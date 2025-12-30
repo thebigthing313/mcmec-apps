@@ -25,6 +25,7 @@
 		"react": "^19.0.0"
 	},
 	"exports": {
-		"./constants/*": "./src/constants/*.tsx"
+		"./constants/*": "./src/constants/*.tsx",
+		"./functions/*": "./src/functions/*.tsx"
 	}
 }

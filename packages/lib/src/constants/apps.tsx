@@ -4,7 +4,7 @@ export type App = {
     name: string
     logo: React.ReactNode
     description: string
-    subdomainName: string
+    href: string
     requiredPermission: string | null
 }
 
@@ -12,7 +12,7 @@ export const AVAILABLE_APPS: App[] = [
     {name: 'Central',
     logo: <LayoutDashboard />,
 description: 'Main dashboard and homepage for all users.',
-subdomainName: 'central',
+href: '/central',
 requiredPermission: null,}
 ]
 
@@ -29,12 +29,12 @@ export function filterAppsByPermissions(userPermissions: string[]): App[] {
 
 /**
  * Checks if a user has access to a specific app
- * @param appName The subdomain name of the app
+ * @param appName The name of the app
  * @param userPermissions Array of permission strings the user has
  * @returns Boolean indicating if user has access
  */
 export function hasAppAccess(appName: string, userPermissions: string[]): boolean {
-    const app = AVAILABLE_APPS.find(a => a.subdomainName === appName)
+    const app = AVAILABLE_APPS.find(a => a.name === appName)
     if (!app) return false
     return app.requiredPermission === null || userPermissions.includes(app.requiredPermission)
 }
