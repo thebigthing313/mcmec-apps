@@ -1,0 +1,8 @@
+# Caddyfile
+http://central.local.test:8080 {
+    reverse_proxy localhost:3001
+}
+
+http://login.local.test:8080 {
+    reverse_proxy localhost:3000
+}
