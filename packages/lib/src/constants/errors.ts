@@ -5,6 +5,7 @@ export const ErrorMessages = {
 		SESSION_EXPIRED: "Your session has expired. Please log in again.",
 		INVALID_JWT: "The provided authentication token is invalid.",
 		UNABLE_TO_FETCH_CLAIMS: "Unable to fetch user claims. Please try again.",
+		UNABLE_TO_RETRIEVE_SESSION: "Unable to retrieve session. Please try again.",
 	},
 	VALIDATION: {
 		INVALID_EMAIL: "Please enter a valid email address.",
