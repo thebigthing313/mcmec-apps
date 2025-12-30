@@ -1,0 +1,12 @@
+{
+	"extends": "@mcmec/typescript-config/tanstack-start.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@mcmec/supabase/*": ["./src/*"],
+			"@mcmec/lib/*": ["../../packages/lib/src/*"]
+		}
+	},
+	"include": ["."],
+	"exclude": ["node_modules", "dist"]
+}

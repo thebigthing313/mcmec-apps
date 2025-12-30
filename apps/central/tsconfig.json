@@ -1,0 +1,13 @@
+{
+	"extends": "@mcmec/typescript-config/tanstack-start.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./*"],
+			"@mcmec/ui/*": ["../../packages/ui/src/*"],
+			"@mcmec/lib/*": ["../../packages/lib/src/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
+}

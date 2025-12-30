@@ -1,0 +1,19 @@
+{
+	"name": "@mcmec/lib",
+	"type": "module",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"private": true,
+	"scripts": {
+		"lint": "biome check --write ."
+	},
+	"keywords": [],
+	"author": "Adrian Kabigting",
+	"license": "ISC",
+	"packageManager": "pnpm@10.19.0",
+	"devDependencies": {
+		"@mcmec/typescript-config": "workspace:*",
+		"typescript": "^5.9.3"
+	}
+}
