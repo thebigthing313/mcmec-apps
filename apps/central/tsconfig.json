@@ -5,7 +5,8 @@
 		"paths": {
 			"@/*": ["./*"],
 			"@mcmec/ui/*": ["../../packages/ui/src/*"],
-			"@mcmec/lib/*": ["../../packages/lib/src/*"]
+			"@mcmec/lib/*": ["../../packages/lib/src/*"],
+			"@mcmec/supabase/*": ["../../packages/supabase/src/*"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx"],
