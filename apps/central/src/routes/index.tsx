@@ -1,4 +1,3 @@
-import { Button } from "@mcmec/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -6,5 +5,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-	return <Button>Test</Button>;
+	return (
+		<div className="flex items-center justify-center min-h-screen">
+			<h1 className="text-4xl font-bold">Hello World</h1>
+		</div>
+	)
 }

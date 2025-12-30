@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 
+import appCss from "@mcmec/ui/globals.css?url";
 import {
 	createRootRoute,
 	HeadContent,
@@ -7,8 +8,12 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import "@mcmec/ui/globals.css";
+
 export const Route = createRootRoute({
+	beforeLoad: async () => {
+		console.log("DO SESSION CHECK HERE");
+		console.log("DO CLAIMS CHECK IF NEEDED HERE");
+	},
 	head: () => ({
 		meta: [
 			{
@@ -19,9 +24,10 @@ export const Route = createRootRoute({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "MCMEC Central",
 			},
 		],
+		links: [{ rel: "stylesheet", href: appCss }],
 	}),
 	component: RootComponent,
 });
@@ -36,7 +42,7 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 	return (
-		<html>
+		<html lang="en">
 			<head>
 				<HeadContent />
 			</head>
