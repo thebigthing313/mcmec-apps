@@ -10,7 +10,7 @@ import { AppSwitcher } from "@mcmec/ui/mcmec-layout/app-switcher";
 import { NavUser } from "@mcmec/ui/mcmec-layout/nav-user";
 import type React from "react";
 
-export function MCMECLayoutSidebar({
+export function LayoutSidebar({
 	children,
 	...props
 }: React.ComponentProps<typeof Sidebar> & { children?: React.ReactNode }) {

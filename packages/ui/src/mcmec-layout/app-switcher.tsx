@@ -62,12 +62,15 @@ export function AppSwitcher() {
 							<DropdownMenuItem
 								key={app.name}
 								className="gap-2 p-2"
+								asChild
 							>
-								<div className="flex size-6 items-center justify-center rounded-md border">
-									{app.logo}
-								</div>
-								{app.name}
-								<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+								<a href={app.href}>
+									<div className="flex size-6 items-center justify-center rounded-md border">
+										{app.logo}
+									</div>
+									{app.name}
+									<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+								</a>
 							</DropdownMenuItem>
 						))}
 					</DropdownMenuContent>

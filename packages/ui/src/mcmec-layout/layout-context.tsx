@@ -13,6 +13,7 @@ export interface LayoutContextData {
 		title: string;
 		avatar: string;
 	};
+	onLogout?: () => void;
 }
 
 const LayoutContext = React.createContext<LayoutContextData | undefined>(
