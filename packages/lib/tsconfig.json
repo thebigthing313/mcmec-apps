@@ -1,5 +1,5 @@
 {
-	"extends": "@mcmec/typescript-config/base.json",
+	"extends": "@mcmec/typescript-config/react-library.json",
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {

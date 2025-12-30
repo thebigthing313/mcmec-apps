@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-			"@mcmec/ui/*": ["./src/*"]
+			"@mcmec/ui/*": ["./src/*"],
+			"@mcmec/lib/*": ["../lib/src/*"]
 		}
 	},
 	"include": ["."],
