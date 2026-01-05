@@ -1,18 +1,15 @@
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-	server: {
-		port: 3001,
-		strictPort: true,
-		allowedHosts: ['central.local.test']
-	},
 	plugins: [
 		tsConfigPaths(),
-		tanstackStart(),
-		// react's vite plugin must come after start's vite plugin
+		tanstackRouter({
+			target: "react",
+			autoCodeSplitting: true,
+		}),
 		viteReact(),
 	],
 });
