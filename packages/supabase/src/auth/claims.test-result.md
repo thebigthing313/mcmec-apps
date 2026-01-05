@@ -1,4 +1,4 @@
-# Test Results - verifyClaimsLogic
+# Test Results - verifyClaims
 
 **Date:** December 30, 2025  
 **Test Suite:** `src/auth/claims.test.ts`  

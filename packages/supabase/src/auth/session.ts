@@ -1,7 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-import { createClient } from "../client/server";
+import { createClient } from "../client";
 
 const SessionSchema = z.object({
 	userId: z.string().uuid(ErrorMessages.VALIDATION.INVALID_UUID),
@@ -12,21 +11,10 @@ const SessionSchema = z.object({
 export type SessionData = z.infer<typeof SessionSchema>;
 
 /**
- * Server function to validate the current user session.
+ * Validates the current user session.
  * Throws an error if no valid session exists.
- * Use this in TanStack Router's beforeLoad to protect routes.
  */
-export const checkSessionFn = createServerFn({ method: "GET" })
-	.inputValidator((d: { supabaseUrl: string; supabaseKey: string }) => d)
-	.handler(async ({ data }) => {
-		return checkSessionLogic(data);
-	});
-
-/**
- * Core logic to check for a valid session.
- * Can be reused directly in server contexts.
- */
-export const checkSessionLogic = async (input: {
+export const checkSession = async (input: {
 	supabaseUrl: string;
 	supabaseKey: string;
 }) => {

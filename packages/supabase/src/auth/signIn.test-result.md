@@ -1,4 +1,4 @@
-# Test Results - signInLogic
+# Test Results - signIn
 
 **Date:** December 30, 2025  
 **Test Suite:** `src/auth/signIn.test.ts`  

@@ -1,4 +1,4 @@
-# Test Results - signOutLogic
+# Test Results - signOut
 
 **Date:** December 30, 2025  
 **Test Suite:** `src/auth/signOut.test.ts`  
@@ -43,7 +43,7 @@ The test suite covers:
 
 ## Function Behavior
 
-The `signOutLogic` function:
+The `signOut` function:
 
 - Calls Supabase's `signOut` method to terminate the user session
 - Returns a success status object `{ success: true }` on successful sign out

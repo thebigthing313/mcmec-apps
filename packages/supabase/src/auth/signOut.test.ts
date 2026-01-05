@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockSignOut = vi.fn();
 
-vi.mock("../client/server", () => {
+vi.mock("../client", () => {
 	return {
 		createClient: vi.fn(() => ({
 			auth: {
@@ -12,14 +12,14 @@ vi.mock("../client/server", () => {
 	};
 });
 
-import { createClient } from "../client/server";
-import { signOutLogic } from "./signOut";
+import { createClient } from "../client";
+import { signOut as signOutFn } from "./signOut";
 
 beforeEach(() => {
 	vi.clearAllMocks();
 });
 
-describe("signOutLogic", () => {
+describe("signOut", () => {
 	const validInput = {
 		supabaseUrl: "https://example.supabase.co",
 		supabaseKey: "test-key",
@@ -30,7 +30,7 @@ describe("signOutLogic", () => {
 			error: null,
 		});
 
-		const result = await signOutLogic(validInput);
+		const result = await signOutFn(validInput);
 
 		expect(mockSignOut).toHaveBeenCalledWith();
 		expect(result).toEqual({ success: true });
@@ -41,7 +41,7 @@ describe("signOutLogic", () => {
 			error: { message: "Sign out failed" },
 		});
 
-		await expect(signOutLogic(validInput)).rejects.toThrow(
+		await expect(signOutFn(validInput)).rejects.toThrow(
 			"You must be logged in to access this resource.",
 		);
 	});
@@ -51,7 +51,7 @@ describe("signOutLogic", () => {
 			error: null,
 		});
 
-		await signOutLogic(validInput);
+		await signOutFn(validInput);
 
 		expect(createClient).toHaveBeenCalledWith(
 			"https://example.supabase.co",
@@ -64,7 +64,7 @@ describe("signOutLogic", () => {
 			error: { message: "Network error", status: 500 },
 		});
 
-		await expect(signOutLogic(validInput)).rejects.toThrow(
+		await expect(signOutFn(validInput)).rejects.toThrow(
 			"You must be logged in to access this resource.",
 		);
 	});
@@ -74,6 +74,6 @@ describe("signOutLogic", () => {
 			error: { message: "Request timeout" },
 		});
 
-		await expect(signOutLogic(validInput)).rejects.toThrow();
+		await expect(signOutFn(validInput)).rejects.toThrow();
 	});
 });

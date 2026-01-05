@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockGetClaims = vi.fn();
 
-vi.mock("../client/server", () => {
+vi.mock("../client", () => {
 	return {
 		createClient: vi.fn(() => ({
 			auth: {
@@ -12,14 +12,14 @@ vi.mock("../client/server", () => {
 	};
 });
 
-import { createClient } from "../client/server";
-import { verifyClaimsLogic } from "./claims";
+import { createClient } from "../client";
+import { verifyClaims } from "./claims";
 
 beforeEach(() => {
 	vi.clearAllMocks();
 });
 
-describe("verifyClaimsLogic", () => {
+describe("verifyClaims", () => {
 	it("should return claims when all required fields are present", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
@@ -36,7 +36,7 @@ describe("verifyClaimsLogic", () => {
 			error: null,
 		});
 
-		const result = await verifyClaimsLogic({
+		const result = await verifyClaims({
 			supabaseUrl: "url",
 			supabaseKey: "key",
 		});
@@ -66,7 +66,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow("The provided authentication token is invalid.");
 	});
 
@@ -86,7 +86,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow("The provided authentication token is invalid.");
 	});
 
@@ -107,7 +107,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({
+			verifyClaims({
 				supabaseUrl: "url",
 				supabaseKey: "key",
 				permission: "write",
@@ -131,7 +131,7 @@ describe("verifyClaimsLogic", () => {
 			error: null,
 		});
 
-		const result = await verifyClaimsLogic({
+		const result = await verifyClaims({
 			supabaseUrl: "url",
 			supabaseKey: "key",
 			permission: "write",
@@ -147,7 +147,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow("The provided authentication token is invalid.");
 	});
 
@@ -158,7 +158,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow();
 	});
 
@@ -169,7 +169,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow("The provided authentication token is invalid.");
 	});
 
@@ -190,7 +190,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow();
 	});
 
@@ -211,7 +211,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow();
 	});
 
@@ -232,7 +232,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow();
 	});
 
@@ -253,7 +253,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow();
 	});
 
@@ -274,7 +274,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow();
 	});
 
@@ -295,7 +295,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow();
 	});
 
@@ -312,7 +312,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow("The provided authentication token is invalid.");
 	});
 
@@ -328,7 +328,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow("The provided authentication token is invalid.");
 	});
 
@@ -348,7 +348,7 @@ describe("verifyClaimsLogic", () => {
 			error: null,
 		});
 
-		const result = await verifyClaimsLogic({
+		const result = await verifyClaims({
 			supabaseUrl: "url",
 			supabaseKey: "key",
 		});
@@ -372,7 +372,7 @@ describe("verifyClaimsLogic", () => {
 			error: null,
 		});
 
-		const result = await verifyClaimsLogic({
+		const result = await verifyClaims({
 			supabaseUrl: "url",
 			supabaseKey: "key",
 		});
@@ -397,7 +397,7 @@ describe("verifyClaimsLogic", () => {
 			error: null,
 		});
 
-		const result = await verifyClaimsLogic({
+		const result = await verifyClaims({
 			supabaseUrl: "url",
 			supabaseKey: "key",
 		});
@@ -423,7 +423,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow("The provided authentication token is invalid.");
 	});
 
@@ -444,7 +444,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({ supabaseUrl: "url", supabaseKey: "key" }),
+			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
 		).rejects.toThrow("The provided authentication token is invalid.");
 	});
 
@@ -466,7 +466,7 @@ describe("verifyClaimsLogic", () => {
 			error: null,
 		});
 
-		await verifyClaimsLogic({
+		await verifyClaims({
 			supabaseUrl: "https://test.supabase.co",
 			supabaseKey: "test-key-123",
 		});
@@ -493,7 +493,7 @@ describe("verifyClaimsLogic", () => {
 			error: null,
 		});
 
-		const result = await verifyClaimsLogic({
+		const result = await verifyClaims({
 			supabaseUrl: "url",
 			supabaseKey: "key",
 			permission: "delete",
@@ -520,7 +520,7 @@ describe("verifyClaimsLogic", () => {
 		});
 
 		await expect(
-			verifyClaimsLogic({
+			verifyClaims({
 				supabaseUrl: "url",
 				supabaseKey: "key",
 				permission: "read",

@@ -1,7 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-import { createClient } from "../client/server";
+import { createClient } from "../client";
 
 interface JwtClaims {
 	iss: string;
@@ -34,15 +33,7 @@ const ReturnedClaimsSchema = z.object({
 	permissions: z.array(z.string()),
 });
 
-export const verifyClaimsFn = createServerFn({ method: "POST" })
-	.inputValidator(
-		(d: { supabaseUrl: string; supabaseKey: string; permission?: string }) => d,
-	)
-	.handler(async ({ data }) => {
-		return verifyClaimsLogic(data);
-	});
-
-export const verifyClaimsLogic = async (input: {
+export const verifyClaims = async (input: {
 	supabaseUrl: string;
 	supabaseKey: string;
 	permission?: string;

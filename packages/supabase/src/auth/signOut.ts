@@ -1,14 +1,7 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "../client/server";
+import { createClient } from "../client";
 
-export const signOutFn = createServerFn({ method: "POST" })
-	.inputValidator((d: { supabaseUrl: string; supabaseKey: string }) => d)
-	.handler(async ({ data }) => {
-		return signOutLogic(data);
-	});
-
-export const signOutLogic = async (input: {
+export const signOut = async (input: {
 	supabaseUrl: string;
 	supabaseKey: string;
 }) => {

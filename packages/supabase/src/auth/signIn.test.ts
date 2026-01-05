@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockSignInWithPassword = vi.fn();
 
-vi.mock("../client/server", () => {
+vi.mock("../client", () => {
 	return {
 		createClient: vi.fn(() => ({
 			auth: {
@@ -12,14 +12,14 @@ vi.mock("../client/server", () => {
 	};
 });
 
-import { createClient } from "../client/server";
-import { signInLogic } from "./signIn";
+import { createClient } from "../client";
+import { signIn } from "./signIn";
 
 beforeEach(() => {
 	vi.clearAllMocks();
 });
 
-describe("signInLogic", () => {
+describe("signIn", () => {
 	const validInput = {
 		email: "user@example.com",
 		password: "securepassword123",
@@ -42,7 +42,7 @@ describe("signInLogic", () => {
 			error: null,
 		});
 
-		const result = await signInLogic(validInput);
+		const result = await signIn(validInput);
 
 		expect(mockSignInWithPassword).toHaveBeenCalledWith({
 			email: "user@example.com",
@@ -63,7 +63,7 @@ describe("signInLogic", () => {
 			error: { message: "Invalid credentials" },
 		});
 
-		await expect(signInLogic(validInput)).rejects.toThrow(
+		await expect(signIn(validInput)).rejects.toThrow(
 			"You must be logged in to access this resource.",
 		);
 	});
@@ -80,7 +80,7 @@ describe("signInLogic", () => {
 			error: null,
 		});
 
-		await expect(signInLogic(validInput)).rejects.toThrow(
+		await expect(signIn(validInput)).rejects.toThrow(
 			"You must be logged in to access this resource.",
 		);
 	});
@@ -97,7 +97,7 @@ describe("signInLogic", () => {
 			error: null,
 		});
 
-		await expect(signInLogic(validInput)).rejects.toThrow(
+		await expect(signIn(validInput)).rejects.toThrow(
 			"You must be logged in to access this resource.",
 		);
 	});
@@ -108,7 +108,7 @@ describe("signInLogic", () => {
 			email: "not-an-email",
 		};
 
-		await expect(signInLogic(invalidInput)).rejects.toThrow();
+		await expect(signIn(invalidInput)).rejects.toThrow();
 	});
 
 	it("should throw error for password shorter than 8 characters", async () => {
@@ -117,7 +117,7 @@ describe("signInLogic", () => {
 			password: "short",
 		};
 
-		await expect(signInLogic(invalidInput)).rejects.toThrow();
+		await expect(signIn(invalidInput)).rejects.toThrow();
 	});
 
 	it("should call createClient with correct parameters", async () => {
@@ -135,7 +135,7 @@ describe("signInLogic", () => {
 			error: null,
 		});
 
-		await signInLogic(validInput);
+		await signIn(validInput);
 
 		expect(createClient).toHaveBeenCalledWith(
 			"https://example.supabase.co",
@@ -158,6 +158,6 @@ describe("signInLogic", () => {
 			error: null,
 		});
 
-		await expect(signInLogic(validInput)).rejects.toThrow();
+		await expect(signIn(validInput)).rejects.toThrow();
 	});
 });

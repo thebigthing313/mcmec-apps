@@ -1,7 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-import { createClient } from "../client/server";
+import { createClient } from "../client";
 
 const SignInInputSchema = z.object({
 	email: z.string().email(ErrorMessages.VALIDATION.INVALID_EMAIL),
@@ -18,15 +17,7 @@ const SignInResponseSchema = z.object({
 export type SignInInput = z.infer<typeof SignInInputSchema>;
 export type SignInResponse = z.infer<typeof SignInResponseSchema>;
 
-export const signInFn = createServerFn({ method: "POST" })
-	.inputValidator(
-		(d: SignInInput & { supabaseUrl: string; supabaseKey: string }) => d,
-	)
-	.handler(async ({ data }) => {
-		return signInLogic(data);
-	});
-
-export const signInLogic = async (input: {
+export const signIn = async (input: {
 	email: string;
 	password: string;
 	supabaseUrl: string;
