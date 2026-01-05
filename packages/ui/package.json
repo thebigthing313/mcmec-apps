@@ -14,6 +14,7 @@
 	"packageManager": "pnpm@10.19.0",
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
+		"@mcmec/lib": "workspace:*",
 		"@radix-ui/react-accordion": "^1.2.12",
 		"@radix-ui/react-alert-dialog": "^1.1.15",
 		"@radix-ui/react-aspect-ratio": "^1.1.8",
@@ -40,12 +41,15 @@
 		"@radix-ui/react-toggle": "^1.1.10",
 		"@radix-ui/react-toggle-group": "^1.1.11",
 		"@radix-ui/react-tooltip": "^1.2.8",
+		"@tanstack/react-form": "^1.27.7",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cmdk": "^1.1.1",
 		"date-fns": "^4.1.0",
 		"embla-carousel-react": "^8.6.0",
+		"flag-icons": "^7.5.0",
 		"input-otp": "^1.4.2",
+		"libphonenumber-js": "^1.12.33",
 		"lucide-react": "^0.475.0",
 		"next-themes": "^0.4.6",
 		"react": "^19.1.1",
@@ -58,8 +62,7 @@
 		"tailwind-merge": "^3.4.0",
 		"tw-animate-css": "^1.3.6",
 		"vaul": "^1.1.2",
-		"zod": "^3.25.76",
-		"@mcmec/lib": "workspace:*"
+		"zod": "^3.25.76"
 	},
 	"devDependencies": {
 		"@mcmec/typescript-config": "workspace:*",
@@ -78,6 +81,9 @@
 		"./lib/*": "./src/lib/*.ts",
 		"./components/*": "./src/components/*.tsx",
 		"./mcmec-layout/*": "./src/mcmec-layout/*.tsx",
-		"./hooks/*": "./src/hooks/*.ts"
+		"./hooks/*": "./src/hooks/*.ts",
+		"./inputs/*": "./src/inputs/*.ts",
+		"./blocks/*": "./src/blocks/*.ts",
+		"./forms/*": "./src/forms/*.tsx"
 	}
 }
