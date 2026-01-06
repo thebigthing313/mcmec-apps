@@ -1,4 +1,4 @@
-import { LayoutDashboard } from "lucide-react";
+import { Newspaper } from "lucide-react";
 
 export type App = {
 	name: string;
@@ -10,11 +10,11 @@ export type App = {
 
 export const AVAILABLE_APPS: App[] = [
 	{
-		name: "Central",
-		logo: <LayoutDashboard />,
-		description: "Main dashboard and homepage for all users.",
-		href: "/central",
-		requiredPermission: null,
+		name: "Public Notices",
+		logo: <Newspaper />,
+		description: "Manage and publish public notices for the agency.",
+		href: "public-notices",
+		requiredPermission: "public_notices",
 	},
 ];
 
