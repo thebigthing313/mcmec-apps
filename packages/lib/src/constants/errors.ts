@@ -5,6 +5,7 @@ export const ErrorMessages = {
 		SESSION_EXPIRED: "Your session has expired. Please log in again.",
 		INVALID_JWT: "The provided authentication token is invalid.",
 		UNABLE_TO_FETCH_CLAIMS: "Unable to fetch user claims. Please try again.",
+		NOT_ONBOARDED: "User has not properly onboarded.",
 		UNABLE_TO_RETRIEVE_SESSION: "Unable to retrieve session. Please try again.",
 	},
 	VALIDATION: {
@@ -15,6 +16,10 @@ export const ErrorMessages = {
 	SERVER: {
 		INTERNAL_ERROR: "An unexpected error occurred. Please try again later.",
 		SERVICE_UNAVAILABLE: "The service is temporarily down.",
+		ENVIRONMENT_MISCONFIGURED: "The server environment is misconfigured.",
+	},
+	BROWSER: {
+		ROOT_ELEMENT_NOT_FOUND: "Root element not found",
 	},
 } as const;
 
