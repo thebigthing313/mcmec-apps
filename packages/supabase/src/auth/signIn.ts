@@ -1,6 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import z from "zod";
-import { createClient } from "../client";
+import type { SupabaseClient } from "../client";
 
 const SignInInputSchema = z.object({
 	email: z.string().email(ErrorMessages.VALIDATION.INVALID_EMAIL),
@@ -20,8 +20,7 @@ export type SignInResponse = z.infer<typeof SignInResponseSchema>;
 export const signIn = async (input: {
 	email: string;
 	password: string;
-	supabaseUrl: string;
-	supabaseKey: string;
+	client: SupabaseClient;
 }) => {
 	// Validate input
 	const validatedInput = SignInInputSchema.parse({
@@ -29,9 +28,7 @@ export const signIn = async (input: {
 		password: input.password,
 	});
 
-	const supabase = createClient(input.supabaseUrl, input.supabaseKey);
-
-	const { data, error } = await supabase.auth.signInWithPassword({
+	const { data, error } = await input.client.auth.signInWithPassword({
 		email: validatedInput.email,
 		password: validatedInput.password,
 	});

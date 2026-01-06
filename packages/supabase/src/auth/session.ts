@@ -1,6 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import z from "zod";
-import { createClient } from "../client";
+import type { SupabaseClient } from "../client";
 
 const SessionSchema = z.object({
 	userId: z.string().uuid(ErrorMessages.VALIDATION.INVALID_UUID),
@@ -14,27 +14,20 @@ export type SessionData = z.infer<typeof SessionSchema>;
  * Validates the current user session.
  * Throws an error if no valid session exists.
  */
-export const checkSession = async (input: {
-	supabaseUrl: string;
-	supabaseKey: string;
-}) => {
-	const { supabaseUrl, supabaseKey } = input;
-
-	const supabase = createClient(supabaseUrl, supabaseKey);
+export const checkSession = async (input: { client: SupabaseClient }) => {
+	const { client } = input;
 
 	// Get the current session
 	const {
 		data: { session },
 		error,
-	} = await supabase.auth.getSession();
+	} = await client.auth.getSession();
 
 	if (error) {
 		throw new Error(ErrorMessages.AUTH.UNABLE_TO_RETRIEVE_SESSION);
 	}
 
-	if (!session) {
-		throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
-	}
+	if (!session) return null;
 
 	// Validate session data
 	const sessionData: SessionData = {

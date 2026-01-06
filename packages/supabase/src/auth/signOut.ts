@@ -1,13 +1,8 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import { createClient } from "../client";
+import type { SupabaseClient } from "../client";
 
-export const signOut = async (input: {
-	supabaseUrl: string;
-	supabaseKey: string;
-}) => {
-	const supabase = createClient(input.supabaseUrl, input.supabaseKey);
-
-	const { error } = await supabase.auth.signOut();
+export const signOut = async (input: { client: SupabaseClient }) => {
+	const { error } = await input.client.auth.signOut();
 
 	if (error) {
 		throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);

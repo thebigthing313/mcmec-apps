@@ -1,18 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockSignInWithPassword = vi.fn();
+const mockClient = {
+	auth: {
+		signInWithPassword: mockSignInWithPassword,
+	},
+};
 
-vi.mock("../client", () => {
-	return {
-		createClient: vi.fn(() => ({
-			auth: {
-				signInWithPassword: mockSignInWithPassword,
-			},
-		})),
-	};
-});
-
-import { createClient } from "../client";
 import { signIn } from "./signIn";
 
 beforeEach(() => {
@@ -23,8 +17,7 @@ describe("signIn", () => {
 	const validInput = {
 		email: "user@example.com",
 		password: "securepassword123",
-		supabaseUrl: "https://example.supabase.co",
-		supabaseKey: "test-key",
+		client: mockClient as any,
 	};
 
 	it("should successfully sign in with valid credentials", async () => {
@@ -134,13 +127,6 @@ describe("signIn", () => {
 			},
 			error: null,
 		});
-
-		await signIn(validInput);
-
-		expect(createClient).toHaveBeenCalledWith(
-			"https://example.supabase.co",
-			"test-key",
-		);
 	});
 
 	it("should handle missing email in user response", async () => {

@@ -1,18 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockGetClaims = vi.fn();
+const mockClient = {
+	auth: {
+		getClaims: mockGetClaims,
+	},
+};
 
-vi.mock("../client", () => {
-	return {
-		createClient: vi.fn(() => ({
-			auth: {
-				getClaims: mockGetClaims,
-			},
-		})),
-	};
-});
-
-import { createClient } from "../client";
 import { verifyClaims } from "./claims";
 
 beforeEach(() => {
@@ -36,10 +30,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		const result = await verifyClaims({
-			supabaseUrl: "url",
-			supabaseKey: "key",
-		});
+		const result = await verifyClaims({ client: mockClient as any });
 
 		expect(result).toEqual({
 			userId: "123e4567-e89b-12d3-a456-426614174000",
@@ -65,9 +56,9 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow("The provided authentication token is invalid.");
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			"The provided authentication token is invalid.",
+		);
 	});
 
 	it("should throw INVALID_JWT when employeeId is missing", async () => {
@@ -85,9 +76,9 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow("The provided authentication token is invalid.");
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			"The provided authentication token is invalid.",
+		);
 	});
 
 	it("should throw FORBIDDEN when permission is required but not present", async () => {
@@ -108,8 +99,7 @@ describe("verifyClaims", () => {
 
 		await expect(
 			verifyClaims({
-				supabaseUrl: "url",
-				supabaseKey: "key",
+				client: mockClient as any,
 				permission: "write",
 			}),
 		).rejects.toThrow("You do not have permission to this action or resource.");
@@ -132,8 +122,7 @@ describe("verifyClaims", () => {
 		});
 
 		const result = await verifyClaims({
-			supabaseUrl: "url",
-			supabaseKey: "key",
+			client: mockClient as any,
 			permission: "write",
 		});
 
@@ -146,9 +135,9 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow("The provided authentication token is invalid.");
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			"The provided authentication token is invalid.",
+		);
 	});
 
 	it("should throw UNABLE_TO_FETCH_CLAIMS when getClaims returns an error", async () => {
@@ -157,9 +146,7 @@ describe("verifyClaims", () => {
 			error: { message: "Network error", status: 500 },
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
 	});
 
 	it("should throw INVALID_JWT when claims data is undefined", async () => {
@@ -168,9 +155,9 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow("The provided authentication token is invalid.");
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			"The provided authentication token is invalid.",
+		);
 	});
 
 	it("should throw validation error when userId is not a valid UUID", async () => {
@@ -189,9 +176,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
 	});
 
 	it("should throw validation error when email is invalid", async () => {
@@ -210,9 +195,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
 	});
 
 	it("should throw validation error when profileId is not a valid UUID", async () => {
@@ -231,9 +214,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
 	});
 
 	it("should throw validation error when employeeId is not a valid UUID", async () => {
@@ -252,9 +233,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
 	});
 
 	it("should handle empty string profileId as invalid", async () => {
@@ -273,9 +252,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
 	});
 
 	it("should handle empty string employeeId as invalid", async () => {
@@ -294,9 +271,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
 	});
 
 	it("should handle when app_metadata is null", async () => {
@@ -311,9 +286,9 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow("The provided authentication token is invalid.");
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			"The provided authentication token is invalid.",
+		);
 	});
 
 	it("should handle when app_metadata is undefined", async () => {
@@ -327,9 +302,9 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow("The provided authentication token is invalid.");
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			"The provided authentication token is invalid.",
+		);
 	});
 
 	it("should handle when permissions is not an array", async () => {
@@ -348,10 +323,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		const result = await verifyClaims({
-			supabaseUrl: "url",
-			supabaseKey: "key",
-		});
+		const result = await verifyClaims({ client: mockClient as any });
 
 		// Should default to empty array when permissions is not an array
 		expect(result.permissions).toEqual([]);
@@ -372,10 +344,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		const result = await verifyClaims({
-			supabaseUrl: "url",
-			supabaseKey: "key",
-		});
+		const result = await verifyClaims({ client: mockClient as any });
 
 		// Should default to empty array when permissions is missing
 		expect(result.permissions).toEqual([]);
@@ -397,10 +366,7 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		const result = await verifyClaims({
-			supabaseUrl: "url",
-			supabaseKey: "key",
-		});
+		const result = await verifyClaims({ client: mockClient as any });
 
 		expect(result.permissions).toEqual([]);
 		expect(result.userId).toBe("123e4567-e89b-12d3-a456-426614174000");
@@ -422,9 +388,9 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow("The provided authentication token is invalid.");
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			"The provided authentication token is invalid.",
+		);
 	});
 
 	it("should handle when employeeId is a number instead of string", async () => {
@@ -443,37 +409,8 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(
-			verifyClaims({ supabaseUrl: "url", supabaseKey: "key" }),
-		).rejects.toThrow("The provided authentication token is invalid.");
-	});
-
-	it("should verify createClient is called with correct parameters", async () => {
-		const mockCreateClient = vi.mocked(createClient);
-
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		await verifyClaims({
-			supabaseUrl: "https://test.supabase.co",
-			supabaseKey: "test-key-123",
-		});
-
-		expect(mockCreateClient).toHaveBeenCalledWith(
-			"https://test.supabase.co",
-			"test-key-123",
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			"The provided authentication token is invalid.",
 		);
 	});
 
@@ -494,8 +431,7 @@ describe("verifyClaims", () => {
 		});
 
 		const result = await verifyClaims({
-			supabaseUrl: "url",
-			supabaseKey: "key",
+			client: mockClient as any,
 			permission: "delete",
 		});
 
@@ -521,10 +457,10 @@ describe("verifyClaims", () => {
 
 		await expect(
 			verifyClaims({
-				supabaseUrl: "url",
-				supabaseKey: "key",
+				client: mockClient as any,
 				permission: "read",
 			}),
 		).rejects.toThrow("You do not have permission to this action or resource.");
 	});
 });
+

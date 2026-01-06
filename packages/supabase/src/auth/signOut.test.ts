@@ -1,18 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockSignOut = vi.fn();
+const mockClient = {
+	auth: {
+		signOut: mockSignOut,
+	},
+};
 
-vi.mock("../client", () => {
-	return {
-		createClient: vi.fn(() => ({
-			auth: {
-				signOut: mockSignOut,
-			},
-		})),
-	};
-});
-
-import { createClient } from "../client";
 import { signOut as signOutFn } from "./signOut";
 
 beforeEach(() => {
@@ -21,8 +15,7 @@ beforeEach(() => {
 
 describe("signOut", () => {
 	const validInput = {
-		supabaseUrl: "https://example.supabase.co",
-		supabaseKey: "test-key",
+		client: mockClient as any,
 	};
 
 	it("should successfully sign out", async () => {
@@ -43,19 +36,6 @@ describe("signOut", () => {
 
 		await expect(signOutFn(validInput)).rejects.toThrow(
 			"You must be logged in to access this resource.",
-		);
-	});
-
-	it("should call createClient with correct parameters", async () => {
-		mockSignOut.mockResolvedValue({
-			error: null,
-		});
-
-		await signOutFn(validInput);
-
-		expect(createClient).toHaveBeenCalledWith(
-			"https://example.supabase.co",
-			"test-key",
 		);
 	});
 

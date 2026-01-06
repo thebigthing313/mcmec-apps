@@ -7,5 +7,5 @@ export function createClient(
 	supabaseUrl: string,
 	supabaseKey: string,
 ): SupabaseClient {
-	return createSupabaseClient<Database>(supabaseUrl, supabaseKey);
+	return createSupabaseClient<Database>(supabaseUrl, supabaseKey, {});
 }

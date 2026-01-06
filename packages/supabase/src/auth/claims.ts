@@ -1,6 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import z from "zod";
-import { createClient } from "../client";
+import type { SupabaseClient } from "../client";
 
 interface JwtClaims {
 	iss: string;
@@ -34,13 +34,12 @@ const ReturnedClaimsSchema = z.object({
 });
 
 export const verifyClaims = async (input: {
-	supabaseUrl: string;
-	supabaseKey: string;
+	client: SupabaseClient;
 	permission?: string;
 }) => {
-	const { supabaseUrl, supabaseKey, permission } = input;
-	const supabase = createClient(supabaseUrl, supabaseKey);
-	const { data: claimsData, error } = await supabase.auth.getClaims();
+	const { client, permission } = input;
+	const { data: claimsData, error } = await client.auth.getClaims();
+
 	if (error) {
 		throw new Error(ErrorMessages.AUTH.UNABLE_TO_FETCH_CLAIMS);
 	}
@@ -69,7 +68,12 @@ export const verifyClaims = async (input: {
 	const parsedClaims = ReturnedClaimsSchema.parse(returnedClaims);
 
 	// Verify existence of required fields
-	if (!parsedClaims.profileId || !parsedClaims.employeeId) {
+	// if (!parsedClaims.profileId || !parsedClaims.employeeId) {
+	// 	throw new Error(ErrorMessages.AUTH.INVALID_JWT);
+	// }
+	// employees table not yet created
+	// TODO: remove this check when employees table is created
+	if (!parsedClaims.profileId) {
 		throw new Error(ErrorMessages.AUTH.INVALID_JWT);
 	}
 
