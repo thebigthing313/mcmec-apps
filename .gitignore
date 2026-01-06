@@ -3,3 +3,4 @@
 .turbo/
 dist/
 .tanstack/
+seed.sql
