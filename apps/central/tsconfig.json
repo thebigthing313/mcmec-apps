@@ -1,6 +1,7 @@
 {
 	"extends": "@mcmec/typescript-config/tanstack-start.json",
 	"compilerOptions": {
+		"types": ["vite/client"],
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./*"],
@@ -9,6 +10,6 @@
 			"@mcmec/supabase/*": ["../../packages/supabase/src/*"]
 		}
 	},
-	"include": ["**/*.ts", "**/*.tsx"],
+	"include": ["**/*.ts", "**/*.tsx", "src/env.d.ts"],
 	"exclude": ["node_modules"]
 }
