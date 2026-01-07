@@ -1,6 +1,8 @@
 "use client";
 
 import type { App } from "@mcmec/lib/constants/apps";
+import { ASSET_URLS } from "@mcmec/lib/constants/assets";
+import { COMPANY_INFO } from "@mcmec/lib/constants/company";
 import { SidebarProvider } from "@mcmec/ui/components/sidebar";
 import { LayoutContextProvider } from "@mcmec/ui/mcmec-layout/layout-context.js";
 import { LayoutErrorBoundary } from "@mcmec/ui/mcmec-layout/layout-error-boundary";
@@ -8,8 +10,6 @@ import type * as React from "react";
 
 interface LayoutProviderProps {
 	children: React.ReactNode;
-	companyLogoUrl: string;
-	companyName: string;
 	apps: Array<App>;
 	activeApp: string;
 	user: {
@@ -22,13 +22,13 @@ interface LayoutProviderProps {
 
 export function LayoutProvider({
 	children,
-	companyLogoUrl,
-	companyName,
 	apps,
 	activeApp,
 	user,
 	onLogout,
 }: LayoutProviderProps) {
+	const companyLogoUrl = ASSET_URLS.logo;
+	const companyName = COMPANY_INFO.name;
 	return (
 		<LayoutErrorBoundary>
 			<LayoutContextProvider
