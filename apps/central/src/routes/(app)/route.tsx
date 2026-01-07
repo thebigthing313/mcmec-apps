@@ -1,11 +1,9 @@
-import { AVAILABLE_APPS } from "@mcmec/lib/constants/apps";
+import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { verifyClaims } from "@mcmec/supabase/auth/claims";
 import { checkSession } from "@mcmec/supabase/auth/session";
 import { signOut } from "@mcmec/supabase/auth/signOut";
-import { LayoutInset } from "@mcmec/ui/mcmec-layout/layout-inset";
-import { LayoutProvider } from "@mcmec/ui/mcmec-layout/layout-provider";
-import { LayoutSidebar } from "@mcmec/ui/mcmec-layout/layout-sidebar";
+import { Layout } from "@mcmec/ui/mcmec-layout";
 import {
 	createFileRoute,
 	Outlet,
@@ -72,7 +70,10 @@ export const Route = createFileRoute("/(app)")({
 });
 
 function LayoutComponent() {
-	const { supabase } = Route.useRouteContext();
+	const { supabase, claims } = Route.useRouteContext();
+	const { permissions } = claims;
+	const accessibleApps = filterAppsByPermissions(permissions);
+
 	const navigate = useNavigate();
 	const handleLogout = async () => {
 		await signOut({ client: supabase });
@@ -80,22 +81,32 @@ function LayoutComponent() {
 	};
 
 	return (
-		<LayoutProvider
-			apps={AVAILABLE_APPS}
-			activeApp="Central"
-			user={{
-				name: "User Name",
-				title: "Job Title",
-				avatar: "/avatar.png",
+		<Layout
+			value={{
+				apps: accessibleApps,
+				activeApp: "Central",
+				user: {
+					name: "User Name",
+					title: "Job Title",
+					avatar: "/avatar.png",
+				},
+				onLogout: handleLogout,
 			}}
-			onLogout={handleLogout}
 		>
-			<LayoutSidebar>
-				<CentralSidebar />
-			</LayoutSidebar>
-			<LayoutInset>
+			<Layout.Sidebar>
+				<Layout.Sidebar.Header>
+					<Layout.AppSwitcher />
+				</Layout.Sidebar.Header>
+				<Layout.Sidebar.Content>
+					<CentralSidebar />
+				</Layout.Sidebar.Content>
+				<Layout.Sidebar.Footer>
+					<Layout.NavUser />
+				</Layout.Sidebar.Footer>
+			</Layout.Sidebar>
+			<Layout.Content>
 				<Outlet />
-			</LayoutInset>
-		</LayoutProvider>
+			</Layout.Content>
+		</Layout>
 	);
 }
