@@ -13,7 +13,7 @@ export const AVAILABLE_APPS: App[] = [
 		name: "Public Notices",
 		logo: <Newspaper />,
 		description: "Manage and publish public notices for the agency.",
-		href: "public-notices",
+		href: "notices",
 		requiredPermission: "public_notices",
 	},
 ];
