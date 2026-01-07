@@ -35,11 +35,11 @@ export function AppSwitcher() {
 							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
-							<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+							<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white text-sidebar-primary-foreground">
 								<img
 									src={companyLogoUrl}
 									alt={companyName}
-									className="size-4"
+									className="size-8"
 								/>
 							</div>
 							<div className="grid flex-1 text-left text-sm leading-tight">
@@ -59,11 +59,7 @@ export function AppSwitcher() {
 							Applications
 						</DropdownMenuLabel>
 						{apps.map((app, index) => (
-							<DropdownMenuItem
-								key={app.name}
-								className="gap-2 p-2"
-								asChild
-							>
+							<DropdownMenuItem key={app.name} className="gap-2 p-2" asChild>
 								<a href={app.href}>
 									<div className="flex size-6 items-center justify-center rounded-md border">
 										{app.logo}
