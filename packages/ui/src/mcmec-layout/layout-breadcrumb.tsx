@@ -5,16 +5,18 @@ import {
 	BreadcrumbItem,
 	BreadcrumbLink,
 	BreadcrumbList,
+	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@mcmec/ui/components/breadcrumb";
+import { Fragment } from "react";
 
-export interface BreadcrumbItem {
+export interface BreadcrumbPart {
 	label: string;
 	href?: string;
 }
 
 interface LayoutBreadcrumbProps {
-	items: BreadcrumbItem[];
+	items: BreadcrumbPart[];
 }
 
 export function LayoutBreadcrumb({ items }: LayoutBreadcrumbProps) {
@@ -25,18 +27,21 @@ export function LayoutBreadcrumb({ items }: LayoutBreadcrumbProps) {
 	return (
 		<Breadcrumb>
 			<BreadcrumbList>
-				{items.map((item, index) => (
-					<div key={`${item.label}-${index}`} className="flex gap-3 items-center">
-						<BreadcrumbItem>
-							{item.href ? (
-								<BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
-							) : (
-								<span className="font-normal text-foreground">{item.label}</span>
-							)}
-						</BreadcrumbItem>
-						{index + 1 < items.length ? <BreadcrumbSeparator /> : null}
-					</div>
-				))}
+				{items.map((item, index) => {
+					const itemKey = item.href || item.label;
+					return (
+						<Fragment key={itemKey}>
+							<BreadcrumbItem>
+								{item.href ? (
+									<BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+								) : (
+									<BreadcrumbPage>{item.label}</BreadcrumbPage>
+								)}
+							</BreadcrumbItem>
+							{index + 1 < items.length ? <BreadcrumbSeparator /> : null}
+						</Fragment>
+					);
+				})}
 			</BreadcrumbList>
 		</Breadcrumb>
 	);

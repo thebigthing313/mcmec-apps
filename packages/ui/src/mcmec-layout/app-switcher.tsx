@@ -16,7 +16,6 @@ import {
 } from "@mcmec/ui/components/sidebar";
 import { useLayoutContext } from "@mcmec/ui/mcmec-layout/layout-context.js";
 import { ChevronsUpDown } from "lucide-react";
-import * as React from "react";
 
 export function AppSwitcher() {
 	const { companyLogoUrl, companyName, activeApp, apps } = useLayoutContext();
