@@ -81,8 +81,6 @@ function LayoutComponent() {
 
 	return (
 		<LayoutProvider
-			companyLogoUrl="/logo.png"
-			companyName="MCMEC"
 			apps={AVAILABLE_APPS}
 			activeApp="Central"
 			user={{
