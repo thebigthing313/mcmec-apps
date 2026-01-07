@@ -1,15 +1,14 @@
 import { AVAILABLE_APPS } from "@mcmec/lib/constants/apps";
-import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { verifyClaims } from "@mcmec/supabase/auth/claims";
 import { checkSession } from "@mcmec/supabase/auth/session";
 import { signOut } from "@mcmec/supabase/auth/signOut";
-import { LayoutInset } from "@mcmec/ui/mcmec-layout/layout-inset";
-import { LayoutProvider } from "@mcmec/ui/mcmec-layout/layout-provider";
-import { LayoutSidebar } from "@mcmec/ui/mcmec-layout/layout-sidebar";
+import { Layout } from "@mcmec/ui/mcmec-layout";
 import {
 	createFileRoute,
+	isMatch,
 	Outlet,
 	redirect,
+	useMatches,
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/notices-sidebar";
@@ -43,63 +42,53 @@ export const Route = createFileRoute("/(app)")({
 		return { claims: claims as CompleteClaims };
 	},
 	component: LayoutComponent,
-	notFoundComponent: () => {},
-	errorComponent: ({ error }) => {
-		// Handle NOT_ONBOARDED error
-		if (error.message === ErrorMessages.AUTH.NOT_ONBOARDED) {
-			return (
-				<div className="flex min-h-screen items-center justify-center">
-					<div className="text-center">
-						<h1 className="mb-4 font-bold text-2xl">Onboarding Required</h1>
-						<p className="text-gray-600">
-							Your account needs to be onboarded before you can access this
-							application.
-						</p>
-						<p className="mt-2 text-gray-600">
-							Please contact your administrator for assistance.
-						</p>
-					</div>
-				</div>
-			);
-		}
-
-		// Generic error fallback
-		return (
-			<div className="flex min-h-screen items-center justify-center">
-				<div className="text-center">
-					<h1 className="mb-4 font-bold text-2xl">Authentication Error</h1>
-					<p className="text-red-600">{error.message}</p>
-				</div>
-			</div>
-		);
-	},
 });
 
 function LayoutComponent() {
 	const { supabase } = Route.useRouteContext();
 	const navigate = useNavigate();
+	const matches = useMatches();
+	const matchesWithCrumbs = matches.filter((match) =>
+		isMatch(match, "loaderData.crumb"),
+	);
+	const breadcrumbParts = matchesWithCrumbs.map((match) => ({
+		label: match.loaderData?.crumb as string,
+		href: match.fullPath as string,
+	}));
 	const handleLogout = async () => {
 		await signOut({ client: supabase });
 		navigate({ to: "/login" });
 	};
 
 	return (
-		<LayoutProvider
-			apps={AVAILABLE_APPS}
-			activeApp="Public Notices"
-			user={{
-				name: "User Name",
-				title: "Job Title",
-				avatar: "/avatar.png",
+		<Layout
+			value={{
+				apps: AVAILABLE_APPS,
+				activeApp: "Public Notices",
+				user: {
+					name: "User Name",
+					title: "Job Title",
+					avatar: "/avatar.png",
+				},
+				onLogout: handleLogout,
 			}}
-			onLogout={handleLogout}
 		>
-			<LayoutSidebar>
-				<CentralSidebar />
-			</LayoutSidebar>
-			<LayoutInset>
+			<Layout.Sidebar>
+				<Layout.Sidebar.Header>
+					<Layout.AppSwitcher />
+				</Layout.Sidebar.Header>
+				<Layout.Sidebar.Content>
+					<CentralSidebar />
+				</Layout.Sidebar.Content>
+				<Layout.Sidebar.Footer>
+					<Layout.NavUser />
+				</Layout.Sidebar.Footer>
+			</Layout.Sidebar>
+			<Layout.Content
+				breadcrumb={<Layout.Breadcrumb items={breadcrumbParts} />}
+			>
 				<Outlet />
-			</LayoutInset>
-		</LayoutProvider>
+			</Layout.Content>
+		</Layout>
 	);
 }
