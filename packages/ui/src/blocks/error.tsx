@@ -10,7 +10,6 @@ import {
 } from "../components/card";
 
 interface ErrorProps {
-	title?: string;
 	message: string;
 	details?: string;
 	errorCode?: string;
@@ -20,7 +19,6 @@ interface ErrorProps {
 }
 
 export function ErrorDisplay({
-	title = "An Error Occurred",
 	message,
 	details,
 	errorCode,
