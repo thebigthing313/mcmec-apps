@@ -21,6 +21,10 @@ export const ErrorMessages = {
 	BROWSER: {
 		ROOT_ELEMENT_NOT_FOUND: "Root element not found",
 	},
+	DATABASE: {
+		UNABLE_TO_FETCH: (table: string) =>
+			`Unable to fetch data from the ${table} table.`,
+	},
 } as const;
 
 export type ErrorCode = typeof ErrorMessages;
