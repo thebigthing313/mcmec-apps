@@ -1,5 +1,8 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { AutocompleteField } from "./autocomplete-field";
+import { ComboboxField } from "./combobox-field";
+import { ContentField } from "./content-field";
+import { DateTimeField } from "./datetime-field";
 import { FormWrapper } from "./form-wrapper";
 import { PasswordField } from "./password-field";
 import { PhoneField } from "./phone-field";
@@ -18,6 +21,9 @@ export const { useAppForm, withFieldGroup } = createFormHook({
 		PasswordField,
 		PhoneField,
 		AutocompleteField,
+		ComboboxField,
+		DateTimeField,
+		ContentField,
 	},
 	formComponents: { FormWrapper, SubmitFormButton, ResetFormButton },
 });
