@@ -23,5 +23,6 @@
 	"[jsonc]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
-	"tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css"
+	"tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css",
+	"tailwindCSS.files.exclude": ["packages/ui/src/components/**"]
 }
