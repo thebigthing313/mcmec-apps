@@ -2,6 +2,7 @@ create table public.notices (
     id uuid primary key default gen_random_uuid(),
     notice_type_id uuid not null references public.notice_types(id) on delete restrict,
     title text not null,
+    notice_date date not null,
     content jsonb not null,
     publish_at timestamptz,
     created_at timestamptz not null default now(),
