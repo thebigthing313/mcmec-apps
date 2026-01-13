@@ -4,7 +4,7 @@ create table public.notices (
     title text not null,
     notice_date date not null,
     content jsonb not null,
-    publish_at timestamptz,
+    is_published boolean not null default false,
     created_at timestamptz not null default now(),
     created_by uuid references auth.users(id) on delete set null,
     updated_at timestamptz not null default now(),
