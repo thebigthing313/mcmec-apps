@@ -8,6 +8,7 @@ import { PasswordField } from "./password-field";
 import { PhoneField } from "./phone-field";
 import { ResetFormButton } from "./reset-form-button";
 import { SubmitFormButton } from "./submit-form-button";
+import { SwitchField } from "./switch-field";
 import { TextField } from "./text-field";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
@@ -24,6 +25,7 @@ export const { useAppForm, withFieldGroup } = createFormHook({
 		ComboboxField,
 		DateTimeField,
 		ContentField,
+		SwitchField,
 	},
 	formComponents: { FormWrapper, SubmitFormButton, ResetFormButton },
 });
