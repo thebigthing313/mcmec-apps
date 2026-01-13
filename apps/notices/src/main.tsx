@@ -1,26 +1,34 @@
-import { createRouter, RouterProvider } from "@tanstack/react-router";
+import {
+	createRouter,
+	RouterProvider,
+	useNavigate,
+	useRouter,
+} from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "@mcmec/ui/styles/globals.css";
+import { ASSET_URLS } from "@mcmec/lib/constants/assets";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import { createClient } from "@mcmec/supabase/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ErrorDisplay } from "@mcmec/ui/blocks/error";
+import { NotFound } from "@mcmec/ui/blocks/not-found";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { queryClient, supabase } from "./lib/queryClient";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-	throw new Error(ErrorMessages.SERVER.ENVIRONMENT_MISCONFIGURED);
+// Set favicon from constants
+const faviconLink = document.querySelector(
+	"link[rel='icon']",
+) as HTMLLinkElement;
+if (faviconLink) {
+	faviconLink.href = ASSET_URLS.favicon;
 }
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
-export const queryClient = new QueryClient();
 
 // Create a new router instance
 const router = createRouter({
+	defaultNotFoundComponent: () => <NotFoundComponent />,
+	defaultErrorComponent: (error) => <ErrorComponent {...error} />,
 	routeTree,
 	context: {
 		supabase: supabase,
@@ -47,5 +55,26 @@ if (!rootElement.innerHTML) {
 				<ReactQueryDevtools initialIsOpen={false} />
 			</QueryClientProvider>
 		</StrictMode>,
+	);
+}
+
+function NotFoundComponent() {
+	const navigate = useNavigate();
+
+	return <NotFound onAction={() => navigate({ to: "/" })} />;
+}
+
+interface ErrorComponentProps {
+	error: Error;
+}
+
+function ErrorComponent({ error }: ErrorComponentProps) {
+	const router = useRouter();
+	return (
+		<ErrorDisplay
+			message={error.message}
+			onBack={() => router.history.back()}
+			onRetry={() => router.invalidate()}
+		/>
 	);
 }
