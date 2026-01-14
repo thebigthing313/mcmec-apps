@@ -36,8 +36,8 @@ function RouteComponent() {
 				</p>
 				<div className="pt-4">
 					<a
-						href={redirectUrl}
 						className="text-blue-600 underline hover:text-blue-800"
+						href={redirectUrl}
 					>
 						Click here if you are not redirected automatically
 					</a>
