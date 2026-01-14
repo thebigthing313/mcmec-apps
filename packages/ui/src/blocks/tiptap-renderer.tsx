@@ -13,15 +13,6 @@ export interface TiptapRendererProps {
 
 export function TiptapRenderer({ content, className }: TiptapRendererProps) {
 	const editor = useEditor({
-		extensions: [
-			StarterKit,
-			Link.configure({
-				openOnClick: true,
-				HTMLAttributes: {
-					class: "text-primary underline",
-				},
-			}),
-		],
 		content: content as JSONContent,
 		editable: false,
 		editorProps: {
@@ -32,6 +23,15 @@ export function TiptapRenderer({ content, className }: TiptapRendererProps) {
 				),
 			},
 		},
+		extensions: [
+			StarterKit,
+			Link.configure({
+				HTMLAttributes: {
+					class: "text-primary underline",
+				},
+				openOnClick: true,
+			}),
+		],
 	});
 
 	if (!editor) {

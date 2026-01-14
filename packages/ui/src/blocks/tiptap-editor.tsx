@@ -59,15 +59,6 @@ export function TiptapEditor({
 	const [linkText, setLinkText] = useState("");
 
 	const editor = useEditor({
-		extensions: [
-			StarterKit,
-			Link.configure({
-				openOnClick: false,
-				HTMLAttributes: {
-					class: "text-primary underline cursor-pointer",
-				},
-			}),
-		],
 		content: content as JSONContent,
 		editable,
 		editorProps: {
@@ -79,6 +70,15 @@ export function TiptapEditor({
 				"data-placeholder": placeholder,
 			},
 		},
+		extensions: [
+			StarterKit,
+			Link.configure({
+				HTMLAttributes: {
+					class: "text-primary underline cursor-pointer",
+				},
+				openOnClick: false,
+			}),
+		],
 		onUpdate: ({ editor }) => {
 			onChange?.(editor.getJSON());
 		},
@@ -111,9 +111,9 @@ export function TiptapEditor({
 				.chain()
 				.focus()
 				.insertContent({
-					type: "text",
+					marks: [{ attrs: { href: linkUrl }, type: "link" }],
 					text: linkText,
-					marks: [{ type: "link", attrs: { href: linkUrl } }],
+					type: "text",
 				})
 				.run();
 		} else {
@@ -128,7 +128,7 @@ export function TiptapEditor({
 
 	return (
 		<>
-			<Dialog open={linkDialogOpen} onOpenChange={setLinkDialogOpen}>
+			<Dialog onOpenChange={setLinkDialogOpen} open={linkDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Add Link</DialogTitle>
@@ -141,36 +141,36 @@ export function TiptapEditor({
 							<Label htmlFor="link-text">Link Text</Label>
 							<Input
 								id="link-text"
-								value={linkText}
 								onChange={(e) => setLinkText(e.target.value)}
 								placeholder="Enter link text"
+								value={linkText}
 							/>
 						</div>
 						<div className="grid gap-2">
 							<Label htmlFor="link-url">URL</Label>
 							<Input
 								id="link-url"
-								value={linkUrl}
 								onChange={(e) => setLinkUrl(e.target.value)}
-								placeholder="https://example.com"
 								onKeyDown={(e) => {
 									if (e.key === "Enter") {
 										e.preventDefault();
 										setLink();
 									}
 								}}
+								placeholder="https://example.com"
+								value={linkUrl}
 							/>
 						</div>
 					</div>
 					<DialogFooter>
 						<Button
+							onClick={() => setLinkDialogOpen(false)}
 							type="button"
 							variant="outline"
-							onClick={() => setLinkDialogOpen(false)}
 						>
 							Cancel
 						</Button>
-						<Button type="button" onClick={setLink}>
+						<Button onClick={setLink} type="button">
 							{linkUrl && editor.getAttributes("link").href
 								? "Update Link"
 								: "Add Link"}
@@ -185,15 +185,15 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() => editor.chain().focus().toggleBold().run()}
-										disabled={!editor.can().chain().focus().toggleBold().run()}
 										className={cn(
 											editor.isActive("bold") ? "bg-muted" : "",
 											"h-8 w-8 p-0",
 										)}
+										disabled={!editor.can().chain().focus().toggleBold().run()}
+										onClick={() => editor.chain().focus().toggleBold().run()}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<Bold className="h-4 w-4" />
 									</Button>
@@ -204,17 +204,17 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() => editor.chain().focus().toggleItalic().run()}
-										disabled={
-											!editor.can().chain().focus().toggleItalic().run()
-										}
 										className={cn(
 											editor.isActive("italic") ? "bg-muted" : "",
 											"h-8 w-8 p-0",
 										)}
+										disabled={
+											!editor.can().chain().focus().toggleItalic().run()
+										}
+										onClick={() => editor.chain().focus().toggleItalic().run()}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<Italic className="h-4 w-4" />
 									</Button>
@@ -225,17 +225,17 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() => editor.chain().focus().toggleStrike().run()}
-										disabled={
-											!editor.can().chain().focus().toggleStrike().run()
-										}
 										className={cn(
 											editor.isActive("strike") ? "bg-muted" : "",
 											"h-8 w-8 p-0",
 										)}
+										disabled={
+											!editor.can().chain().focus().toggleStrike().run()
+										}
+										onClick={() => editor.chain().focus().toggleStrike().run()}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<Strikethrough className="h-4 w-4" />
 									</Button>
@@ -246,15 +246,15 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() => editor.chain().focus().toggleCode().run()}
-										disabled={!editor.can().chain().focus().toggleCode().run()}
 										className={cn(
 											editor.isActive("code") ? "bg-muted" : "",
 											"h-8 w-8 p-0",
 										)}
+										disabled={!editor.can().chain().focus().toggleCode().run()}
+										onClick={() => editor.chain().focus().toggleCode().run()}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<Code className="h-4 w-4" />
 									</Button>
@@ -267,18 +267,18 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() =>
-											editor.chain().focus().toggleHeading({ level: 1 }).run()
-										}
 										className={cn(
 											editor.isActive("heading", { level: 1 })
 												? "bg-muted"
 												: "",
 											"h-8 w-8 p-0",
 										)}
+										onClick={() =>
+											editor.chain().focus().toggleHeading({ level: 1 }).run()
+										}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<Heading1 className="h-4 w-4" />
 									</Button>
@@ -289,18 +289,18 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() =>
-											editor.chain().focus().toggleHeading({ level: 2 }).run()
-										}
 										className={cn(
 											editor.isActive("heading", { level: 2 })
 												? "bg-muted"
 												: "",
 											"h-8 w-8 p-0",
 										)}
+										onClick={() =>
+											editor.chain().focus().toggleHeading({ level: 2 }).run()
+										}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<Heading2 className="h-4 w-4" />
 									</Button>
@@ -311,18 +311,18 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() =>
-											editor.chain().focus().toggleHeading({ level: 3 }).run()
-										}
 										className={cn(
 											editor.isActive("heading", { level: 3 })
 												? "bg-muted"
 												: "",
 											"h-8 w-8 p-0",
 										)}
+										onClick={() =>
+											editor.chain().focus().toggleHeading({ level: 3 }).run()
+										}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<Heading3 className="h-4 w-4" />
 									</Button>
@@ -335,16 +335,16 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() =>
-											editor.chain().focus().toggleBulletList().run()
-										}
 										className={cn(
 											editor.isActive("bulletList") ? "bg-muted" : "",
 											"h-8 w-8 p-0",
 										)}
+										onClick={() =>
+											editor.chain().focus().toggleBulletList().run()
+										}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<List className="h-4 w-4" />
 									</Button>
@@ -355,16 +355,16 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() =>
-											editor.chain().focus().toggleOrderedList().run()
-										}
 										className={cn(
 											editor.isActive("orderedList") ? "bg-muted" : "",
 											"h-8 w-8 p-0",
 										)}
+										onClick={() =>
+											editor.chain().focus().toggleOrderedList().run()
+										}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<ListOrdered className="h-4 w-4" />
 									</Button>
@@ -375,16 +375,16 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() =>
-											editor.chain().focus().toggleBlockquote().run()
-										}
 										className={cn(
 											editor.isActive("blockquote") ? "bg-muted" : "",
 											"h-8 w-8 p-0",
 										)}
+										onClick={() =>
+											editor.chain().focus().toggleBlockquote().run()
+										}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<Quote className="h-4 w-4" />
 									</Button>
@@ -397,14 +397,14 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={openLinkDialog}
 										className={cn(
 											editor.isActive("link") ? "bg-muted" : "",
 											"h-8 w-8 p-0",
 										)}
+										onClick={openLinkDialog}
+										size="sm"
+										type="button"
+										variant="ghost"
 									>
 										<LinkIcon className="h-4 w-4" />
 									</Button>
@@ -417,12 +417,12 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
+										className="h-8 w-8 p-0"
+										disabled={!editor.can().chain().focus().undo().run()}
+										onClick={() => editor.chain().focus().undo().run()}
+										size="sm"
 										type="button"
 										variant="ghost"
-										size="sm"
-										onClick={() => editor.chain().focus().undo().run()}
-										disabled={!editor.can().chain().focus().undo().run()}
-										className="h-8 w-8 p-0"
 									>
 										<Undo className="h-4 w-4" />
 									</Button>
@@ -433,12 +433,12 @@ export function TiptapEditor({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
+										className="h-8 w-8 p-0"
+										disabled={!editor.can().chain().focus().redo().run()}
+										onClick={() => editor.chain().focus().redo().run()}
+										size="sm"
 										type="button"
 										variant="ghost"
-										size="sm"
-										onClick={() => editor.chain().focus().redo().run()}
-										disabled={!editor.can().chain().focus().redo().run()}
-										className="h-8 w-8 p-0"
 									>
 										<Redo className="h-4 w-4" />
 									</Button>
