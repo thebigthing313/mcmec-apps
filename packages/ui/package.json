@@ -1,17 +1,5 @@
 {
-	"name": "@mcmec/ui",
-	"version": "1.0.0",
-	"type": "module",
-	"private": true,
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"lint": "biome check --write ."
-	},
-	"keywords": [],
 	"author": "",
-	"license": "ISC",
-	"packageManager": "pnpm@10.19.0",
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
 		"@mcmec/lib": "workspace:*",
@@ -68,6 +56,7 @@
 		"vaul": "^1.1.2",
 		"zod": "^3.25.76"
 	},
+	"description": "",
 	"devDependencies": {
 		"@mcmec/typescript-config": "workspace:*",
 		"@tailwindcss/postcss": "^4.1.11",
@@ -81,14 +70,25 @@
 		"typescript": "^5.9.2"
 	},
 	"exports": {
-		"./globals.css": "./src/styles/globals.css",
-		"./postcss.config": "./postcss.config.mjs",
-		"./lib/*": "./src/lib/*.ts",
+		"./blocks/*": "./src/blocks/*.ts",
 		"./components/*": "./src/components/*.tsx",
-		"./mcmec-layout/*": "./src/mcmec-layout/*.tsx",
+		"./forms/*": "./src/forms/*.tsx",
+		"./globals.css": "./src/styles/globals.css",
 		"./hooks/*": "./src/hooks/*.ts",
 		"./inputs/*": "./src/inputs/*.ts",
-		"./blocks/*": "./src/blocks/*.ts",
-		"./forms/*": "./src/forms/*.tsx"
-	}
+		"./lib/*": "./src/lib/*.ts",
+		"./mcmec-layout/*": "./src/mcmec-layout/*.tsx",
+		"./postcss.config": "./postcss.config.mjs"
+	},
+	"keywords": [],
+	"license": "ISC",
+	"main": "index.js",
+	"name": "@mcmec/ui",
+	"packageManager": "pnpm@10.19.0",
+	"private": true,
+	"scripts": {
+		"lint": "biome check --write ."
+	},
+	"type": "module",
+	"version": "1.0.0"
 }
