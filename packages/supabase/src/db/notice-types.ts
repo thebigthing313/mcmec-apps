@@ -3,24 +3,24 @@ import z from "zod";
 import type { SupabaseClient } from "../client";
 
 export const NoticeTypesRowSchema = z.object({
-	id: z.uuid(),
-	name: z.string(),
-	description: z.string().nullable(),
 	created_at: z.coerce.date(),
 	created_by: z.string().nullable(),
+	description: z.string().nullable(),
+	id: z.uuid(),
+	name: z.string(),
 	updated_at: z.coerce.date(),
 	updated_by: z.string().nullable(),
 });
 
 export const NoticeTypesInsertSchema = z.object({
+	description: z.string().optional(),
 	id: z.uuid(),
 	name: z.string(),
-	description: z.string().optional(),
 });
 
 export const NoticeTypesUpdateSchema = z.object({
-	name: z.string().optional(),
 	description: z.string().nullable().optional(),
+	name: z.string().optional(),
 });
 
 export type NoticeTypesRowType = z.infer<typeof NoticeTypesRowSchema>;

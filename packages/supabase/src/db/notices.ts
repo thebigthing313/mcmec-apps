@@ -3,36 +3,39 @@ import z from "zod";
 import type { SupabaseClient } from "../client";
 
 export const NoticesRowSchema = z.object({
-	id: z.uuid(),
-	notice_type_id: z.uuid(),
-	title: z.string(),
-	notice_date: z.coerce.date(),
 	content: z.any(),
-	is_published: z.boolean(),
 	created_at: z.coerce.date(),
 	created_by: z.string().nullable(),
+	id: z.uuid(),
+	is_archived: z.boolean(),
+	is_published: z.boolean(),
+	notice_date: z.coerce.date(),
+	notice_type_id: z.uuid(),
+	title: z.string(),
 	updated_at: z.coerce.date(),
 	updated_by: z.string().nullable(),
 });
 
 export const NoticesInsertSchema = z.object({
+	content: z.any(),
 	id: z.uuid(),
+	is_archived: z.boolean(),
+	is_published: z.boolean(),
+	notice_date: z.coerce.date().transform((date) => date.toISOString()),
 	notice_type_id: z.uuid(),
 	title: z.string(),
-	notice_date: z.coerce.date().transform((date) => date.toISOString()),
-	content: z.any(),
-	is_published: z.boolean(),
 });
 
 export const NoticesUpdateSchema = z.object({
-	notice_type_id: z.uuid().optional(),
-	title: z.string().optional(),
+	content: z.any().optional(),
+	is_archived: z.boolean().optional(),
+	is_published: z.boolean().optional(),
 	notice_date: z.coerce
 		.date()
 		.optional()
 		.transform((date) => (date ? date.toISOString() : date)),
-	content: z.any().optional(),
-	is_published: z.boolean().optional(),
+	notice_type_id: z.uuid().optional(),
+	title: z.string().optional(),
 });
 
 export type NoticesRowType = z.infer<typeof NoticesRowSchema>;
