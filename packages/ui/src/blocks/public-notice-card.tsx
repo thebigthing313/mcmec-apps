@@ -1,6 +1,7 @@
 "use client";
 
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
+import type { JSONContent } from "@tiptap/react";
 import { Check, Copy, Share2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -31,7 +32,7 @@ import { TiptapRenderer } from "./tiptap-renderer";
 interface PublicNoticeCardProps {
 	title: string;
 	type: string;
-	content: string;
+	content: string | JSONContent | null;
 	noticeDate: Date;
 	isPublished: boolean;
 	isArchived: boolean;
