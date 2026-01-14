@@ -1,18 +1,18 @@
 import {
-	fetchNoticeTypes,
-	NoticeTypesInsertSchema,
-	type NoticeTypesRowType,
-	NoticeTypesUpdateSchema,
-} from "@mcmec/supabase/db/notice-types";
+	fetchNotices,
+	NoticesInsertSchema,
+	type NoticesRowType,
+	NoticesUpdateSchema,
+} from "@mcmec/supabase/db/notices";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import { queryClient, supabase } from "../queryClient";
 
-export const notice_types = createCollection(
-	queryCollectionOptions<NoticeTypesRowType>({
-		id: "notice_types",
-		queryKey: ["notice_types"],
-		queryFn: () => fetchNoticeTypes(supabase),
+export const notices = createCollection(
+	queryCollectionOptions<NoticesRowType>({
+		id: "notices",
+		queryKey: ["notices"],
+		queryFn: () => fetchNotices(supabase),
 		queryClient,
 		getKey: (item) => item.id,
 		syncMode: "eager",
@@ -20,22 +20,22 @@ export const notice_types = createCollection(
 		onInsert: async ({ transaction }) => {
 			const newItems = transaction.mutations.map((m) => m.modified);
 			const parsedItems = newItems.map((item) =>
-				NoticeTypesInsertSchema.parse(item),
+				NoticesInsertSchema.parse(item),
 			);
-			await supabase.from("notice_types").insert(parsedItems);
+			await supabase.from("notices").insert(parsedItems);
 		},
 		onUpdate: async ({ transaction }) => {
 			const updatedKeys = transaction.mutations.map((m) => m.key);
 			const localChanges = transaction.mutations[0].changes;
-			const parsedLocalChanges = NoticeTypesUpdateSchema.parse(localChanges);
+			const parsedLocalChanges = NoticesUpdateSchema.parse(localChanges);
 			await supabase
-				.from("notice_types")
+				.from("notices")
 				.update(parsedLocalChanges)
 				.in("id", updatedKeys);
 		},
 		onDelete: async ({ transaction }) => {
 			const deletedKeys = transaction.mutations.map((m) => m.key);
-			await supabase.from("notice_types").delete().in("id", deletedKeys);
+			await supabase.from("notices").delete().in("id", deletedKeys);
 		},
 	}),
 );
