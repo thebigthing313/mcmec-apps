@@ -1,20 +1,5 @@
 {
-	"name": "notices",
-	"version": "1.0.0",
-	"type": "module",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
-		"check-types": "tsc --noEmit"
-	},
-	"keywords": [],
 	"author": "Adrian Kabigting",
-	"license": "ISC",
-	"packageManager": "pnpm@10.19.0",
 	"dependencies": {
 		"@mcmec/lib": "workspace:*",
 		"@mcmec/supabase": "workspace:*",
@@ -33,6 +18,7 @@
 		"react-dom": "^19.2.3",
 		"vite-tsconfig-paths": "^6.0.3"
 	},
+	"description": "",
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@mcmec/typescript-config": "workspace:*",
@@ -44,5 +30,19 @@
 		"@vitejs/plugin-react": "^5.1.2",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.0"
-	}
+	},
+	"keywords": [],
+	"license": "ISC",
+	"main": "index.js",
+	"name": "notices",
+	"packageManager": "pnpm@10.19.0",
+	"scripts": {
+		"build": "vite build",
+		"check-types": "tsc --noEmit",
+		"dev": "vite dev",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write ."
+	},
+	"type": "module",
+	"version": "1.0.0"
 }
