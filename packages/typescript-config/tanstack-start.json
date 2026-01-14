@@ -1,14 +1,14 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"display": "TanStack Start",
-	"extends": "./base.json",
 	"compilerOptions": {
 		"jsx": "react-jsx",
-		"moduleResolution": "Bundler",
 		"module": "esnext",
-		"target": "es2022",
+		"moduleResolution": "Bundler",
 		"skipLibCheck": true,
 		"strictNullChecks": true,
+		"target": "es2022",
 		"verbatimModuleSyntax": false
-	}
+	},
+	"display": "TanStack Start",
+	"extends": "./base.json"
 }

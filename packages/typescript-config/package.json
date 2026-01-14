@@ -1,9 +1,9 @@
 {
-	"name": "@mcmec/typescript-config",
-	"version": "0.0.0",
-	"private": true,
 	"license": "PROPRIETARY",
+	"name": "@mcmec/typescript-config",
+	"private": true,
 	"publishConfig": {
 		"access": "public"
-	}
+	},
+	"version": "0.0.0"
 }
