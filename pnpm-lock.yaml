@@ -191,6 +191,18 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
+      '@tanstack/query-db-collection':
+        specifier: ^1.0.13
+        version: 1.0.13(@tanstack/query-core@5.90.16)(typescript@5.9.3)
+      '@tanstack/react-db':
+        specifier: ^0.1.61
+        version: 0.1.61(react@19.2.3)(typescript@5.9.3)
+      '@tanstack/react-query':
+        specifier: ^5.90.16
+        version: 5.90.16(react@19.2.3)
+      '@tanstack/react-query-devtools':
+        specifier: ^5.91.2
+        version: 5.91.2(@tanstack/react-query@5.90.16(react@19.2.3))(react@19.2.3)
       '@tanstack/react-router':
         specifier: ^1.144.0
         version: 1.144.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
