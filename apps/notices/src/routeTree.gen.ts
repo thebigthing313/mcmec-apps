@@ -13,6 +13,11 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as appCategoriesRouteImport } from './routes/(app)/categories'
+import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
+import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
+import { Route as appNoticesCreateRouteImport } from './routes/(app)/notices/create'
+import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
+import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -33,30 +38,94 @@ const appCategoriesRoute = appCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appNoticesRouteRoute = appNoticesRouteRouteImport.update({
+  id: '/notices',
+  path: '/notices',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appNoticesIndexRoute = appNoticesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appNoticesRouteRoute,
+} as any)
+const appNoticesCreateRoute = appNoticesCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => appNoticesRouteRoute,
+} as any)
+const appNoticesNoticeIdRoute = appNoticesNoticeIdRouteImport.update({
+  id: '/$noticeId',
+  path: '/$noticeId',
+  getParentRoute: () => appNoticesRouteRoute,
+} as any)
+const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
+  id: '/$noticeId_/edit',
+  path: '/$noticeId/edit',
+  getParentRoute: () => appNoticesRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/notices': typeof appNoticesRouteRouteWithChildren
   '/categories': typeof appCategoriesRoute
   '/': typeof appIndexRoute
+  '/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/notices/create': typeof appNoticesCreateRoute
+  '/notices/': typeof appNoticesIndexRoute
+  '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/categories': typeof appCategoriesRoute
   '/': typeof appIndexRoute
+  '/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/notices/create': typeof appNoticesCreateRoute
+  '/notices': typeof appNoticesIndexRoute
+  '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/(app)/categories': typeof appCategoriesRoute
   '/(app)/': typeof appIndexRoute
+  '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/(app)/notices/create': typeof appNoticesCreateRoute
+  '/(app)/notices/': typeof appNoticesIndexRoute
+  '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/categories' | '/'
+  fullPaths:
+    | '/login'
+    | '/notices'
+    | '/categories'
+    | '/'
+    | '/notices/$noticeId'
+    | '/notices/create'
+    | '/notices/'
+    | '/notices/$noticeId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/categories' | '/'
-  id: '__root__' | '/(app)' | '/login' | '/(app)/categories' | '/(app)/'
+  to:
+    | '/login'
+    | '/categories'
+    | '/'
+    | '/notices/$noticeId'
+    | '/notices/create'
+    | '/notices'
+    | '/notices/$noticeId/edit'
+  id:
+    | '__root__'
+    | '/(app)'
+    | '/login'
+    | '/(app)/notices'
+    | '/(app)/categories'
+    | '/(app)/'
+    | '/(app)/notices/$noticeId'
+    | '/(app)/notices/create'
+    | '/(app)/notices/'
+    | '/(app)/notices/$noticeId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,15 +163,70 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appCategoriesRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/notices': {
+      id: '/(app)/notices'
+      path: '/notices'
+      fullPath: '/notices'
+      preLoaderRoute: typeof appNoticesRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/notices/': {
+      id: '/(app)/notices/'
+      path: '/'
+      fullPath: '/notices/'
+      preLoaderRoute: typeof appNoticesIndexRouteImport
+      parentRoute: typeof appNoticesRouteRoute
+    }
+    '/(app)/notices/create': {
+      id: '/(app)/notices/create'
+      path: '/create'
+      fullPath: '/notices/create'
+      preLoaderRoute: typeof appNoticesCreateRouteImport
+      parentRoute: typeof appNoticesRouteRoute
+    }
+    '/(app)/notices/$noticeId': {
+      id: '/(app)/notices/$noticeId'
+      path: '/$noticeId'
+      fullPath: '/notices/$noticeId'
+      preLoaderRoute: typeof appNoticesNoticeIdRouteImport
+      parentRoute: typeof appNoticesRouteRoute
+    }
+    '/(app)/notices/$noticeId_/edit': {
+      id: '/(app)/notices/$noticeId_/edit'
+      path: '/$noticeId/edit'
+      fullPath: '/notices/$noticeId/edit'
+      preLoaderRoute: typeof appNoticesNoticeIdEditRouteImport
+      parentRoute: typeof appNoticesRouteRoute
+    }
   }
 }
 
+interface appNoticesRouteRouteChildren {
+  appNoticesNoticeIdRoute: typeof appNoticesNoticeIdRoute
+  appNoticesCreateRoute: typeof appNoticesCreateRoute
+  appNoticesIndexRoute: typeof appNoticesIndexRoute
+  appNoticesNoticeIdEditRoute: typeof appNoticesNoticeIdEditRoute
+}
+
+const appNoticesRouteRouteChildren: appNoticesRouteRouteChildren = {
+  appNoticesNoticeIdRoute: appNoticesNoticeIdRoute,
+  appNoticesCreateRoute: appNoticesCreateRoute,
+  appNoticesIndexRoute: appNoticesIndexRoute,
+  appNoticesNoticeIdEditRoute: appNoticesNoticeIdEditRoute,
+}
+
+const appNoticesRouteRouteWithChildren = appNoticesRouteRoute._addFileChildren(
+  appNoticesRouteRouteChildren,
+)
+
 interface appRouteRouteChildren {
+  appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appCategoriesRoute: typeof appCategoriesRoute
   appIndexRoute: typeof appIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
+  appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appCategoriesRoute: appCategoriesRoute,
   appIndexRoute: appIndexRoute,
 }
