@@ -27,13 +27,13 @@ if (faviconLink) {
 
 // Create a new router instance
 const router = createRouter({
-	defaultNotFoundComponent: () => <NotFoundComponent />,
-	defaultErrorComponent: (error) => <ErrorComponent {...error} />,
-	routeTree,
 	context: {
-		supabase: supabase,
 		queryClient: queryClient,
+		supabase: supabase,
 	},
+	defaultErrorComponent: (error) => <ErrorComponent {...error} />,
+	defaultNotFoundComponent: () => <NotFoundComponent />,
+	routeTree,
 });
 
 // Register the router instance for type safety
