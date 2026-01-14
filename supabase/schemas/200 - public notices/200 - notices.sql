@@ -14,7 +14,7 @@ create table public.notices (
 
 alter table public.notices enable row level security;
 
-create policy "select: allow all"
+create policy "select: allow all if authenticated, otherwise published only"
 on public.notices
 for select
 to public
