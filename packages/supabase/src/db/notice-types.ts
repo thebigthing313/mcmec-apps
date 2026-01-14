@@ -13,7 +13,7 @@ export const NoticeTypesRowSchema = z.object({
 });
 
 export const NoticeTypesInsertSchema = z.object({
-	description: z.string().optional(),
+	description: z.string().nullable(),
 	id: z.uuid(),
 	name: z.string(),
 });
