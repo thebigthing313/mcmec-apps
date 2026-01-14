@@ -4,6 +4,7 @@ import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { Check, Copy, Share2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Badge } from "../components/badge";
 import { Button } from "../components/button";
 import {
 	Card,
@@ -33,6 +34,7 @@ interface PublicNoticeCardProps {
 	content: string;
 	noticeDate: Date;
 	isPublished: boolean;
+	isArchived: boolean;
 	className?: string;
 }
 export function PublicNoticeCard({
@@ -41,6 +43,7 @@ export function PublicNoticeCard({
 	content,
 	noticeDate,
 	isPublished,
+	isArchived,
 	className,
 }: PublicNoticeCardProps) {
 	const [open, setOpen] = useState(false);
@@ -66,11 +69,11 @@ export function PublicNoticeCard({
 			<CardHeader>
 				<CardTitle className="text-xl">{title}</CardTitle>
 				<CardAction>
-					<Dialog open={open} onOpenChange={setOpen}>
+					<Dialog onOpenChange={setOpen} open={open}>
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<DialogTrigger asChild>
-									<Button variant="ghost" size="icon" aria-label="Share notice">
+									<Button aria-label="Share notice" size="icon" variant="ghost">
 										<Share2 />
 									</Button>
 								</DialogTrigger>
@@ -86,16 +89,16 @@ export function PublicNoticeCard({
 							</DialogHeader>
 							<div className="flex items-center gap-2">
 								<Input
-									value={currentUrl}
-									readOnly
 									className="flex-1"
 									onClick={(e) => e.currentTarget.select()}
+									readOnly
+									value={currentUrl}
 								/>
 								<Button
-									variant="outline"
-									size="icon"
-									onClick={handleCopy}
 									aria-label={copied ? "Copied" : "Copy to clipboard"}
+									onClick={handleCopy}
+									size="icon"
+									variant="outline"
 								>
 									{copied ? (
 										<Check className="h-4 w-4" />
@@ -105,7 +108,7 @@ export function PublicNoticeCard({
 								</Button>
 							</div>
 							<DialogFooter>
-								<Button variant="outline" onClick={() => setOpen(false)}>
+								<Button onClick={() => setOpen(false)} variant="outline">
 									Close
 								</Button>
 							</DialogFooter>
@@ -124,11 +127,11 @@ export function PublicNoticeCard({
 				<div className="text-muted-foreground text-sm">
 					<span className="font-medium">Type:</span> {type}
 				</div>
-				{isPublished && (
-					<div className="flex items-center gap-1.5 text-green-600 text-sm dark:text-green-500">
-						<div className="h-2 w-2 rounded-full bg-green-600 dark:bg-green-500" />
-						Published
-					</div>
+				{isPublished && isArchived && (
+					<Badge variant="secondary">Archived</Badge>
+				)}
+				{isPublished && !isArchived && (
+					<Badge variant="secondary">Current</Badge>
 				)}
 			</CardFooter>
 		</Card>
