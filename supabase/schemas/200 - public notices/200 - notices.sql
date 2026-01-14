@@ -5,6 +5,7 @@ create table public.notices (
     notice_date date not null,
     content jsonb not null,
     is_published boolean not null default false,
+    is_archived boolean not null default false,
     created_at timestamptz not null default now(),
     created_by uuid references auth.users(id) on delete set null,
     updated_at timestamptz not null default now(),
