@@ -4,12 +4,14 @@ import {
 	FieldDescription,
 	FieldError,
 	FieldLabel,
+	FieldSeparator,
 } from "../components/field";
 
 interface FormFieldProps {
 	label?: string;
 	description?: string;
 	htmlFor?: string;
+	orientation?: "horizontal" | "vertical";
 	errors?: Array<{ message?: string | undefined } | undefined>;
 }
 
@@ -24,7 +26,12 @@ export function FormField({
 	...props
 }: FormFieldProps & React.ComponentPropsWithRef<"div">) {
 	return (
-		<Field orientation="vertical" className={className} ref={ref} {...props}>
+		<Field
+			className={className}
+			orientation={props.orientation}
+			ref={ref}
+			{...props}
+		>
 			{label && description ? (
 				<FieldContent>
 					<FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>
@@ -32,7 +39,7 @@ export function FormField({
 				</FieldContent>
 			) : (
 				<>
-					{label && <FieldLabel>{label}</FieldLabel>}
+					{label && <FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>}
 					{description && <FieldDescription>{description}</FieldDescription>}
 				</>
 			)}
