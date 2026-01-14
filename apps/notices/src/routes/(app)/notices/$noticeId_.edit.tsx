@@ -20,7 +20,8 @@ import { notices } from "@/src/lib/collections/notices";
 export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
-		const notice = await notices.get(params.noticeId);
+		await Promise.all([notices.preload(), notice_types.preload()]);
+		const notice = notices.get(params.noticeId);
 		if (!notice) {
 			throw new Error("Notice not found");
 		}
@@ -59,28 +60,29 @@ function RouteComponent() {
 	return (
 		<div className="space-y-4">
 			<NoticeForm
+				categories={items}
 				defaultValues={{
-					id: notice.id,
-					notice_type_id: notice.notice_type_id,
-					title: notice.title,
-					notice_date: new Date(notice.notice_date),
 					content: notice.content,
-					is_published: notice.is_published,
 					created_at: new Date(notice.created_at),
 					created_by: notice.created_by,
+					id: notice.id,
+					is_archived: notice.is_archived,
+					is_published: notice.is_published,
+					notice_date: new Date(notice.notice_date),
+					notice_type_id: notice.notice_type_id,
+					title: notice.title,
 					updated_at: new Date(),
 					updated_by: null,
 				}}
-				onSubmit={handleSubmit}
-				categories={items}
 				formLabel="Edit Notice"
+				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>
 
 			<div className="max-w-2xl">
 				<AlertDialog>
 					<AlertDialogTrigger asChild>
-						<Button variant="destructive" className="w-full">
+						<Button className="w-full" variant="destructive">
 							Delete Notice
 						</Button>
 					</AlertDialogTrigger>
