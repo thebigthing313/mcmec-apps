@@ -1,5 +1,4 @@
 import { FormField } from "../blocks/form-field";
-import { Label } from "../components/label";
 import { Switch } from "../components/switch";
 import { useFieldContext } from "./form-context";
 
@@ -13,22 +12,20 @@ export function SwitchField({
 	return (
 		<FormField
 			data-invalid={!field.state.meta.isValid}
-			htmlFor={field.name}
 			errors={field.state.meta.errors}
+			htmlFor={field.name}
+			orientation="horizontal"
 			{...formFieldProps}
 		>
 			<div className="flex items-center space-x-2">
 				<Switch
+					aria-invalid={!field.state.meta.isValid}
+					checked={field.state.value}
 					id={field.name}
 					name={field.name}
-					checked={field.state.value}
-					onCheckedChange={(checked) => field.handleChange(checked)}
 					onBlur={field.handleBlur}
-					aria-invalid={!field.state.meta.isValid}
+					onCheckedChange={(checked) => field.handleChange(checked)}
 				/>
-				<Label htmlFor={field.name} className="cursor-pointer">
-					{formFieldProps.label}
-				</Label>
 			</div>
 		</FormField>
 	);
