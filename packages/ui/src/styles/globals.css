@@ -128,7 +128,7 @@
 /* Typography/Prose Styles for Tiptap */
 .prose {
 	color: var(--color-foreground);
-	max-width: 65ch;
+	/* max-width: 65ch; -- Removed to allow max-w-none utility to work */
 }
 
 .prose :where(p):not(:where([class~="not-prose"] *)) {
