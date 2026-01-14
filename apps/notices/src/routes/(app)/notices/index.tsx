@@ -15,20 +15,21 @@ function RouteComponent() {
 	const navigate = useNavigate();
 	const { data: notices } = useNotices();
 	const mappedData = notices?.map((notice) => ({
-		id: notice.id,
-		title: notice.title,
-		noticeTypeId: notice.noticeTypeId,
-		noticeType: notice.noticeType,
-		noticeDate: notice.noticeDate,
 		creator: notice.createdByName,
+		id: notice.id,
+		isArchived: notice.isArchived,
 		isPublished: notice.isPublished,
+		noticeDate: notice.noticeDate,
+		noticeType: notice.noticeType,
+		noticeTypeId: notice.noticeTypeId,
+		title: notice.title,
 	}));
 
 	return (
 		<div className="flex flex-col gap-2">
 			<Button
-				variant="default"
 				onClick={() => navigate({ to: "/notices/create" })}
+				variant="default"
 			>
 				<Plus />
 				Create New Notice
