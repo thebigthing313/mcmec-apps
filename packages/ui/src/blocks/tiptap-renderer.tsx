@@ -1,9 +1,10 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import type { JSONContent } from "@tiptap/core";
+import Link from "@tiptap/extension-link";
+import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { cn } from "../lib/utils";
-import { type JSONContent } from "@tiptap/core";
 
 export interface TiptapRendererProps {
 	content: JSONContent | string | null;
@@ -12,12 +13,23 @@ export interface TiptapRendererProps {
 
 export function TiptapRenderer({ content, className }: TiptapRendererProps) {
 	const editor = useEditor({
-		extensions: [StarterKit],
+		extensions: [
+			StarterKit,
+			Link.configure({
+				openOnClick: true,
+				HTMLAttributes: {
+					class: "text-primary underline",
+				},
+			}),
+		],
 		content: content as JSONContent,
 		editable: false,
 		editorProps: {
 			attributes: {
-				class: cn("prose prose-sm sm:prose-base max-w-none px-4 py-3", className),
+				class: cn(
+					"prose prose-sm sm:prose-base max-w-none px-4 py-3",
+					className,
+				),
 			},
 		},
 	});
