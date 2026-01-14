@@ -7,7 +7,7 @@ import {
 	SidebarMenuItem,
 } from "@mcmec/ui/components/sidebar";
 import { Link, type LinkProps } from "@tanstack/react-router";
-import { Group, Home } from "lucide-react";
+import { BookOpen, Group, Home } from "lucide-react";
 
 type SidebarItem = {
 	label: string;
@@ -17,6 +17,11 @@ type SidebarItem = {
 
 const items: SidebarItem[] = [
 	{ label: "Dashboard", linkProps: { to: "/" }, icon: <Home /> },
+	{
+		label: "Public Notices",
+		linkProps: { to: "/notices" },
+		icon: <BookOpen />,
+	},
 	{ label: "Categories", linkProps: { to: "/categories" }, icon: <Group /> },
 ];
 export function CentralSidebar() {
