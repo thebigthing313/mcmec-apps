@@ -36,6 +36,7 @@ type Notice = {
 	noticeDate: Date;
 	creator: string | null | undefined;
 	isPublished: boolean;
+	isArchived: boolean;
 };
 
 interface NoticesTableProps {
@@ -44,6 +45,7 @@ interface NoticesTableProps {
 
 function getPublicationStatus(
 	isPublished: boolean,
+	isArchived: boolean,
 	noticeDate: Date,
 ): { label: string; variant: "default" | "secondary" | "outline" } {
 	if (!isPublished) {
@@ -56,7 +58,11 @@ function getPublicationStatus(
 	notice.setHours(0, 0, 0, 0);
 
 	if (notice <= today) {
-		return { label: "Published", variant: "default" };
+		if (isArchived) {
+			return { label: "Archived", variant: "secondary" };
+		} else {
+			return { label: "Published", variant: "default" };
+		}
 	}
 
 	return { label: "Pending", variant: "secondary" };
@@ -68,27 +74,27 @@ export function NoticesTable({ data }: NoticesTableProps) {
 	const columns: ColumnDef<Notice>[] = [
 		{
 			accessorKey: "title",
+			cell: ({ row }) => {
+				return (
+					<Link
+						className="font-medium text-primary hover:underline"
+						params={{ noticeId: row.original.id }}
+						to="/notices/$noticeId"
+					>
+						{row.getValue("title")}
+					</Link>
+				);
+			},
 			header: ({ column }) => {
 				return (
 					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						className="-ml-4"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+						variant="ghost"
 					>
 						Title
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
-				);
-			},
-			cell: ({ row }) => {
-				return (
-					<Link
-						to="/notices/$noticeId"
-						params={{ noticeId: row.original.id }}
-						className="font-medium text-primary hover:underline"
-					>
-						{row.getValue("title")}
-					</Link>
 				);
 			},
 		},
@@ -97,9 +103,9 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			header: ({ column }) => {
 				return (
 					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						className="-ml-4"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+						variant="ghost"
 					>
 						Notice Type
 						<ArrowUpDown className="ml-2 h-4 w-4" />
@@ -109,69 +115,76 @@ export function NoticesTable({ data }: NoticesTableProps) {
 		},
 		{
 			accessorKey: "noticeDate",
+			cell: ({ row }) => {
+				const date = row.getValue("noticeDate") as Date;
+				return new Date(date).toLocaleDateString();
+			},
 			header: ({ column }) => {
 				return (
 					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						className="-ml-4"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+						variant="ghost"
 					>
 						Notice Date
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
 				);
 			},
-			cell: ({ row }) => {
-				const date = row.getValue("noticeDate") as Date;
-				return new Date(date).toLocaleDateString();
-			},
 		},
 		{
 			accessorKey: "creator",
+			cell: ({ row }) => {
+				return row.getValue("creator") || "—";
+			},
 			header: ({ column }) => {
 				return (
 					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						className="-ml-4"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+						variant="ghost"
 					>
 						Creator
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
 				);
 			},
-			cell: ({ row }) => {
-				return row.getValue("creator") || "—";
-			},
 		},
 		{
 			accessorKey: "isPublished",
+			cell: ({ row }) => {
+				const isPublished = row.getValue("isPublished") as boolean;
+				const isArchived = row.original.isArchived;
+				const noticeDate = row.original.noticeDate;
+				const status = getPublicationStatus(
+					isPublished,
+					isArchived,
+					noticeDate,
+				);
+
+				return <Badge variant={status.variant}>{status.label}</Badge>;
+			},
 			header: ({ column }) => {
 				return (
 					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						className="-ml-4"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+						variant="ghost"
 					>
 						Status
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
 				);
 			},
-			cell: ({ row }) => {
-				const isPublished = row.getValue("isPublished") as boolean;
-				const noticeDate = row.original.noticeDate;
-				const status = getPublicationStatus(isPublished, noticeDate);
-
-				return <Badge variant={status.variant}>{status.label}</Badge>;
-			},
 			sortingFn: (rowA, rowB) => {
 				const statusA = getPublicationStatus(
 					rowA.original.isPublished,
+					rowA.original.isArchived,
 					rowA.original.noticeDate,
 				);
 				const statusB = getPublicationStatus(
 					rowB.original.isPublished,
+					rowB.original.isArchived,
 					rowB.original.noticeDate,
 				);
 				return statusA.label.localeCompare(statusB.label);
@@ -180,19 +193,19 @@ export function NoticesTable({ data }: NoticesTableProps) {
 	];
 
 	const table = useReactTable({
-		data,
 		columns,
+		data,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
-		onSortingChange: setSorting,
-		state: {
-			sorting,
-		},
 		initialState: {
 			pagination: {
 				pageSize: 10,
 			},
+		},
+		onSortingChange: setSorting,
+		state: {
+			sorting,
 		},
 	});
 
@@ -222,8 +235,8 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow
-									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
+									key={row.id}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id}>
@@ -238,8 +251,8 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						) : (
 							<TableRow>
 								<TableCell
-									colSpan={columns.length}
 									className="h-24 text-center"
+									colSpan={columns.length}
 								>
 									No results.
 								</TableCell>
@@ -253,10 +266,10 @@ export function NoticesTable({ data }: NoticesTableProps) {
 				<div className="flex items-center space-x-2">
 					<p className="text-muted-foreground text-sm">Rows per page</p>
 					<Select
-						value={`${table.getState().pagination.pageSize}`}
 						onValueChange={(value) => {
 							table.setPageSize(Number(value));
 						}}
+						value={`${table.getState().pagination.pageSize}`}
 					>
 						<SelectTrigger className="h-8 w-17.5">
 							<SelectValue placeholder={table.getState().pagination.pageSize} />
@@ -278,18 +291,18 @@ export function NoticesTable({ data }: NoticesTableProps) {
 					</div>
 					<div className="flex items-center space-x-2">
 						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => table.previousPage()}
 							disabled={!table.getCanPreviousPage()}
+							onClick={() => table.previousPage()}
+							size="sm"
+							variant="outline"
 						>
 							Previous
 						</Button>
 						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => table.nextPage()}
 							disabled={!table.getCanNextPage()}
+							onClick={() => table.nextPage()}
+							size="sm"
+							variant="outline"
 						>
 							Next
 						</Button>
