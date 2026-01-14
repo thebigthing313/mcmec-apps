@@ -29,25 +29,3 @@ export function useNotices() {
 			}),
 	);
 }
-
-export function usePublishedNotices() {
-	const { collection: allNotices } = useNotices();
-	return useLiveQuery((q) =>
-		q
-			.from({ notice: allNotices })
-			.where(({ notice }) => eq(notice.isPublished, true))
-			.select(({ notice }) => notice),
-	);
-}
-
-export function useNoticesByType(noticeTypeId: string) {
-	const { collection: allNotices } = useNotices();
-	return useLiveQuery(
-		(q) =>
-			q
-				.from({ notice: allNotices })
-				.where(({ notice }) => eq(notice.noticeTypeId, noticeTypeId))
-				.select(({ notice }) => notice),
-		[noticeTypeId],
-	);
-}
