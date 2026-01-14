@@ -8,12 +8,12 @@ import { queryClient, supabase } from "../queryClient";
 
 export const profiles = createCollection(
 	queryCollectionOptions<ProfilesRowType>({
-		id: "profiles",
-		queryKey: ["profiles"],
-		queryFn: () => fetchProfiles(supabase),
-		queryClient,
 		getKey: (item) => item.id,
-		syncMode: "eager",
+		id: "profiles",
+		queryClient,
+		queryFn: () => fetchProfiles(supabase),
+		queryKey: ["profiles"],
 		staleTime: 1000 * 60 * 30,
+		syncMode: "eager",
 	}),
 );

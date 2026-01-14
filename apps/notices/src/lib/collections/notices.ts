@@ -1,3 +1,4 @@
+import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import {
 	fetchNotices,
 	NoticesInsertSchema,
@@ -14,23 +15,41 @@ export const notices = createCollection(
 		id: "notices",
 		onDelete: async ({ transaction }) => {
 			const deletedKeys = transaction.mutations.map((m) => m.key);
-			await supabase.from("notices").delete().in("id", deletedKeys);
+			const { error } = await supabase
+				.from("notices")
+				.delete()
+				.in("id", deletedKeys);
+			if (error) {
+				throw new Error(
+					ErrorMessages.DATABASE.UNABLE_TO_DELETE("notices", error.message),
+				);
+			}
 		},
 		onInsert: async ({ transaction }) => {
 			const newItems = transaction.mutations.map((m) => m.modified);
 			const parsedItems = newItems.map((item) =>
 				NoticesInsertSchema.parse(item),
 			);
-			await supabase.from("notices").insert(parsedItems);
+			const { error } = await supabase.from("notices").insert(parsedItems);
+			if (error) {
+				throw new Error(
+					ErrorMessages.DATABASE.UNABLE_TO_INSERT("notices", error.message),
+				);
+			}
 		},
 		onUpdate: async ({ transaction }) => {
 			const updatedKeys = transaction.mutations.map((m) => m.key);
 			const localChanges = transaction.mutations[0].changes;
 			const parsedLocalChanges = NoticesUpdateSchema.parse(localChanges);
-			await supabase
+			const { error } = await supabase
 				.from("notices")
 				.update(parsedLocalChanges)
 				.in("id", updatedKeys);
+			if (error) {
+				throw new Error(
+					ErrorMessages.DATABASE.UNABLE_TO_UPDATE("notices", error.message),
+				);
+			}
 		},
 		queryClient,
 		queryFn: () => fetchNotices(supabase),
