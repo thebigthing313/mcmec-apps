@@ -8,6 +8,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@mcmec/ui/components/breadcrumb";
+import type { ComponentType, ReactNode } from "react";
 import { Fragment } from "react";
 
 export interface BreadcrumbPart {
@@ -15,11 +16,21 @@ export interface BreadcrumbPart {
 	href?: string;
 }
 
-interface LayoutBreadcrumbProps {
+interface LayoutBreadcrumbProps<
+	TLinkProps = { to: string; children: ReactNode },
+> {
 	items: BreadcrumbPart[];
+	LinkComponent?: ComponentType<TLinkProps>;
+	getLinkProps?: (href: string) => TLinkProps;
 }
 
-export function LayoutBreadcrumb({ items }: LayoutBreadcrumbProps) {
+export function LayoutBreadcrumb<
+	TLinkProps = { to: string; children: ReactNode },
+>({
+	items,
+	LinkComponent,
+	getLinkProps = (href) => ({ to: href }) as TLinkProps,
+}: LayoutBreadcrumbProps<TLinkProps>) {
 	if (!items || items.length === 0) {
 		return null;
 	}
@@ -33,7 +44,17 @@ export function LayoutBreadcrumb({ items }: LayoutBreadcrumbProps) {
 						<Fragment key={itemKey}>
 							<BreadcrumbItem>
 								{item.href ? (
-									<BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+									LinkComponent ? (
+										<BreadcrumbLink asChild>
+											<LinkComponent {...getLinkProps(item.href)}>
+												{item.label}
+											</LinkComponent>
+										</BreadcrumbLink>
+									) : (
+										<BreadcrumbLink href={item.href}>
+											{item.label}
+										</BreadcrumbLink>
+									)
 								) : (
 									<BreadcrumbPage>{item.label}</BreadcrumbPage>
 								)}

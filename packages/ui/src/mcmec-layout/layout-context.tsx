@@ -11,7 +11,7 @@ export interface LayoutContextData {
 	user: {
 		name: string;
 		title: string;
-		avatar: string;
+		avatar: string | null | undefined;
 	};
 	onLogout?: () => void;
 }
