@@ -12,6 +12,7 @@ interface NoticeFormProps {
 		notice_date: Date;
 		content: string;
 		is_published: boolean;
+		is_archived: boolean;
 		created_at: Date;
 		created_by: string | null;
 		updated_at: Date;
@@ -40,7 +41,7 @@ export function NoticeForm({
 
 	return (
 		<form.AppForm>
-			<form.FormWrapper formLabel={formLabel} className="max-w-2xl">
+			<form.FormWrapper className="max-w-2xl" formLabel={formLabel}>
 				<form.AppField name="title">
 					{(field) => <field.TextField label="Title" />}
 				</form.AppField>
@@ -56,9 +57,10 @@ export function NoticeForm({
 				<form.AppField name="notice_date">
 					{(field) => (
 						<field.DateTimeField
+							description="This should be the effective date of the notice."
 							label="Notice Date"
-							showTimeInput={false}
 							placeholder="Select date"
+							showTimeInput={false}
 						/>
 					)}
 				</form.AppField>
@@ -66,9 +68,22 @@ export function NoticeForm({
 					{(field) => <field.ContentField label="Content" />}
 				</form.AppField>
 				<form.AppField name="is_published">
-					{(field) => <field.SwitchField label="Published" />}
+					{(field) => (
+						<field.SwitchField
+							description="Mark notice as ready to publish or as a draft"
+							label="Published"
+						/>
+					)}
 				</form.AppField>
-				<form.SubmitFormButton label={submitLabel} className="w-full" />
+				<form.AppField name="is_archived">
+					{(field) => (
+						<field.SwitchField
+							description="Archived notices will be removed from the notices main page."
+							label="Archived"
+						/>
+					)}
+				</form.AppField>
+				<form.SubmitFormButton className="w-full" label={submitLabel} />
 			</form.FormWrapper>
 		</form.AppForm>
 	);
