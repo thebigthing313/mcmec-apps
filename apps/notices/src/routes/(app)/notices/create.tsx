@@ -32,21 +32,22 @@ function RouteComponent() {
 
 	return (
 		<NoticeForm
+			categories={items}
 			defaultValues={{
-				id: crypto.randomUUID(),
-				notice_type_id: "",
-				title: "",
-				notice_date: new Date(),
 				content: "",
-				is_published: true,
 				created_at: new Date(),
 				created_by: null,
+				id: crypto.randomUUID(),
+				is_archived: false,
+				is_published: true,
+				notice_date: new Date(),
+				notice_type_id: "",
+				title: "",
 				updated_at: new Date(),
 				updated_by: null,
 			}}
-			onSubmit={handleSubmit}
-			categories={items}
 			formLabel="Create New Notice"
+			onSubmit={handleSubmit}
 			submitLabel="Create"
 		/>
 	);
