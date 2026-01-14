@@ -15,15 +15,16 @@ export function useNotices() {
 			)
 			.select(({ notice, notice_type, profile }) => {
 				return {
-					id: notice.id,
-					title: notice.title,
 					content: notice.content,
 					createdById: notice.created_by,
 					createdByName: profile?.display_name,
-					noticeTypeId: notice.notice_type_id,
-					noticeType: notice_type?.name,
-					noticeDate: notice.notice_date,
+					id: notice.id,
+					isArchived: notice.is_archived,
 					isPublished: notice.is_published,
+					noticeDate: notice.notice_date,
+					noticeType: notice_type?.name,
+					noticeTypeId: notice.notice_type_id,
+					title: notice.title,
 				};
 			}),
 	);
