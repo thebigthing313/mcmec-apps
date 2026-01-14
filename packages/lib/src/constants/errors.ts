@@ -25,6 +25,9 @@ export const ErrorMessages = {
 		UNABLE_TO_FETCH: (table: string) =>
 			`Unable to fetch data from the ${table} table.`,
 	},
+	UI: {
+		FAILED_TO_COPY: "Failed to copy to clipboard. Please try again.",
+	},
 } as const;
 
 export type ErrorCode = typeof ErrorMessages;
