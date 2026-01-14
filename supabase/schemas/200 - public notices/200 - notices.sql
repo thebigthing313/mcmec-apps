@@ -18,7 +18,11 @@ create policy "select: allow all"
 on public.notices
 for select
 to public
-using (true);
+using (
+    (is_published = true and notice_date <= current_date)
+    or
+    (auth.role() = 'authenticated')
+);
 
 create policy "insert: public_notices permission"
 on public.notices
