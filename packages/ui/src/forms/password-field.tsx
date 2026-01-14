@@ -12,17 +12,17 @@ export function PasswordField({
 	return (
 		<FormField
 			data-invalid={!field.state.meta.isValid}
-			htmlFor={field.name}
 			errors={field.state.meta.errors}
+			htmlFor={field.name}
 			{...props}
 		>
 			<PasswordInput
+				aria-invalid={!field.state.meta.isValid}
 				id={field.name}
 				name={field.name}
-				value={field.state.value}
-				onChange={(e) => field.handleChange(e.target.value)}
 				onBlur={field.handleBlur}
-				aria-invalid={!field.state.meta.isValid}
+				onChange={(e) => field.handleChange(e.target.value)}
+				value={field.state.value}
 			/>
 		</FormField>
 	);

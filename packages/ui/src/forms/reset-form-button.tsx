@@ -15,15 +15,15 @@ export function ResetFormButton({
 		<form.Subscribe selector={(state) => state.isSubmitting}>
 			{(isSubmitting) => (
 				<Button
-					ref={ref}
-					type="button"
-					variant="secondary"
 					aria-busy={isSubmitting}
 					disabled={isSubmitting}
 					onClick={() => {
 						form.reset();
 						toast.success("Form reset to original values.");
 					}}
+					ref={ref}
+					type="button"
+					variant="secondary"
 					{...props}
 				>
 					{label}

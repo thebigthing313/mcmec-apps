@@ -20,18 +20,18 @@ export function ComboboxField({
 	return (
 		<FormField
 			data-invalid={!field.state.meta.isValid}
-			htmlFor={field.name}
 			errors={field.state.meta.errors}
+			htmlFor={field.name}
 			{...formFieldProps}
 		>
 			<ComboboxInput
-				options={options}
-				value={field.state.value}
+				disabled={field.state.meta.isValidating}
+				emptyMessage={emptyMessage}
 				onChange={(value) => field.handleChange(value)}
+				options={options}
 				placeholder={placeholder}
 				searchPlaceholder={searchPlaceholder}
-				emptyMessage={emptyMessage}
-				disabled={field.state.meta.isValidating}
+				value={field.state.value}
 			/>
 		</FormField>
 	);

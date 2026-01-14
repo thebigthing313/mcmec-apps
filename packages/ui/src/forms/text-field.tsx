@@ -19,22 +19,22 @@ export function TextField({
 	return (
 		<FormField
 			data-invalid={!field.state.meta.isValid}
-			htmlFor={field.name}
 			errors={field.state.meta.errors}
+			htmlFor={field.name}
 			{...formFieldProps}
 		>
 			<TextInput
+				aria-invalid={!field.state.meta.isValid}
 				id={field.name}
-				type="text"
 				name={field.name}
-				value={field.state.value}
-				showSpinner={field.state.meta.isValidating}
-				showValid={showValid}
+				onBlur={field.handleBlur}
+				onChange={(e) => field.handleChange(e.target.value)}
 				showClear={showClear}
 				showPaste={showPaste}
-				onChange={(e) => field.handleChange(e.target.value)}
-				onBlur={field.handleBlur}
-				aria-invalid={!field.state.meta.isValid}
+				showSpinner={field.state.meta.isValidating}
+				showValid={showValid}
+				type="text"
+				value={field.state.value}
 			/>
 		</FormField>
 	);

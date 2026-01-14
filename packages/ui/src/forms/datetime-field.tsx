@@ -18,16 +18,16 @@ export function DateTimeField({
 	return (
 		<FormField
 			data-invalid={!field.state.meta.isValid}
-			htmlFor={field.name}
 			errors={field.state.meta.errors}
+			htmlFor={field.name}
 			{...formFieldProps}
 		>
 			<DateTimeInput
-				value={field.state.value}
+				disabled={field.state.meta.isValidating}
 				onChange={(date) => field.handleChange(date ?? new Date())}
 				placeholder={placeholder}
 				showTimeInput={showTimeInput}
-				disabled={field.state.meta.isValidating}
+				value={field.state.value}
 			/>
 		</FormField>
 	);

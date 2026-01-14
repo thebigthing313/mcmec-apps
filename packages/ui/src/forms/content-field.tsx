@@ -13,8 +13,8 @@ export function ContentField({
 	return (
 		<FormField
 			data-invalid={!field.state.meta.isValid}
-			htmlFor={field.name}
 			errors={field.state.meta.errors}
+			htmlFor={field.name}
 			{...formFieldProps}
 		>
 			<TiptapEditor

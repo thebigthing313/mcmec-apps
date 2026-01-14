@@ -14,17 +14,17 @@ export function PhoneField({
 	return (
 		<FormField
 			data-invalid={!field.state.meta.isValid}
-			htmlFor={field.name}
 			errors={field.state.meta.errors}
+			htmlFor={field.name}
 			{...formFieldProps}
 		>
 			<PhoneInput
+				aria-invalid={!field.state.meta.isValid}
 				id={field.name}
 				name={field.name}
-				value={field.state.value}
 				onChange={(value) => field.handleChange(value)}
 				showExt={showExt}
-				aria-invalid={!field.state.meta.isValid}
+				value={field.state.value}
 			/>
 		</FormField>
 	);

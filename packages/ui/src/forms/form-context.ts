@@ -15,17 +15,17 @@ export const { fieldContext, formContext, useFieldContext, useFormContext } =
 	createFormHookContexts();
 
 export const { useAppForm, withFieldGroup } = createFormHook({
-	fieldContext,
-	formContext,
 	fieldComponents: {
-		TextField,
-		PasswordField,
-		PhoneField,
 		AutocompleteField,
 		ComboboxField,
-		DateTimeField,
 		ContentField,
+		DateTimeField,
+		PasswordField,
+		PhoneField,
 		SwitchField,
+		TextField,
 	},
-	formComponents: { FormWrapper, SubmitFormButton, ResetFormButton },
+	fieldContext,
+	formComponents: { FormWrapper, ResetFormButton, SubmitFormButton },
+	formContext,
 });

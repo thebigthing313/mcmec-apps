@@ -15,11 +15,11 @@ export function SubmitFormButton({
 		<form.Subscribe selector={(state) => state.isSubmitting}>
 			{(isSubmitting) => (
 				<Button
+					aria-busy={isSubmitting}
+					disabled={isSubmitting}
 					ref={ref}
 					type="submit"
 					variant="default"
-					aria-busy={isSubmitting}
-					disabled={isSubmitting}
 					{...props}
 				>
 					<span>

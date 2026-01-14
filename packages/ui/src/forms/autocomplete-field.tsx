@@ -23,19 +23,19 @@ export function AutocompleteField({
 	return (
 		<FormField
 			data-invalid={!field.state.meta.isValid}
-			htmlFor={field.name}
 			errors={field.state.meta.errors}
+			htmlFor={field.name}
 			{...formFieldProps}
 		>
 			<AutoComplete
-				selectedValue={field.state.value}
-				onSelectedValueChange={(value) => field.handleChange(value)}
-				searchValue={searchValue}
-				onSearchValueChange={setSearchValue}
-				items={items}
-				isLoading={isLoading}
 				emptyMessage={emptyMessage}
+				isLoading={isLoading}
+				items={items}
+				onSearchValueChange={setSearchValue}
+				onSelectedValueChange={(value) => field.handleChange(value)}
 				placeholder={placeholder}
+				searchValue={searchValue}
+				selectedValue={field.state.value}
 			/>
 		</FormField>
 	);
