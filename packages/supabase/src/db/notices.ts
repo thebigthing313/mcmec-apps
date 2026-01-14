@@ -8,7 +8,7 @@ export const NoticesRowSchema = z.object({
 	title: z.string(),
 	notice_date: z.coerce.date(),
 	content: z.any(),
-	publish_at: z.coerce.date().nullable(),
+	is_published: z.boolean(),
 	created_at: z.coerce.date(),
 	created_by: z.string().nullable(),
 	updated_at: z.coerce.date(),
@@ -19,17 +19,20 @@ export const NoticesInsertSchema = z.object({
 	id: z.uuid(),
 	notice_type_id: z.uuid(),
 	title: z.string(),
-	notice_date: z.coerce.date(),
+	notice_date: z.coerce.date().transform((date) => date.toISOString()),
 	content: z.any(),
-	publish_at: z.coerce.date().nullable().optional(),
+	is_published: z.boolean(),
 });
 
 export const NoticesUpdateSchema = z.object({
 	notice_type_id: z.uuid().optional(),
 	title: z.string().optional(),
-	notice_date: z.coerce.date().optional(),
+	notice_date: z.coerce
+		.date()
+		.optional()
+		.transform((date) => (date ? date.toISOString() : date)),
 	content: z.any().optional(),
-	publish_at: z.coerce.date().nullable().optional(),
+	is_published: z.boolean().optional(),
 });
 
 export type NoticesRowType = z.infer<typeof NoticesRowSchema>;
