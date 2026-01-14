@@ -4,9 +4,9 @@ import { notices } from "@/src/lib/collections/notices";
 
 export const Route = createFileRoute("/(app)/notices")({
 	component: RouteComponent,
-	loader: () => {
-		notices.preload();
-		notice_types.preload();
+	loader: async () => {
+		await notices.preload();
+		await notice_types.preload();
 		return { crumb: "Notices" };
 	},
 });
