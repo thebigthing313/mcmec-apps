@@ -10,13 +10,12 @@ import { queryClient, supabase } from "../queryClient";
 
 export const notices = createCollection(
 	queryCollectionOptions<NoticesRowType>({
-		id: "notices",
-		queryKey: ["notices"],
-		queryFn: () => fetchNotices(supabase),
-		queryClient,
 		getKey: (item) => item.id,
-		syncMode: "eager",
-		staleTime: 1000 * 60 * 30,
+		id: "notices",
+		onDelete: async ({ transaction }) => {
+			const deletedKeys = transaction.mutations.map((m) => m.key);
+			await supabase.from("notices").delete().in("id", deletedKeys);
+		},
 		onInsert: async ({ transaction }) => {
 			const newItems = transaction.mutations.map((m) => m.modified);
 			const parsedItems = newItems.map((item) =>
@@ -33,9 +32,10 @@ export const notices = createCollection(
 				.update(parsedLocalChanges)
 				.in("id", updatedKeys);
 		},
-		onDelete: async ({ transaction }) => {
-			const deletedKeys = transaction.mutations.map((m) => m.key);
-			await supabase.from("notices").delete().in("id", deletedKeys);
-		},
+		queryClient,
+		queryFn: () => fetchNotices(supabase),
+		queryKey: ["notices"],
+		staleTime: 1000 * 60 * 30,
+		syncMode: "eager",
 	}),
 );
