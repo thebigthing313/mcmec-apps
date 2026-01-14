@@ -56,7 +56,7 @@ function RouteComponent() {
 	const isDraft = !is_published;
 
 	return (
-		<div className="space-y-6">
+		<div className="max-w-2xl space-y-6">
 			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
 				<Button asChild size="sm" variant="outline">
 					<Link to="/notices">
