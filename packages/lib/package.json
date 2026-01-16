@@ -13,13 +13,13 @@
 	"license": "ISC",
 	"packageManager": "pnpm@10.19.0",
 	"dependencies": {
-		"lucide-react": "^0.468.0",
-		"react": "^19.0.0",
+		"lucide-react": "^0.475.0",
 		"zod": "^4.3.5"
 	},
 	"devDependencies": {
 		"@mcmec/typescript-config": "workspace:*",
-		"@types/react": "^19.0.0",
+		"@types/react": "^19.2.7",
+		"react": "^19.2.3",
 		"typescript": "^5.9.3"
 	},
 	"peerDependencies": {

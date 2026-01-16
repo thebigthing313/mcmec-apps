@@ -14,7 +14,7 @@
 	"packageManager": "pnpm@10.19.0",
 	"devDependencies": {
 		"@mcmec/typescript-config": "workspace:*",
-		"@types/node": "^20.19.27",
+		"@types/node": "25.0.9",
 		"typescript": "^5.9.3",
 		"vitest": "^2.1.5"
 	},
@@ -24,7 +24,7 @@
 		"@tanstack/query-db-collection": "^1.0.13",
 		"@tanstack/react-db": "^0.1.61",
 		"@tanstack/react-query": "^5.90.16",
-		"zod": "^4.2.1"
+		"zod": "^4.3.5"
 	},
 	"exports": {
 		"./auth/*": "./src/auth/*.ts",
