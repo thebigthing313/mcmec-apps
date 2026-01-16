@@ -1,32 +1,32 @@
 {
-	"name": "@mcmec/lib",
-	"type": "module",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"private": true,
-	"scripts": {
-		"lint": "biome check --write ."
-	},
-	"keywords": [],
 	"author": "Adrian Kabigting",
-	"license": "ISC",
-	"packageManager": "pnpm@10.19.0",
 	"dependencies": {
 		"lucide-react": "^0.475.0",
 		"zod": "^4.3.5"
 	},
+	"description": "",
 	"devDependencies": {
 		"@mcmec/typescript-config": "workspace:*",
 		"@types/react": "^19.2.7",
 		"react": "^19.2.3",
 		"typescript": "^5.9.3"
 	},
-	"peerDependencies": {
-		"react": "^19.0.0"
-	},
 	"exports": {
 		"./constants/*": "./src/constants/*",
 		"./functions/*": "./src/functions/*"
-	}
+	},
+	"keywords": [],
+	"license": "ISC",
+	"main": "index.js",
+	"name": "@mcmec/lib",
+	"packageManager": "pnpm@10.19.0",
+	"peerDependencies": {
+		"react": "^19.0.0"
+	},
+	"private": true,
+	"scripts": {
+		"lint": "biome check --write ."
+	},
+	"type": "module",
+	"version": "0.5.0"
 }
