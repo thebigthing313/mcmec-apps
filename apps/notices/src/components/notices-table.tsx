@@ -69,7 +69,13 @@ function getPublicationStatus(
 }
 
 export function NoticesTable({ data }: NoticesTableProps) {
-	const [sorting, setSorting] = useState<SortingState>([]);
+	const [sorting, setSorting] = useState<SortingState>([
+		{
+			desc: true,
+			id: "noticeDate",
+		},
+		{ desc: false, id: "title" },
+	]);
 
 	const columns: ColumnDef<Notice>[] = [
 		{
