@@ -3,6 +3,8 @@
 	"description": "",
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@changesets/cli": "^2.29.8",
+		"@manypkg/cli": "^0.25.1",
 		"@types/node": "25.0.9",
 		"turbo": "^2.7.2",
 		"typescript": "^5.9.3"
@@ -14,7 +16,10 @@
 	"packageManager": "pnpm@10.19.0",
 	"private": true,
 	"scripts": {
-		"gen-types": "pnpx supabase gen types typescript --local > packages/supabase/src/database.types.ts"
+		"change": "changeset",
+		"check-pkgs": "manypkg check",
+		"fix-pkgs": "manypkg fix",
+		"version-pkgs": "changeset version"
 	},
 	"version": "0.1.0"
 }
