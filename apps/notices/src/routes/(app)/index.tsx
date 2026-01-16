@@ -33,13 +33,14 @@ function RouteComponent() {
 	const { collection: allNotices } = useNotices();
 	const [currentPage, setCurrentPage] = useState(1);
 	const noticesPerPage = 5;
+	const now = new Date();
 
 	const { data: currentNotices } = useLiveQuery((q) =>
 		q
 			.from({ notice: allNotices })
 			.where(({ notice }) => eq(notice.isPublished, true))
 			.where(({ notice }) => eq(notice.isArchived, false))
-			.where(({ notice }) => lte(notice.noticeDate, new Date()))
+			.where(({ notice }) => lte(notice.noticeDate, now))
 			.orderBy(({ notice }) => notice.noticeDate, "desc"),
 	);
 
