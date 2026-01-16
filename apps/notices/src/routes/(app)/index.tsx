@@ -13,7 +13,7 @@ import {
 	EmptyHeader,
 	EmptyTitle,
 } from "@mcmec/ui/components/empty";
-import { eq, useLiveQuery } from "@tanstack/react-db";
+import { eq, lte, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
@@ -33,12 +33,14 @@ function RouteComponent() {
 	const { collection: allNotices } = useNotices();
 	const [currentPage, setCurrentPage] = useState(1);
 	const noticesPerPage = 5;
+	const now = new Date();
 
 	const { data: currentNotices } = useLiveQuery((q) =>
 		q
 			.from({ notice: allNotices })
 			.where(({ notice }) => eq(notice.isPublished, true))
 			.where(({ notice }) => eq(notice.isArchived, false))
+			.where(({ notice }) => lte(notice.noticeDate, now))
 			.orderBy(({ notice }) => notice.noticeDate, "desc"),
 	);
 
