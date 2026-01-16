@@ -1,5 +1,10 @@
 "use client";
 
+import {
+	formatDate,
+	formatTime,
+	parseTimeToDate,
+} from "@mcmec/lib/functions/date-fns";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 import { Button } from "../components/button";
@@ -15,27 +20,6 @@ interface DateTimeInputProps {
 	className?: string;
 	disabled?: boolean;
 	showTimeInput?: boolean;
-}
-
-function formatDate(date: Date | undefined) {
-	if (!date) {
-		return "";
-	}
-	return date.toLocaleDateString("en-US", {
-		day: "2-digit",
-		month: "long",
-		year: "numeric",
-	});
-}
-
-function formatTime(date: Date | undefined) {
-	if (!date) {
-		return "00:00:00";
-	}
-	const hours = date.getHours().toString().padStart(2, "0");
-	const minutes = date.getMinutes().toString().padStart(2, "0");
-	const seconds = date.getSeconds().toString().padStart(2, "0");
-	return `${hours}:${minutes}:${seconds}`;
 }
 
 export function DateTimeInput({
@@ -72,53 +56,47 @@ export function DateTimeInput({
 		const timeValue = e.target.value; // HH:MM:SS or HH:MM
 		if (!timeValue) return;
 
-		const [hours = "0", minutes = "0", seconds = "0"] = timeValue.split(":");
-		const newDate = value ? new Date(value) : new Date();
-
-		newDate.setHours(Number.parseInt(hours, 10));
-		newDate.setMinutes(Number.parseInt(minutes, 10));
-		newDate.setSeconds(Number.parseInt(seconds, 10));
-
+		const newDate = parseTimeToDate(value, timeValue);
 		onChange?.(newDate);
 	};
 
 	return (
 		<div className={cn("flex gap-2", className)}>
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover onOpenChange={setOpen} open={open}>
 				<PopoverTrigger asChild>
 					<Button
-						variant="outline"
-						disabled={disabled}
 						className={cn(
 							"justify-between font-normal",
 							showTimeInput ? "flex-1" : "w-full",
 							!value && "text-muted-foreground",
 						)}
+						disabled={disabled}
+						variant="outline"
 					>
 						{value ? formatDate(value) : placeholder}
 						<ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-auto overflow-hidden p-0" align="start">
+				<PopoverContent align="start" className="w-auto overflow-hidden p-0">
 					<Calendar
-						mode="single"
-						selected={value}
-						onSelect={handleDateSelect}
 						captionLayout="dropdown"
+						disabled={disabled}
+						mode="single"
 						month={month}
 						onMonthChange={setMonth}
-						disabled={disabled}
+						onSelect={handleDateSelect}
+						selected={value}
 					/>
 				</PopoverContent>
 			</Popover>
 			{showTimeInput && (
 				<Input
-					type="time"
-					step="1"
-					value={formatTime(value)}
-					onChange={handleTimeChange}
-					disabled={disabled}
 					className="w-35 appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+					disabled={disabled}
+					onChange={handleTimeChange}
+					step="1"
+					type="time"
+					value={formatTime(value)}
 				/>
 			)}
 		</div>

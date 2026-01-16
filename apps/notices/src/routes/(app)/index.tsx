@@ -1,3 +1,4 @@
+import { formatDateShort, getTodayUTC } from "@mcmec/lib/functions/date-fns";
 import { PublicNoticeCard } from "@mcmec/ui/blocks/public-notice-card";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -33,7 +34,7 @@ function RouteComponent() {
 	const { collection: allNotices } = useNotices();
 	const [currentPage, setCurrentPage] = useState(1);
 	const noticesPerPage = 5;
-	const now = new Date();
+	const now = getTodayUTC();
 
 	const { data: currentNotices } = useLiveQuery((q) =>
 		q
@@ -185,7 +186,7 @@ function RouteComponent() {
 														</p>
 													</div>
 													<span className="text-muted-foreground text-xs">
-														{notice.noticeDate.toLocaleDateString()}
+														{formatDateShort(notice.noticeDate)}
 													</span>
 												</Link>
 											</li>
@@ -229,7 +230,7 @@ function RouteComponent() {
 														</p>
 													</div>
 													<span className="text-muted-foreground text-xs">
-														{notice.noticeDate.toLocaleDateString()}
+														{formatDateShort(notice.noticeDate)}
 													</span>
 												</Link>
 											</li>
