@@ -1,3 +1,8 @@
+import {
+	formatDateShort,
+	getTodayUTC,
+	isOnOrBeforeDay,
+} from "@mcmec/lib/functions/date-fns";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -52,12 +57,9 @@ function getPublicationStatus(
 		return { label: "Draft", variant: "outline" };
 	}
 
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	const notice = new Date(noticeDate);
-	notice.setHours(0, 0, 0, 0);
+	const today = getTodayUTC();
 
-	if (notice <= today) {
+	if (isOnOrBeforeDay(noticeDate, today)) {
 		if (isArchived) {
 			return { label: "Archived", variant: "secondary" };
 		} else {
@@ -123,7 +125,7 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			accessorKey: "noticeDate",
 			cell: ({ row }) => {
 				const date = row.getValue("noticeDate") as Date;
-				return new Date(date).toLocaleDateString();
+				return formatDateShort(date);
 			},
 			header: ({ column }) => {
 				return (

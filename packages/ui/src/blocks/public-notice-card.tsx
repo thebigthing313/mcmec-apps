@@ -1,6 +1,7 @@
 "use client";
 
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
+import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import type { JSONContent } from "@tiptap/react";
 import { Check, Copy, Share2 } from "lucide-react";
 import { useState } from "react";
@@ -117,8 +118,7 @@ export function PublicNoticeCard({
 					</Dialog>
 				</CardAction>
 				<CardDescription className="text-sm">
-					Published on:{" "}
-					{noticeDate ? new Date(noticeDate).toLocaleDateString() : "[unknown]"}
+					Published on: {noticeDate ? formatDateShort(noticeDate) : "[unknown]"}
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="prose prose-sm dark:prose-invert max-w-none">
