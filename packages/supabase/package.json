@@ -1,23 +1,5 @@
 {
-	"name": "@mcmec/supabase",
-	"version": "1.0.1",
-	"type": "module",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"test": "vitest",
-		"test:run": "vitest run"
-	},
-	"keywords": [],
 	"author": "",
-	"license": "ISC",
-	"packageManager": "pnpm@10.19.0",
-	"devDependencies": {
-		"@mcmec/typescript-config": "workspace:*",
-		"@types/node": "25.0.9",
-		"typescript": "^5.9.3",
-		"vitest": "^2.1.5"
-	},
 	"dependencies": {
 		"@mcmec/lib": "workspace:*",
 		"@supabase/supabase-js": "^2.47.14",
@@ -26,10 +8,28 @@
 		"@tanstack/react-query": "^5.90.16",
 		"zod": "^4.3.5"
 	},
+	"description": "",
+	"devDependencies": {
+		"@mcmec/typescript-config": "workspace:*",
+		"@types/node": "25.0.9",
+		"typescript": "^5.9.3",
+		"vitest": "^2.1.5"
+	},
 	"exports": {
 		"./auth/*": "./src/auth/*.ts",
 		"./client": "./src/client.ts",
-		"./db/*": "./src/db/*.ts",
-		"./database.types": "./src/database.types.ts"
-	}
+		"./database.types": "./src/database.types.ts",
+		"./db/*": "./src/db/*.ts"
+	},
+	"keywords": [],
+	"license": "ISC",
+	"main": "index.js",
+	"name": "@mcmec/supabase",
+	"packageManager": "pnpm@10.19.0",
+	"scripts": {
+		"test": "vitest",
+		"test:run": "vitest run"
+	},
+	"type": "module",
+	"version": "1.0.1"
 }
