@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@mcmec/supabase/client";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { Footer } from "../components/footer";
 import { Header } from "../components/header";
 import { Navbar } from "../components/nav-bar";
 
@@ -18,6 +19,7 @@ const RootLayout = () => (
 		<main className="flex-1 p-4">
 			<Outlet />
 		</main>
+		<Footer />
 		<TanStackRouterDevtools />
 	</div>
 );
