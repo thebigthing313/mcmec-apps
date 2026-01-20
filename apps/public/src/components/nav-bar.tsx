@@ -1,3 +1,9 @@
+import { Button } from "@mcmec/ui/components/button";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@mcmec/ui/components/collapsible";
 import {
 	NavigationMenu,
 	NavigationMenuContent,
@@ -7,56 +13,176 @@ import {
 	NavigationMenuTrigger,
 	navigationMenuTriggerStyle,
 } from "@mcmec/ui/components/navigation-menu";
-import { Link } from "@tanstack/react-router";
+import { Separator } from "@mcmec/ui/components/separator";
+import {
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from "@mcmec/ui/components/sheet";
+import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
+import { Link, type LinkProps } from "@tanstack/react-router";
+import { ChevronDown, Menu } from "lucide-react";
+import { useState } from "react";
+
+type MenuSubItem = {
+	title: string;
+	linkProps: LinkProps;
+	description?: string;
+};
+
+type MenuItem = {
+	title: string;
+	linkProps?: LinkProps;
+	subItems?: MenuSubItem[];
+};
+
+const menuItems: MenuItem[] = [
+	{ linkProps: { to: "/" }, title: "Home" },
+	{
+		subItems: [
+			{
+				description: "Notices that are still currently in effect.",
+				linkProps: { to: "/notices" },
+				title: "Legal Notices",
+			},
+			{
+				description: "Previous legal notices that are no longer active.",
+				linkProps: { to: "/archive" },
+				title: "Archived Notices",
+			},
+		],
+		title: "Notices",
+	},
+];
 
 export function Navbar() {
-	return (
-		<NavigationMenu>
-			<NavigationMenuList>
-				<NavMenuHome />
-				<NavMenuNotices />
-			</NavigationMenuList>
-		</NavigationMenu>
-	);
+	const isMobile = useIsMobile();
+	if (isMobile) {
+		return <MobileNavBar />;
+	} else {
+		return <WebNavBar />;
+	}
 }
-function NavMenuHome() {
+
+function WebNavBar() {
 	return (
-		<NavigationMenuItem>
-			<NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-				<Link to="/">
-					<span>Home</span>
-				</Link>
-			</NavigationMenuLink>
-		</NavigationMenuItem>
+		<div className="bg-primary px-16 py-2">
+			<NavigationMenu>
+				<NavigationMenuList>
+					{menuItems.map((item) =>
+						item.subItems ? (
+							<NavigationMenuItem key={item.title}>
+								<NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
+								<NavigationMenuContent>
+									<ul className="grid w-50 gap-2">
+										{item.subItems.map((subItem) => (
+											<li key={subItem.title}>
+												<NavigationMenuLink asChild>
+													<Link to={subItem.linkProps.to}>
+														<div className="font-semibold">{subItem.title}</div>
+														{subItem.description && (
+															<div className="text-muted-foreground">
+																{subItem.description}
+															</div>
+														)}
+													</Link>
+												</NavigationMenuLink>
+											</li>
+										))}
+									</ul>
+								</NavigationMenuContent>
+							</NavigationMenuItem>
+						) : (
+							<NavigationMenuItem key={item.title}>
+								<NavigationMenuLink
+									asChild
+									className={navigationMenuTriggerStyle()}
+								>
+									<Link to={item.linkProps?.to}>
+										<span>{item.title}</span>
+									</Link>
+								</NavigationMenuLink>
+							</NavigationMenuItem>
+						),
+					)}
+				</NavigationMenuList>
+			</NavigationMenu>
+		</div>
 	);
 }
 
-function NavMenuNotices() {
+function MobileNavBar() {
+	const [open, setOpen] = useState(false);
+
 	return (
-		<NavigationMenuItem>
-			<NavigationMenuTrigger>Notices</NavigationMenuTrigger>
-			<NavigationMenuContent>
-				<ul className="grid w-50 gap-4">
-					<li>
-						<NavigationMenuLink asChild>
-							<Link to="/notices">
-								<div className="font-semibold">Legal Notices</div>
-								<div className="text-muted-foreground">
-									Notices that are still currently in effect.
-								</div>
-							</Link>
-						</NavigationMenuLink>
-						<NavigationMenuLink asChild>
-							<Link to="/archive">
-								<div className="font-semibold">Archived Notices</div>
-								<div className="text-muted-foreground">
-									Previous legal notices that are no longer active.
-								</div>
-							</Link>
-						</NavigationMenuLink>
-					</li>
-				</ul>
-			</NavigationMenuContent>
-		</NavigationMenuItem>
+		<div className="bg-primary px-2 py-2">
+			<Sheet onOpenChange={setOpen} open={open}>
+				<SheetTrigger>
+					<div className="flex flex-row items-center gap-2">
+						<Menu />
+						<span className="text-2xl uppercase tracking-tight">Menu</span>
+					</div>
+				</SheetTrigger>
+				<SheetContent side="left">
+					<SheetHeader>
+						<SheetTitle>Menu</SheetTitle>
+					</SheetHeader>
+					<div className="mt-4 flex flex-col gap-0">
+						{menuItems.map((item, index) => (
+							<div key={item.title}>
+								{item.subItems ? (
+									<Collapsible>
+										<CollapsibleTrigger asChild>
+											<Button
+												className="w-full justify-between"
+												variant="ghost"
+											>
+												<span>{item.title}</span>
+												<ChevronDown className="h-4 w-4" />
+											</Button>
+										</CollapsibleTrigger>
+										<CollapsibleContent className="pt-2 pl-4">
+											<div className="flex flex-col gap-2">
+												{item.subItems.map((subItem) => (
+													<Link
+														className="block rounded-md p-2 hover:bg-accent"
+														key={subItem.title}
+														onClick={() => setOpen(false)}
+														to={subItem.linkProps.to}
+													>
+														<div className="font-semibold">{subItem.title}</div>
+														{subItem.description && (
+															<div className="text-muted-foreground text-xs">
+																{subItem.description}
+															</div>
+														)}
+													</Link>
+												))}
+											</div>
+										</CollapsibleContent>
+									</Collapsible>
+								) : (
+									<Button
+										asChild
+										className="w-full justify-start"
+										variant="ghost"
+									>
+										<Link
+											onClick={() => setOpen(false)}
+											to={item.linkProps?.to}
+										>
+											<span>{item.title}</span>
+										</Link>
+									</Button>
+								)}
+								{index < menuItems.length - 1 && <Separator className="my-2" />}
+							</div>
+						))}
+					</div>
+				</SheetContent>
+			</Sheet>
+		</div>
 	);
 }

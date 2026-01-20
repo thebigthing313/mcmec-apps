@@ -11,10 +11,13 @@ export interface MyRouterContext {
 }
 
 const RootLayout = () => (
-	<div className="flex w-full flex-col items-center gap-0 px-18 py-4">
+	<div className="flex min-h-screen flex-col bg-background p-4">
 		<Header />
 		<Navbar />
-		<Outlet />
+
+		<main className="flex-1 p-4">
+			<Outlet />
+		</main>
 		<TanStackRouterDevtools />
 	</div>
 );

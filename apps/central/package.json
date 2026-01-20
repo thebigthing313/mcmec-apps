@@ -16,7 +16,7 @@
 	},
 	"description": "",
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.3.11",
 		"@mcmec/typescript-config": "workspace:*",
 		"@tanstack/router-plugin": "^1.145.7",
 		"@types/node": "25.0.9",
