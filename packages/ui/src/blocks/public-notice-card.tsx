@@ -68,7 +68,7 @@ export function PublicNoticeCard({
 
 	return (
 		<Card className={className}>
-			<CardHeader>
+			<CardHeader className="border-b">
 				<CardTitle className="text-xl">{title}</CardTitle>
 				<CardAction>
 					<Dialog onOpenChange={setOpen} open={open}>
@@ -121,7 +121,7 @@ export function PublicNoticeCard({
 					Published on: {noticeDate ? formatDateShort(noticeDate) : "[unknown]"}
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="prose prose-sm dark:prose-invert max-w-none">
+			<CardContent>
 				<TiptapRenderer content={content} />
 			</CardContent>
 			<CardFooter className="flex items-center justify-between border-t pt-4">
