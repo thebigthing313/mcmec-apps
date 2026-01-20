@@ -39,7 +39,7 @@ export function TiptapRenderer({ content, className }: TiptapRendererProps) {
 	}
 
 	return (
-		<div className="bg-background">
+		<div>
 			<EditorContent editor={editor} />
 		</div>
 	);
