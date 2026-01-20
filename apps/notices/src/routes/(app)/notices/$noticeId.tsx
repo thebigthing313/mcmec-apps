@@ -1,6 +1,5 @@
 import { formatDate } from "@mcmec/lib/functions/date-fns";
 import { PublicNoticeBadge } from "@mcmec/ui/blocks/public-notice-badge";
-import { PublicNoticeCard } from "@mcmec/ui/blocks/public-notice-card";
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Button } from "@mcmec/ui/components/button";
 import {
