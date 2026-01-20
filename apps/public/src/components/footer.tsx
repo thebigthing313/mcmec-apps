@@ -13,7 +13,7 @@ export function Footer() {
 	).formatNational();
 	return (
 		<footer className="w-full border-t bg-background p-4 font-semibold text-primary">
-			<div className="flex flex-row items-center justify-start gap-8 px-4">
+			<div className="flex flex-row flex-wrap items-center justify-start gap-8 px-4">
 				<div>
 					<img alt="Logo" className="size-24" src={ASSET_URLS.logo512} />
 				</div>
