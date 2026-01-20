@@ -1,5 +1,13 @@
 # @mcmec/ui
 
+## 1.2.0
+
+### Minor Changes
+
+- 456bdae: Turned public notice card into a preview card with callbacks to navigate to notice page and share URL.
+  Added a new route in public to display a notice.
+  Modified design of notice route in notice manager.
+
 ## 1.1.0
 
 ### Minor Changes

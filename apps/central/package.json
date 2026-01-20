@@ -39,5 +39,5 @@
 		"lint:fix": "biome check --write ."
 	},
 	"type": "module",
-	"version": "0.1.2"
+	"version": "0.1.3"
 }

@@ -1,5 +1,12 @@
 # central
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [456bdae]
+  - @mcmec/ui@1.2.0
+
 ## 0.1.2
 
 ### Patch Changes
