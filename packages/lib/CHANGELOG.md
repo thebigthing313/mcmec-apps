@@ -1,5 +1,12 @@
 # @mcmec/lib
 
+## 0.6.1
+
+### Patch Changes
+
+- d00a319: Applied Middlesex County styling guidelines and web/mobile layouts for the public website.
+- fb040ad: Created footer for public website.
+
 ## 0.6.0
 
 ### Minor Changes

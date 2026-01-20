@@ -1,5 +1,15 @@
 # notices
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies [d00a319]
+- Updated dependencies [fb040ad]
+  - @mcmec/ui@1.1.0
+  - @mcmec/lib@0.6.1
+  - @mcmec/supabase@1.0.2
+
 ## 0.5.1
 
 ### Patch Changes

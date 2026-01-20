@@ -1,5 +1,17 @@
 # @mcmec/ui
 
+## 1.1.0
+
+### Minor Changes
+
+- d00a319: Applied Middlesex County styling guidelines and web/mobile layouts for the public website.
+
+### Patch Changes
+
+- Updated dependencies [d00a319]
+- Updated dependencies [fb040ad]
+  - @mcmec/lib@0.6.1
+
 ## 1.0.1
 
 ### Patch Changes
