@@ -7,39 +7,68 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.97 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
-	--destructive: oklch(0.577 0.245 27.325);
-	--destructive-foreground: oklch(0.577 0.245 27.325);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
-	--ring: oklch(0.708 0 0);
-	--chart-1: oklch(0.646 0.222 41.116);
-	--chart-2: oklch(0.6 0.118 184.704);
-	--chart-3: oklch(0.398 0.07 227.392);
-	--chart-4: oklch(0.828 0.189 84.429);
-	--chart-5: oklch(0.769 0.188 70.08);
-	--radius: 0.625rem;
-	--sidebar: oklch(0.985 0 0);
-	--sidebar-foreground: oklch(0.145 0 0);
-	--sidebar-primary: oklch(0.205 0 0);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.97 0 0);
-	--sidebar-accent-foreground: oklch(0.205 0 0);
-	--sidebar-border: oklch(0.922 0 0);
-	--sidebar-ring: oklch(0.708 0 0);
+	--background: oklch(100% 0.00011 271.152);
+	--foreground: oklch(0.2537 0.0035 164.7797);
+	--card: oklch(0.8555 0.0035 67.7765);
+	--card-foreground: oklch(0.2537 0.0035 164.7797);
+	--popover: oklch(0.8555 0.0035 67.7765);
+	--popover-foreground: oklch(0.2537 0.0035 164.7797);
+	--primary: oklch(0.5364 0.1457 150.5842);
+	--primary-foreground: oklch(0.9556 0.0199 112.9333);
+	--secondary: oklch(0.8176 0.1 116.5842);
+	--secondary-foreground: oklch(0.2537 0.0035 164.7797);
+	--muted: oklch(0.83 0.0307 164.1343);
+	--muted-foreground: oklch(0.3538 0.0069 118.171);
+	--accent: oklch(0.6638 0.0267 183.8599);
+	--accent-foreground: oklch(0.3394 0.0441 1.7583);
+	--destructive: oklch(0.5046 0.2053 29.0423);
+	--destructive-foreground: oklch(0.8852 0.0042 91.4508);
+	--border: oklch(36.07% 0.06071 159.857);
+	--input: oklch(0.9329 0.0124 301.2783);
+	--ring: oklch(0.5353 0.1357 153.5529);
+	--chart-1: oklch(0.6104 0.0767 299.7335);
+	--chart-2: oklch(0.7889 0.0802 359.9375);
+	--chart-3: oklch(0.7321 0.0749 169.867);
+	--chart-4: oklch(0.854 0.0882 76.8292);
+	--chart-5: oklch(0.7857 0.0645 258.0839);
+	--sidebar: oklch(0.9427 0.0054 95.1019);
+	--sidebar-foreground: oklch(0.2713 0.0023 145.5111);
+	--sidebar-primary: oklch(0.5353 0.1357 153.5529);
+	--sidebar-primary-foreground: oklch(0.8852 0.0042 91.4508);
+	--sidebar-accent: oklch(0.8114 0.0992 114.1476);
+	--sidebar-accent-foreground: oklch(0.3867 0.0191 145.1951);
+	--sidebar-border: oklch(0.7231 0.1679 137.4158);
+	--sidebar-ring: oklch(0.5353 0.1357 153.5529);
+	--font-sans: "Arial Nova", system-ui, sans-serif;
+	--font-serif: "Lora", Georgia, serif;
+	--font-mono: "Fira Code", "Courier New", monospace;
+	--radius: 1.5rem;
+	--shadow-x: 2px;
+	--shadow-y: 2px;
+	--shadow-blur: 11px;
+	--shadow-spread: 0px;
+	--shadow-opacity: 0.19;
+	--shadow-color: #212322;
+	--shadow-2xs: 2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.1);
+	--shadow-xs: 2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.1);
+	--shadow-sm:
+		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
+		2px 1px 2px -1px hsl(150 2.9412% 13.3333% / 0.19);
+	--shadow:
+		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
+		2px 1px 2px -1px hsl(150 2.9412% 13.3333% / 0.19);
+	--shadow-md:
+		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
+		2px 2px 4px -1px hsl(150 2.9412% 13.3333% / 0.19);
+	--shadow-lg:
+		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
+		2px 4px 6px -1px hsl(150 2.9412% 13.3333% / 0.19);
+	--shadow-xl:
+		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
+		2px 8px 10px -1px hsl(150 2.9412% 13.3333% / 0.19);
+	--shadow-2xl: 2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.47);
+	--tracking-normal: 0em;
+	--spacing: 0.25rem;
 }
 
 .dark {
@@ -50,7 +79,7 @@
 	--popover: oklch(0.145 0 0);
 	--popover-foreground: oklch(0.985 0 0);
 	--primary: oklch(0.985 0 0);
-	--primary-foreground: oklch(0.205 0 0);
+	--primary-foreground: oklch(0.5364 0.1457 150.58);
 	--secondary: oklch(0.269 0 0);
 	--secondary-foreground: oklch(0.985 0 0);
 	--muted: oklch(0.269 0 0);
@@ -67,7 +96,7 @@
 	--chart-3: oklch(0.769 0.188 70.08);
 	--chart-4: oklch(0.627 0.265 303.9);
 	--chart-5: oklch(0.645 0.246 16.439);
-	--sidebar: oklch(0.205 0 0);
+	--sidebar: oklch(0.5364 0.1457 150.58);
 	--sidebar-foreground: oklch(0.985 0 0);
 	--sidebar-primary: oklch(0.488 0.243 264.376);
 	--sidebar-primary-foreground: oklch(0.985 0 0);
@@ -128,7 +157,6 @@
 /* Typography/Prose Styles for Tiptap */
 .prose {
 	color: var(--color-foreground);
-	/* max-width: 65ch; -- Removed to allow max-w-none utility to work */
 }
 
 .prose :where(p):not(:where([class~="not-prose"] *)) {
@@ -176,8 +204,13 @@
 }
 
 .prose :where(li):not(:where([class~="not-prose"] *)) {
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
+	margin-top: 0.25em;
+	margin-bottom: 0.25em;
+}
+
+.prose :where(li p):not(:where([class~="not-prose"] *)) {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 .prose :where(ol > li):not(:where([class~="not-prose"] *))::marker {
