@@ -15,7 +15,7 @@ import {
 	EmptyTitle,
 } from "@mcmec/ui/components/empty";
 import { eq, lte, useLiveQuery } from "@tanstack/react-db";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useNotices } from "@/src/hooks/use-notices";
@@ -31,6 +31,7 @@ export const Route = createFileRoute("/(app)/")({
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
 	const { collection: allNotices } = useNotices();
 	const [currentPage, setCurrentPage] = useState(1);
 	const noticesPerPage = 5;
@@ -108,6 +109,13 @@ function RouteComponent() {
 												isArchived={notice.isArchived}
 												isPublished={notice.isPublished}
 												noticeDate={notice.noticeDate}
+												onNoticeClick={() =>
+													navigate({
+														params: { noticeId: notice.id },
+														to: "/notices/$noticeId",
+													})
+												}
+												showShare={false}
 												title={notice.title}
 												type={notice.noticeType}
 											/>

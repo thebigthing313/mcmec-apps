@@ -1,4 +1,7 @@
+import { formatDate } from "@mcmec/lib/functions/date-fns";
+import { PublicNoticeBadge } from "@mcmec/ui/blocks/public-notice-badge";
 import { PublicNoticeCard } from "@mcmec/ui/blocks/public-notice-card";
+import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	createFileRoute,
@@ -85,14 +88,19 @@ function RouteComponent() {
 				</div>
 			</nav>
 
-			<PublicNoticeCard
-				content={content}
-				isArchived={is_archived}
-				isPublished={is_published}
-				noticeDate={notice_date || new Date()}
-				title={title}
-				type={type || "General"}
-			/>
+			<article className="prose">
+				<div className="flex flex-row items-baseline gap-2">
+					<h2>{title}</h2>
+					<PublicNoticeBadge
+						isArchived={is_archived}
+						isPublished={is_published}
+						noticeDate={notice_date}
+					/>
+				</div>
+				<h4>Type: {type}</h4>
+				<h4>Published on: {formatDate(notice_date)}</h4>
+				<TiptapRenderer content={content} />
+			</article>
 		</div>
 	);
 }

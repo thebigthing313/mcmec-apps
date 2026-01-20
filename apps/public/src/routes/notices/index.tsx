@@ -1,10 +1,10 @@
 import { PublicNoticeCard } from "@mcmec/ui/blocks/public-notice-card";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { createFileRoute } from "@tanstack/react-router";
-import { notice_types } from "../lib/collections/notice_types";
-import { notices } from "../lib/collections/notices";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { notice_types } from "../../lib/collections/notice_types";
+import { notices } from "../../lib/collections/notices";
 
-export const Route = createFileRoute("/notices")({
+export const Route = createFileRoute("/notices/")({
 	component: RouteComponent,
 	loader: async () => {
 		await Promise.all([notices.preload(), notice_types.preload()]);
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/notices")({
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
 	const { data: noticesToShow } = useLiveQuery((q) =>
 		q
 			.from({ notice: notices })
@@ -36,17 +37,27 @@ function RouteComponent() {
 			<h3 className="w-full text-center font-bold text-2xl">
 				Current Legal Notices
 			</h3>
-			{noticesToShow?.map((notice) => (
-				<PublicNoticeCard
-					content={notice.content}
-					isArchived={notice.isArchived}
-					isPublished={notice.isPublished}
-					key={notice.id}
-					noticeDate={notice.noticeDate}
-					title={notice.title}
-					type={notice.type}
-				/>
-			))}
+			{noticesToShow?.map((notice) => {
+				const shareUrl = `${window.location.origin}/notices/${notice.id}`;
+				return (
+					<PublicNoticeCard
+						content={notice.content}
+						getShareUrl={() => shareUrl}
+						isArchived={notice.isArchived}
+						isPublished={notice.isPublished}
+						key={notice.id}
+						noticeDate={notice.noticeDate}
+						onNoticeClick={() =>
+							navigate({
+								params: { noticeId: notice.id },
+								to: "/notices/$noticeId",
+							})
+						}
+						title={notice.title}
+						type={notice.type}
+					/>
+				);
+			})}
 		</div>
 	);
 }
