@@ -1,4 +1,6 @@
 export const ASSET_URLS = {
+	countyLogo:
+		"https://qkgqhexcnbavdpmxzcii.supabase.co/storage/v1/object/public/assets/county-logo.png",
 	favicon:
 		"https://qkgqhexcnbavdpmxzcii.supabase.co/storage/v1/object/public/assets/favicon.ico",
 	logo: "https://qkgqhexcnbavdpmxzcii.supabase.co/storage/v1/object/public/assets/logo.png",
