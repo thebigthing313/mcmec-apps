@@ -1,5 +1,13 @@
 # central
 
+## 0.1.4
+
+### Patch Changes
+
+- 2cb183e: Fixed scrollbar not resetting to top of content div when navigating.
+- Updated dependencies [1bc6947]
+  - @mcmec/ui@1.2.1
+
 ## 0.1.3
 
 ### Patch Changes

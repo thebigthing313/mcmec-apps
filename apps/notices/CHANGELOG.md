@@ -1,5 +1,12 @@
 # notices
 
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies [1bc6947]
+  - @mcmec/ui@1.2.1
+
 ## 0.5.3
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # public
 
+## 0.8.0
+
+### Minor Changes
+
+- 1bc6947: Added archived notices feature. Notice feed now has pagination and filtering components.
+
+### Patch Changes
+
+- 2cb183e: Fixed scrollbar not resetting to top of content div when navigating.
+- Updated dependencies [1bc6947]
+  - @mcmec/ui@1.2.1
+
 ## 0.7.0
 
 ### Minor Changes

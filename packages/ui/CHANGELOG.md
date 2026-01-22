@@ -1,5 +1,11 @@
 # @mcmec/ui
 
+## 1.2.1
+
+### Patch Changes
+
+- 1bc6947: Added archived notices feature. Notice feed now has pagination and filtering components.
+
 ## 1.2.0
 
 ### Minor Changes
