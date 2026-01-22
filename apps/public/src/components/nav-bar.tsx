@@ -49,7 +49,7 @@ const menuItems: MenuItem[] = [
 			},
 			{
 				description: "Previous legal notices that are no longer active.",
-				linkProps: { to: "/archive" },
+				linkProps: { to: "/notices/archive" },
 				title: "Archived Notices",
 			},
 		],

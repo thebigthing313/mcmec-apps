@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticesIndexRouteImport } from './routes/notices/index'
-import { Route as ArchiveIndexRouteImport } from './routes/archive/index'
+import { Route as NoticesArchiveRouteImport } from './routes/notices/archive'
 import { Route as NoticesNoticeIdRouteImport } from './routes/notices/$noticeId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -24,9 +24,9 @@ const NoticesIndexRoute = NoticesIndexRouteImport.update({
   path: '/notices/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ArchiveIndexRoute = ArchiveIndexRouteImport.update({
-  id: '/archive/',
-  path: '/archive/',
+const NoticesArchiveRoute = NoticesArchiveRouteImport.update({
+  id: '/notices/archive',
+  path: '/notices/archive',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticesNoticeIdRoute = NoticesNoticeIdRouteImport.update({
@@ -38,34 +38,34 @@ const NoticesNoticeIdRoute = NoticesNoticeIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
-  '/archive': typeof ArchiveIndexRoute
+  '/notices/archive': typeof NoticesArchiveRoute
   '/notices': typeof NoticesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
-  '/archive': typeof ArchiveIndexRoute
+  '/notices/archive': typeof NoticesArchiveRoute
   '/notices': typeof NoticesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
-  '/archive/': typeof ArchiveIndexRoute
+  '/notices/archive': typeof NoticesArchiveRoute
   '/notices/': typeof NoticesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/notices/$noticeId' | '/archive' | '/notices'
+  fullPaths: '/' | '/notices/$noticeId' | '/notices/archive' | '/notices'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/notices/$noticeId' | '/archive' | '/notices'
-  id: '__root__' | '/' | '/notices/$noticeId' | '/archive/' | '/notices/'
+  to: '/' | '/notices/$noticeId' | '/notices/archive' | '/notices'
+  id: '__root__' | '/' | '/notices/$noticeId' | '/notices/archive' | '/notices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   NoticesNoticeIdRoute: typeof NoticesNoticeIdRoute
-  ArchiveIndexRoute: typeof ArchiveIndexRoute
+  NoticesArchiveRoute: typeof NoticesArchiveRoute
   NoticesIndexRoute: typeof NoticesIndexRoute
 }
 
@@ -85,11 +85,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/archive/': {
-      id: '/archive/'
-      path: '/archive'
-      fullPath: '/archive'
-      preLoaderRoute: typeof ArchiveIndexRouteImport
+    '/notices/archive': {
+      id: '/notices/archive'
+      path: '/notices/archive'
+      fullPath: '/notices/archive'
+      preLoaderRoute: typeof NoticesArchiveRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notices/$noticeId': {
@@ -105,7 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   NoticesNoticeIdRoute: NoticesNoticeIdRoute,
-  ArchiveIndexRoute: ArchiveIndexRoute,
+  NoticesArchiveRoute: NoticesArchiveRoute,
   NoticesIndexRoute: NoticesIndexRoute,
 }
 export const routeTree = rootRouteImport

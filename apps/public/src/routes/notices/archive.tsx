@@ -1,10 +1,10 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
+import { notice_types } from "@/src/lib/collections/notice_types";
+import { notices } from "@/src/lib/collections/notices";
 import { NoticeFeed } from "../../components/notice-feed";
-import { notice_types } from "../../lib/collections/notice_types";
-import { notices } from "../../lib/collections/notices";
 
-export const Route = createFileRoute("/notices/")({
+export const Route = createFileRoute("/notices/archive")({
 	component: RouteComponent,
 	loader: async () => {
 		await Promise.all([notices.preload(), notice_types.preload()]);
@@ -18,7 +18,7 @@ function RouteComponent() {
 			.innerJoin({ notice_type: notice_types }, ({ notice, notice_type }) =>
 				eq(notice.notice_type_id, notice_type.id),
 			)
-			.where(({ notice }) => eq(notice.is_archived, false))
+			.where(({ notice }) => eq(notice.is_archived, true))
 			.orderBy(({ notice }) => notice.notice_date, "desc")
 			.orderBy(({ notice }) => notice.title, "asc")
 			.select(({ notice, notice_type }) => ({
@@ -32,7 +32,5 @@ function RouteComponent() {
 			})),
 	);
 
-	return (
-		<NoticeFeed notices={noticesToShow || []} title="Current Legal Notices" />
-	);
+	return <NoticeFeed notices={noticesToShow || []} title="Archived Notices" />;
 }
