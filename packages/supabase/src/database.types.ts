@@ -34,6 +34,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      meetings: {
+        Row: {
+          agenda_url: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_cancelled: boolean
+          meeting_at: string
+          minutes_url: string | null
+          name: string
+          notes: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          agenda_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_cancelled?: boolean
+          meeting_at: string
+          minutes_url?: string | null
+          name: string
+          notes?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          agenda_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_cancelled?: boolean
+          meeting_at?: string
+          minutes_url?: string | null
+          name?: string
+          notes?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       notice_types: {
         Row: {
           created_at: string
@@ -70,6 +112,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
+          is_archived: boolean
           is_published: boolean
           notice_date: string
           notice_type_id: string
@@ -82,6 +125,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_archived?: boolean
           is_published?: boolean
           notice_date: string
           notice_type_id: string
@@ -94,6 +138,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_archived?: boolean
           is_published?: boolean
           notice_date?: string
           notice_type_id?: string
