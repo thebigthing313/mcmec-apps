@@ -19,10 +19,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Create a new router instance
 const router = createRouter({
-	routeTree,
 	context: {
 		supabase: supabase,
 	},
+	routeTree,
 });
 
 // Register the router instance for type safety

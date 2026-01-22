@@ -16,7 +16,7 @@ const RootLayout = () => (
 		<Header />
 		<Navbar />
 
-		<main className="max-w-7xl flex-1 p-4">
+		<main className="max-w-7xl flex-1 p-4" id="main-content">
 			<Outlet />
 		</main>
 		<Footer />

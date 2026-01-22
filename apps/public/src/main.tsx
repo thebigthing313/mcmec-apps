@@ -35,6 +35,8 @@ const router = createRouter({
 	defaultErrorComponent: (error) => <ErrorComponent {...error} />,
 	defaultNotFoundComponent: () => <NotFoundComponent />,
 	routeTree,
+	scrollRestoration: true,
+	scrollToTopSelectors: ["#main-content"],
 });
 
 // Register the router instance for type safety
