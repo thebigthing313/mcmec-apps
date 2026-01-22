@@ -34,7 +34,7 @@ export function TextField({
 				showSpinner={field.state.meta.isValidating}
 				showValid={showValid}
 				type="text"
-				value={field.state.value}
+				value={field.state.value ?? ""}
 			/>
 		</FormField>
 	);

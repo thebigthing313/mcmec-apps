@@ -14,9 +14,13 @@ import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as appCategoriesRouteImport } from './routes/(app)/categories'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
+import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
 import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
+import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/index'
 import { Route as appNoticesCreateRouteImport } from './routes/(app)/notices/create'
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
+import { Route as appMeetingsCreateRouteImport } from './routes/(app)/meetings/create'
+import { Route as appMeetingsMeetingIdRouteImport } from './routes/(app)/meetings/$meetingId'
 import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
 
 const LoginRoute = LoginRouteImport.update({
@@ -43,10 +47,20 @@ const appNoticesRouteRoute = appNoticesRouteRouteImport.update({
   path: '/notices',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appMeetingsRouteRoute = appMeetingsRouteRouteImport.update({
+  id: '/meetings',
+  path: '/meetings',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appNoticesIndexRoute = appNoticesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => appNoticesRouteRoute,
+} as any)
+const appMeetingsIndexRoute = appMeetingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appMeetingsRouteRoute,
 } as any)
 const appNoticesCreateRoute = appNoticesCreateRouteImport.update({
   id: '/create',
@@ -58,6 +72,16 @@ const appNoticesNoticeIdRoute = appNoticesNoticeIdRouteImport.update({
   path: '/$noticeId',
   getParentRoute: () => appNoticesRouteRoute,
 } as any)
+const appMeetingsCreateRoute = appMeetingsCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => appMeetingsRouteRoute,
+} as any)
+const appMeetingsMeetingIdRoute = appMeetingsMeetingIdRouteImport.update({
+  id: '/$meetingId',
+  path: '/$meetingId',
+  getParentRoute: () => appMeetingsRouteRoute,
+} as any)
 const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
   id: '/$noticeId_/edit',
   path: '/$noticeId/edit',
@@ -66,11 +90,15 @@ const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/meetings': typeof appMeetingsRouteRouteWithChildren
   '/notices': typeof appNoticesRouteRouteWithChildren
   '/categories': typeof appCategoriesRoute
   '/': typeof appIndexRoute
+  '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
+  '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
+  '/meetings/': typeof appMeetingsIndexRoute
   '/notices/': typeof appNoticesIndexRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
 }
@@ -78,8 +106,11 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/categories': typeof appCategoriesRoute
   '/': typeof appIndexRoute
+  '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
+  '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
+  '/meetings': typeof appMeetingsIndexRoute
   '/notices': typeof appNoticesIndexRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
 }
@@ -87,11 +118,15 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/(app)/meetings': typeof appMeetingsRouteRouteWithChildren
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/(app)/categories': typeof appCategoriesRoute
   '/(app)/': typeof appIndexRoute
+  '/(app)/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
+  '/(app)/meetings/create': typeof appMeetingsCreateRoute
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/(app)/notices/create': typeof appNoticesCreateRoute
+  '/(app)/meetings/': typeof appMeetingsIndexRoute
   '/(app)/notices/': typeof appNoticesIndexRoute
   '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
 }
@@ -99,11 +134,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
+    | '/meetings'
     | '/notices'
     | '/categories'
     | '/'
+    | '/meetings/$meetingId'
+    | '/meetings/create'
     | '/notices/$noticeId'
     | '/notices/create'
+    | '/meetings/'
     | '/notices/'
     | '/notices/$noticeId/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -111,19 +150,26 @@ export interface FileRouteTypes {
     | '/login'
     | '/categories'
     | '/'
+    | '/meetings/$meetingId'
+    | '/meetings/create'
     | '/notices/$noticeId'
     | '/notices/create'
+    | '/meetings'
     | '/notices'
     | '/notices/$noticeId/edit'
   id:
     | '__root__'
     | '/(app)'
     | '/login'
+    | '/(app)/meetings'
     | '/(app)/notices'
     | '/(app)/categories'
     | '/(app)/'
+    | '/(app)/meetings/$meetingId'
+    | '/(app)/meetings/create'
     | '/(app)/notices/$noticeId'
     | '/(app)/notices/create'
+    | '/(app)/meetings/'
     | '/(app)/notices/'
     | '/(app)/notices/$noticeId_/edit'
   fileRoutesById: FileRoutesById
@@ -170,12 +216,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appNoticesRouteRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/meetings': {
+      id: '/(app)/meetings'
+      path: '/meetings'
+      fullPath: '/meetings'
+      preLoaderRoute: typeof appMeetingsRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/notices/': {
       id: '/(app)/notices/'
       path: '/'
       fullPath: '/notices/'
       preLoaderRoute: typeof appNoticesIndexRouteImport
       parentRoute: typeof appNoticesRouteRoute
+    }
+    '/(app)/meetings/': {
+      id: '/(app)/meetings/'
+      path: '/'
+      fullPath: '/meetings/'
+      preLoaderRoute: typeof appMeetingsIndexRouteImport
+      parentRoute: typeof appMeetingsRouteRoute
     }
     '/(app)/notices/create': {
       id: '/(app)/notices/create'
@@ -191,6 +251,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appNoticesNoticeIdRouteImport
       parentRoute: typeof appNoticesRouteRoute
     }
+    '/(app)/meetings/create': {
+      id: '/(app)/meetings/create'
+      path: '/create'
+      fullPath: '/meetings/create'
+      preLoaderRoute: typeof appMeetingsCreateRouteImport
+      parentRoute: typeof appMeetingsRouteRoute
+    }
+    '/(app)/meetings/$meetingId': {
+      id: '/(app)/meetings/$meetingId'
+      path: '/$meetingId'
+      fullPath: '/meetings/$meetingId'
+      preLoaderRoute: typeof appMeetingsMeetingIdRouteImport
+      parentRoute: typeof appMeetingsRouteRoute
+    }
     '/(app)/notices/$noticeId_/edit': {
       id: '/(app)/notices/$noticeId_/edit'
       path: '/$noticeId/edit'
@@ -200,6 +274,21 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface appMeetingsRouteRouteChildren {
+  appMeetingsMeetingIdRoute: typeof appMeetingsMeetingIdRoute
+  appMeetingsCreateRoute: typeof appMeetingsCreateRoute
+  appMeetingsIndexRoute: typeof appMeetingsIndexRoute
+}
+
+const appMeetingsRouteRouteChildren: appMeetingsRouteRouteChildren = {
+  appMeetingsMeetingIdRoute: appMeetingsMeetingIdRoute,
+  appMeetingsCreateRoute: appMeetingsCreateRoute,
+  appMeetingsIndexRoute: appMeetingsIndexRoute,
+}
+
+const appMeetingsRouteRouteWithChildren =
+  appMeetingsRouteRoute._addFileChildren(appMeetingsRouteRouteChildren)
 
 interface appNoticesRouteRouteChildren {
   appNoticesNoticeIdRoute: typeof appNoticesNoticeIdRoute
@@ -220,12 +309,14 @@ const appNoticesRouteRouteWithChildren = appNoticesRouteRoute._addFileChildren(
 )
 
 interface appRouteRouteChildren {
+  appMeetingsRouteRoute: typeof appMeetingsRouteRouteWithChildren
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appCategoriesRoute: typeof appCategoriesRoute
   appIndexRoute: typeof appIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
+  appMeetingsRouteRoute: appMeetingsRouteRouteWithChildren,
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appCategoriesRoute: appCategoriesRoute,
   appIndexRoute: appIndexRoute,

@@ -1,3 +1,4 @@
+import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import type { NoticesRowType } from "@mcmec/supabase/db/notices";
 import {
 	AlertDialog,
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 		await Promise.all([notices.preload(), notice_types.preload()]);
 		const notice = notices.get(params.noticeId);
 		if (!notice) {
-			throw new Error("Notice not found");
+			throw new Error(ErrorMessages.DATABASE.RECORD_NOT_AVAILABLE);
 		}
 		return { crumb: "Edit", notice };
 	},
