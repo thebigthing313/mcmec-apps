@@ -21,7 +21,7 @@ to public
 using (
     (is_published = true and notice_date <= current_date)
     or
-    (auth.role() = 'authenticated')
+    ((select auth.role()) = 'authenticated')
 );
 
 create policy "insert: public_notices permission"

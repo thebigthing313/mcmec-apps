@@ -7,9 +7,12 @@ export default defineConfig({
 	plugins: [
 		tsConfigPaths(),
 		tanstackRouter({
-			target: "react",
 			autoCodeSplitting: true,
+			target: "react",
 		}),
 		viteReact(),
 	],
+	server: {
+		port: 3001,
+	},
 });

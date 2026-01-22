@@ -12,4 +12,7 @@ export default defineConfig({
 		}),
 		viteReact(),
 	],
+	server: {
+		port: 3002,
+	},
 });
