@@ -4,11 +4,14 @@ import {
 	formatTime,
 } from "@mcmec/lib/functions/date-fns";
 import { PublicNoticeBadge } from "@mcmec/ui/blocks/public-notice-badge";
+import { ShareNoticeDialog } from "@mcmec/ui/blocks/share-notice-dialog";
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Button } from "@mcmec/ui/components/button";
+import { ButtonGroup } from "@mcmec/ui/components/button-group";
 import { Label } from "@mcmec/ui/components/label";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ChevronLeft } from "lucide-react";
+import { Clock, FolderArchive } from "lucide-react";
+import { useState } from "react";
 import { notice_types } from "@/src/lib/collections/notice_types";
 import { notices } from "@/src/lib/collections/notices";
 export const Route = createFileRoute("/notices/$noticeId")({
@@ -24,6 +27,8 @@ export const Route = createFileRoute("/notices/$noticeId")({
 });
 
 function RouteComponent() {
+	const [open, setOpen] = useState(false);
+	const [copied, setCopied] = useState(false);
 	const { notice } = Route.useLoaderData();
 	const {
 		id,
@@ -37,15 +42,43 @@ function RouteComponent() {
 	} = notice;
 
 	const type = notice_types.get(notice_type_id)?.name;
+	const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
+	const handleCopy = async () => {
+		try {
+			await navigator.clipboard.writeText(shareUrl);
+			setCopied(true);
+			setTimeout(() => setCopied(false), 2000);
+		} catch (err) {
+			console.error("Failed to copy: ", err);
+		}
+	};
 
 	return (
 		<>
-			<Button asChild variant="link">
-				<Link to={`/notices`}>
-					<ChevronLeft />
-					Return to Current Notices
-				</Link>
-			</Button>
+			<div className="flex flex-row items-center justify-between">
+				<ButtonGroup orientation="horizontal">
+					<Button asChild variant="link">
+						<Link to={`/notices`}>
+							<Clock />
+							Current Notices
+						</Link>
+					</Button>
+					<Button asChild variant="link">
+						<Link to={`/notices/archive`}>
+							<FolderArchive />
+							Archived Notices
+						</Link>
+					</Button>
+				</ButtonGroup>
+				<ShareNoticeDialog
+					copied={copied}
+					handleCopy={handleCopy}
+					open={open}
+					setOpen={setOpen}
+					shareUrl={shareUrl}
+				/>
+			</div>
 
 			<article className="prose">
 				<h2>{title}</h2>
