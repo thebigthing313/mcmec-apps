@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticesIndexRouteImport } from './routes/notices/index'
 import { Route as NoticesArchiveRouteImport } from './routes/notices/archive'
 import { Route as NoticesNoticeIdRouteImport } from './routes/notices/$noticeId'
 
+const MeetingsRoute = MeetingsRouteImport.update({
+  id: '/meetings',
+  path: '/meetings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,12 +43,14 @@ const NoticesNoticeIdRoute = NoticesNoticeIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/meetings': typeof MeetingsRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices': typeof NoticesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/meetings': typeof MeetingsRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices': typeof NoticesIndexRoute
@@ -50,20 +58,33 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/meetings': typeof MeetingsRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/': typeof NoticesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/notices/$noticeId' | '/notices/archive' | '/notices'
+  fullPaths:
+    | '/'
+    | '/meetings'
+    | '/notices/$noticeId'
+    | '/notices/archive'
+    | '/notices'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/notices/$noticeId' | '/notices/archive' | '/notices'
-  id: '__root__' | '/' | '/notices/$noticeId' | '/notices/archive' | '/notices/'
+  to: '/' | '/meetings' | '/notices/$noticeId' | '/notices/archive' | '/notices'
+  id:
+    | '__root__'
+    | '/'
+    | '/meetings'
+    | '/notices/$noticeId'
+    | '/notices/archive'
+    | '/notices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MeetingsRoute: typeof MeetingsRoute
   NoticesNoticeIdRoute: typeof NoticesNoticeIdRoute
   NoticesArchiveRoute: typeof NoticesArchiveRoute
   NoticesIndexRoute: typeof NoticesIndexRoute
@@ -71,6 +92,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/meetings': {
+      id: '/meetings'
+      path: '/meetings'
+      fullPath: '/meetings'
+      preLoaderRoute: typeof MeetingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,6 +132,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MeetingsRoute: MeetingsRoute,
   NoticesNoticeIdRoute: NoticesNoticeIdRoute,
   NoticesArchiveRoute: NoticesArchiveRoute,
   NoticesIndexRoute: NoticesIndexRoute,
