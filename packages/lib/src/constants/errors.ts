@@ -12,6 +12,7 @@ export const ErrorMessages = {
 		ROOT_ELEMENT_NOT_FOUND: "Root element not found",
 	},
 	DATABASE: {
+		RECORD_NOT_AVAILABLE: "The requested record is not available.",
 		UNABLE_TO_DELETE: (table: string, dbError?: string) =>
 			`Unable to delete data from the ${table} table.${dbError ? ` Error: ${dbError}` : ""}`,
 		UNABLE_TO_FETCH: (table: string, dbError?: string) =>

@@ -19,6 +19,7 @@
 		"change": "changeset",
 		"check-pkgs": "manypkg check",
 		"fix-pkgs": "manypkg fix",
+		"gen-types": "supabase gen types typescript --local > ./packages/supabase/src/database.types.ts",
 		"version-pkgs": "changeset version"
 	},
 	"version": "0.1.0"

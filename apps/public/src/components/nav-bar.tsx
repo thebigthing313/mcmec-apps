@@ -43,6 +43,11 @@ const menuItems: MenuItem[] = [
 	{
 		subItems: [
 			{
+				description: "Meeting schedules, agenda, and minutes.",
+				linkProps: { to: "/meetings" },
+				title: "Public Meetings",
+			},
+			{
 				description: "Notices that are still currently in effect.",
 				linkProps: { to: "/notices" },
 				title: "Legal Notices",

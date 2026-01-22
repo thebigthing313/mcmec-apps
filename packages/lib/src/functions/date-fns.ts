@@ -267,3 +267,52 @@ export function isOnOrAfterDay(
 	const d2 = getStartOfDayUTC(compareDate);
 	return d1.getTime() >= d2.getTime();
 }
+
+/**
+ * Format a date with time as a localized date and time string with timezone.
+ * Displays full date, time, and timezone abbreviation.
+ *
+ * @param date - The date to format (can be Date, string, or null/undefined)
+ * @param locale - The locale to use for formatting (defaults to 'en-US')
+ * @returns Formatted date-time string or empty string if date is invalid
+ *
+ * @example
+ * formatDateTime(new Date('2026-01-22T12:00:00'))
+ * // "Wednesday, January 22, 2026 12:00 PM (EST)"
+ */
+export function formatDateTime(
+	date: Date | string | null | undefined,
+	locale = "en-US",
+): string {
+	if (!date) {
+		return "";
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return "";
+	}
+
+	const dateStr = dateObj.toLocaleDateString(locale, {
+		day: "numeric",
+		month: "long",
+		weekday: "long",
+		year: "numeric",
+	});
+
+	const timeStr = dateObj.toLocaleTimeString(locale, {
+		hour: "numeric",
+		hour12: true,
+		minute: "2-digit",
+	});
+
+	const timeZoneStr = dateObj
+		.toLocaleTimeString(locale, {
+			timeZoneName: "short",
+		})
+		.split(" ")
+		.pop();
+
+	return `${dateStr} ${timeStr} (${timeZoneStr})`;
+}
