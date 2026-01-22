@@ -41,10 +41,13 @@ export type Database = {
           created_by: string | null
           id: string
           is_cancelled: boolean
+          location: string
           meeting_at: string
           minutes_url: string | null
           name: string
           notes: string | null
+          notice_url: string | null
+          report_url: string | null
           updated_at: string
           updated_by: string | null
         }
@@ -54,10 +57,13 @@ export type Database = {
           created_by?: string | null
           id?: string
           is_cancelled?: boolean
+          location: string
           meeting_at: string
           minutes_url?: string | null
           name: string
           notes?: string | null
+          notice_url?: string | null
+          report_url?: string | null
           updated_at?: string
           updated_by?: string | null
         }
@@ -67,10 +73,13 @@ export type Database = {
           created_by?: string | null
           id?: string
           is_cancelled?: boolean
+          location?: string
           meeting_at?: string
           minutes_url?: string | null
           name?: string
           notes?: string | null
+          notice_url?: string | null
+          report_url?: string | null
           updated_at?: string
           updated_by?: string | null
         }
