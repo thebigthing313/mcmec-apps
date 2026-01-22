@@ -30,6 +30,7 @@
 		"@radix-ui/react-toggle-group": "^1.1.11",
 		"@radix-ui/react-tooltip": "^1.2.8",
 		"@tanstack/react-form": "^1.27.7",
+		"@tanstack/react-table": "^8.21.3",
 		"@tiptap/core": "^2.10.5",
 		"@tiptap/extension-link": "^2.27.2",
 		"@tiptap/react": "^2.10.5",
