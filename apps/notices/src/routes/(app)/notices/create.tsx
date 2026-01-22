@@ -8,7 +8,7 @@ import { notices } from "@/src/lib/collections/notices";
 export const Route = createFileRoute("/(app)/notices/create")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Create New" };
+		return { crumb: "Create New Notice" };
 	},
 });
 
