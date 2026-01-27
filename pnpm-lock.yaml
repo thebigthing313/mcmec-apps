@@ -178,6 +178,9 @@ importers:
 
   apps/public:
     dependencies:
+      '@mcmec/assets':
+        specifier: workspace:*
+        version: link:../../packages/assets
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
@@ -257,6 +260,8 @@ importers:
       vite:
         specifier: ^7.3.0
         version: 7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)
+
+  packages/assets: {}
 
   packages/lib:
     dependencies:
