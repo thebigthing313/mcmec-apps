@@ -1,6 +1,7 @@
 {
 	"author": "Adrian Kabigting",
 	"dependencies": {
+		"@mcmec/assets": "workspace:*",
 		"@mcmec/lib": "workspace:*",
 		"@mcmec/supabase": "workspace:*",
 		"@mcmec/ui": "workspace:*",
@@ -37,11 +38,12 @@
 	"name": "public",
 	"packageManager": "pnpm@10.19.0",
 	"scripts": {
-		"build": "vite build",
+		"build": "pnpm sync-assets && vite build",
 		"check-types": "tsc --noEmit",
-		"dev": "vite dev",
+		"dev": "pnpm sync-assets && vite",
 		"lint": "biome check .",
-		"lint:fix": "biome check --write ."
+		"lint:fix": "biome check --write .",
+		"sync-assets": "mkdir -p public/shared && cp -R ../../packages/assets/images/* public/shared/"
 	},
 	"type": "module",
 	"version": "0.8.0"
