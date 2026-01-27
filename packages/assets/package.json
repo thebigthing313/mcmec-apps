@@ -1,0 +1,14 @@
+{
+	"author": "Adrian Kabigting",
+	"description": "MCMEC website assets",
+	"exports": {
+		"./images/*": "./images/*"
+	},
+	"keywords": [],
+	"license": "ISC",
+	"main": "index.js",
+	"name": "@mcmec/assets",
+	"packageManager": "pnpm@10.19.0",
+	"private": true,
+	"version": "0.1.0"
+}
