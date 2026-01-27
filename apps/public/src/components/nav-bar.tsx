@@ -39,7 +39,6 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-	{ linkProps: { to: "/" }, title: "Home" },
 	{
 		subItems: [
 			{
@@ -58,7 +57,7 @@ const menuItems: MenuItem[] = [
 				title: "Archived Notices",
 			},
 		],
-		title: "Notices",
+		title: "Public Notices",
 	},
 ];
 
@@ -73,47 +72,61 @@ export function Navbar() {
 
 function WebNavBar() {
 	return (
-		<div className="bg-primary px-16 py-2">
-			<NavigationMenu>
-				<NavigationMenuList>
-					{menuItems.map((item) =>
-						item.subItems ? (
-							<NavigationMenuItem key={item.title}>
-								<NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-								<NavigationMenuContent>
-									<ul className="grid w-50 gap-2">
-										{item.subItems.map((subItem) => (
-											<li key={subItem.title}>
-												<NavigationMenuLink asChild>
-													<Link to={subItem.linkProps.to}>
-														<div className="font-semibold">{subItem.title}</div>
-														{subItem.description && (
-															<div className="text-muted-foreground">
-																{subItem.description}
+		<div className="sticky top-0 z-50 flex h-30 flex-row items-center justify-start bg-primary py-2 drop-shadow-accent drop-shadow-xl">
+			<div className="flex w-50 flex-row justify-center rounded-r-full bg-background">
+				<Link to="/">
+					<img
+						alt="MCMEC Logo"
+						className="m-4 h-26"
+						src="/shared/logo512.png"
+					/>
+				</Link>
+			</div>
+
+			<div className="ml-8 flex flex-1 flex-row items-center justify-start gap-4">
+				<NavigationMenu>
+					<NavigationMenuList>
+						{menuItems.map((item) =>
+							item.subItems ? (
+								<NavigationMenuItem key={item.title}>
+									<NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
+									<NavigationMenuContent>
+										<ul className="grid w-50 gap-2">
+											{item.subItems.map((subItem) => (
+												<li key={subItem.title}>
+													<NavigationMenuLink asChild>
+														<Link to={subItem.linkProps.to}>
+															<div className="font-semibold">
+																{subItem.title}
 															</div>
-														)}
-													</Link>
-												</NavigationMenuLink>
-											</li>
-										))}
-									</ul>
-								</NavigationMenuContent>
-							</NavigationMenuItem>
-						) : (
-							<NavigationMenuItem key={item.title}>
-								<NavigationMenuLink
-									asChild
-									className={navigationMenuTriggerStyle()}
-								>
-									<Link to={item.linkProps?.to}>
-										<span>{item.title}</span>
-									</Link>
-								</NavigationMenuLink>
-							</NavigationMenuItem>
-						),
-					)}
-				</NavigationMenuList>
-			</NavigationMenu>
+															{subItem.description && (
+																<div className="text-muted-foreground">
+																	{subItem.description}
+																</div>
+															)}
+														</Link>
+													</NavigationMenuLink>
+												</li>
+											))}
+										</ul>
+									</NavigationMenuContent>
+								</NavigationMenuItem>
+							) : (
+								<NavigationMenuItem key={item.title}>
+									<NavigationMenuLink
+										asChild
+										className={navigationMenuTriggerStyle()}
+									>
+										<Link to={item.linkProps?.to}>
+											<span>{item.title}</span>
+										</Link>
+									</NavigationMenuLink>
+								</NavigationMenuItem>
+							),
+						)}
+					</NavigationMenuList>
+				</NavigationMenu>
+			</div>
 		</div>
 	);
 }

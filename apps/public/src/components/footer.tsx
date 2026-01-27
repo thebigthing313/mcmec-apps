@@ -1,4 +1,3 @@
-import { ASSET_URLS } from "@mcmec/lib/constants/assets";
 import { COMPANY_INFO } from "@mcmec/lib/constants/company";
 import { Link } from "@tanstack/react-router";
 import { parsePhoneNumberWithError } from "libphonenumber-js";
@@ -12,11 +11,15 @@ export function Footer() {
 		COMPANY_INFO.fax,
 	).formatNational();
 	return (
-		<footer className="w-full border-t bg-background p-4 font-semibold text-primary">
+		<footer className="w-full border-t bg-accent p-4 text-bg-foreground">
 			<div className="flex flex-row flex-wrap items-center justify-start gap-8 px-4">
-				<div>
-					<img alt="Logo" className="size-24" src={ASSET_URLS.logo512} />
-				</div>
+				<a
+					href="https://www.middlesexcountynj.gov/government/departments/department-of-public-safety-and-health/middlesex-county-mosquito-commission"
+					rel="noreferrer"
+					target="_blank"
+				>
+					<img alt="Logo" className="h-12" src="/shared/county-logo.png" />
+				</a>
 				<div className="flex flex-col gap-0 leading-tight">
 					<span className="font-extrabold uppercase tracking-wide">
 						{COMPANY_INFO.nameLine1}
