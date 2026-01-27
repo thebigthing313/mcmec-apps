@@ -3,7 +3,6 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Footer } from "../components/footer";
-import { Header } from "../components/header";
 import { Navbar } from "../components/nav-bar";
 
 export interface MyRouterContext {
@@ -12,11 +11,10 @@ export interface MyRouterContext {
 }
 
 const RootLayout = () => (
-	<div className="flex min-h-screen flex-col bg-background p-4">
-		<Header />
+	<div className="flex min-h-screen flex-col bg-background">
 		<Navbar />
 
-		<main className="max-w-7xl flex-1 p-4" id="main-content">
+		<main className="my-8 flex-1" id="main-content">
 			<Outlet />
 		</main>
 		<Footer />
