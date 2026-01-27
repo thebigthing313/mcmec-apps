@@ -11,7 +11,7 @@ export function Footer() {
 		COMPANY_INFO.fax,
 	).formatNational();
 	return (
-		<footer className="w-full border-t bg-accent p-4 font-semibold text-primary">
+		<footer className="w-full border-t bg-accent p-4 text-bg-foreground">
 			<div className="flex flex-row flex-wrap items-center justify-start gap-8 px-4">
 				<a
 					href="https://www.middlesexcountynj.gov/government/departments/department-of-public-safety-and-health/middlesex-county-mosquito-commission"
