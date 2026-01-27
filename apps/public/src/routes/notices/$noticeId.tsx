@@ -55,7 +55,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<>
+		<div className="mx-auto flex max-w-4xl flex-col gap-4">
 			<div className="flex flex-row items-center justify-between">
 				<ButtonGroup orientation="horizontal">
 					<Button asChild variant="link">
@@ -101,6 +101,6 @@ function RouteComponent() {
 					Last updated: {formatDateShort(updated_at)} {formatTime(updated_at)}
 				</p>
 			</div>
-		</>
+		</div>
 	);
 }

@@ -99,7 +99,7 @@ export function NoticeFeed({ notices, title }: NoticeFeedProps) {
 	};
 
 	return (
-		<div className="flex max-w-4xl flex-col gap-4">
+		<div className="mx-auto flex max-w-4xl flex-col gap-4">
 			<h3 className="w-full text-center font-bold text-2xl">{title}</h3>
 
 			{/* Filters */}
