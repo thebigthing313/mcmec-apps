@@ -20,12 +20,12 @@ import {
 	type ColumnDef,
 	flexRender,
 	getCoreRowModel,
-	getPaginationRowModel,
 	getSortedRowModel,
 	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import * as React from "react";
 import { useState } from "react";
 
 export type MeetingTableRowType = {
@@ -53,11 +53,27 @@ export function MeetingsTable({
 }: MeetingsTableProps) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{
-			desc: true,
+			desc: false,
 			id: "meetingAt",
 		},
 		{ desc: false, id: "name" },
 	]);
+
+	const years = React.useMemo(() => {
+		const yearSet = new Set(
+			data.map((meeting) => new Date(meeting.meetingAt).getFullYear()),
+		);
+		return Array.from(yearSet).sort((a, b) => b - a);
+	}, [data]);
+
+	const currentYear = new Date().getFullYear();
+	const [selectedYear, setSelectedYear] = React.useState<number>(currentYear);
+
+	const filteredData = React.useMemo(() => {
+		return data.filter(
+			(meeting) => new Date(meeting.meetingAt).getFullYear() === selectedYear,
+		);
+	}, [data, selectedYear]);
 
 	const columns: ColumnDef<MeetingTableRowType>[] = [
 		{
@@ -212,15 +228,9 @@ export function MeetingsTable({
 
 	const table = useReactTable({
 		columns,
-		data,
+		data: filteredData,
 		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
-		initialState: {
-			pagination: {
-				pageSize: 20,
-			},
-		},
 		onSortingChange: setSorting,
 		state: {
 			sorting,
@@ -229,6 +239,31 @@ export function MeetingsTable({
 
 	return (
 		<div className="space-y-4">
+			<div className="flex items-center justify-between px-2">
+				<div className="flex items-center space-x-2">
+					<p className="text-muted-foreground text-sm">Year</p>
+					<Select
+						onValueChange={(value) => setSelectedYear(Number(value))}
+						value={`${selectedYear}`}
+					>
+						<SelectTrigger className="h-8 w-20">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent side="top">
+							{years.map((year) => (
+								<SelectItem key={year} value={`${year}`}>
+									{year}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+
+				<div className="font-medium text-sm">
+					{filteredData.length} meeting{filteredData.length !== 1 ? "s" : ""} in{" "}
+					{selectedYear}
+				</div>
+			</div>
 			<div className="rounded-md border">
 				<Table>
 					<TableHeader>
@@ -278,54 +313,6 @@ export function MeetingsTable({
 						)}
 					</TableBody>
 				</Table>
-			</div>
-
-			<div className="flex items-center justify-between px-2">
-				<div className="flex items-center space-x-2">
-					<p className="text-muted-foreground text-sm">Rows per page</p>
-					<Select
-						onValueChange={(value) => {
-							table.setPageSize(Number(value));
-						}}
-						value={`${table.getState().pagination.pageSize}`}
-					>
-						<SelectTrigger className="h-8 w-17.5">
-							<SelectValue placeholder={table.getState().pagination.pageSize} />
-						</SelectTrigger>
-						<SelectContent side="top">
-							{[10, 20, 30, 40, 50].map((pageSize) => (
-								<SelectItem key={pageSize} value={`${pageSize}`}>
-									{pageSize}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-
-				<div className="flex items-center space-x-6 lg:space-x-8">
-					<div className="flex w-25 items-center justify-center font-medium text-sm">
-						Page {table.getState().pagination.pageIndex + 1} of{" "}
-						{table.getPageCount()}
-					</div>
-					<div className="flex items-center space-x-2">
-						<Button
-							disabled={!table.getCanPreviousPage()}
-							onClick={() => table.previousPage()}
-							size="sm"
-							variant="outline"
-						>
-							Previous
-						</Button>
-						<Button
-							disabled={!table.getCanNextPage()}
-							onClick={() => table.nextPage()}
-							size="sm"
-							variant="outline"
-						>
-							Next
-						</Button>
-					</div>
-				</div>
 			</div>
 		</div>
 	);
