@@ -1,8 +1,8 @@
-# public
+# @mcmec/assets
 
-## 0.9.0
+## 1.0.0
 
-### Minor Changes
+### Major Changes
 
 - ad6a006: UI & Design Updates
   New Homepage: Replaced the splash page with a new, modern Hero section.
@@ -14,6 +14,8 @@
   Performance & System
   Cross-Platform Reliability: Updated internal build scripts to ensure consistent performance across different operating systems.
   Asset Management: Improved the way shared assets and dependencies are synced during development and deployment.
+
+### Minor Changes
 
 - 9dc254d: 🌐 Public App (apps/public)
   New "About" Content: Added comprehensive informational pages for Mission, Leadership & Staff, How We Control Mosquitoes, and Mosquito Control Products.
@@ -33,70 +35,3 @@
   Database Schema: Designed and deployed the insecticides table with granular attributes and secure Row Level Security (RLS) policies.
   Migration: Streamlined the data structure by removing redundant columns to focus on specific product data.
   Type Safety: Generated updated database types and fetch functions to ensure full end-to-end type safety.
-
-- 519868d: Public Meetings Dashboard: A new dedicated section for viewing and managing meeting data, accessible via the main navigation.
-  Meeting Management Tools: Introduced streamlined forms and workflows to create, edit, and organize meeting details.
-  Mobile-Optimized Views: Added a responsive interface including a new mobile-friendly list view for meetings on the go.
-  Improved Date/Time Formatting: Meetings now display in localized formats with proper timezone support.
-  Refined Navigation: Updated breadcrumbs and menus for more intuitive browsing.
-  Stability Fixes: Improved error handling for missing records and resolved a display issue within text input fields.
-
-### Patch Changes
-
-- Updated dependencies [ad6a006]
-- Updated dependencies [9dc254d]
-- Updated dependencies [519868d]
-  - @mcmec/assets@1.0.0
-  - @mcmec/ui@1.3.0
-  - @mcmec/supabase@1.1.0
-  - @mcmec/lib@0.6.2
-
-## 0.8.0
-
-### Minor Changes
-
-- 1bc6947: Added archived notices feature. Notice feed now has pagination and filtering components.
-
-### Patch Changes
-
-- 2cb183e: Fixed scrollbar not resetting to top of content div when navigating.
-- Updated dependencies [1bc6947]
-  - @mcmec/ui@1.2.1
-
-## 0.7.0
-
-### Minor Changes
-
-- 456bdae: Turned public notice card into a preview card with callbacks to navigate to notice page and share URL.
-  Added a new route in public to display a notice.
-  Modified design of notice route in notice manager.
-
-### Patch Changes
-
-- c6cc549: Fixed minor styling issues.
-- Updated dependencies [456bdae]
-  - @mcmec/ui@1.2.0
-
-## 0.6.0
-
-### Minor Changes
-
-- d00a319: Applied Middlesex County styling guidelines and web/mobile layouts for the public website.
-- fb040ad: Created footer for public website.
-
-### Patch Changes
-
-- Updated dependencies [d00a319]
-- Updated dependencies [fb040ad]
-  - @mcmec/ui@1.1.0
-  - @mcmec/lib@0.6.1
-  - @mcmec/supabase@1.0.2
-
-## 0.5.1
-
-### Patch Changes
-
-- Updated dependencies [3f9666d]
-  - @mcmec/lib@0.6.0
-  - @mcmec/ui@1.0.1
-  - @mcmec/supabase@1.0.1
