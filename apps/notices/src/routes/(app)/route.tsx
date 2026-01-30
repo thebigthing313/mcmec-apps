@@ -31,8 +31,8 @@ export const Route = createFileRoute("/(app)")({
 		const session = await checkSession({ client: context.supabase });
 		if (!session) {
 			throw redirect({
-				to: "/login",
 				search: { redirect: location.href },
+				to: "/login",
 			});
 		}
 
@@ -59,8 +59,8 @@ function LayoutComponent() {
 		isMatch(match, "loaderData.crumb"),
 	);
 	const breadcrumbParts = matchesWithCrumbs.map((match) => ({
-		label: match.loaderData?.crumb as string,
 		href: match.pathname as string,
+		label: match.loaderData?.crumb as string,
 	}));
 	const handleLogout = async () => {
 		await signOut({ client: supabase });
@@ -78,14 +78,14 @@ function LayoutComponent() {
 		<TooltipProvider>
 			<Layout
 				value={{
-					apps: AVAILABLE_APPS,
 					activeApp: "Public Notices",
+					apps: AVAILABLE_APPS,
+					onLogout: handleLogout,
 					user: {
+						avatar: profile?.avatar_url,
 						name: profile?.display_name ?? "[missing name]",
 						title: profile?.display_title ?? "[missing title]",
-						avatar: profile?.avatar_url,
 					},
-					onLogout: handleLogout,
 				}}
 			>
 				<Layout.Sidebar>
@@ -102,9 +102,9 @@ function LayoutComponent() {
 				<Layout.Content
 					breadcrumb={
 						<Layout.Breadcrumb
+							getLinkProps={(href) => ({ to: href })}
 							items={breadcrumbParts}
 							LinkComponent={Link}
-							getLinkProps={(href) => ({ to: href })}
 						/>
 					}
 				>
