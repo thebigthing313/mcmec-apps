@@ -34,6 +34,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      insecticides: {
+        Row: {
+          active_ingredient: string
+          active_ingredient_url: string
+          created_at: string
+          created_by: string | null
+          id: string
+          label_url: string
+          msds_url: string
+          trade_name: string
+          type_name: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          active_ingredient: string
+          active_ingredient_url: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          label_url: string
+          msds_url: string
+          trade_name: string
+          type_name: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          active_ingredient?: string
+          active_ingredient_url?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          label_url?: string
+          msds_url?: string
+          trade_name?: string
+          type_name?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       meetings: {
         Row: {
           agenda_url: string | null
