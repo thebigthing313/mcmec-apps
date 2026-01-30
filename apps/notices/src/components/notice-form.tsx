@@ -49,7 +49,7 @@ export function NoticeForm({
 			<form.FormWrapper className="max-w-2xl" formLabel={formLabel}>
 				<form.AppField
 					name="title"
-					validators={{ onBlur: NonEmptyStringSchema }}
+					validators={{ onBlur: NonEmptyStringSchema(5) }}
 				>
 					{(field) => <field.TextField label="Title" />}
 				</form.AppField>
