@@ -161,7 +161,7 @@ function MobileNavBar() {
 	const [open, setOpen] = useState(false);
 
 	return (
-		<div className="bg-primary px-2 py-2">
+		<div className="flex h-15 flex-row items-center justify-between bg-primary py-2 pl-2">
 			<Sheet aria-describedby="Mobile Menu" onOpenChange={setOpen} open={open}>
 				<SheetTrigger>
 					<div className="flex flex-row items-center gap-2 text-primary-foreground">
@@ -227,6 +227,15 @@ function MobileNavBar() {
 					</div>
 				</SheetContent>
 			</Sheet>
+			<div className="flex w-24 flex-row justify-center rounded-l-full bg-background">
+				<Link to="/">
+					<img
+						alt="MCMEC Logo"
+						className="m-4 h-15"
+						src="/shared/logo512.png"
+					/>
+				</Link>
+			</div>
 		</div>
 	);
 }

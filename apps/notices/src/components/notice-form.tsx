@@ -1,4 +1,9 @@
 import {
+	NonEmptyDateSchema,
+	NonEmptyStringSchema,
+	NonEmptyUUID,
+} from "@mcmec/lib/constants/validators";
+import {
 	NoticesRowSchema,
 	type NoticesRowType,
 } from "@mcmec/supabase/db/notices";
@@ -42,10 +47,18 @@ export function NoticeForm({
 	return (
 		<form.AppForm>
 			<form.FormWrapper className="max-w-2xl" formLabel={formLabel}>
-				<form.AppField name="title">
+				<form.AppField
+					name="title"
+					validators={{ onBlur: NonEmptyStringSchema(5) }}
+				>
 					{(field) => <field.TextField label="Title" />}
 				</form.AppField>
-				<form.AppField name="notice_type_id">
+				<form.AppField
+					name="notice_type_id"
+					validators={{
+						onChange: NonEmptyUUID,
+					}}
+				>
 					{(field) => (
 						<field.ComboboxField
 							label="Notice Type"
@@ -54,7 +67,10 @@ export function NoticeForm({
 						/>
 					)}
 				</form.AppField>
-				<form.AppField name="notice_date">
+				<form.AppField
+					name="notice_date"
+					validators={{ onBlur: NonEmptyDateSchema }}
+				>
 					{(field) => (
 						<field.DateTimeField
 							description="This should be the effective date of the notice."

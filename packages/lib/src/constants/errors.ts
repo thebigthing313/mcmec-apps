@@ -31,9 +31,13 @@ export const ErrorMessages = {
 		FAILED_TO_COPY: "Failed to copy to clipboard. Please try again.",
 	},
 	VALIDATION: {
+		FIELD_TOO_SHORT: (minLength: number) =>
+			`This field must be at least ${minLength} characters long.`,
 		INVALID_EMAIL: "Please enter a valid email address.",
+		INVALID_URL: "Please enter a valid URL.",
 		INVALID_UUID: "The provided ID is not valid.",
 		PASSWORD_TOO_SHORT: "Password must be at least 8 characters long.",
+		REQUIRED: "This field is required.",
 	},
 } as const;
 

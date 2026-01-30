@@ -20,7 +20,7 @@ function RouteComponent() {
 					Agency (EPA), and the New Jersey Department of Environmental
 					Protection (NJDEP).
 				</p>
-				<h3>Surveillance</h3>
+				<h2>Surveillance</h2>
 				<p>
 					All mosquito control actions start with surveillance. The Commission
 					conducts surveillance for larval mosquitoes, adult mosquitoes, and
@@ -39,7 +39,7 @@ function RouteComponent() {
 					</a>
 					.
 				</p>
-				<h3>Public Education & Outreach</h3>
+				<h2>Public Education & Outreach</h2>
 				<p>
 					Public education is an essential part of any mosquito control program
 					encourages the public to practice source reduction around their homes
@@ -47,8 +47,8 @@ function RouteComponent() {
 					traveling. The Commission attends large public events as well as
 					provides classroom lectures to schools and other groups.
 				</p>
-				<h3>Source Reduction</h3>
-				<h4>Water Management</h4>
+				<h2>Source Reduction</h2>
+				<h3>Water Management</h3>
 				<p>
 					In many instances, stormwater facilities such as ditches may get
 					clogged and create a mosquito habitat. The Commission’s Water
@@ -73,7 +73,7 @@ function RouteComponent() {
 					are carried out with the cooperation of other county departments and
 					local municipalities.
 				</p>
-				<h4>Site Plan Reviews</h4>
+				<h3>Site Plan Reviews</h3>
 				<p>
 					The Commission reviews applications and plans submitted to the
 					Middlesex County Planning Board Development Review Division for any
@@ -86,7 +86,7 @@ function RouteComponent() {
 					review of site plans, the Commission forwards a report to the County
 					Planning Board with recommendations for revisions if necessary.
 				</p>
-				<h4>Tire Recycling</h4>
+				<h3>Tire Recycling</h3>
 				<p>
 					Improperly stored or illegally disposed tires can collect water and
 					become habitats for large populations of mosquito that can transmit
@@ -105,7 +105,7 @@ function RouteComponent() {
 					</a>{" "}
 					for information on how you can recycle your personal scrap tires.
 				</p>
-				<h3>Biological Control</h3>
+				<h2>Biological Control</h2>
 				<p>
 					The Commission also stocks mosquito-eating fish in unkempt swimming
 					pools, small ponds and other standing water bodies that may breed
@@ -122,8 +122,8 @@ function RouteComponent() {
 						Request for fish stocking.
 					</a>
 				</p>
-				<h3>Insecticide Control</h3>
-				<h4>Larval Control</h4>
+				<h2>Insecticide Control</h2>
+				<h3>Larval Control</h3>
 				<p>
 					Over 14,000 (potential) larval habitat sites are inspected and
 					serviced on a regular basis by the Mosquito Commission. The
@@ -140,7 +140,7 @@ function RouteComponent() {
 						treated by aircraft.
 					</a>
 				</p>
-				<h4>Adult Mosquito Control</h4>
+				<h3>Adult Mosquito Control</h3>
 				<p>
 					The Commission monitors nuisance and disease-causing mosquitoes
 					throughout the mosquito season using specialized traps. Should an

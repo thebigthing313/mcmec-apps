@@ -23,7 +23,7 @@ import {
 	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 
 export type InsecticideTableRowType = {
@@ -56,6 +56,7 @@ export function InsecticidesTable({
 		{
 			accessorKey: "type_name",
 			header: ({ column }) => {
+				const sortState = column.getIsSorted();
 				return (
 					<Button
 						className="-ml-4"
@@ -63,7 +64,13 @@ export function InsecticidesTable({
 						variant="ghost"
 					>
 						Type
-						<ArrowUpDown className="ml-2 h-4 w-4" />
+						{sortState === "asc" ? (
+							<ArrowUp className="ml-2 h-4 w-4" />
+						) : sortState === "desc" ? (
+							<ArrowDown className="ml-2 h-4 w-4" />
+						) : (
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						)}
 					</Button>
 				);
 			},
@@ -86,6 +93,7 @@ export function InsecticidesTable({
 				return tradeName;
 			},
 			header: ({ column }) => {
+				const sortState = column.getIsSorted();
 				return (
 					<Button
 						className="-ml-4"
@@ -93,7 +101,13 @@ export function InsecticidesTable({
 						variant="ghost"
 					>
 						Trade Name
-						<ArrowUpDown className="ml-2 h-4 w-4" />
+						{sortState === "asc" ? (
+							<ArrowUp className="ml-2 h-4 w-4" />
+						) : sortState === "desc" ? (
+							<ArrowDown className="ml-2 h-4 w-4" />
+						) : (
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						)}
 					</Button>
 				);
 			},
@@ -115,6 +129,7 @@ export function InsecticidesTable({
 				);
 			},
 			header: ({ column }) => {
+				const sortState = column.getIsSorted();
 				return (
 					<Button
 						className="-ml-4"
@@ -122,7 +137,13 @@ export function InsecticidesTable({
 						variant="ghost"
 					>
 						Active Ingredient
-						<ArrowUpDown className="ml-2 h-4 w-4" />
+						{sortState === "asc" ? (
+							<ArrowUp className="ml-2 h-4 w-4" />
+						) : sortState === "desc" ? (
+							<ArrowDown className="ml-2 h-4 w-4" />
+						) : (
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						)}
 					</Button>
 				);
 			},

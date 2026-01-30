@@ -1,4 +1,8 @@
 import {
+	NonEmptyStringSchema,
+	ValidURLSchema,
+} from "@mcmec/lib/constants/validators";
+import {
 	InsecticidesRowSchema,
 	type InsecticidesRowType,
 } from "@mcmec/supabase/db/insecticides";
@@ -32,24 +36,36 @@ export function InsecticidesForm({
 				formDescription="This insecticides list are only used in the website's page dedicated to mosquito control products that the Commission uses and are not linked to actual activities."
 				formLabel={formLabel}
 			>
-				<form.AppField name="trade_name">
+				<form.AppField
+					name="trade_name"
+					validators={{ onBlur: NonEmptyStringSchema(5) }}
+				>
 					{(field) => <field.TextField label="Trade Name" />}
 				</form.AppField>
-				<form.AppField name="type_name">
+				<form.AppField
+					name="type_name"
+					validators={{ onBlur: NonEmptyStringSchema(5) }}
+				>
 					{(field) => <field.TextField label="Type Name" />}
 				</form.AppField>
-				<form.AppField name="active_ingredient">
+				<form.AppField
+					name="active_ingredient"
+					validators={{ onBlur: NonEmptyStringSchema() }}
+				>
 					{(field) => <field.TextField label="Active Ingredient" />}
 				</form.AppField>
-				<form.AppField name="active_ingredient_url">
+				<form.AppField
+					name="active_ingredient_url"
+					validators={{ onBlur: ValidURLSchema }}
+				>
 					{(field) => (
 						<field.TextField label="Active Ingredient URL" showPaste={true} />
 					)}
 				</form.AppField>
-				<form.AppField name="label_url">
+				<form.AppField name="label_url" validators={{ onBlur: ValidURLSchema }}>
 					{(field) => <field.TextField label="Label URL" showPaste={true} />}
 				</form.AppField>
-				<form.AppField name="msds_url">
+				<form.AppField name="msds_url" validators={{ onBlur: ValidURLSchema }}>
 					{(field) => <field.TextField label="MSDS URL" showPaste={true} />}
 				</form.AppField>
 

@@ -33,6 +33,19 @@ function RouteComponent() {
 	);
 
 	return (
-		<NoticeFeed notices={noticesToShow || []} title="Current Legal Notices" />
+		<div className="mx-auto w-full max-w-7xl p-4">
+			<article className="prose lg:prose-xl mb-8 max-w-none">
+				<h1>Current Legal Notices</h1>
+				<p>
+					This website and the public notices contained herein are maintained in
+					accordance with P.L. 2025, c.72. The Middlesex County Mosquito
+					Extermination Commission has designated this digital platform as its
+					official primary method for the publication of legal notices,
+					replacing or supplementing traditional newspaper advertisements as
+					permitted by New Jersey law.
+				</p>
+			</article>
+			<NoticeFeed notices={noticesToShow || []} />
+		</div>
 	);
 }
