@@ -1,6 +1,5 @@
 import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronDown } from "lucide-react";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
@@ -55,11 +54,6 @@ function RouteComponent() {
 							</p>
 						</article>
 					</div>
-				</div>
-
-				{/* Scroll indicator with bounce animation */}
-				<div className="absolute bottom-4 left-1/2 -translate-x-1/2 animate-bounce">
-					<ChevronDown className="h-8 w-8 text-white/70" />
 				</div>
 			</div>
 		</div>
