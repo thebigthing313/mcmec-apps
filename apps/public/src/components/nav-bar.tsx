@@ -39,6 +39,7 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
+	{ linkProps: { to: "/" }, title: "Home" },
 	{
 		subItems: [
 			{ linkProps: { to: "/mission" }, title: "Mission Statement" },
@@ -106,7 +107,7 @@ function WebNavBar() {
 												<li key={subItem.title}>
 													<NavigationMenuLink asChild>
 														<Link to={subItem.linkProps.to}>
-															<div className="font-semibold">
+															<div className="font-semibold text-xl">
 																{subItem.title}
 															</div>
 															{subItem.description && (
