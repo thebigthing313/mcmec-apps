@@ -42,10 +42,25 @@ const menuItems: MenuItem[] = [
 	{ linkProps: { to: "/" }, title: "Home" },
 	{
 		subItems: [
-			{ linkProps: { to: "/mission" }, title: "Mission Statement" },
 			{
+				description: "Our purpose and goals.",
+				linkProps: { to: "/mission" },
+				title: "Mission Statement",
+			},
+			{
+				description: "Meet our board of commissioners.",
 				linkProps: { to: "/leadership" },
 				title: "Leadership",
+			},
+			{
+				description: "Overview of our mosquito control methods.",
+				linkProps: { to: "/how-we-control-mosquitoes" },
+				title: "How We Control Mosquitoes",
+			},
+			{
+				description: "Insecticides and other products we commonly use.",
+				linkProps: { to: "/mosquito-control-products" },
+				title: "Mosquito Control Products",
 			},
 		],
 		title: "About",
@@ -102,7 +117,7 @@ function WebNavBar() {
 								<NavigationMenuItem key={item.title}>
 									<NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
 									<NavigationMenuContent>
-										<ul className="grid w-50 gap-2">
+										<ul className="grid w-100 gap-2">
 											{item.subItems.map((subItem) => (
 												<li key={subItem.title}>
 													<NavigationMenuLink asChild>
