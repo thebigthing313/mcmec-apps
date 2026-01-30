@@ -31,10 +31,9 @@ interface NoticeData {
 
 interface NoticeFeedProps {
 	notices: NoticeData[];
-	title: string;
 }
 
-export function NoticeFeed({ notices, title }: NoticeFeedProps) {
+export function NoticeFeed({ notices }: NoticeFeedProps) {
 	const navigate = useNavigate();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [selectedType, setSelectedType] = useState<string>("");
@@ -100,8 +99,6 @@ export function NoticeFeed({ notices, title }: NoticeFeedProps) {
 
 	return (
 		<div className="mx-auto flex max-w-4xl flex-col gap-4">
-			<h3 className="w-full text-center font-bold text-2xl">{title}</h3>
-
 			{/* Filters */}
 			<div className="flex flex-col gap-4 rounded-lg bg-gray-50 p-4">
 				<div className="flex flex-wrap items-end gap-4">
@@ -152,47 +149,7 @@ export function NoticeFeed({ notices, title }: NoticeFeedProps) {
 			</div>
 
 			{/* Pagination */}
-			{totalPages > 1 && (
-				<Pagination>
-					<PaginationContent>
-						<PaginationItem>
-							<PaginationPrevious
-								className={
-									currentPage === 1
-										? "pointer-events-none opacity-50"
-										: "cursor-pointer"
-								}
-								onClick={currentPage > 1 ? handlePreviousPage : undefined}
-							/>
-						</PaginationItem>
-
-						{Array.from({ length: totalPages }, (_, i) => i + 1).map(
-							(pageNum) => (
-								<PaginationItem key={pageNum}>
-									<PaginationLink
-										className="cursor-pointer"
-										isActive={pageNum === currentPage}
-										onClick={() => setCurrentPage(pageNum)}
-									>
-										{pageNum}
-									</PaginationLink>
-								</PaginationItem>
-							),
-						)}
-
-						<PaginationItem>
-							<PaginationNext
-								className={
-									currentPage === totalPages
-										? "pointer-events-none opacity-50"
-										: "cursor-pointer"
-								}
-								onClick={currentPage < totalPages ? handleNextPage : undefined}
-							/>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
-			)}
+			{totalPages > 1 && renderPagination()}
 
 			{/* Notices */}
 			<div className="flex flex-col gap-2">
@@ -219,6 +176,9 @@ export function NoticeFeed({ notices, title }: NoticeFeedProps) {
 				})}
 			</div>
 
+			{/* Pagination */}
+			{totalPages > 1 && renderPagination()}
+
 			{/* No results message */}
 			{filteredNotices.length === 0 && (
 				<div className="py-8 text-center text-muted-foreground">
@@ -227,4 +187,48 @@ export function NoticeFeed({ notices, title }: NoticeFeedProps) {
 			)}
 		</div>
 	);
+
+	function renderPagination() {
+		return (
+			<Pagination>
+				<PaginationContent>
+					<PaginationItem>
+						<PaginationPrevious
+							className={
+								currentPage === 1
+									? "pointer-events-none opacity-50"
+									: "cursor-pointer"
+							}
+							onClick={currentPage > 1 ? handlePreviousPage : undefined}
+						/>
+					</PaginationItem>
+
+					{Array.from({ length: totalPages }, (_, i) => i + 1).map(
+						(pageNum) => (
+							<PaginationItem key={pageNum}>
+								<PaginationLink
+									className="cursor-pointer"
+									isActive={pageNum === currentPage}
+									onClick={() => setCurrentPage(pageNum)}
+								>
+									{pageNum}
+								</PaginationLink>
+							</PaginationItem>
+						),
+					)}
+
+					<PaginationItem>
+						<PaginationNext
+							className={
+								currentPage === totalPages
+									? "pointer-events-none opacity-50"
+									: "cursor-pointer"
+							}
+							onClick={currentPage < totalPages ? handleNextPage : undefined}
+						/>
+					</PaginationItem>
+				</PaginationContent>
+			</Pagination>
+		);
+	}
 }
