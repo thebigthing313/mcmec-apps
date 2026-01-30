@@ -14,6 +14,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticesIndexRouteImport } from './routes/notices/index'
 import { Route as NoticesArchiveRouteImport } from './routes/notices/archive'
 import { Route as NoticesNoticeIdRouteImport } from './routes/notices/$noticeId'
+import { Route as aboutMissionRouteImport } from './routes/(about)/mission'
+import { Route as aboutLeadershipAndStaffRouteImport } from './routes/(about)/leadership-and-staff'
 
 const MeetingsRoute = MeetingsRouteImport.update({
   id: '/meetings',
@@ -40,10 +42,22 @@ const NoticesNoticeIdRoute = NoticesNoticeIdRouteImport.update({
   path: '/notices/$noticeId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const aboutMissionRoute = aboutMissionRouteImport.update({
+  id: '/(about)/mission',
+  path: '/mission',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const aboutLeadershipAndStaffRoute = aboutLeadershipAndStaffRouteImport.update({
+  id: '/(about)/leadership-and-staff',
+  path: '/leadership-and-staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/meetings': typeof MeetingsRoute
+  '/leadership-and-staff': typeof aboutLeadershipAndStaffRoute
+  '/mission': typeof aboutMissionRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices': typeof NoticesIndexRoute
@@ -51,6 +65,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/meetings': typeof MeetingsRoute
+  '/leadership-and-staff': typeof aboutLeadershipAndStaffRoute
+  '/mission': typeof aboutMissionRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices': typeof NoticesIndexRoute
@@ -59,6 +75,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/meetings': typeof MeetingsRoute
+  '/(about)/leadership-and-staff': typeof aboutLeadershipAndStaffRoute
+  '/(about)/mission': typeof aboutMissionRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/': typeof NoticesIndexRoute
@@ -68,15 +86,26 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/meetings'
+    | '/leadership-and-staff'
+    | '/mission'
     | '/notices/$noticeId'
     | '/notices/archive'
     | '/notices'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/meetings' | '/notices/$noticeId' | '/notices/archive' | '/notices'
+  to:
+    | '/'
+    | '/meetings'
+    | '/leadership-and-staff'
+    | '/mission'
+    | '/notices/$noticeId'
+    | '/notices/archive'
+    | '/notices'
   id:
     | '__root__'
     | '/'
     | '/meetings'
+    | '/(about)/leadership-and-staff'
+    | '/(about)/mission'
     | '/notices/$noticeId'
     | '/notices/archive'
     | '/notices/'
@@ -85,6 +114,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MeetingsRoute: typeof MeetingsRoute
+  aboutLeadershipAndStaffRoute: typeof aboutLeadershipAndStaffRoute
+  aboutMissionRoute: typeof aboutMissionRoute
   NoticesNoticeIdRoute: typeof NoticesNoticeIdRoute
   NoticesArchiveRoute: typeof NoticesArchiveRoute
   NoticesIndexRoute: typeof NoticesIndexRoute
@@ -127,12 +158,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticesNoticeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(about)/mission': {
+      id: '/(about)/mission'
+      path: '/mission'
+      fullPath: '/mission'
+      preLoaderRoute: typeof aboutMissionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(about)/leadership-and-staff': {
+      id: '/(about)/leadership-and-staff'
+      path: '/leadership-and-staff'
+      fullPath: '/leadership-and-staff'
+      preLoaderRoute: typeof aboutLeadershipAndStaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MeetingsRoute: MeetingsRoute,
+  aboutLeadershipAndStaffRoute: aboutLeadershipAndStaffRoute,
+  aboutMissionRoute: aboutMissionRoute,
   NoticesNoticeIdRoute: NoticesNoticeIdRoute,
   NoticesArchiveRoute: NoticesArchiveRoute,
   NoticesIndexRoute: NoticesIndexRoute,
