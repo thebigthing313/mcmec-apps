@@ -16,6 +16,7 @@ function RouteComponent() {
 	const tableData: InsecticideTableRowType[] = insecticidesData.map(
 		(insecticide) => ({
 			active_ingredient: insecticide.active_ingredient,
+			active_ingredient_url: insecticide.active_ingredient_url,
 			id: insecticide.id,
 			label_url: insecticide.label_url,
 			msds_url: insecticide.msds_url,

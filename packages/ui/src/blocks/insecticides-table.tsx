@@ -31,6 +31,7 @@ export type InsecticideTableRowType = {
 	type_name: string;
 	trade_name: string;
 	active_ingredient: string;
+	active_ingredient_url: string;
 	label_url: string;
 	msds_url: string;
 };
@@ -69,6 +70,21 @@ export function InsecticidesTable({
 		},
 		{
 			accessorKey: "trade_name",
+			cell: ({ row }) => {
+				const tradeName = row.getValue("trade_name") as string;
+				if (linkToEdit && onRowClick) {
+					return (
+						<button
+							className="text-left text-primary hover:underline"
+							onClick={() => onRowClick(row.original.id)}
+							type="button"
+						>
+							{tradeName}
+						</button>
+					);
+				}
+				return tradeName;
+			},
 			header: ({ column }) => {
 				return (
 					<Button
@@ -86,18 +102,17 @@ export function InsecticidesTable({
 			accessorKey: "active_ingredient",
 			cell: ({ row }) => {
 				const activeIngredient = row.getValue("active_ingredient") as string;
-				if (linkToEdit && onRowClick) {
-					return (
-						<button
-							className="text-left text-primary hover:underline"
-							onClick={() => onRowClick(row.original.id)}
-							type="button"
-						>
-							{activeIngredient}
-						</button>
-					);
-				}
-				return activeIngredient;
+				const { active_ingredient_url } = row.original;
+				return (
+					<a
+						className="text-primary hover:underline"
+						href={active_ingredient_url}
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						{activeIngredient}
+					</a>
+				);
 			},
 			header: ({ column }) => {
 				return (
