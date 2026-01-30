@@ -147,7 +147,7 @@ function MobileNavBar() {
 
 	return (
 		<div className="bg-primary px-2 py-2">
-			<Sheet onOpenChange={setOpen} open={open}>
+			<Sheet aria-describedby="Mobile Menu" onOpenChange={setOpen} open={open}>
 				<SheetTrigger>
 					<div className="flex flex-row items-center gap-2 text-primary-foreground">
 						<Menu />
