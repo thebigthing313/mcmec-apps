@@ -15,12 +15,16 @@ import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as appCategoriesRouteImport } from './routes/(app)/categories'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
 import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
+import { Route as appInsecticidesRouteRouteImport } from './routes/(app)/insecticides/route'
 import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
 import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/index'
+import { Route as appInsecticidesIndexRouteImport } from './routes/(app)/insecticides/index'
 import { Route as appNoticesCreateRouteImport } from './routes/(app)/notices/create'
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
 import { Route as appMeetingsCreateRouteImport } from './routes/(app)/meetings/create'
 import { Route as appMeetingsMeetingIdRouteImport } from './routes/(app)/meetings/$meetingId'
+import { Route as appInsecticidesCreateRouteImport } from './routes/(app)/insecticides/create'
+import { Route as appInsecticidesInsecticideIdRouteImport } from './routes/(app)/insecticides/$insecticideId'
 import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
 
 const LoginRoute = LoginRouteImport.update({
@@ -52,6 +56,11 @@ const appMeetingsRouteRoute = appMeetingsRouteRouteImport.update({
   path: '/meetings',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appInsecticidesRouteRoute = appInsecticidesRouteRouteImport.update({
+  id: '/insecticides',
+  path: '/insecticides',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appNoticesIndexRoute = appNoticesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -61,6 +70,11 @@ const appMeetingsIndexRoute = appMeetingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => appMeetingsRouteRoute,
+} as any)
+const appInsecticidesIndexRoute = appInsecticidesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appInsecticidesRouteRoute,
 } as any)
 const appNoticesCreateRoute = appNoticesCreateRouteImport.update({
   id: '/create',
@@ -82,6 +96,17 @@ const appMeetingsMeetingIdRoute = appMeetingsMeetingIdRouteImport.update({
   path: '/$meetingId',
   getParentRoute: () => appMeetingsRouteRoute,
 } as any)
+const appInsecticidesCreateRoute = appInsecticidesCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => appInsecticidesRouteRoute,
+} as any)
+const appInsecticidesInsecticideIdRoute =
+  appInsecticidesInsecticideIdRouteImport.update({
+    id: '/$insecticideId',
+    path: '/$insecticideId',
+    getParentRoute: () => appInsecticidesRouteRoute,
+  } as any)
 const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
   id: '/$noticeId_/edit',
   path: '/$noticeId/edit',
@@ -90,14 +115,18 @@ const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/insecticides': typeof appInsecticidesRouteRouteWithChildren
   '/meetings': typeof appMeetingsRouteRouteWithChildren
   '/notices': typeof appNoticesRouteRouteWithChildren
   '/categories': typeof appCategoriesRoute
   '/': typeof appIndexRoute
+  '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
+  '/insecticides/create': typeof appInsecticidesCreateRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
+  '/insecticides/': typeof appInsecticidesIndexRoute
   '/meetings/': typeof appMeetingsIndexRoute
   '/notices/': typeof appNoticesIndexRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
@@ -106,10 +135,13 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/categories': typeof appCategoriesRoute
   '/': typeof appIndexRoute
+  '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
+  '/insecticides/create': typeof appInsecticidesCreateRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
+  '/insecticides': typeof appInsecticidesIndexRoute
   '/meetings': typeof appMeetingsIndexRoute
   '/notices': typeof appNoticesIndexRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
@@ -118,14 +150,18 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/(app)/insecticides': typeof appInsecticidesRouteRouteWithChildren
   '/(app)/meetings': typeof appMeetingsRouteRouteWithChildren
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/(app)/categories': typeof appCategoriesRoute
   '/(app)/': typeof appIndexRoute
+  '/(app)/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
+  '/(app)/insecticides/create': typeof appInsecticidesCreateRoute
   '/(app)/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/(app)/meetings/create': typeof appMeetingsCreateRoute
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/(app)/notices/create': typeof appNoticesCreateRoute
+  '/(app)/insecticides/': typeof appInsecticidesIndexRoute
   '/(app)/meetings/': typeof appMeetingsIndexRoute
   '/(app)/notices/': typeof appNoticesIndexRoute
   '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
@@ -134,14 +170,18 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
+    | '/insecticides'
     | '/meetings'
     | '/notices'
     | '/categories'
     | '/'
+    | '/insecticides/$insecticideId'
+    | '/insecticides/create'
     | '/meetings/$meetingId'
     | '/meetings/create'
     | '/notices/$noticeId'
     | '/notices/create'
+    | '/insecticides/'
     | '/meetings/'
     | '/notices/'
     | '/notices/$noticeId/edit'
@@ -150,10 +190,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/categories'
     | '/'
+    | '/insecticides/$insecticideId'
+    | '/insecticides/create'
     | '/meetings/$meetingId'
     | '/meetings/create'
     | '/notices/$noticeId'
     | '/notices/create'
+    | '/insecticides'
     | '/meetings'
     | '/notices'
     | '/notices/$noticeId/edit'
@@ -161,14 +204,18 @@ export interface FileRouteTypes {
     | '__root__'
     | '/(app)'
     | '/login'
+    | '/(app)/insecticides'
     | '/(app)/meetings'
     | '/(app)/notices'
     | '/(app)/categories'
     | '/(app)/'
+    | '/(app)/insecticides/$insecticideId'
+    | '/(app)/insecticides/create'
     | '/(app)/meetings/$meetingId'
     | '/(app)/meetings/create'
     | '/(app)/notices/$noticeId'
     | '/(app)/notices/create'
+    | '/(app)/insecticides/'
     | '/(app)/meetings/'
     | '/(app)/notices/'
     | '/(app)/notices/$noticeId_/edit'
@@ -223,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appMeetingsRouteRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/insecticides': {
+      id: '/(app)/insecticides'
+      path: '/insecticides'
+      fullPath: '/insecticides'
+      preLoaderRoute: typeof appInsecticidesRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/notices/': {
       id: '/(app)/notices/'
       path: '/'
@@ -236,6 +290,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/meetings/'
       preLoaderRoute: typeof appMeetingsIndexRouteImport
       parentRoute: typeof appMeetingsRouteRoute
+    }
+    '/(app)/insecticides/': {
+      id: '/(app)/insecticides/'
+      path: '/'
+      fullPath: '/insecticides/'
+      preLoaderRoute: typeof appInsecticidesIndexRouteImport
+      parentRoute: typeof appInsecticidesRouteRoute
     }
     '/(app)/notices/create': {
       id: '/(app)/notices/create'
@@ -265,6 +326,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appMeetingsMeetingIdRouteImport
       parentRoute: typeof appMeetingsRouteRoute
     }
+    '/(app)/insecticides/create': {
+      id: '/(app)/insecticides/create'
+      path: '/create'
+      fullPath: '/insecticides/create'
+      preLoaderRoute: typeof appInsecticidesCreateRouteImport
+      parentRoute: typeof appInsecticidesRouteRoute
+    }
+    '/(app)/insecticides/$insecticideId': {
+      id: '/(app)/insecticides/$insecticideId'
+      path: '/$insecticideId'
+      fullPath: '/insecticides/$insecticideId'
+      preLoaderRoute: typeof appInsecticidesInsecticideIdRouteImport
+      parentRoute: typeof appInsecticidesRouteRoute
+    }
     '/(app)/notices/$noticeId_/edit': {
       id: '/(app)/notices/$noticeId_/edit'
       path: '/$noticeId/edit'
@@ -274,6 +349,21 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface appInsecticidesRouteRouteChildren {
+  appInsecticidesInsecticideIdRoute: typeof appInsecticidesInsecticideIdRoute
+  appInsecticidesCreateRoute: typeof appInsecticidesCreateRoute
+  appInsecticidesIndexRoute: typeof appInsecticidesIndexRoute
+}
+
+const appInsecticidesRouteRouteChildren: appInsecticidesRouteRouteChildren = {
+  appInsecticidesInsecticideIdRoute: appInsecticidesInsecticideIdRoute,
+  appInsecticidesCreateRoute: appInsecticidesCreateRoute,
+  appInsecticidesIndexRoute: appInsecticidesIndexRoute,
+}
+
+const appInsecticidesRouteRouteWithChildren =
+  appInsecticidesRouteRoute._addFileChildren(appInsecticidesRouteRouteChildren)
 
 interface appMeetingsRouteRouteChildren {
   appMeetingsMeetingIdRoute: typeof appMeetingsMeetingIdRoute
@@ -309,6 +399,7 @@ const appNoticesRouteRouteWithChildren = appNoticesRouteRoute._addFileChildren(
 )
 
 interface appRouteRouteChildren {
+  appInsecticidesRouteRoute: typeof appInsecticidesRouteRouteWithChildren
   appMeetingsRouteRoute: typeof appMeetingsRouteRouteWithChildren
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appCategoriesRoute: typeof appCategoriesRoute
@@ -316,6 +407,7 @@ interface appRouteRouteChildren {
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
+  appInsecticidesRouteRoute: appInsecticidesRouteRouteWithChildren,
   appMeetingsRouteRoute: appMeetingsRouteRouteWithChildren,
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appCategoriesRoute: appCategoriesRoute,
