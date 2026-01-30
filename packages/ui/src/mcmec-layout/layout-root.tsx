@@ -1,6 +1,5 @@
 "use client";
 
-import { ASSET_URLS } from "@mcmec/lib/constants/assets";
 import { COMPANY_INFO } from "@mcmec/lib/constants/company";
 import { SidebarProvider } from "@mcmec/ui/components/sidebar";
 import type { LayoutContextData } from "@mcmec/ui/mcmec-layout/layout-context.js";
@@ -13,7 +12,7 @@ interface LayoutRootProps {
 }
 
 export function LayoutRoot({ children, value }: LayoutRootProps) {
-	const companyLogoUrl = ASSET_URLS.logo;
+	const companyLogoUrl = "/shared/logo512.png";
 	const companyName = COMPANY_INFO.shortName;
 	return (
 		<LayoutContextProvider

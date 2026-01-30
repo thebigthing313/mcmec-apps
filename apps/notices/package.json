@@ -37,11 +37,12 @@
 	"name": "notices",
 	"packageManager": "pnpm@10.19.0",
 	"scripts": {
-		"build": "vite build",
+		"build": "pnpm sync-assets && vite build",
 		"check-types": "tsc --noEmit",
-		"dev": "vite dev",
+		"dev": "pnpm sync-assets && vite",
 		"lint": "biome check .",
-		"lint:fix": "biome check --write ."
+		"lint:fix": "biome check --write .",
+		"sync-assets": "shx mkdir -p public/shared && shx cp -r ../../packages/assets/images/* public/shared/"
 	},
 	"type": "module",
 	"version": "0.6.0"
