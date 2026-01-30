@@ -12,7 +12,7 @@ function RouteComponent() {
 				<p>
 					<img
 						alt="MCMEC Building"
-						className="mb-4 w-full md:float-right md:ml-6 md:w-1/2"
+						className="w-full rounded-sm drop-shadow-accent drop-shadow-xl md:float-right md:ml-6 md:w-1/2"
 						src="/shared/building.webp"
 					/>
 					The Middlesex County Mosquito Extermination Commission (MCMEC) was
