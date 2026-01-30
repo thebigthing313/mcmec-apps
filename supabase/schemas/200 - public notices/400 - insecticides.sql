@@ -1,6 +1,5 @@
 create table public.insecticides(
     id uuid primary key default gen_random_uuid(),
-    name text not null,
     type_name text not null,
     active_ingredient text not null,
     active_ingredient_url text not null,
