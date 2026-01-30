@@ -44,17 +44,17 @@ export function TextInput({
 
 	return (
 		<InputGroup className={className}>
-			<InputGroupInput type="text" ref={ref} {...props} />
+			<InputGroupInput ref={ref} type="text" {...props} />
 			<InputGroupAddon align="inline-end">
 				{showSpinner && <Spinner />}
 				{showPaste && (
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<InputGroupButton
-								variant="ghost"
-								size="icon-sm"
-								onClick={handlePaste}
 								aria-label="Paste from clipboard"
+								onClick={handlePaste}
+								size="icon-sm"
+								variant="ghost"
 							>
 								<ClipboardPaste />
 							</InputGroupButton>
@@ -66,15 +66,14 @@ export function TextInput({
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<InputGroupButton
-								variant="ghost"
-								size="icon-sm"
+								aria-label="Clear input"
 								onClick={() => {
 									if (props.type === "file") {
 										if (ref && "current" in ref && ref.current) {
 											ref.current.value = "";
 										}
 										props.onChange?.({
-											target: { value: "", files: null },
+											target: { files: null, value: "" },
 										} as React.ChangeEvent<HTMLInputElement>);
 									} else {
 										props.onChange?.({
@@ -82,7 +81,8 @@ export function TextInput({
 										} as React.ChangeEvent<HTMLInputElement>);
 									}
 								}}
-								aria-label="Clear input"
+								size="icon-sm"
+								variant="ghost"
 							>
 								<EraserIcon />
 							</InputGroupButton>
