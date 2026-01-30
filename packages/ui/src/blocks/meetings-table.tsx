@@ -25,7 +25,7 @@ import {
 	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 
 export type MeetingTableRowType = {
@@ -78,6 +78,7 @@ export function MeetingsTable({
 				return <span className="font-medium">{name}</span>;
 			},
 			header: ({ column }) => {
+				const sortState = column.getIsSorted();
 				return (
 					<Button
 						className="-ml-4"
@@ -85,7 +86,13 @@ export function MeetingsTable({
 						variant="ghost"
 					>
 						Name
-						<ArrowUpDown className="ml-2 h-4 w-4" />
+						{sortState === "asc" ? (
+							<ArrowUp className="ml-2 h-4 w-4" />
+						) : sortState === "desc" ? (
+							<ArrowDown className="ml-2 h-4 w-4" />
+						) : (
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						)}
 					</Button>
 				);
 			},
@@ -97,6 +104,7 @@ export function MeetingsTable({
 				return formatDateTime(date);
 			},
 			header: ({ column }) => {
+				const sortState = column.getIsSorted();
 				return (
 					<Button
 						className="-ml-4"
@@ -104,7 +112,13 @@ export function MeetingsTable({
 						variant="ghost"
 					>
 						Meeting Date & Time
-						<ArrowUpDown className="ml-2 h-4 w-4" />
+						{sortState === "asc" ? (
+							<ArrowUp className="ml-2 h-4 w-4" />
+						) : sortState === "desc" ? (
+							<ArrowDown className="ml-2 h-4 w-4" />
+						) : (
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						)}
 					</Button>
 				);
 			},
@@ -134,6 +148,7 @@ export function MeetingsTable({
 				return <Badge variant={variant}>{status}</Badge>;
 			},
 			header: ({ column }) => {
+				const sortState = column.getIsSorted();
 				return (
 					<Button
 						className="-ml-4"
@@ -141,7 +156,13 @@ export function MeetingsTable({
 						variant="ghost"
 					>
 						Status
-						<ArrowUpDown className="ml-2 h-4 w-4" />
+						{sortState === "asc" ? (
+							<ArrowUp className="ml-2 h-4 w-4" />
+						) : sortState === "desc" ? (
+							<ArrowDown className="ml-2 h-4 w-4" />
+						) : (
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						)}
 					</Button>
 				);
 			},
