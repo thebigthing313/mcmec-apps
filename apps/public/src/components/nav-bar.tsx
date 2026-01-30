@@ -41,6 +41,16 @@ type MenuItem = {
 const menuItems: MenuItem[] = [
 	{
 		subItems: [
+			{ linkProps: { to: "/mission" }, title: "Mission Statement" },
+			{
+				linkProps: { to: "/leadership-and-staff" },
+				title: "Leadership & Staff",
+			},
+		],
+		title: "About Us",
+	},
+	{
+		subItems: [
 			{
 				description: "Meeting schedules, agenda, and minutes.",
 				linkProps: { to: "/meetings" },
