@@ -43,11 +43,11 @@ const menuItems: MenuItem[] = [
 		subItems: [
 			{ linkProps: { to: "/mission" }, title: "Mission Statement" },
 			{
-				linkProps: { to: "/leadership-and-staff" },
-				title: "Leadership & Staff",
+				linkProps: { to: "/leadership" },
+				title: "Leadership",
 			},
 		],
-		title: "About Us",
+		title: "About",
 	},
 	{
 		subItems: [
