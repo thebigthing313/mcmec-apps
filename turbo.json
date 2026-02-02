@@ -3,8 +3,9 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
+			"env": ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"],
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": [".output/**", "dist/**", ".vinxi/**"]
+			"outputs": [".output/**"]
 		},
 		"check-types": {
 			"dependsOn": ["^check-types"]
