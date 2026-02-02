@@ -12,6 +12,7 @@ export function getSupabaseServerClient(): SupabaseClient<Database> {
 		throw new Error(ErrorMessages.SERVER.ENVIRONMENT_MISCONFIGURED);
 	}
 
+	//@ts-expect-error TS2345 Supabase types are not correctly inferred here
 	return createServerClient<Database>(supabaseUrl, supabaseKey, {
 		cookies: {
 			getAll() {
@@ -20,7 +21,9 @@ export function getSupabaseServerClient(): SupabaseClient<Database> {
 					value,
 				}));
 			},
+			//@ts-expect-error TS2322 Type mismatch in setAll method, but this is how TS Start/Supabase documentation shows how to do it.
 			setAll(cookies) {
+				//@ts-expect-error TS2322 Type mismatch in setAll method, but this is how TS Start/Supabase documentation shows how to do it.
 				cookies.forEach((cookie) => {
 					setCookie(cookie.name, cookie.value);
 				});
