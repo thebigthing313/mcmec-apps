@@ -18,7 +18,7 @@ export function Footer() {
 					rel="noreferrer"
 					target="_blank"
 				>
-					<img alt="Logo" className="h-12" src="/shared/county-logo.png" />
+					<img alt="Logo" className="h-12" src="county-logo.png" />
 				</a>
 				<div className="flex flex-col gap-0 leading-tight">
 					<span className="font-extrabold uppercase tracking-wide">
