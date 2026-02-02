@@ -30,11 +30,11 @@ for select
 to authenticated
 using (has_permission('public_notices'));
 
-create policy "insert: requires authenticated user"
+create policy "insert: requires public_notices permission"
 on public.water_management_requests
 for insert
 to authenticated
-with check (true);
+with check (has_permission('public_notices'));
 
 create policy "update: requires public_notices permission"
 on public.water_management_requests
