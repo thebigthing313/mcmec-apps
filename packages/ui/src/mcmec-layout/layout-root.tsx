@@ -12,7 +12,7 @@ interface LayoutRootProps {
 }
 
 export function LayoutRoot({ children, value }: LayoutRootProps) {
-	const companyLogoUrl = "/shared/logo512.png";
+	const companyLogoUrl = "logo512.png";
 	const companyName = COMPANY_INFO.shortName;
 	return (
 		<LayoutContextProvider

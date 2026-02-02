@@ -101,11 +101,7 @@ function WebNavBar() {
 		<div className="sticky top-0 z-50 flex h-30 flex-row items-center justify-start bg-primary py-2 drop-shadow-accent drop-shadow-xl">
 			<div className="flex w-50 flex-row justify-center rounded-r-full bg-background">
 				<Link to="/">
-					<img
-						alt="MCMEC Logo"
-						className="m-4 h-26"
-						src="/shared/logo512.png"
-					/>
+					<img alt="MCMEC Logo" className="m-4 h-26" src="logo512.png" />
 				</Link>
 			</div>
 
@@ -229,11 +225,7 @@ function MobileNavBar() {
 			</Sheet>
 			<div className="flex w-24 flex-row justify-center rounded-l-full bg-background">
 				<Link to="/">
-					<img
-						alt="MCMEC Logo"
-						className="m-4 h-15"
-						src="/shared/logo512.png"
-					/>
+					<img alt="MCMEC Logo" className="m-4 h-15" src="logo512.png" />
 				</Link>
 			</div>
 		</div>

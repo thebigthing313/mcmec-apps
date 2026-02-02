@@ -76,7 +76,7 @@ export interface FileRoutesByFullPath {
   '/mosquito-control-products': typeof aboutMosquitoControlProductsRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
-  '/notices': typeof NoticesIndexRoute
+  '/notices/': typeof NoticesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -112,7 +112,7 @@ export interface FileRouteTypes {
     | '/mosquito-control-products'
     | '/notices/$noticeId'
     | '/notices/archive'
-    | '/notices'
+    | '/notices/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -168,7 +168,7 @@ declare module '@tanstack/react-router' {
     '/notices/': {
       id: '/notices/'
       path: '/notices'
-      fullPath: '/notices'
+      fullPath: '/notices/'
       preLoaderRoute: typeof NoticesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -231,3 +231,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

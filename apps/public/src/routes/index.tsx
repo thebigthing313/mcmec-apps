@@ -16,7 +16,7 @@ function RouteComponent() {
 					alt="Woodbridge River cleanup project"
 					className="absolute inset-0 h-full w-full object-cover"
 					fetchPriority="high"
-					src={isMobile ? "/shared/hero-mobile.avif" : "/shared/hero.avif"}
+					src={isMobile ? "hero-mobile.avif" : "hero.avif"}
 				/>
 
 				{/* Dark gradient overlay */}
