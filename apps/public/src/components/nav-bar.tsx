@@ -68,6 +68,22 @@ const menuItems: MenuItem[] = [
 	{
 		subItems: [
 			{
+				description:
+					"Report a mosquito problem, water management issue, or request mosquitofish here.",
+				linkProps: { to: "/service" },
+				title: "Service Requests",
+			},
+			{
+				description: "For general inquiries and support.",
+				linkProps: { to: "/contact-us" },
+				title: "Contact Us",
+			},
+		],
+		title: "Contact",
+	},
+	{
+		subItems: [
+			{
 				description: "Meeting schedules, agenda, and minutes.",
 				linkProps: { to: "/meetings" },
 				title: "Public Meetings",
