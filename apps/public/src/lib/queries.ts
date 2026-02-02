@@ -1,16 +1,4 @@
-import {
-	fetchInsecticides,
-	type InsecticidesRowType,
-} from "@mcmec/supabase/db/insecticides";
-import {
-	fetchMeetings,
-	type MeetingsRowType,
-} from "@mcmec/supabase/db/meetings";
-import {
-	fetchNoticeTypes,
-	type NoticeTypesRowType,
-} from "@mcmec/supabase/db/notice-types";
-import { fetchNotices, type NoticesRowType } from "@mcmec/supabase/db/notices";
+import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { getSupabaseServerClient } from "./supabase-server";
@@ -19,28 +7,56 @@ import { getSupabaseServerClient } from "./supabase-server";
 const getNoticesServerFn = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const supabase = getSupabaseServerClient();
-		return fetchNotices(supabase);
+		async function fetchNotices() {
+			const { data, error } = await supabase.from("notices").select("*");
+			if (error) {
+				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("notices"));
+			}
+			return data;
+		}
+		return fetchNotices();
 	},
 );
 
 const getNoticeTypesServerFn = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const supabase = getSupabaseServerClient();
-		return fetchNoticeTypes(supabase);
+		async function fetchNoticeTypes() {
+			const { data, error } = await supabase.from("notice_types").select("*");
+			if (error) {
+				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("notice_types"));
+			}
+			return data;
+		}
+		return fetchNoticeTypes();
 	},
 );
 
 const getMeetingsServerFn = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const supabase = getSupabaseServerClient();
-		return fetchMeetings(supabase);
+		async function fetchMeetings() {
+			const { data, error } = await supabase.from("meetings").select("*");
+			if (error) {
+				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("meetings"));
+			}
+			return data;
+		}
+		return fetchMeetings();
 	},
 );
 
 const getInsecticidesServerFn = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const supabase = getSupabaseServerClient();
-		return fetchInsecticides(supabase);
+		async function fetchInsecticides() {
+			const { data, error } = await supabase.from("insecticides").select("*");
+			if (error) {
+				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("insecticides"));
+			}
+			return data;
+		}
+		return fetchInsecticides();
 	},
 );
 
@@ -72,11 +88,3 @@ export const insecticidesQueryOptions = () =>
 		queryKey: ["insecticides"],
 		staleTime: 1000 * 60 * 30, // 30 minutes
 	});
-
-// Export types for convenience
-export type {
-	NoticesRowType,
-	NoticeTypesRowType,
-	MeetingsRowType,
-	InsecticidesRowType,
-};
