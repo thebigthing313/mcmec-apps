@@ -1,4 +1,5 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
+import type { Database } from "@mcmec/supabase/database.types";
 import { createServerClient } from "@supabase/ssr";
 import { getCookies, setCookie } from "@tanstack/react-start/server";
 
@@ -10,7 +11,7 @@ export function getSupabaseServerClient() {
 		throw new Error(ErrorMessages.SERVER.ENVIRONMENT_MISCONFIGURED);
 	}
 
-	return createServerClient(supabaseUrl, supabaseKey, {
+	return createServerClient<Database>(supabaseUrl, supabaseKey, {
 		cookies: {
 			getAll() {
 				return Object.entries(getCookies()).map(([name, value]) => ({
