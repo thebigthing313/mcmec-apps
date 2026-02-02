@@ -2,14 +2,14 @@ import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { createServerClient } from "@supabase/ssr";
 import { getCookies, setCookie } from "@tanstack/react-start/server";
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-	throw new Error(ErrorMessages.SERVER.ENVIRONMENT_MISCONFIGURED);
-}
-
 export function getSupabaseServerClient() {
+	const supabaseUrl = process.env.VITE_SUPABASE_URL;
+	const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+	if (!supabaseUrl || !supabaseKey) {
+		throw new Error(ErrorMessages.SERVER.ENVIRONMENT_MISCONFIGURED);
+	}
+
 	return createServerClient(supabaseUrl, supabaseKey, {
 		cookies: {
 			getAll() {
