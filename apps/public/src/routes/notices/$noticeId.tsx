@@ -9,16 +9,23 @@ import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Button } from "@mcmec/ui/components/button";
 import { ButtonGroup } from "@mcmec/ui/components/button-group";
 import { Label } from "@mcmec/ui/components/label";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Clock, FolderArchive } from "lucide-react";
 import { useState } from "react";
-import { notice_types } from "@/src/lib/collections/notice_types";
-import { notices } from "@/src/lib/collections/notices";
+import {
+	noticesQueryOptions,
+	noticeTypesQueryOptions,
+} from "@/src/lib/queries";
+
 export const Route = createFileRoute("/notices/$noticeId")({
 	component: RouteComponent,
-	loader: async ({ params }) => {
-		await Promise.all([notices.preload(), notice_types.preload()]);
-		const notice = notices.get(params.noticeId);
+	loader: async ({ params, context }) => {
+		const [notices] = await Promise.all([
+			context.queryClient.ensureQueryData(noticesQueryOptions()),
+			context.queryClient.ensureQueryData(noticeTypesQueryOptions()),
+		]);
+		const notice = notices.find((n) => n.id === params.noticeId);
 		if (!notice) {
 			throw notFound();
 		}
@@ -30,6 +37,8 @@ function RouteComponent() {
 	const [open, setOpen] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const { notice } = Route.useLoaderData();
+	const { data: noticeTypes } = useSuspenseQuery(noticeTypesQueryOptions());
+
 	const {
 		id,
 		title,
@@ -41,7 +50,7 @@ function RouteComponent() {
 		updated_at,
 	} = notice;
 
-	const type = notice_types.get(notice_type_id)?.name;
+	const type = noticeTypes.find((nt) => nt.id === notice_type_id)?.name;
 	const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
 	const handleCopy = async () => {

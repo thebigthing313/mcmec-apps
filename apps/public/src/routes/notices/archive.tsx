@@ -1,36 +1,49 @@
-import { eq, useLiveQuery } from "@tanstack/react-db";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { notice_types } from "@/src/lib/collections/notice_types";
-import { notices } from "@/src/lib/collections/notices";
 import { NoticeFeed } from "../../components/notice-feed";
+import {
+	noticesQueryOptions,
+	noticeTypesQueryOptions,
+} from "../../lib/queries";
 
 export const Route = createFileRoute("/notices/archive")({
 	component: RouteComponent,
-	loader: async () => {
-		await Promise.all([notices.preload(), notice_types.preload()]);
+	loader: async ({ context }) => {
+		await Promise.all([
+			context.queryClient.ensureQueryData(noticesQueryOptions()),
+			context.queryClient.ensureQueryData(noticeTypesQueryOptions()),
+		]);
 	},
 });
 
 function RouteComponent() {
-	const { data: noticesToShow } = useLiveQuery((q) =>
-		q
-			.from({ notice: notices })
-			.innerJoin({ notice_type: notice_types }, ({ notice, notice_type }) =>
-				eq(notice.notice_type_id, notice_type.id),
-			)
-			.where(({ notice }) => eq(notice.is_archived, true))
-			.orderBy(({ notice }) => notice.notice_date, "desc")
-			.orderBy(({ notice }) => notice.title, "asc")
-			.select(({ notice, notice_type }) => ({
-				content: notice.content,
-				id: notice.id,
-				isArchived: notice.is_archived,
-				isPublished: notice.is_published,
-				noticeDate: notice.notice_date,
-				title: notice.title,
-				type: notice_type.name,
-			})),
+	const { data: notices } = useSuspenseQuery(noticesQueryOptions());
+	const { data: noticeTypes } = useSuspenseQuery(noticeTypesQueryOptions());
+
+	// Create a map for quick lookup of notice types
+	const noticeTypesMap = new Map(
+		noticeTypes.map((type) => [type.id, type.name]),
 	);
+
+	// Filter and transform notices
+	const noticesToShow = notices
+		.filter((notice) => notice.is_archived)
+		.sort((a, b) => {
+			// Sort by notice_date descending, then by title ascending
+			const dateCompare =
+				new Date(b.notice_date).getTime() - new Date(a.notice_date).getTime();
+			return dateCompare !== 0 ? dateCompare : a.title.localeCompare(b.title);
+		})
+		.map((notice) => ({
+			content: notice.content,
+			id: notice.id,
+			isArchived: notice.is_archived,
+			isPublished: notice.is_published,
+			noticeDate: notice.notice_date,
+			title: notice.title,
+			type: noticeTypesMap.get(notice.notice_type_id) || "Unknown",
+		}));
+
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4">
 			<article className="prose lg:prose-xl mb-8 max-w-none">
@@ -44,7 +57,7 @@ function RouteComponent() {
 					permitted by New Jersey law.
 				</p>
 			</article>
-			<NoticeFeed notices={noticesToShow || []} />
+			<NoticeFeed notices={noticesToShow} />
 		</div>
 	);
 }

@@ -1,16 +1,19 @@
 import type { InsecticideTableRowType } from "@mcmec/ui/blocks/insecticides-table";
 import { InsecticidesTable } from "@mcmec/ui/blocks/insecticides-table";
-import { useLiveQuery } from "@tanstack/react-db";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { insecticides } from "@/src/lib/collections/insecticides";
+import { insecticidesQueryOptions } from "@/src/lib/queries";
 
 export const Route = createFileRoute("/(about)/mosquito-control-products")({
 	component: RouteComponent,
+	loader: async ({ context }) => {
+		await context.queryClient.ensureQueryData(insecticidesQueryOptions());
+	},
 });
 
 function RouteComponent() {
-	const { data: insecticidesData } = useLiveQuery((q) =>
-		q.from({ insecticide: insecticides }),
+	const { data: insecticidesData } = useSuspenseQuery(
+		insecticidesQueryOptions(),
 	);
 
 	const tableData: InsecticideTableRowType[] = insecticidesData.map(

@@ -4,22 +4,22 @@ import {
 	type MeetingTableRowType,
 } from "@mcmec/ui/blocks/meetings-table";
 import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
-import { useLiveQuery } from "@tanstack/react-db";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { meetings } from "../lib/collections/meetings";
+import { meetingsQueryOptions } from "../lib/queries";
 
 export const Route = createFileRoute("/meetings")({
 	component: RouteComponent,
-	loader: async () => {
-		await meetings.preload();
+	loader: async ({ context }) => {
+		await context.queryClient.ensureQueryData(meetingsQueryOptions());
 	},
 });
 
 function RouteComponent() {
 	const isMobile = useIsMobile();
-	const { data } = useLiveQuery((q) => q.from({ meeting: meetings }));
+	const { data: meetings } = useSuspenseQuery(meetingsQueryOptions());
 
-	const mappedData: MeetingTableRowType[] = data.map((meeting) => ({
+	const mappedData: MeetingTableRowType[] = meetings.map((meeting) => ({
 		agendaUrl: meeting.agenda_url,
 		id: meeting.id,
 		isCancelled: meeting.is_cancelled,
