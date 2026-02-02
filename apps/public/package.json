@@ -46,7 +46,7 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"start": "pnpx srvx --prod -s ../client dist/server/server.js",
-		"sync-assets": "shx mkdir -p public/shared && shx cp -r ../../packages/assets/images/* public/shared/"
+		"sync-assets": "shx mkdir -p public && shx cp -r ../../packages/assets/images/* public/"
 	},
 	"type": "module",
 	"version": "1.0.0"
