@@ -1,9 +1,10 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import type { Database } from "@mcmec/supabase/database.types";
 import { createServerClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { getCookies, setCookie } from "@tanstack/react-start/server";
 
-export function getSupabaseServerClient() {
+export function getSupabaseServerClient(): SupabaseClient<Database> {
 	const supabaseUrl = process.env.VITE_SUPABASE_URL;
 	const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 

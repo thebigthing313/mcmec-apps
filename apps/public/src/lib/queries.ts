@@ -1,4 +1,8 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
+import { InsecticidesRowSchema } from "@mcmec/supabase/db/insecticides";
+import { MeetingsRowSchema } from "@mcmec/supabase/db/meetings";
+import { NoticeTypesRowSchema } from "@mcmec/supabase/db/notice-types";
+import { NoticesRowSchema } from "@mcmec/supabase/db/notices";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { getSupabaseServerClient } from "./supabase-server";
@@ -12,7 +16,9 @@ const getNoticesServerFn = createServerFn({ method: "GET" }).handler(
 			if (error) {
 				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("notices"));
 			}
-			return data;
+			return data.map((notice) => {
+				return NoticesRowSchema.parse(notice);
+			});
 		}
 		return fetchNotices();
 	},
@@ -26,7 +32,9 @@ const getNoticeTypesServerFn = createServerFn({ method: "GET" }).handler(
 			if (error) {
 				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("notice_types"));
 			}
-			return data;
+			return data.map((noticeType) => {
+				return NoticeTypesRowSchema.parse(noticeType);
+			});
 		}
 		return fetchNoticeTypes();
 	},
@@ -40,7 +48,9 @@ const getMeetingsServerFn = createServerFn({ method: "GET" }).handler(
 			if (error) {
 				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("meetings"));
 			}
-			return data;
+			return data.map((meeting) => {
+				return MeetingsRowSchema.parse(meeting);
+			});
 		}
 		return fetchMeetings();
 	},
@@ -54,7 +64,9 @@ const getInsecticidesServerFn = createServerFn({ method: "GET" }).handler(
 			if (error) {
 				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("insecticides"));
 			}
-			return data;
+			return data.map((insecticide) => {
+				return InsecticidesRowSchema.parse(insecticide);
+			});
 		}
 		return fetchInsecticides();
 	},
