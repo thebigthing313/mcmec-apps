@@ -10,6 +10,7 @@ import { ResetFormButton } from "./reset-form-button";
 import { SubmitFormButton } from "./submit-form-button";
 import { SwitchField } from "./switch-field";
 import { TextField } from "./text-field";
+import { TextAreaField } from "./textarea-field";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
 	createFormHookContexts();
@@ -23,6 +24,7 @@ export const { useAppForm, withFieldGroup } = createFormHook({
 		PasswordField,
 		PhoneField,
 		SwitchField,
+		TextAreaField,
 		TextField,
 	},
 	fieldContext,
