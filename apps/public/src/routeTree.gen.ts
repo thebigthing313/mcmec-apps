@@ -14,6 +14,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticesIndexRouteImport } from './routes/notices/index'
 import { Route as NoticesArchiveRouteImport } from './routes/notices/archive'
 import { Route as NoticesNoticeIdRouteImport } from './routes/notices/$noticeId'
+import { Route as contactServiceRouteImport } from './routes/(contact)/service'
+import { Route as contactContactUsRouteImport } from './routes/(contact)/contact-us'
 import { Route as aboutMosquitoControlProductsRouteImport } from './routes/(about)/mosquito-control-products'
 import { Route as aboutMissionRouteImport } from './routes/(about)/mission'
 import { Route as aboutLeadershipRouteImport } from './routes/(about)/leadership'
@@ -42,6 +44,16 @@ const NoticesArchiveRoute = NoticesArchiveRouteImport.update({
 const NoticesNoticeIdRoute = NoticesNoticeIdRouteImport.update({
   id: '/notices/$noticeId',
   path: '/notices/$noticeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const contactServiceRoute = contactServiceRouteImport.update({
+  id: '/(contact)/service',
+  path: '/service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const contactContactUsRoute = contactContactUsRouteImport.update({
+  id: '/(contact)/contact-us',
+  path: '/contact-us',
   getParentRoute: () => rootRouteImport,
 } as any)
 const aboutMosquitoControlProductsRoute =
@@ -74,6 +86,8 @@ export interface FileRoutesByFullPath {
   '/leadership': typeof aboutLeadershipRoute
   '/mission': typeof aboutMissionRoute
   '/mosquito-control-products': typeof aboutMosquitoControlProductsRoute
+  '/contact-us': typeof contactContactUsRoute
+  '/service': typeof contactServiceRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/': typeof NoticesIndexRoute
@@ -85,6 +99,8 @@ export interface FileRoutesByTo {
   '/leadership': typeof aboutLeadershipRoute
   '/mission': typeof aboutMissionRoute
   '/mosquito-control-products': typeof aboutMosquitoControlProductsRoute
+  '/contact-us': typeof contactContactUsRoute
+  '/service': typeof contactServiceRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices': typeof NoticesIndexRoute
@@ -97,6 +113,8 @@ export interface FileRoutesById {
   '/(about)/leadership': typeof aboutLeadershipRoute
   '/(about)/mission': typeof aboutMissionRoute
   '/(about)/mosquito-control-products': typeof aboutMosquitoControlProductsRoute
+  '/(contact)/contact-us': typeof contactContactUsRoute
+  '/(contact)/service': typeof contactServiceRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/': typeof NoticesIndexRoute
@@ -110,6 +128,8 @@ export interface FileRouteTypes {
     | '/leadership'
     | '/mission'
     | '/mosquito-control-products'
+    | '/contact-us'
+    | '/service'
     | '/notices/$noticeId'
     | '/notices/archive'
     | '/notices/'
@@ -121,6 +141,8 @@ export interface FileRouteTypes {
     | '/leadership'
     | '/mission'
     | '/mosquito-control-products'
+    | '/contact-us'
+    | '/service'
     | '/notices/$noticeId'
     | '/notices/archive'
     | '/notices'
@@ -132,6 +154,8 @@ export interface FileRouteTypes {
     | '/(about)/leadership'
     | '/(about)/mission'
     | '/(about)/mosquito-control-products'
+    | '/(contact)/contact-us'
+    | '/(contact)/service'
     | '/notices/$noticeId'
     | '/notices/archive'
     | '/notices/'
@@ -144,6 +168,8 @@ export interface RootRouteChildren {
   aboutLeadershipRoute: typeof aboutLeadershipRoute
   aboutMissionRoute: typeof aboutMissionRoute
   aboutMosquitoControlProductsRoute: typeof aboutMosquitoControlProductsRoute
+  contactContactUsRoute: typeof contactContactUsRoute
+  contactServiceRoute: typeof contactServiceRoute
   NoticesNoticeIdRoute: typeof NoticesNoticeIdRoute
   NoticesArchiveRoute: typeof NoticesArchiveRoute
   NoticesIndexRoute: typeof NoticesIndexRoute
@@ -186,6 +212,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticesNoticeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(contact)/service': {
+      id: '/(contact)/service'
+      path: '/service'
+      fullPath: '/service'
+      preLoaderRoute: typeof contactServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(contact)/contact-us': {
+      id: '/(contact)/contact-us'
+      path: '/contact-us'
+      fullPath: '/contact-us'
+      preLoaderRoute: typeof contactContactUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(about)/mosquito-control-products': {
       id: '/(about)/mosquito-control-products'
       path: '/mosquito-control-products'
@@ -224,6 +264,8 @@ const rootRouteChildren: RootRouteChildren = {
   aboutLeadershipRoute: aboutLeadershipRoute,
   aboutMissionRoute: aboutMissionRoute,
   aboutMosquitoControlProductsRoute: aboutMosquitoControlProductsRoute,
+  contactContactUsRoute: contactContactUsRoute,
+  contactServiceRoute: contactServiceRoute,
   NoticesNoticeIdRoute: NoticesNoticeIdRoute,
   NoticesArchiveRoute: NoticesArchiveRoute,
   NoticesIndexRoute: NoticesIndexRoute,
