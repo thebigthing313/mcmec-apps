@@ -4,8 +4,14 @@ import {
 } from "@mcmec/lib/constants/validators";
 import { ContactFormSubmissionsInsertSchema } from "@mcmec/supabase/db/contact-form-submissions";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import {
+	TurnstileWidget,
+	type TurnstileWidgetRef,
+} from "@/src/components/turnstile-widget";
 import { submitContactFormServerFn } from "@/src/lib/submit-contact-form";
 
 export const Route = createFileRoute("/(contact)/contact-us")({
@@ -13,6 +19,12 @@ export const Route = createFileRoute("/(contact)/contact-us")({
 });
 
 function RouteComponent() {
+	const sitekey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITEKEY;
+	const [honeypot, setHoneypot] = useState<string>("");
+	const [turnstileToken, setTurnstileToken] = useState<string>("");
+	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+	const turnstileRef = useRef<TurnstileWidgetRef>(null);
+
 	const submitForm = useServerFn(submitContactFormServerFn);
 	const form = useAppForm({
 		defaultValues: {
@@ -24,7 +36,45 @@ function RouteComponent() {
 			subject: "",
 		},
 		onSubmit: async ({ value }) => {
-			await submitForm({ data: { ...value } });
+			if (honeypot) {
+				toast.info("Submission successful! Thank you for contacting us.");
+				form.reset();
+				return;
+			}
+
+			// Validate turnstile token is present
+			if (!turnstileToken) {
+				toast.error("Please complete the security verification.");
+				return;
+			}
+
+			// Prevent double submissions
+			if (isSubmitting) {
+				return;
+			}
+
+			setIsSubmitting(true);
+			try {
+				const result = await submitForm({
+					data: { data: { ...value }, turnstileToken },
+				});
+
+				// Reset token and turnstile widget after submission attempt
+				setTurnstileToken("");
+				turnstileRef.current?.reset();
+
+				if (result.success) {
+					toast.success("Submission successful! Thank you for contacting us.");
+					form.reset();
+				} else {
+					toast.error(
+						result.error ||
+							"There was an error submitting the form. Please try again.",
+					);
+				}
+			} finally {
+				setIsSubmitting(false);
+			}
 		},
 		validators: {
 			onSubmit: ContactFormSubmissionsInsertSchema,
@@ -77,7 +127,26 @@ function RouteComponent() {
 							<field.TextAreaField className="max-w-2xl" label="Message" />
 						)}
 					</form.AppField>
-					<form.SubmitFormButton className="w-full" label="Submit Form" />
+					<ClientOnly fallback={<div className="h-16.25" />}>
+						<TurnstileWidget
+							onSuccess={(token) => setTurnstileToken(token)}
+							ref={turnstileRef}
+							sitekey={sitekey}
+						/>
+					</ClientOnly>
+
+					<form.SubmitFormButton
+						className="w-full"
+						disabled={isSubmitting || !turnstileToken}
+						label={isSubmitting ? "Submitting..." : "Submit Form"}
+					/>
+					<input
+						name="nickname"
+						onChange={(e) => setHoneypot(e.target.value)}
+						style={{ display: "none" }}
+						type="text"
+						value={honeypot}
+					/>
 				</form.FormWrapper>
 			</form.AppForm>
 		</div>
