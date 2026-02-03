@@ -1,2 +1,4 @@
 public/
 .output/
+.env.local
+.env.production

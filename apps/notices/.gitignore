@@ -1,1 +1,3 @@
 public/shared/
+.env.local
+.env.production
