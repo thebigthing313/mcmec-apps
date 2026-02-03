@@ -17,6 +17,7 @@ export const ContactFormSubmissionsRowSchema = z.object({
 
 export const ContactFormSubmissionsInsertSchema = z.object({
 	email: z.email(),
+	honeypot: z.string().optional(), // Optional honeypot field for bot detection
 	id: z.uuid(),
 	is_closed: z.boolean(),
 	message: z.string(),
