@@ -1,8 +1,11 @@
 /// <reference types="vite/client" />
+
+import { Toaster } from "@mcmec/ui/components/sonner";
 import appCss from "@mcmec/ui/styles/globals.css?url";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
+	ClientOnly,
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
@@ -41,6 +44,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				title: "Middlesex County Mosquito Extermination Commission",
 			}),
 		],
+		scripts: [
+			{
+				defer: true,
+				src: "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
+			},
+		],
 	}),
 });
 
@@ -66,10 +75,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						{children}
 					</main>
 					<Footer />
+					<ClientOnly>
+						<Toaster />
+						<TanStackRouterDevtools position="bottom-right" />
+						<ReactQueryDevtools buttonPosition="bottom-left" />
+					</ClientOnly>
 				</div>
-
-				<TanStackRouterDevtools position="bottom-right" />
-				<ReactQueryDevtools buttonPosition="bottom-left" />
 
 				<Scripts />
 			</body>
