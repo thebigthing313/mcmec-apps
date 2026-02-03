@@ -5,6 +5,7 @@ interface ImportMetaEnv {
 	readonly VITE_SUPABASE_PUBLISHABLE_KEY: string;
 	readonly VITE_APP_NAME: string;
 	readonly VITE_DOMAIN_NAME: string;
+	readonly VITE_CLOUDFLARE_TURNSTILE_SITEKEY: string;
 }
 
 interface ImportMeta {
