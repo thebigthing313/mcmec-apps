@@ -6,7 +6,9 @@ import { getSupabaseServiceClient } from "./supabase-service-client.server";
 import { validateTurnstile } from "./validate-turnstile.server";
 
 const MosquitofishRequestSchema = z.object({
-	data: MosquitofishRequestsInsertSchema,
+	data: MosquitofishRequestsInsertSchema.extend({
+		honeypot: z.string().optional(),
+	}),
 	turnstileToken: z.string(),
 });
 
