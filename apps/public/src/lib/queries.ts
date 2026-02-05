@@ -3,6 +3,7 @@ import { InsecticidesRowSchema } from "@mcmec/supabase/db/insecticides";
 import { MeetingsRowSchema } from "@mcmec/supabase/db/meetings";
 import { NoticeTypesRowSchema } from "@mcmec/supabase/db/notice-types";
 import { NoticesRowSchema } from "@mcmec/supabase/db/notices";
+import { ZipCodesRowSchema } from "@mcmec/supabase/db/zip-codes";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { getSupabaseServerClient } from "./supabase-server";
@@ -99,4 +100,27 @@ export const insecticidesQueryOptions = () =>
 		queryFn: () => getInsecticidesServerFn(),
 		queryKey: ["insecticides"],
 		staleTime: 1000 * 60 * 30, // 30 minutes
+	});
+
+const getZipCodesServerFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const supabase = getSupabaseServerClient();
+		async function fetchZipCodes() {
+			const { data, error } = await supabase.from("zip_codes").select("*");
+			if (error) {
+				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("zip_codes"));
+			}
+			return data.map((zipCode) => {
+				return ZipCodesRowSchema.parse(zipCode);
+			});
+		}
+		return fetchZipCodes();
+	},
+);
+
+export const zipCodesQueryOptions = () =>
+	queryOptions({
+		queryFn: () => getZipCodesServerFn(),
+		queryKey: ["zip_codes"],
+		staleTime: 1000 * 60 * 60, // 1 hour
 	});
