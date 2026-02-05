@@ -34,6 +34,7 @@ export const ErrorMessages = {
 		FIELD_TOO_SHORT: (minLength: number) =>
 			`This field must be at least ${minLength} characters long.`,
 		INVALID_EMAIL: "Please enter a valid email address.",
+		INVALID_PHONE_NUMBER: "Please enter a valid phone number.",
 		INVALID_URL: "Please enter a valid URL.",
 		INVALID_UUID: "The provided ID is not valid.",
 		PASSWORD_TOO_SHORT: "Password must be at least 8 characters long.",
