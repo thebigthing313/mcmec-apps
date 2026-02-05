@@ -1,4 +1,7 @@
-import { EmailSchema, PasswordSchema } from "@mcmec/lib/constants/validators";
+import {
+	PasswordSchema,
+	ValidEmailSchema,
+} from "@mcmec/lib/constants/validators";
 import { Card, CardContent } from "../components/card";
 import {
 	FieldDescription,
@@ -40,7 +43,7 @@ export function LoginForm({ onSignIn }: LoginFormProps) {
 									<FieldGroup>
 										<form.AppField
 											name="email"
-											validators={{ onBlur: EmailSchema }}
+											validators={{ onBlur: ValidEmailSchema }}
 										>
 											{(field) => <field.TextField label="Email" />}
 										</form.AppField>
@@ -53,7 +56,7 @@ export function LoginForm({ onSignIn }: LoginFormProps) {
 										</form.AppField>
 
 										<form.AppForm>
-											<form.SubmitFormButton label="Login" className="w-full" />
+											<form.SubmitFormButton className="w-full" label="Login" />
 										</form.AppForm>
 									</FieldGroup>
 								</FieldSet>
