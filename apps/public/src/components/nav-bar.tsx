@@ -70,12 +70,12 @@ const menuItems: MenuItem[] = [
 			{
 				description:
 					"Report a mosquito problem, water management issue, or request mosquitofish here.",
-				linkProps: { to: "/service" },
+				linkProps: { to: "/contact/service-request" },
 				title: "Service Requests",
 			},
 			{
 				description: "For general inquiries and support.",
-				linkProps: { to: "/contact-us" },
+				linkProps: { to: "/contact/contact-us" },
 				title: "Contact Us",
 			},
 		],
@@ -117,7 +117,7 @@ function WebNavBar() {
 		<div className="sticky top-0 z-50 flex h-30 flex-row items-center justify-start bg-primary py-2 drop-shadow-accent drop-shadow-xl">
 			<div className="flex w-50 flex-row justify-center rounded-r-full bg-background">
 				<Link to="/">
-					<img alt="MCMEC Logo" className="m-4 h-26" src="logo512.png" />
+					<img alt="MCMEC Logo" className="m-4 h-26" src="/logo512.png" />
 				</Link>
 			</div>
 
