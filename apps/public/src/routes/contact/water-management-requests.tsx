@@ -67,7 +67,6 @@ function RouteComponent() {
 		is_on_neighbor_property: false,
 		is_on_public_property: false,
 		is_processed: false,
-		location_of_concern: "",
 		other_location_description: null,
 		phone: "",
 		updated_at: new Date(),
@@ -129,11 +128,9 @@ function RouteComponent() {
 			<article className="prose lg:prose-xl max-w-none">
 				<h1>Water Management Request</h1>
 				<p>
-					Use this form to report standing water that may be creating mosquito
-					breeding habitats. This includes areas such as clogged storm drains,
-					ditches, ponding in fields, or other areas with persistent standing
-					water. Our team will investigate and take appropriate action to
-					address the issue.
+					Please use this form to report significant areas of blocked waterways,
+					poor drainage, or other persistent water issues that you believe may
+					be serving as mosquito breeding habitats.
 				</p>
 			</article>
 			<form.AppForm>
@@ -195,15 +192,6 @@ function RouteComponent() {
 						</form.AppField>
 					</FieldSet>
 					<FieldSeparator />
-					<form.AppField name="location_of_concern">
-						{(field) => (
-							<field.TextAreaField
-								className="max-w-2xl"
-								label="Location of Concern *"
-							/>
-						)}
-					</form.AppField>
-
 					<FieldSet>
 						<FieldLegend>Where is the standing water located?</FieldLegend>
 						<FieldDescription>Check all that apply</FieldDescription>
@@ -212,20 +200,24 @@ function RouteComponent() {
 							name="is_on_my_property"
 							validators={{
 								onChange: ({ value, fieldApi }) => {
-									if (
-										!isOneChecked([
-											value,
-											fieldApi.form.getFieldValue("is_on_neighbor_property"),
-											fieldApi.form.getFieldValue("is_on_public_property"),
-										])
-									) {
-										return "At least one location option must be selected.";
+									const hasCheckbox = isOneChecked([
+										value,
+										fieldApi.form.getFieldValue("is_on_neighbor_property"),
+										fieldApi.form.getFieldValue("is_on_public_property"),
+									]);
+									const hasOtherDescription = fieldApi.form.getFieldValue(
+										"other_location_description",
+									);
+
+									if (!hasCheckbox && !hasOtherDescription) {
+										return "At least one location option must be selected or provide other location description.";
 									}
 									return undefined;
 								},
 								onChangeListenTo: [
 									"is_on_neighbor_property",
 									"is_on_public_property",
+									"other_location_description",
 								],
 							}}
 						>
@@ -241,7 +233,28 @@ function RouteComponent() {
 						</form.AppField>
 					</FieldSet>
 
-					<form.AppField name="other_location_description">
+					<form.AppField
+						name="other_location_description"
+						validators={{
+							onChange: ({ value, fieldApi }) => {
+								const hasCheckbox = isOneChecked([
+									fieldApi.form.getFieldValue("is_on_my_property"),
+									fieldApi.form.getFieldValue("is_on_neighbor_property"),
+									fieldApi.form.getFieldValue("is_on_public_property"),
+								]);
+
+								if (!hasCheckbox && !value) {
+									return "At least one location option must be selected or provide other location description.";
+								}
+								return undefined;
+							},
+							onChangeListenTo: [
+								"is_on_my_property",
+								"is_on_neighbor_property",
+								"is_on_public_property",
+							],
+						}}
+					>
 						{(field) => (
 							<field.TextAreaField
 								className="max-w-2xl"

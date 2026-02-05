@@ -8,7 +8,6 @@ create table public.water_management_requests (
     address_line_2 text,
     zip_code_id uuid not null references public.zip_codes(id) on delete restrict,
     --- water management details
-    location_of_concern text not null,
     is_on_my_property boolean not null default false,
     is_on_neighbor_property boolean not null default false,
     is_on_public_property boolean not null default false,

@@ -19,7 +19,6 @@ const BaseSchema = z.object({
 	is_on_neighbor_property: z.boolean().default(false),
 	is_on_public_property: z.boolean().default(false),
 	is_processed: z.boolean().default(false),
-	location_of_concern: NonEmptyStringSchema(5),
 	other_location_description: z.string().nullable(),
 	phone: ValidPhoneNumberSchema,
 	updated_at: z.coerce.date(),

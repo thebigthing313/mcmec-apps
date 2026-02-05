@@ -488,7 +488,6 @@ export type Database = {
           is_on_neighbor_property: boolean
           is_on_public_property: boolean
           is_processed: boolean
-          location_of_concern: string
           other_location_description: string | null
           phone: string
           updated_at: string
@@ -508,7 +507,6 @@ export type Database = {
           is_on_neighbor_property?: boolean
           is_on_public_property?: boolean
           is_processed?: boolean
-          location_of_concern: string
           other_location_description?: string | null
           phone: string
           updated_at?: string
@@ -528,7 +526,6 @@ export type Database = {
           is_on_neighbor_property?: boolean
           is_on_public_property?: boolean
           is_processed?: boolean
-          location_of_concern?: string
           other_location_description?: string | null
           phone?: string
           updated_at?: string
