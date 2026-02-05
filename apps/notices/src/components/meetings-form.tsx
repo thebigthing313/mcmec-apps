@@ -113,6 +113,9 @@ export function MeetingsForm({
 						<field.SwitchField
 							description="Cancelled meetings will still be shown on the public meetings page. If cancelled, put the reason in the notes."
 							label="Cancelled"
+							labelWhenFalse="This meeting is scheduled or has already occurred."
+							labelWhenTrue="This meeting was cancelled."
+							orientation="vertical"
 						/>
 					)}
 				</form.AppField>
