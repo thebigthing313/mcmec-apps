@@ -33,12 +33,18 @@ export function FormField({
 		>
 			{label && description ? (
 				<FieldContent>
-					<FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>
+					<FieldLabel className="text-md" htmlFor={htmlFor}>
+						{label}
+					</FieldLabel>
 					<FieldDescription>{description}</FieldDescription>
 				</FieldContent>
 			) : (
 				<>
-					{label && <FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>}
+					{label && (
+						<FieldLabel className="text-md" htmlFor={htmlFor}>
+							{label}
+						</FieldLabel>
+					)}
 					{description && <FieldDescription>{description}</FieldDescription>}
 				</>
 			)}
