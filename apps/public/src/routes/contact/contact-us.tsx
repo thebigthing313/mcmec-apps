@@ -1,6 +1,6 @@
 import {
-	EmailSchema,
 	NonEmptyStringSchema,
+	ValidEmailSchema,
 } from "@mcmec/lib/constants/validators";
 import { ContactFormSubmissionsInsertSchema } from "@mcmec/supabase/db/contact-form-submissions";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
@@ -14,7 +14,7 @@ import {
 } from "@/src/components/turnstile-widget";
 import { submitContactFormServerFn } from "@/src/lib/submit-contact-form";
 
-export const Route = createFileRoute("/(contact)/contact-us")({
+export const Route = createFileRoute("/contact/contact-us")({
 	component: RouteComponent,
 });
 
@@ -93,7 +93,7 @@ function RouteComponent() {
 					outreach, or current spray schedules, our office in Edison is here to
 					assist you. If you would like to report a mosquito problem, water
 					management issue, or request mosquito fish, please use our dedicated{" "}
-					<Link to="/service">service request</Link> page.
+					<Link to="/contact/service-request">service request</Link> page.
 				</p>
 			</article>
 
@@ -105,7 +105,10 @@ function RouteComponent() {
 					>
 						{(field) => <field.TextField label="Name" />}
 					</form.AppField>
-					<form.AppField name="email" validators={{ onSubmit: EmailSchema }}>
+					<form.AppField
+						name="email"
+						validators={{ onSubmit: ValidEmailSchema }}
+					>
 						{(field) => <field.TextField label="Email" />}
 					</form.AppField>
 					<form.AppField
