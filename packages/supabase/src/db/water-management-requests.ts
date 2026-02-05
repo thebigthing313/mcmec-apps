@@ -32,11 +32,13 @@ export const WaterManagementRequestsRowSchema = BaseSchema.refine(
 		return (
 			data.is_on_my_property ||
 			data.is_on_neighbor_property ||
-			data.is_on_public_property
+			data.is_on_public_property ||
+			data.other_location_description
 		);
 	},
 	{
-		message: "At least one location option must be selected.",
+		message:
+			"At least one location option must be selected or other location description must be provided.",
 		path: ["is_on_my_property"],
 	},
 );
@@ -51,11 +53,13 @@ export const WaterManagementRequestsInsertSchema = BaseSchema.omit({
 		return (
 			data.is_on_my_property ||
 			data.is_on_neighbor_property ||
-			data.is_on_public_property
+			data.is_on_public_property ||
+			data.other_location_description
 		);
 	},
 	{
-		message: "At least one location option must be selected.",
+		message:
+			"At least one location option must be selected or other location description must be provided.",
 		path: ["is_on_my_property"],
 	},
 );
