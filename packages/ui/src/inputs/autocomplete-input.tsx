@@ -74,17 +74,17 @@ export function AutoComplete<T extends string>({
 
 	return (
 		<div className="flex items-center">
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover onOpenChange={setOpen} open={open}>
 				<Command shouldFilter={false}>
 					<PopoverAnchor asChild>
 						<CommandPrimitive.Input
 							asChild
-							value={searchValue}
-							onValueChange={onSearchValueChange}
+							onBlur={onInputBlur}
+							onFocus={() => setOpen(true)}
 							onKeyDown={(e) => setOpen(e.key !== "Escape")}
 							onMouseDown={() => setOpen((open) => !!searchValue || !open)}
-							onFocus={() => setOpen(true)}
-							onBlur={onInputBlur}
+							onValueChange={onSearchValueChange}
+							value={searchValue}
 						>
 							<Input placeholder={placeholder} />
 						</CommandPrimitive.Input>
@@ -92,7 +92,7 @@ export function AutoComplete<T extends string>({
 					{!open && <CommandList aria-hidden="true" className="hidden" />}
 					<PopoverContent
 						asChild
-						onOpenAutoFocus={(e) => e.preventDefault()}
+						className="w-[--radix-popover-trigger-width] p-0"
 						onInteractOutside={(e) => {
 							if (
 								e.target instanceof Element &&
@@ -101,7 +101,7 @@ export function AutoComplete<T extends string>({
 								e.preventDefault();
 							}
 						}}
-						className="w-[--radix-popover-trigger-width] p-0"
+						onOpenAutoFocus={(e) => e.preventDefault()}
 					>
 						<CommandList>
 							{isLoading && (
@@ -116,9 +116,9 @@ export function AutoComplete<T extends string>({
 									{items.map((option) => (
 										<CommandItem
 											key={option.value}
-											value={option.value}
 											onMouseDown={(e) => e.preventDefault()}
 											onSelect={onSelectItem}
+											value={option.value}
 										>
 											<Check
 												className={cn(
