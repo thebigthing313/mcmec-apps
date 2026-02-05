@@ -6,7 +6,9 @@ import { getSupabaseServiceClient } from "./supabase-service-client.server";
 import { validateTurnstile } from "./validate-turnstile.server";
 
 const AdultMosquitoRequestSchema = z.object({
-	data: AdultMosquitoRequestsInsertSchema,
+	data: AdultMosquitoRequestsInsertSchema.extend({
+		honeypot: z.string().optional(),
+	}),
 	turnstileToken: z.string(),
 });
 

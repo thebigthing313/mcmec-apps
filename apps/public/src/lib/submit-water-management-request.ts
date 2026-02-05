@@ -6,7 +6,9 @@ import { getSupabaseServiceClient } from "./supabase-service-client.server";
 import { validateTurnstile } from "./validate-turnstile.server";
 
 const WaterManagementRequestSchema = z.object({
-	data: WaterManagementRequestsInsertSchema,
+	data: WaterManagementRequestsInsertSchema.extend({
+		honeypot: z.string().optional(),
+	}),
 	turnstileToken: z.string(),
 });
 
