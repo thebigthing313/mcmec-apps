@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/(about)/leadership")({
+export const Route = createFileRoute("/about/leadership")({
 	component: RouteComponent,
 });
 
@@ -89,5 +89,5 @@ function RouteComponent() {
 				</p>
 			</article>
 		</div>
-	);
+	)
 }

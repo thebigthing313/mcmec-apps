@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/(about)/how-we-control-mosquitoes")({
+export const Route = createFileRoute("/about/how-we-control-mosquitoes")({
 	component: RouteComponent,
 });
 
@@ -157,7 +157,7 @@ function RouteComponent() {
 						Spray Schedule
 					</a>{" "}
 					page. Insecticides used by the Commission can be found{" "}
-					<Link to="/mosquito-control-products">here</Link>.
+					<Link to="/about/mosquito-control-products">here</Link>.
 				</p>
 			</article>
 		</div>

@@ -44,22 +44,22 @@ const menuItems: MenuItem[] = [
 		subItems: [
 			{
 				description: "Our purpose and goals.",
-				linkProps: { to: "/mission" },
+				linkProps: { to: "/about/mission" },
 				title: "Mission Statement",
 			},
 			{
 				description: "Meet our board of commissioners.",
-				linkProps: { to: "/leadership" },
+				linkProps: { to: "/about/leadership" },
 				title: "Leadership",
 			},
 			{
 				description: "Overview of our mosquito control methods.",
-				linkProps: { to: "/how-we-control-mosquitoes" },
+				linkProps: { to: "/about/how-we-control-mosquitoes" },
 				title: "How We Control Mosquitoes",
 			},
 			{
 				description: "Insecticides and other products we commonly use.",
-				linkProps: { to: "/mosquito-control-products" },
+				linkProps: { to: "/about/mosquito-control-products" },
 				title: "Mosquito Control Products",
 			},
 		],

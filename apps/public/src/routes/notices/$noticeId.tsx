@@ -89,7 +89,7 @@ function RouteComponent() {
 				/>
 			</div>
 
-			<article className="prose">
+			<article className="prose lg:prose-xl max-w-none">
 				<h2>{title}</h2>
 				<div className="flex flex-row items-center gap-2">
 					<Label>Status: </Label>

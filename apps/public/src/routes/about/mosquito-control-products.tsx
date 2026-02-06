@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { insecticidesQueryOptions } from "@/src/lib/queries";
 
-export const Route = createFileRoute("/(about)/mosquito-control-products")({
+export const Route = createFileRoute("/about/mosquito-control-products")({
 	component: RouteComponent,
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(insecticidesQueryOptions());
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/(about)/mosquito-control-products")({
 function RouteComponent() {
 	const { data: insecticidesData } = useSuspenseQuery(
 		insecticidesQueryOptions(),
-	);
+	)
 
 	const tableData: InsecticideTableRowType[] = insecticidesData.map(
 		(insecticide) => ({
@@ -26,7 +26,7 @@ function RouteComponent() {
 			trade_name: insecticide.trade_name,
 			type_name: insecticide.type_name,
 		}),
-	);
+	)
 
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4">
@@ -52,5 +52,5 @@ function RouteComponent() {
 				<InsecticidesTable data={tableData} linkToEdit={false} />
 			</div>
 		</div>
-	);
+	)
 }

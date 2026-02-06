@@ -20,10 +20,10 @@ import { Route as ContactRequestSuccessRouteImport } from './routes/contact/requ
 import { Route as ContactMosquitofishRequestsRouteImport } from './routes/contact/mosquitofish-requests'
 import { Route as ContactContactUsRouteImport } from './routes/contact/contact-us'
 import { Route as ContactAdultMosquitoRequestsRouteImport } from './routes/contact/adult-mosquito-requests'
-import { Route as aboutMosquitoControlProductsRouteImport } from './routes/(about)/mosquito-control-products'
-import { Route as aboutMissionRouteImport } from './routes/(about)/mission'
-import { Route as aboutLeadershipRouteImport } from './routes/(about)/leadership'
-import { Route as aboutHowWeControlMosquitoesRouteImport } from './routes/(about)/how-we-control-mosquitoes'
+import { Route as AboutMosquitoControlProductsRouteImport } from './routes/about/mosquito-control-products'
+import { Route as AboutMissionRouteImport } from './routes/about/mission'
+import { Route as AboutLeadershipRouteImport } from './routes/about/leadership'
+import { Route as AboutHowWeControlMosquitoesRouteImport } from './routes/about/how-we-control-mosquitoes'
 
 const MeetingsRoute = MeetingsRouteImport.update({
   id: '/meetings',
@@ -83,36 +83,36 @@ const ContactAdultMosquitoRequestsRoute =
     path: '/contact/adult-mosquito-requests',
     getParentRoute: () => rootRouteImport,
   } as any)
-const aboutMosquitoControlProductsRoute =
-  aboutMosquitoControlProductsRouteImport.update({
-    id: '/(about)/mosquito-control-products',
-    path: '/mosquito-control-products',
+const AboutMosquitoControlProductsRoute =
+  AboutMosquitoControlProductsRouteImport.update({
+    id: '/about/mosquito-control-products',
+    path: '/about/mosquito-control-products',
     getParentRoute: () => rootRouteImport,
   } as any)
-const aboutMissionRoute = aboutMissionRouteImport.update({
-  id: '/(about)/mission',
-  path: '/mission',
+const AboutMissionRoute = AboutMissionRouteImport.update({
+  id: '/about/mission',
+  path: '/about/mission',
   getParentRoute: () => rootRouteImport,
 } as any)
-const aboutLeadershipRoute = aboutLeadershipRouteImport.update({
-  id: '/(about)/leadership',
-  path: '/leadership',
+const AboutLeadershipRoute = AboutLeadershipRouteImport.update({
+  id: '/about/leadership',
+  path: '/about/leadership',
   getParentRoute: () => rootRouteImport,
 } as any)
-const aboutHowWeControlMosquitoesRoute =
-  aboutHowWeControlMosquitoesRouteImport.update({
-    id: '/(about)/how-we-control-mosquitoes',
-    path: '/how-we-control-mosquitoes',
+const AboutHowWeControlMosquitoesRoute =
+  AboutHowWeControlMosquitoesRouteImport.update({
+    id: '/about/how-we-control-mosquitoes',
+    path: '/about/how-we-control-mosquitoes',
     getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/meetings': typeof MeetingsRoute
-  '/how-we-control-mosquitoes': typeof aboutHowWeControlMosquitoesRoute
-  '/leadership': typeof aboutLeadershipRoute
-  '/mission': typeof aboutMissionRoute
-  '/mosquito-control-products': typeof aboutMosquitoControlProductsRoute
+  '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
+  '/about/leadership': typeof AboutLeadershipRoute
+  '/about/mission': typeof AboutMissionRoute
+  '/about/mosquito-control-products': typeof AboutMosquitoControlProductsRoute
   '/contact/adult-mosquito-requests': typeof ContactAdultMosquitoRequestsRoute
   '/contact/contact-us': typeof ContactContactUsRoute
   '/contact/mosquitofish-requests': typeof ContactMosquitofishRequestsRoute
@@ -126,10 +126,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/meetings': typeof MeetingsRoute
-  '/how-we-control-mosquitoes': typeof aboutHowWeControlMosquitoesRoute
-  '/leadership': typeof aboutLeadershipRoute
-  '/mission': typeof aboutMissionRoute
-  '/mosquito-control-products': typeof aboutMosquitoControlProductsRoute
+  '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
+  '/about/leadership': typeof AboutLeadershipRoute
+  '/about/mission': typeof AboutMissionRoute
+  '/about/mosquito-control-products': typeof AboutMosquitoControlProductsRoute
   '/contact/adult-mosquito-requests': typeof ContactAdultMosquitoRequestsRoute
   '/contact/contact-us': typeof ContactContactUsRoute
   '/contact/mosquitofish-requests': typeof ContactMosquitofishRequestsRoute
@@ -144,10 +144,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/meetings': typeof MeetingsRoute
-  '/(about)/how-we-control-mosquitoes': typeof aboutHowWeControlMosquitoesRoute
-  '/(about)/leadership': typeof aboutLeadershipRoute
-  '/(about)/mission': typeof aboutMissionRoute
-  '/(about)/mosquito-control-products': typeof aboutMosquitoControlProductsRoute
+  '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
+  '/about/leadership': typeof AboutLeadershipRoute
+  '/about/mission': typeof AboutMissionRoute
+  '/about/mosquito-control-products': typeof AboutMosquitoControlProductsRoute
   '/contact/adult-mosquito-requests': typeof ContactAdultMosquitoRequestsRoute
   '/contact/contact-us': typeof ContactContactUsRoute
   '/contact/mosquitofish-requests': typeof ContactMosquitofishRequestsRoute
@@ -163,10 +163,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/meetings'
-    | '/how-we-control-mosquitoes'
-    | '/leadership'
-    | '/mission'
-    | '/mosquito-control-products'
+    | '/about/how-we-control-mosquitoes'
+    | '/about/leadership'
+    | '/about/mission'
+    | '/about/mosquito-control-products'
     | '/contact/adult-mosquito-requests'
     | '/contact/contact-us'
     | '/contact/mosquitofish-requests'
@@ -180,10 +180,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/meetings'
-    | '/how-we-control-mosquitoes'
-    | '/leadership'
-    | '/mission'
-    | '/mosquito-control-products'
+    | '/about/how-we-control-mosquitoes'
+    | '/about/leadership'
+    | '/about/mission'
+    | '/about/mosquito-control-products'
     | '/contact/adult-mosquito-requests'
     | '/contact/contact-us'
     | '/contact/mosquitofish-requests'
@@ -197,10 +197,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/meetings'
-    | '/(about)/how-we-control-mosquitoes'
-    | '/(about)/leadership'
-    | '/(about)/mission'
-    | '/(about)/mosquito-control-products'
+    | '/about/how-we-control-mosquitoes'
+    | '/about/leadership'
+    | '/about/mission'
+    | '/about/mosquito-control-products'
     | '/contact/adult-mosquito-requests'
     | '/contact/contact-us'
     | '/contact/mosquitofish-requests'
@@ -215,10 +215,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MeetingsRoute: typeof MeetingsRoute
-  aboutHowWeControlMosquitoesRoute: typeof aboutHowWeControlMosquitoesRoute
-  aboutLeadershipRoute: typeof aboutLeadershipRoute
-  aboutMissionRoute: typeof aboutMissionRoute
-  aboutMosquitoControlProductsRoute: typeof aboutMosquitoControlProductsRoute
+  AboutHowWeControlMosquitoesRoute: typeof AboutHowWeControlMosquitoesRoute
+  AboutLeadershipRoute: typeof AboutLeadershipRoute
+  AboutMissionRoute: typeof AboutMissionRoute
+  AboutMosquitoControlProductsRoute: typeof AboutMosquitoControlProductsRoute
   ContactAdultMosquitoRequestsRoute: typeof ContactAdultMosquitoRequestsRoute
   ContactContactUsRoute: typeof ContactContactUsRoute
   ContactMosquitofishRequestsRoute: typeof ContactMosquitofishRequestsRoute
@@ -309,32 +309,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactAdultMosquitoRequestsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(about)/mosquito-control-products': {
-      id: '/(about)/mosquito-control-products'
-      path: '/mosquito-control-products'
-      fullPath: '/mosquito-control-products'
-      preLoaderRoute: typeof aboutMosquitoControlProductsRouteImport
+    '/about/mosquito-control-products': {
+      id: '/about/mosquito-control-products'
+      path: '/about/mosquito-control-products'
+      fullPath: '/about/mosquito-control-products'
+      preLoaderRoute: typeof AboutMosquitoControlProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(about)/mission': {
-      id: '/(about)/mission'
-      path: '/mission'
-      fullPath: '/mission'
-      preLoaderRoute: typeof aboutMissionRouteImport
+    '/about/mission': {
+      id: '/about/mission'
+      path: '/about/mission'
+      fullPath: '/about/mission'
+      preLoaderRoute: typeof AboutMissionRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(about)/leadership': {
-      id: '/(about)/leadership'
-      path: '/leadership'
-      fullPath: '/leadership'
-      preLoaderRoute: typeof aboutLeadershipRouteImport
+    '/about/leadership': {
+      id: '/about/leadership'
+      path: '/about/leadership'
+      fullPath: '/about/leadership'
+      preLoaderRoute: typeof AboutLeadershipRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(about)/how-we-control-mosquitoes': {
-      id: '/(about)/how-we-control-mosquitoes'
-      path: '/how-we-control-mosquitoes'
-      fullPath: '/how-we-control-mosquitoes'
-      preLoaderRoute: typeof aboutHowWeControlMosquitoesRouteImport
+    '/about/how-we-control-mosquitoes': {
+      id: '/about/how-we-control-mosquitoes'
+      path: '/about/how-we-control-mosquitoes'
+      fullPath: '/about/how-we-control-mosquitoes'
+      preLoaderRoute: typeof AboutHowWeControlMosquitoesRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -343,10 +343,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MeetingsRoute: MeetingsRoute,
-  aboutHowWeControlMosquitoesRoute: aboutHowWeControlMosquitoesRoute,
-  aboutLeadershipRoute: aboutLeadershipRoute,
-  aboutMissionRoute: aboutMissionRoute,
-  aboutMosquitoControlProductsRoute: aboutMosquitoControlProductsRoute,
+  AboutHowWeControlMosquitoesRoute: AboutHowWeControlMosquitoesRoute,
+  AboutLeadershipRoute: AboutLeadershipRoute,
+  AboutMissionRoute: AboutMissionRoute,
+  AboutMosquitoControlProductsRoute: AboutMosquitoControlProductsRoute,
   ContactAdultMosquitoRequestsRoute: ContactAdultMosquitoRequestsRoute,
   ContactContactUsRoute: ContactContactUsRoute,
   ContactMosquitofishRequestsRoute: ContactMosquitofishRequestsRoute,
