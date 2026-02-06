@@ -48,7 +48,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		scripts: [
 			{
 				defer: true,
-				src: "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
+				src: "https://challenges.cloudflare.com/turnstile/v0/api.js",
 			},
 		],
 	}),

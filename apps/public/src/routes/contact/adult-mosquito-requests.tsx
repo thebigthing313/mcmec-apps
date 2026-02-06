@@ -22,7 +22,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
 	TurnstileWidget,
@@ -43,6 +43,11 @@ function RouteComponent() {
 	const [turnstileToken, setTurnstileToken] = useState<string>("");
 	const turnstileRef = useRef<TurnstileWidgetRef>(null);
 	const navigate = useNavigate();
+
+	// Wrap callback in useCallback to keep it stable and prevent widget re-renders
+	const handleTurnstileSuccess = useCallback((token: string) => {
+		setTurnstileToken(token);
+	}, []);
 
 	const { data: zipCodes } = useSuspenseQuery(zipCodesQueryOptions());
 	const submitForm = useServerFn(submitAdultMosquitoRequestServerFn);
@@ -283,7 +288,7 @@ function RouteComponent() {
 
 					<ClientOnly fallback={<div className="h-16.25" />}>
 						<TurnstileWidget
-							onSuccess={(token) => setTurnstileToken(token)}
+							onSuccess={handleTurnstileSuccess}
 							ref={turnstileRef}
 							sitekey={sitekey}
 						/>

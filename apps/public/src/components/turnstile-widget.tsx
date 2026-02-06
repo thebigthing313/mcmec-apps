@@ -13,6 +13,9 @@ export const TurnstileWidget = forwardRef<
 >(function TurnstileWidget({ sitekey, onSuccess }, ref) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const widgetId = useRef<string | null>(null);
+	// Store onSuccess in a ref to prevent re-renders when callback changes
+	const onSuccessRef = useRef(onSuccess);
+	onSuccessRef.current = onSuccess;
 
 	useImperativeHandle(ref, () => ({
 		reset: () => {
@@ -34,7 +37,7 @@ export const TurnstileWidget = forwardRef<
 				// Cast to 'any' to allow 'action' if your TS definitions are outdated
 				widgetId.current = window.turnstile.render(containerRef.current, {
 					action: "protected-form",
-					callback: onSuccess,
+					callback: (token) => onSuccessRef.current(token),
 					execution: "render",
 					retry: "auto",
 					"retry-interval": 1500,
@@ -68,7 +71,7 @@ export const TurnstileWidget = forwardRef<
 				widgetId.current = null;
 			}
 		};
-	}, [sitekey, onSuccess]);
+	}, [sitekey]);
 
 	// Adding a min-height prevents layout shift and
 	// ensures the widget container is visible to the script.

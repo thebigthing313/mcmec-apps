@@ -6,7 +6,7 @@ import { ContactFormSubmissionsInsertSchema } from "@mcmec/supabase/db/contact-f
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
 	TurnstileWidget,
@@ -23,6 +23,11 @@ function RouteComponent() {
 	const [honeypot, setHoneypot] = useState<string>("");
 	const [turnstileToken, setTurnstileToken] = useState<string>("");
 	const turnstileRef = useRef<TurnstileWidgetRef>(null);
+
+	// Wrap callback in useCallback to keep it stable and prevent widget re-renders
+	const handleTurnstileSuccess = useCallback((token: string) => {
+		setTurnstileToken(token);
+	}, []);
 
 	const submitForm = useServerFn(submitContactFormServerFn);
 	const form = useAppForm({
@@ -122,7 +127,7 @@ function RouteComponent() {
 					<ClientOnly fallback={<div className="h-16.25" />}>
 						<TurnstileWidget
 							key={sitekey} // Force re-mount if sitekey changes
-							onSuccess={(token) => setTurnstileToken(token)}
+							onSuccess={handleTurnstileSuccess}
 							ref={turnstileRef}
 							sitekey={sitekey}
 						/>
