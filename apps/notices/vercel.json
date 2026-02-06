@@ -1,4 +1,6 @@
 {
+	"buildCommand": "cd ../.. && pnpm run build --filter=notices",
+	"installCommand": "pnpm install",
 	"outputDirectory": "dist",
 	"rewrites": [
 		{

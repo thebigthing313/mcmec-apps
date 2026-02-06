@@ -1,4 +1,5 @@
 {
+	"buildCommand": "cd ../.. && pnpm run build --filter=public",
 	"headers": [
 		{
 			"headers": [
@@ -10,5 +11,6 @@
 			"source": "/(.*)"
 		}
 	],
+	"installCommand": "pnpm install",
 	"outputDirectory": ".output/public"
 }
