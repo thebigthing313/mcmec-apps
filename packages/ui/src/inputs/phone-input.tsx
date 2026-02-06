@@ -67,7 +67,7 @@ export function PhoneInput({
 		[],
 	);
 
-	const handleBlur = useCallback(() => {
+	const validateAndNotify = useCallback(() => {
 		if (!rawPhone.trim()) {
 			onChange?.(undefined);
 			setIsValid(true);
@@ -86,22 +86,38 @@ export function PhoneInput({
 		}
 	}, [rawPhone, ext, onChange, displayPhone]);
 
+	const handleBlur = useCallback(() => {
+		validateAndNotify();
+	}, [validateAndNotify]);
+
+	// Handle browser autofill - run validation when rawPhone or ext changes
+	React.useEffect(() => {
+		if (rawPhone || ext) {
+			// Small delay to ensure the component has mounted and state is ready
+			const timer = setTimeout(() => {
+				validateAndNotify();
+			}, 100);
+			return () => clearTimeout(timer);
+		}
+	}, [rawPhone, ext, validateAndNotify]);
+
 	return (
 		<div className={cn("flex gap-2", className)}>
 			<Input
 				aria-invalid={!isValid}
+				autoComplete="tel"
 				className={showExt ? "w-3/4" : "w-full"}
+				id={id}
+				name={name}
 				onBlur={handleBlur}
 				onChange={handlePhoneChange}
-				type="text"
+				type="tel"
 				value={displayPhone}
 			/>
 			{showExt && (
 				<InputGroup className="w-1/4">
 					<InputGroupAddon align="inline-start">ext.</InputGroupAddon>
 					<InputGroupInput
-						id={id}
-						name={name}
 						onBlur={handleBlur}
 						onChange={handleExtChange}
 						type="text"
