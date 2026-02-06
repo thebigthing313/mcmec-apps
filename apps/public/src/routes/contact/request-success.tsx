@@ -9,7 +9,7 @@ export const Route = createFileRoute("/contact/request-success")({
 function RouteComponent() {
 	const navigate = Route.useNavigate();
 	return (
-		<div className="mx-auto w-full max-w-7xl p-4">
+		<div className="flex flex-col gap-4">
 			<article className="prose lg:prose-xl max-w-none">
 				<h1>Request Submitted Successfully!</h1>
 				<p>

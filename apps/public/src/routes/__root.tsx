@@ -59,11 +59,7 @@ function RootComponent() {
 	const isHome = location.pathname === "/";
 	return (
 		<RootDocument>
-			<div
-				className={
-					!isHome ? "mx-auto flex w-full max-w-7xl flex-col gap-4 p-4" : ""
-				}
-			>
+			<div className={!isHome ? "mx-auto flex w-full max-w-7xl p-4" : ""}>
 				<Outlet />
 			</div>
 		</RootDocument>

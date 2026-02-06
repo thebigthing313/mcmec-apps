@@ -14,7 +14,7 @@ export const Route = createFileRoute("/about/mosquito-control-products")({
 function RouteComponent() {
 	const { data: insecticidesData } = useSuspenseQuery(
 		insecticidesQueryOptions(),
-	)
+	);
 
 	const tableData: InsecticideTableRowType[] = insecticidesData.map(
 		(insecticide) => ({
@@ -26,10 +26,10 @@ function RouteComponent() {
 			trade_name: insecticide.trade_name,
 			type_name: insecticide.type_name,
 		}),
-	)
+	);
 
 	return (
-		<div className="mx-auto w-full max-w-7xl p-4">
+		<div className="flex flex-col gap-4">
 			<article className="prose lg:prose-xl max-w-none">
 				<h1>Commonly Used Mosquito Control Products</h1>
 				<p>
@@ -52,5 +52,5 @@ function RouteComponent() {
 				<InsecticidesTable data={tableData} linkToEdit={false} />
 			</div>
 		</div>
-	)
+	);
 }

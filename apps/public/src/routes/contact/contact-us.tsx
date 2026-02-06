@@ -22,7 +22,6 @@ function RouteComponent() {
 	const sitekey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITEKEY;
 	const [honeypot, setHoneypot] = useState<string>("");
 	const [turnstileToken, setTurnstileToken] = useState<string>("");
-	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const turnstileRef = useRef<TurnstileWidgetRef>(null);
 
 	const submitForm = useServerFn(submitContactFormServerFn);
@@ -48,32 +47,22 @@ function RouteComponent() {
 				return;
 			}
 
-			// Prevent double submissions
-			if (isSubmitting) {
-				return;
-			}
+			const result = await submitForm({
+				data: { data: { ...value }, turnstileToken },
+			});
 
-			setIsSubmitting(true);
-			try {
-				const result = await submitForm({
-					data: { data: { ...value }, turnstileToken },
-				});
+			// Reset token and turnstile widget after submission attempt
+			setTurnstileToken("");
+			turnstileRef.current?.reset();
 
-				// Reset token and turnstile widget after submission attempt
-				setTurnstileToken("");
-				turnstileRef.current?.reset();
-
-				if (result.success) {
-					toast.success("Submission successful! Thank you for contacting us.");
-					form.reset();
-				} else {
-					toast.error(
-						result.error ||
-							"There was an error submitting the form. Please try again.",
-					);
-				}
-			} finally {
-				setIsSubmitting(false);
+			if (result.success) {
+				toast.success("Submission successful! Thank you for contacting us.");
+				form.reset();
+			} else {
+				toast.error(
+					result.error ||
+						"There was an error submitting the form. Please try again.",
+				);
 			}
 		},
 		validators: {
@@ -137,12 +126,10 @@ function RouteComponent() {
 							sitekey={sitekey}
 						/>
 					</ClientOnly>
+					<form.AppForm>
+						<form.SubmitFormButton className="w-full" />
+					</form.AppForm>
 
-					<form.SubmitFormButton
-						className="w-full"
-						disabled={isSubmitting || !turnstileToken}
-						label={isSubmitting ? "Submitting..." : "Submit Form"}
-					/>
 					<input
 						name="nickname"
 						onChange={(e) => setHoneypot(e.target.value)}
