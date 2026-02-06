@@ -33,7 +33,7 @@ function RouteComponent() {
 					<GlassCard className="max-w-xl">
 						<h2
 							className={cn(
-								"mb-4 font-semibold leading-snug tracking-tight",
+								"mb-4 border-white/20 border-b-2 pb-2 font-semibold leading-snug tracking-tight",
 								isMobile ? "text-2xl" : "text-3xl",
 							)}
 						>
@@ -41,7 +41,7 @@ function RouteComponent() {
 						</h2>
 						<p
 							className={cn(
-								"font-light italic tracking-wide",
+								"font-light italic leading-tighter tracking-wide",
 								isMobile ? "text-lg" : "text-xl",
 							)}
 						>
@@ -52,7 +52,7 @@ function RouteComponent() {
 					<GlassCard className="flex max-w-xl flex-col items-center">
 						<h2
 							className={cn(
-								"mb-4 text-center font-semibold leading-snug tracking-tight",
+								"mb-4 border-white/20 border-b-2 pb-2 text-center font-semibold leading-snug tracking-tight",
 								isMobile ? "text-2xl" : "text-3xl",
 							)}
 						>
@@ -60,8 +60,8 @@ function RouteComponent() {
 						</h2>
 						<div
 							className={cn(
-								"flex flex-wrap gap-4",
-								isMobile ? "flex-col" : "flex-row",
+								"flex flex-wrap",
+								isMobile ? "w-full flex-col gap-2" : "flex-row gap-4",
 							)}
 						>
 							<GlassButton
@@ -83,13 +83,6 @@ function RouteComponent() {
 								label="Public Meetings"
 								onClick={() => {
 									navigate({ to: "/contact/service-request" });
-								}}
-							/>
-							<GlassButton
-								icon={<Newspaper />}
-								label="Public Notices"
-								onClick={() => {
-									navigate({ to: "/notices" });
 								}}
 							/>
 						</div>
@@ -133,7 +126,7 @@ function GlassButton({ label, icon, onClick }: GlassButtonProps) {
 			type="button"
 		>
 			{icon}
-			<span className="font-light text-lg uppercase tracking-wide">
+			<span className="font-light text-lg uppercase tracking-wide hover:underline">
 				{label}
 			</span>
 		</button>
