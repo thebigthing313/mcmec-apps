@@ -3,7 +3,13 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"env": ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"],
+			"env": [
+				"VITE_SUPABASE_URL",
+				"VITE_SUPABASE_PUBLISHABLE_KEY",
+				"VITE_CLOUDFLARE_TURNSTILE_SITEKEY",
+				"SUPABASE_SERVICE_ROLE_KEY",
+				"CLOUDFLARE_TURNSTILE_SECRETKEY"
+			],
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
 			"outputs": [".output/**"]
 		},
