@@ -10,6 +10,7 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
+	useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
@@ -54,9 +55,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootComponent() {
+	const location = useLocation();
+	const isHome = location.pathname === "/";
 	return (
 		<RootDocument>
-			<Outlet />
+			<div
+				className={
+					!isHome ? "mx-auto flex w-full max-w-7xl flex-col gap-4 p-4" : ""
+				}
+			>
+				<Outlet />
+			</div>
 		</RootDocument>
 	);
 }
