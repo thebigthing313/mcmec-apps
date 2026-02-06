@@ -1,6 +1,6 @@
 import { Command as CommandPrimitive } from "cmdk";
 import { Check } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
 	Command,
 	CommandEmpty,
@@ -35,6 +35,7 @@ export function AutoComplete<T extends string>({
 	placeholder = "Search...",
 }: Props<T>) {
 	const [open, setOpen] = useState(false);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const labels = useMemo(
 		() =>
@@ -54,11 +55,23 @@ export function AutoComplete<T extends string>({
 	};
 
 	const onInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-		if (
-			!e.relatedTarget?.hasAttribute("cmdk-list") &&
-			labels[selectedValue] !== searchValue
-		) {
-			reset();
+		if (!e.relatedTarget?.hasAttribute("cmdk-list")) {
+			// Get the actual DOM value in case browser autofill bypassed React state
+			const actualValue = inputRef.current?.value || searchValue;
+
+			// Check if actualValue matches any label (handle browser autofill)
+			if (actualValue && labels[selectedValue] !== actualValue) {
+				const matchingItem = items.find(
+					(item) => item.label === actualValue || item.value === actualValue,
+				);
+				if (matchingItem) {
+					// Auto-select the matching item
+					onSelectItem(matchingItem.value);
+				} else {
+					// No match found, reset
+					reset();
+				}
+			}
 		}
 	};
 
@@ -86,7 +99,7 @@ export function AutoComplete<T extends string>({
 							onValueChange={onSearchValueChange}
 							value={searchValue}
 						>
-							<Input placeholder={placeholder} />
+							<Input placeholder={placeholder} ref={inputRef} />
 						</CommandPrimitive.Input>
 					</PopoverAnchor>
 					{!open && <CommandList aria-hidden="true" className="hidden" />}
