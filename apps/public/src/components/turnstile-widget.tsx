@@ -37,6 +37,7 @@ export const TurnstileWidget = forwardRef<
 				// Cast to 'any' to allow 'action' if your TS definitions are outdated
 				widgetId.current = window.turnstile.render(containerRef.current, {
 					action: "protected-form",
+					//@ts-expect-error don't have definitions, need any
 					callback: (token) => onSuccessRef.current(token),
 					execution: "render",
 					retry: "auto",

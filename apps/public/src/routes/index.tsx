@@ -82,7 +82,7 @@ function RouteComponent() {
 								icon={<Users />}
 								label="Public Meetings"
 								onClick={() => {
-									navigate({ to: "/contact/service-request" });
+									navigate({ to: "/notices/meetings" });
 								}}
 							/>
 						</div>
