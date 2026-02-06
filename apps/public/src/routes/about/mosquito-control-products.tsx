@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { insecticidesQueryOptions } from "@/src/lib/queries";
 
-export const Route = createFileRoute("/(about)/mosquito-control-products")({
+export const Route = createFileRoute("/about/mosquito-control-products")({
 	component: RouteComponent,
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(insecticidesQueryOptions());
@@ -29,7 +29,7 @@ function RouteComponent() {
 	);
 
 	return (
-		<div className="mx-auto w-full max-w-7xl p-4">
+		<div className="flex flex-col gap-4">
 			<article className="prose lg:prose-xl max-w-none">
 				<h1>Commonly Used Mosquito Control Products</h1>
 				<p>

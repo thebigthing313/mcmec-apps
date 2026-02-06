@@ -1,6 +1,7 @@
 {
 	"author": "Adrian Kabigting",
 	"dependencies": {
+		"libphonenumber-js": "^1.12.33",
 		"lucide-react": "^0.475.0",
 		"zod": "^4.3.5"
 	},
@@ -28,5 +29,5 @@
 		"lint": "biome check --write ."
 	},
 	"type": "module",
-	"version": "0.6.3"
+	"version": "0.7.0"
 }

@@ -14,7 +14,7 @@ export function NotFound({
 			<img
 				alt="404 Not Found"
 				className="mb-6 h-64 w-64"
-				src="/shared/404-not-found.png"
+				src="/404-not-found.png"
 			/>
 			<h2 className="mb-4 font-semibold text-2xl">Not Found</h2>
 			<p className="mb-6 max-w-md text-muted-foreground">{message}</p>

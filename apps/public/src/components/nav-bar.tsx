@@ -44,22 +44,22 @@ const menuItems: MenuItem[] = [
 		subItems: [
 			{
 				description: "Our purpose and goals.",
-				linkProps: { to: "/mission" },
+				linkProps: { to: "/about/mission" },
 				title: "Mission Statement",
 			},
 			{
 				description: "Meet our board of commissioners.",
-				linkProps: { to: "/leadership" },
+				linkProps: { to: "/about/leadership" },
 				title: "Leadership",
 			},
 			{
 				description: "Overview of our mosquito control methods.",
-				linkProps: { to: "/how-we-control-mosquitoes" },
+				linkProps: { to: "/about/how-we-control-mosquitoes" },
 				title: "How We Control Mosquitoes",
 			},
 			{
 				description: "Insecticides and other products we commonly use.",
-				linkProps: { to: "/mosquito-control-products" },
+				linkProps: { to: "/about/mosquito-control-products" },
 				title: "Mosquito Control Products",
 			},
 		],
@@ -68,8 +68,24 @@ const menuItems: MenuItem[] = [
 	{
 		subItems: [
 			{
+				description:
+					"Report a mosquito problem, water management issue, or request mosquitofish here.",
+				linkProps: { to: "/contact/service-request" },
+				title: "Service Requests",
+			},
+			{
+				description: "For general inquiries and support.",
+				linkProps: { to: "/contact/contact-us" },
+				title: "Contact Us",
+			},
+		],
+		title: "Contact",
+	},
+	{
+		subItems: [
+			{
 				description: "Meeting schedules, agenda, and minutes.",
-				linkProps: { to: "/meetings" },
+				linkProps: { to: "/notices/meetings" },
 				title: "Public Meetings",
 			},
 			{
@@ -101,7 +117,7 @@ function WebNavBar() {
 		<div className="sticky top-0 z-50 flex h-30 flex-row items-center justify-start bg-primary py-2 drop-shadow-accent drop-shadow-xl">
 			<div className="flex w-50 flex-row justify-center rounded-r-full bg-background">
 				<Link to="/">
-					<img alt="MCMEC Logo" className="m-4 h-26" src="logo512.png" />
+					<img alt="MCMEC Logo" className="m-4 h-26" src="/logo512.png" />
 				</Link>
 			</div>
 
@@ -225,7 +241,7 @@ function MobileNavBar() {
 			</Sheet>
 			<div className="flex w-24 flex-row justify-center rounded-l-full bg-background">
 				<Link to="/">
-					<img alt="MCMEC Logo" className="m-4 h-15" src="logo512.png" />
+					<img alt="MCMEC Logo" className="m-4 h-15" src="/logo512.png" />
 				</Link>
 			</div>
 		</div>

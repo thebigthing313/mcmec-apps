@@ -32,8 +32,8 @@ function FieldLegend({
       data-variant={variant}
       className={cn(
         "mb-3 font-medium",
-        "data-[variant=legend]:text-base",
-        "data-[variant=label]:text-sm",
+        "data-[variant=legend]:text-lg",
+        "data-[variant=label]:text-lg",
         className
       )}
       {...props}
@@ -130,7 +130,7 @@ function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="field-label"
       className={cn(
-        "flex w-fit items-center gap-2 text-sm leading-snug font-medium group-data-[disabled=true]/field:opacity-50",
+        "flex w-fit items-center gap-2 text-md leading-snug font-medium group-data-[disabled=true]/field:opacity-50",
         className
       )}
       {...props}
@@ -143,7 +143,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="field-description"
       className={cn(
-        "text-muted-foreground text-sm leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance",
+        "text-muted-foreground text-md leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance",
         "last:mt-0 nth-last-2:-mt-1 [[data-variant=legend]+&]:-mt-1.5",
         "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
         className
@@ -189,38 +189,42 @@ function FieldError({
   errors,
   ...props
 }: React.ComponentProps<"div"> & {
-  errors?: Array<{ message?: string } | undefined>
+  // Updated type to accept strings OR objects
+  errors?: Array<{ message?: string } | string | undefined>;
 }) {
   const content = useMemo(() => {
-    if (children) {
-      return children
-    }
+    if (children) return children;
+    if (!errors?.length) return null;
 
-    if (!errors?.length) {
-      return null
-    }
+    // 1. Normalize all inputs to { message: string }
+    const normalized = errors
+      .map((error) => {
+        if (typeof error === "string") return { message: error };
+        return error;
+      })
+      .filter((e): e is { message: string } => !!e?.message);
 
+    // 2. Filter out duplicates based on the message string
     const uniqueErrors = [
-      ...new Map(errors.map((error) => [error?.message, error])).values(),
-    ]
+      ...new Map(normalized.map((error) => [error.message, error])).values(),
+    ];
 
-    if (uniqueErrors?.length == 1) {
-      return uniqueErrors[0]?.message
+    if (uniqueErrors.length === 0) return null;
+
+    if (uniqueErrors.length === 1) {
+      return uniqueErrors[0]?.message;
     }
 
     return (
       <ul className="ml-4 flex list-disc flex-col gap-1">
-        {uniqueErrors.map(
-          (error, index) =>
-            error?.message && <li key={index}>{error.message}</li>
-        )}
+        {uniqueErrors.map((error, index) => (
+          <li key={index}>{error.message}</li>
+        ))}
       </ul>
-    )
-  }, [children, errors])
+    );
+  }, [children, errors]);
 
-  if (!content) {
-    return null
-  }
+  if (!content) return null;
 
   return (
     <div
@@ -231,7 +235,7 @@ function FieldError({
     >
       {content}
     </div>
-  )
+  );
 }
 
 export {

@@ -1,5 +1,7 @@
 import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
+import { cn } from "@mcmec/ui/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
+import { ConciergeBell, Newspaper, Users } from "lucide-react";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
@@ -7,6 +9,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
 	const isMobile = useIsMobile();
+	const navigate = Route.useNavigate();
 
 	return (
 		<div className="-my-8 w-full">
@@ -26,36 +29,106 @@ function RouteComponent() {
 				<div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/60 to-transparent" />
 
 				{/* Content Centering Wrapper */}
-				<div className="absolute inset-0 flex items-center justify-start p-6 md:p-12">
-					<div className="max-h-[90%] w-full max-w-2xl overflow-y-auto rounded-xl border border-white/20 bg-black/30 p-6 shadow-2xl backdrop-blur-md md:ml-12 md:p-10">
-						<article className="space-y-6 text-white leading-relaxed">
-							<p>
-								<span className="mb-2 block font-bold text-3xl tracking-tight">
-									The Middlesex County Mosquito Extermination Commission
-								</span>
-								<span className="text-white/90">
-									was created in 1914. In accordance with the laws of the State
-									of New Jersey, N.J.S.A, Title 26, Chapter 9 and 26:3-46 et.
-									seq., the Commission is "to perform all acts which, in its
-									opinion, may be necessary for the elimination of mosquito
-									breeding areas, or which will tend to exterminate mosquitoes
-									within the county.
-								</span>
-							</p>
-							<p className="text-white/90">
-								The Commission recognizes mosquito-borne diseases to be
-								hazardous to the health and safety of the people of Middlesex
-								County and is committed to reducing the chance of infection
-								through a comprehensive approach to mosquito control. This
-								approach in in accordance with scientifically based best
-								management practices and includes mosquito surveillance, water
-								management, biological control, chemical control and public
-								education.
-							</p>
-						</article>
-					</div>
+				<div className="absolute inset-0 flex flex-col gap-8 p-6 md:p-12">
+					<GlassCard className="max-w-xl">
+						<h2
+							className={cn(
+								"mb-4 border-white/20 border-b-2 pb-2 font-semibold leading-snug tracking-tight",
+								isMobile ? "text-2xl" : "text-3xl",
+							)}
+						>
+							Middlesex County Mosquito Extermination Commission
+						</h2>
+						<p
+							className={cn(
+								"font-light italic leading-tighter tracking-wide",
+								isMobile ? "text-lg" : "text-xl",
+							)}
+						>
+							Protecting the health and comfort of Middlesex County residents
+							and visitors since 1914.
+						</p>
+					</GlassCard>
+					<GlassCard className="flex max-w-xl flex-col items-center">
+						<h2
+							className={cn(
+								"mb-4 border-white/20 border-b-2 pb-2 text-center font-semibold leading-snug tracking-tight",
+								isMobile ? "text-2xl" : "text-3xl",
+							)}
+						>
+							How Can We Help You Today?
+						</h2>
+						<div
+							className={cn(
+								"flex flex-wrap",
+								isMobile ? "w-full flex-col gap-2" : "flex-row gap-4",
+							)}
+						>
+							<GlassButton
+								icon={<ConciergeBell />}
+								label="Request Service"
+								onClick={() => {
+									navigate({ to: "/contact/service-request" });
+								}}
+							/>
+							<GlassButton
+								icon={<Newspaper />}
+								label="Public Notices"
+								onClick={() => {
+									navigate({ to: "/notices" });
+								}}
+							/>
+							<GlassButton
+								icon={<Users />}
+								label="Public Meetings"
+								onClick={() => {
+									navigate({ to: "/contact/service-request" });
+								}}
+							/>
+						</div>
+					</GlassCard>
 				</div>
 			</div>
 		</div>
+	);
+}
+
+interface GlassCardProps {
+	className?: string;
+	children: React.ReactNode;
+}
+function GlassCard({ children, className }: GlassCardProps) {
+	return (
+		<div
+			className={`max-h-[90%] w-full overflow-y-auto rounded-xl border border-white/20 bg-black/30 p-6 text-white shadow-2xl backdrop-blur-md md:ml-12 md:p-10 ${className}`}
+		>
+			{children}
+		</div>
+	);
+}
+
+interface GlassButtonProps {
+	icon?: React.ReactNode;
+	label: string;
+	onClick: () => void;
+}
+function GlassButton({ label, icon, onClick }: GlassButtonProps) {
+	const isMobile = useIsMobile();
+	return (
+		<button
+			className={cn(
+				"flex gap-2 rounded-xl border border-white/20 bg-black/30 p-6 backdrop-blur-md transition-all duration-200 ease-linear hover:scale-115 hover:bg-black/40",
+				isMobile
+					? "h-8 w-full flex-row-reverse items-center justify-between"
+					: "w-36 flex-col items-center",
+			)}
+			onClick={onClick}
+			type="button"
+		>
+			{icon}
+			<span className="font-light text-lg uppercase tracking-wide hover:underline">
+				{label}
+			</span>
+		</button>
 	);
 }

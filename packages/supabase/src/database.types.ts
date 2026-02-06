@@ -34,6 +34,122 @@ export type Database = {
   }
   public: {
     Tables: {
+      adult_mosquito_complaints: {
+        Row: {
+          additional_details: string | null
+          address_line_1: string
+          address_line_2: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          full_name: string
+          id: string
+          is_accessible: boolean
+          is_daytime: boolean
+          is_dusk_dawn: boolean
+          is_front_of_property: boolean
+          is_general_vicinity: boolean
+          is_nighttime: boolean
+          is_processed: boolean
+          is_rear_of_property: boolean
+          phone: string
+          updated_at: string
+          updated_by: string | null
+          zip_code_id: string
+        }
+        Insert: {
+          additional_details?: string | null
+          address_line_1: string
+          address_line_2?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          is_accessible?: boolean
+          is_daytime?: boolean
+          is_dusk_dawn?: boolean
+          is_front_of_property?: boolean
+          is_general_vicinity?: boolean
+          is_nighttime?: boolean
+          is_processed?: boolean
+          is_rear_of_property?: boolean
+          phone: string
+          updated_at?: string
+          updated_by?: string | null
+          zip_code_id: string
+        }
+        Update: {
+          additional_details?: string | null
+          address_line_1?: string
+          address_line_2?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_accessible?: boolean
+          is_daytime?: boolean
+          is_dusk_dawn?: boolean
+          is_front_of_property?: boolean
+          is_general_vicinity?: boolean
+          is_nighttime?: boolean
+          is_processed?: boolean
+          is_rear_of_property?: boolean
+          phone?: string
+          updated_at?: string
+          updated_by?: string | null
+          zip_code_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adult_mosquito_complaints_zip_code_id_fkey"
+            columns: ["zip_code_id"]
+            isOneToOne: false
+            referencedRelation: "zip_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_form_submissions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string
+          id: string
+          is_closed: boolean
+          message: string
+          name: string
+          subject: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email: string
+          id?: string
+          is_closed?: boolean
+          message: string
+          name: string
+          subject: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          id?: string
+          is_closed?: boolean
+          message?: string
+          name?: string
+          subject?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       insecticides: {
         Row: {
           active_ingredient: string
@@ -126,6 +242,68 @@ export type Database = {
           updated_by?: string | null
         }
         Relationships: []
+      }
+      mosquito_fish_requests: {
+        Row: {
+          additional_details: string | null
+          address_line_1: string
+          address_line_2: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          full_name: string
+          id: string
+          is_processed: boolean
+          location_of_water_body: string
+          phone: string
+          type_of_water_body: string
+          updated_at: string
+          updated_by: string | null
+          zip_code_id: string
+        }
+        Insert: {
+          additional_details?: string | null
+          address_line_1: string
+          address_line_2?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          is_processed?: boolean
+          location_of_water_body: string
+          phone: string
+          type_of_water_body: string
+          updated_at?: string
+          updated_by?: string | null
+          zip_code_id: string
+        }
+        Update: {
+          additional_details?: string | null
+          address_line_1?: string
+          address_line_2?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_processed?: boolean
+          location_of_water_body?: string
+          phone?: string
+          type_of_water_body?: string
+          updated_at?: string
+          updated_by?: string | null
+          zip_code_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mosquito_fish_requests_zip_code_id_fkey"
+            columns: ["zip_code_id"]
+            isOneToOne: false
+            referencedRelation: "zip_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notice_types: {
         Row: {
@@ -293,6 +471,107 @@ export type Database = {
           updated_at?: string | null
           updated_by?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      water_management_requests: {
+        Row: {
+          additional_details: string | null
+          address_line_1: string
+          address_line_2: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          full_name: string
+          id: string
+          is_on_my_property: boolean
+          is_on_neighbor_property: boolean
+          is_on_public_property: boolean
+          is_processed: boolean
+          other_location_description: string | null
+          phone: string
+          updated_at: string
+          updated_by: string | null
+          zip_code_id: string
+        }
+        Insert: {
+          additional_details?: string | null
+          address_line_1: string
+          address_line_2?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          is_on_my_property?: boolean
+          is_on_neighbor_property?: boolean
+          is_on_public_property?: boolean
+          is_processed?: boolean
+          other_location_description?: string | null
+          phone: string
+          updated_at?: string
+          updated_by?: string | null
+          zip_code_id: string
+        }
+        Update: {
+          additional_details?: string | null
+          address_line_1?: string
+          address_line_2?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_on_my_property?: boolean
+          is_on_neighbor_property?: boolean
+          is_on_public_property?: boolean
+          is_processed?: boolean
+          other_location_description?: string | null
+          phone?: string
+          updated_at?: string
+          updated_by?: string | null
+          zip_code_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "water_management_requests_zip_code_id_fkey"
+            columns: ["zip_code_id"]
+            isOneToOne: false
+            referencedRelation: "zip_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      zip_codes: {
+        Row: {
+          city: string
+          code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          state: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          city: string
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          state: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          city?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          state?: string
+          updated_at?: string
+          updated_by?: string | null
         }
         Relationships: []
       }

@@ -87,15 +87,21 @@ export function NoticeForm({
 					{(field) => (
 						<field.SwitchField
 							description="Mark notice as ready to publish or as a draft"
-							label="Published"
+							label="Publish Status"
+							labelWhenFalse="This notice is a draft and will never display in the legal notices pages."
+							labelWhenTrue="This notice is published and will display in the legal notices pages once the publish date is reached."
+							orientation="vertical"
 						/>
 					)}
 				</form.AppField>
 				<form.AppField name="is_archived">
 					{(field) => (
 						<field.SwitchField
-							description="Archived notices will be removed from the notices main page."
-							label="Archived"
+							description="Indicates whether the notice is archived or active. Archived notices are notices whose information is no longer current but are kept for historical reference."
+							label="Archive Status"
+							labelWhenFalse="This notice is active and will display in the current legal notices page."
+							labelWhenTrue="This notice is no longer active and will display in the archived notices page."
+							orientation="vertical"
 						/>
 					)}
 				</form.AppField>

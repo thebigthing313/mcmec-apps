@@ -12,11 +12,11 @@ export function SubmitFormButton({
 }: SubmitFormButtonProps & React.ComponentPropsWithRef<"button">) {
 	const form = useFormContext();
 	return (
-		<form.Subscribe selector={(state) => state.isSubmitting}>
-			{(isSubmitting) => (
+		<form.Subscribe selector={(state) => [state.isSubmitting, state.canSubmit]}>
+			{([isSubmitting, canSubmit]) => (
 				<Button
 					aria-busy={isSubmitting}
-					disabled={isSubmitting}
+					disabled={!canSubmit}
 					ref={ref}
 					type="submit"
 					variant="default"

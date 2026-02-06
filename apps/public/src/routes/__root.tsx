@@ -1,12 +1,16 @@
 /// <reference types="vite/client" />
+
+import { Toaster } from "@mcmec/ui/components/sonner";
 import appCss from "@mcmec/ui/styles/globals.css?url";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
+	ClientOnly,
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
 	Scripts,
+	useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
@@ -23,15 +27,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({
 		links: [
 			{ href: appCss, rel: "stylesheet" },
-			{ href: "favicon.ico", rel: "icon" },
+			{ href: "/favicon.ico", rel: "icon", type: "image/x-icon" },
 			{
-				href: "logo192.png",
+				href: "/logo192.png",
 				rel: "apple-touch-icon",
 				sizes: "192x192",
 			},
-			{ href: "logo512.png", rel: "icon", sizes: "512x512" },
+			{ href: "/logo512.png", rel: "icon", sizes: "512x512" },
 			// { href: "/site.webmanifest", rel: "manifest" },
-			{ href: "favicon.ico", rel: "icon" },
 		],
 		meta: [
 			{ charSet: "utf-8" },
@@ -42,13 +45,23 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				title: "Middlesex County Mosquito Extermination Commission",
 			}),
 		],
+		scripts: [
+			{
+				defer: true,
+				src: "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
+			},
+		],
 	}),
 });
 
 function RootComponent() {
+	const location = useLocation();
+	const isHome = location.pathname === "/";
 	return (
 		<RootDocument>
-			<Outlet />
+			<div className={!isHome ? "mx-auto flex w-full max-w-7xl p-4" : ""}>
+				<Outlet />
+			</div>
 		</RootDocument>
 	);
 }
@@ -67,10 +80,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						{children}
 					</main>
 					<Footer />
+					<ClientOnly>
+						<Toaster />
+						<TanStackRouterDevtools position="bottom-right" />
+						<ReactQueryDevtools buttonPosition="bottom-left" />
+					</ClientOnly>
 				</div>
-
-				<TanStackRouterDevtools position="bottom-right" />
-				<ReactQueryDevtools buttonPosition="bottom-left" />
 
 				<Scripts />
 			</body>

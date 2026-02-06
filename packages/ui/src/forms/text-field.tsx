@@ -6,6 +6,7 @@ export function TextField({
 	showValid,
 	showClear,
 	showPaste,
+	autoComplete,
 	...formFieldProps
 }: Omit<
 	React.ComponentPropsWithRef<typeof FormField>,
@@ -13,7 +14,7 @@ export function TextField({
 > &
 	Pick<
 		React.ComponentPropsWithRef<typeof TextInput>,
-		"showPaste" | "showClear" | "showValid"
+		"showPaste" | "showClear" | "showValid" | "autoComplete"
 	>) {
 	const field = useFieldContext<string>();
 	return (
@@ -25,6 +26,7 @@ export function TextField({
 		>
 			<TextInput
 				aria-invalid={!field.state.meta.isValid}
+				autoComplete={autoComplete}
 				id={field.name}
 				name={field.name}
 				onBlur={field.handleBlur}

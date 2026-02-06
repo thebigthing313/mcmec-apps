@@ -64,7 +64,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="mx-auto flex max-w-4xl flex-col gap-4">
+		<div className="flex-col gap-4">
 			<div className="flex flex-row items-center justify-between">
 				<ButtonGroup orientation="horizontal">
 					<Button asChild variant="link">
@@ -89,7 +89,7 @@ function RouteComponent() {
 				/>
 			</div>
 
-			<article className="prose">
+			<article className="prose lg:prose-xl max-w-none">
 				<h2>{title}</h2>
 				<div className="flex flex-row items-center gap-2">
 					<Label>Status: </Label>
