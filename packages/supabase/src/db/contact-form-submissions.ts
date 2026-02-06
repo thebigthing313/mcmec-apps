@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const ContactFormSubmissionsRowSchema = z.object({
-	created_at: z.coerce.date(),
+	created_at: z.coerce.date<Date>(),
 	created_by: z.string().nullable(),
 	email: z.email(),
 	id: z.uuid(),
@@ -9,7 +9,7 @@ export const ContactFormSubmissionsRowSchema = z.object({
 	message: z.string(),
 	name: z.string(),
 	subject: z.string(),
-	updated_at: z.coerce.date(),
+	updated_at: z.coerce.date<Date>(),
 	updated_by: z.string().nullable(),
 });
 
