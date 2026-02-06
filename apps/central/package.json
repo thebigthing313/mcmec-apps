@@ -40,5 +40,5 @@
 		"sync-assets": "shx mkdir -p public/shared && shx cp -r ../../packages/assets/images/* public/shared/"
 	},
 	"type": "module",
-	"version": "0.1.6"
+	"version": "0.1.7"
 }
