@@ -3,11 +3,15 @@ import {
 	type WaterManagementRequestsRowType,
 } from "@mcmec/supabase/db/water-management-requests";
 import {
+	Field,
+	FieldContent,
 	FieldDescription,
+	FieldLabel,
 	FieldLegend,
 	FieldSeparator,
 	FieldSet,
 } from "@mcmec/ui/components/field";
+import { Input } from "@mcmec/ui/components/input";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import type { ComboboxOption } from "@mcmec/ui/inputs/combobox-input";
 import { revalidateLogic } from "@tanstack/react-form";
@@ -34,15 +38,10 @@ export const Route = createFileRoute("/contact/water-management-requests")({
 	},
 });
 
-function isOneChecked(entries: Array<boolean>) {
-	return entries.some((entry) => entry === true);
-}
-
 function RouteComponent() {
 	const sitekey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITEKEY;
 	const [honeypot, setHoneypot] = useState<string>("");
 	const [turnstileToken, setTurnstileToken] = useState<string>("");
-	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const turnstileRef = useRef<TurnstileWidgetRef>(null);
 	const navigate = useNavigate();
 
@@ -50,7 +49,7 @@ function RouteComponent() {
 	const submitForm = useServerFn(submitWaterManagementRequestServerFn);
 
 	const zipCodeOptions: ComboboxOption[] = zipCodes.map((zipCode) => ({
-		label: `${zipCode.city}, NJ ${zipCode.code}`,
+		label: zipCode.code,
 		value: zipCode.id,
 	}));
 
@@ -88,39 +87,30 @@ function RouteComponent() {
 				return;
 			}
 
-			// Prevent double submissions
-			if (isSubmitting) {
-				return;
-			}
+			const result = await submitForm({
+				data: { data: { ...value }, turnstileToken },
+			});
 
-			setIsSubmitting(true);
-			try {
-				const result = await submitForm({
-					data: { data: { ...value }, turnstileToken },
-				});
+			// Reset token and turnstile widget after submission attempt
+			setTurnstileToken("");
+			turnstileRef.current?.reset();
 
-				// Reset token and turnstile widget after submission attempt
-				setTurnstileToken("");
-				turnstileRef.current?.reset();
-
-				if (result.success) {
-					await navigate({ to: "/contact/request-success" });
-				} else {
-					toast.error(
-						result.error ||
-							"There was an error submitting the form. Please try again.",
-					);
-				}
-			} finally {
-				setIsSubmitting(false);
+			if (result.success) {
+				await navigate({ to: "/contact/request-success" });
+			} else {
+				toast.error(
+					result.error ||
+						"There was an error submitting the form. Please try again.",
+				);
 			}
 		},
+
 		validationLogic: revalidateLogic({
 			mode: "submit",
 			modeAfterSubmission: "change",
 		}),
-		//@ts-expect-error Coerced date type not showing here for some reason, thinks its unknown
-		validators: { onSubmit: WaterManagementRequestsRowSchema },
+
+		validators: { onDynamic: WaterManagementRequestsRowSchema },
 	});
 
 	return (
@@ -181,14 +171,33 @@ function RouteComponent() {
 							)}
 						</form.AppField>
 						<form.AppField name="zip_code_id">
-							{(field) => (
-								<field.AutocompleteField
-									emptyMessage="No zip code found."
-									items={zipCodeOptions}
-									label="Zip Code *"
-									placeholder="Select zip code..."
-								/>
-							)}
+							{(field) => {
+								const selectedZipCode = zipCodes.find(
+									(zc) => zc.id === field.state.value,
+								);
+								const cityDisplay = selectedZipCode
+									? `${selectedZipCode.city}, NJ`
+									: "";
+
+								return (
+									<div className="flex w-full flex-row flex-wrap items-center justify-between gap-4">
+										<field.AutocompleteField
+											className="w-42"
+											emptyMessage="No zip code found."
+											items={zipCodeOptions}
+											label="Zip Code *"
+											placeholder="Enter zip code..."
+										/>
+
+										<Field className="flex-1">
+											<FieldLabel>City</FieldLabel>
+											<FieldContent>
+												<Input readOnly value={cityDisplay} />
+											</FieldContent>
+										</Field>
+									</div>
+								);
+							}}
 						</form.AppField>
 					</FieldSet>
 					<FieldSeparator />
@@ -199,21 +208,6 @@ function RouteComponent() {
 						<form.AppField
 							name="is_on_my_property"
 							validators={{
-								onChange: ({ value, fieldApi }) => {
-									const hasCheckbox = isOneChecked([
-										value,
-										fieldApi.form.getFieldValue("is_on_neighbor_property"),
-										fieldApi.form.getFieldValue("is_on_public_property"),
-									]);
-									const hasOtherDescription = fieldApi.form.getFieldValue(
-										"other_location_description",
-									);
-
-									if (!hasCheckbox && !hasOtherDescription) {
-										return "At least one location option must be selected or provide other location description.";
-									}
-									return undefined;
-								},
 								onChangeListenTo: [
 									"is_on_neighbor_property",
 									"is_on_public_property",
@@ -236,18 +230,6 @@ function RouteComponent() {
 					<form.AppField
 						name="other_location_description"
 						validators={{
-							onChange: ({ value, fieldApi }) => {
-								const hasCheckbox = isOneChecked([
-									fieldApi.form.getFieldValue("is_on_my_property"),
-									fieldApi.form.getFieldValue("is_on_neighbor_property"),
-									fieldApi.form.getFieldValue("is_on_public_property"),
-								]);
-
-								if (!hasCheckbox && !value) {
-									return "At least one location option must be selected or provide other location description.";
-								}
-								return undefined;
-							},
 							onChangeListenTo: [
 								"is_on_my_property",
 								"is_on_neighbor_property",
@@ -258,7 +240,8 @@ function RouteComponent() {
 						{(field) => (
 							<field.TextAreaField
 								className="max-w-2xl"
-								label="Other Location Description (Optional)"
+								description="Please describe the location of the water management concern in detail. Use addresses, street intersections, or geographic coordinates, if possible."
+								label="Location Description"
 							/>
 						)}
 					</form.AppField>
@@ -267,6 +250,7 @@ function RouteComponent() {
 						{(field) => (
 							<field.TextAreaField
 								className="max-w-2xl"
+								description="Please enter any other relevant information."
 								label="Additional Details (Optional)"
 							/>
 						)}
@@ -292,11 +276,9 @@ function RouteComponent() {
 						/>
 					</ClientOnly>
 
-					<form.SubmitFormButton
-						className="w-full"
-						disabled={isSubmitting || !turnstileToken}
-						label={isSubmitting ? "Submitting..." : "Submit Request"}
-					/>
+					<form.AppForm>
+						<form.SubmitFormButton className="w-full" label="Submit Request" />
+					</form.AppForm>
 				</form.FormWrapper>
 			</form.AppForm>
 		</div>

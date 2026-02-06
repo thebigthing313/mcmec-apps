@@ -3,11 +3,15 @@ import {
 	type AdultMosquitoRequestsRowType,
 } from "@mcmec/supabase/db/adult-mosquito-requests";
 import {
+	Field,
+	FieldContent,
 	FieldDescription,
+	FieldLabel,
 	FieldLegend,
 	FieldSeparator,
 	FieldSet,
 } from "@mcmec/ui/components/field";
+import { Input } from "@mcmec/ui/components/input";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import type { ComboboxOption } from "@mcmec/ui/inputs/combobox-input";
 import { revalidateLogic } from "@tanstack/react-form";
@@ -33,15 +37,10 @@ export const Route = createFileRoute("/contact/adult-mosquito-requests")({
 	},
 });
 
-function isOneChecked(entries: Array<boolean>) {
-	return entries.some((entry) => entry === true);
-}
-
 function RouteComponent() {
 	const sitekey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITEKEY;
 	const [honeypot, setHoneypot] = useState<string>("");
 	const [turnstileToken, setTurnstileToken] = useState<string>("");
-	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const turnstileRef = useRef<TurnstileWidgetRef>(null);
 	const navigate = useNavigate();
 
@@ -49,7 +48,7 @@ function RouteComponent() {
 	const submitForm = useServerFn(submitAdultMosquitoRequestServerFn);
 
 	const zipCodeOptions: ComboboxOption[] = zipCodes.map((zipCode) => ({
-		label: `${zipCode.city}, NJ ${zipCode.code}`,
+		label: zipCode.code,
 		value: zipCode.id,
 	}));
 
@@ -90,39 +89,28 @@ function RouteComponent() {
 				return;
 			}
 
-			// Prevent double submissions
-			if (isSubmitting) {
-				return;
-			}
+			const result = await submitForm({
+				data: { data: { ...value }, turnstileToken },
+			});
 
-			setIsSubmitting(true);
-			try {
-				const result = await submitForm({
-					data: { data: { ...value }, turnstileToken },
-				});
+			// Reset token and turnstile widget after submission attempt
+			setTurnstileToken("");
+			turnstileRef.current?.reset();
 
-				// Reset token and turnstile widget after submission attempt
-				setTurnstileToken("");
-				turnstileRef.current?.reset();
-
-				if (result.success) {
-					await navigate({ to: "/contact/request-success" });
-				} else {
-					toast.error(
-						result.error ||
-							"There was an error submitting the form. Please try again.",
-					);
-				}
-			} finally {
-				setIsSubmitting(false);
+			if (result.success) {
+				await navigate({ to: "/contact/request-success" });
+			} else {
+				toast.error(
+					result.error ||
+						"There was an error submitting the form. Please try again.",
+				);
 			}
 		},
 		validationLogic: revalidateLogic({
 			mode: "submit",
 			modeAfterSubmission: "change",
 		}),
-		//@ts-expect-error Coerced date type not showing here for some reason, thinks its unknown
-		validators: { onSubmit: AdultMosquitoRequestsRowSchema },
+		validators: { onDynamic: AdultMosquitoRequestsRowSchema },
 	});
 
 	return (
@@ -184,14 +172,33 @@ function RouteComponent() {
 							)}
 						</form.AppField>{" "}
 						<form.AppField name="zip_code_id">
-							{(field) => (
-								<field.AutocompleteField
-									emptyMessage="No zip code found."
-									items={zipCodeOptions}
-									label="Zip Code *"
-									placeholder="Select zip code..."
-								/>
-							)}
+							{(field) => {
+								const selectedZipCode = zipCodes.find(
+									(zc) => zc.id === field.state.value,
+								);
+								const cityDisplay = selectedZipCode
+									? `${selectedZipCode.city}, NJ`
+									: "";
+
+								return (
+									<div className="flex w-full flex-row flex-wrap items-center justify-between gap-4">
+										<field.AutocompleteField
+											className="w-42"
+											emptyMessage="No zip code found."
+											items={zipCodeOptions}
+											label="Zip Code *"
+											placeholder="Enter zip code..."
+										/>
+
+										<Field className="flex-1">
+											<FieldLabel>City</FieldLabel>
+											<FieldContent>
+												<Input readOnly value={cityDisplay} />
+											</FieldContent>
+										</Field>
+									</div>
+								);
+							}}
 						</form.AppField>
 						<FieldSet>
 							<FieldLegend>Location of Mosquito Problem</FieldLegend>
@@ -202,18 +209,6 @@ function RouteComponent() {
 							<form.AppField
 								name="is_front_of_property"
 								validators={{
-									onChange: ({ value, fieldApi }) => {
-										if (
-											!isOneChecked([
-												value,
-												fieldApi.form.getFieldValue("is_rear_of_property"),
-												fieldApi.form.getFieldValue("is_general_vicinity"),
-											])
-										) {
-											return "At least one location option must be selected.";
-										}
-										return undefined;
-									},
 									onChangeListenTo: [
 										"is_rear_of_property",
 										"is_general_vicinity",
@@ -252,19 +247,6 @@ function RouteComponent() {
 						<form.AppField
 							name="is_dusk_dawn"
 							validators={{
-								onChange: ({ value, fieldApi }) => {
-									if (
-										!isOneChecked([
-											value,
-											fieldApi.form.getFieldValue("is_daytime"),
-											fieldApi.form.getFieldValue("is_nighttime"),
-										])
-									) {
-										return "At least one time of day must be selected.";
-									}
-
-									return undefined;
-								},
 								onChangeListenTo: ["is_daytime", "is_nighttime"],
 							}}
 						>
@@ -306,12 +288,9 @@ function RouteComponent() {
 							sitekey={sitekey}
 						/>
 					</ClientOnly>
-
-					<form.SubmitFormButton
-						className="w-full"
-						disabled={isSubmitting || !turnstileToken}
-						label={isSubmitting ? "Submitting..." : "Submit Request"}
-					/>
+					<form.AppForm>
+						<form.SubmitFormButton className="w-full" label="Submit Request" />
+					</form.AppForm>
 				</form.FormWrapper>
 			</form.AppForm>
 		</div>

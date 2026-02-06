@@ -3,11 +3,15 @@ import {
 	type MosquitofishRequestsRowType,
 } from "@mcmec/supabase/db/mosquitofish-requests";
 import {
+	Field,
+	FieldContent,
 	FieldDescription,
+	FieldLabel,
 	FieldLegend,
 	FieldSeparator,
 	FieldSet,
 } from "@mcmec/ui/components/field";
+import { Input } from "@mcmec/ui/components/input";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import type { ComboboxOption } from "@mcmec/ui/inputs/combobox-input";
 import { revalidateLogic } from "@tanstack/react-form";
@@ -38,7 +42,6 @@ function RouteComponent() {
 	const sitekey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITEKEY;
 	const [honeypot, setHoneypot] = useState<string>("");
 	const [turnstileToken, setTurnstileToken] = useState<string>("");
-	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const turnstileRef = useRef<TurnstileWidgetRef>(null);
 	const navigate = useNavigate();
 
@@ -46,7 +49,7 @@ function RouteComponent() {
 	const submitForm = useServerFn(submitMosquitofishRequestServerFn);
 
 	const zipCodeOptions: ComboboxOption[] = zipCodes.map((zipCode) => ({
-		label: `${zipCode.city}, NJ ${zipCode.code}`,
+		label: zipCode.code,
 		value: zipCode.id,
 	}));
 
@@ -82,39 +85,28 @@ function RouteComponent() {
 				return;
 			}
 
-			// Prevent double submissions
-			if (isSubmitting) {
-				return;
-			}
+			const result = await submitForm({
+				data: { data: { ...value }, turnstileToken },
+			});
 
-			setIsSubmitting(true);
-			try {
-				const result = await submitForm({
-					data: { data: { ...value }, turnstileToken },
-				});
+			// Reset token and turnstile widget after submission attempt
+			setTurnstileToken("");
+			turnstileRef.current?.reset();
 
-				// Reset token and turnstile widget after submission attempt
-				setTurnstileToken("");
-				turnstileRef.current?.reset();
-
-				if (result.success) {
-					await navigate({ to: "/contact/request-success" });
-				} else {
-					toast.error(
-						result.error ||
-							"There was an error submitting the form. Please try again.",
-					);
-				}
-			} finally {
-				setIsSubmitting(false);
+			if (result.success) {
+				await navigate({ to: "/contact/request-success" });
+			} else {
+				toast.error(
+					result.error ||
+						"There was an error submitting the form. Please try again.",
+				);
 			}
 		},
 		validationLogic: revalidateLogic({
 			mode: "submit",
 			modeAfterSubmission: "change",
 		}),
-		//@ts-expect-error Coerced date type not showing here for some reason, thinks its unknown
-		validators: { onSubmit: MosquitofishRequestsRowSchema },
+		validators: { onDynamic: MosquitofishRequestsRowSchema },
 	});
 
 	return (
@@ -122,16 +114,12 @@ function RouteComponent() {
 			<article className="prose lg:prose-xl max-w-none">
 				<h1>Mosquitofish Request</h1>
 				<p>
-					Mosquitofish (Gambusia affinis) are small fish that feed on mosquito
-					larvae and can be an effective natural control method for standing
-					water on your property. Use this form to request mosquitofish for a
-					contained body of water such as an ornamental pond, fountain, or
-					similar feature.
-				</p>
-				<p>
-					<strong>Important:</strong> Mosquitofish are only suitable for
-					permanent, contained water features. They should not be released into
-					natural waterways.
+					Mosquitofish are small fish that feed on mosquito larvae and can be an
+					effective natural control method for standing water on your property.
+					Use this form to request mosquitofish for a contained body of water
+					such as an ornamental pond, fountain, or similar feature. Please note
+					that our entomologist will first assess the potential habitat prior to
+					any fish stocking.
 				</p>
 			</article>
 			<form.AppForm>
@@ -182,27 +170,44 @@ function RouteComponent() {
 							)}
 						</form.AppField>
 						<form.AppField name="zip_code_id">
-							{(field) => (
-								<field.AutocompleteField
-									emptyMessage="No zip code found."
-									items={zipCodeOptions}
-									label="Zip Code *"
-									placeholder="Select zip code..."
-								/>
-							)}
+							{(field) => {
+								const selectedZipCode = zipCodes.find(
+									(zc) => zc.id === field.state.value,
+								);
+								const cityDisplay = selectedZipCode
+									? `${selectedZipCode.city}, NJ`
+									: "";
+
+								return (
+									<div className="flex w-full flex-row flex-wrap items-center justify-between gap-4">
+										<field.AutocompleteField
+											className="w-42"
+											emptyMessage="No zip code found."
+											items={zipCodeOptions}
+											label="Zip Code *"
+											placeholder="Enter zip code..."
+										/>
+
+										<Field className="flex-1">
+											<FieldLabel>City</FieldLabel>
+											<FieldContent>
+												<Input readOnly value={cityDisplay} />
+											</FieldContent>
+										</Field>
+									</div>
+								);
+							}}
 						</form.AppField>
 					</FieldSet>
 					<FieldSeparator />
 					<FieldSet>
 						<FieldLegend>Water Body Information</FieldLegend>
-						<FieldDescription>
-							Please provide details about the water body where you would like
-							mosquitofish placed.
-						</FieldDescription>
 						<form.AppField name="type_of_water_body">
 							{(field) => (
 								<field.TextAreaField
 									className="max-w-2xl"
+									description="Please describe the water body. Include details like estimated
+							depth, volume, etc."
 									label="Type of Water Body *"
 								/>
 							)}
@@ -212,6 +217,7 @@ function RouteComponent() {
 							{(field) => (
 								<field.TextAreaField
 									className="max-w-2xl"
+									description="Please describe the location in detail. Include addresses, intersections, coordinates, etc. if applicable."
 									label="Location of Water Body *"
 								/>
 							)}
@@ -222,6 +228,7 @@ function RouteComponent() {
 						{(field) => (
 							<field.TextAreaField
 								className="max-w-2xl"
+								description="Please enter any other relevant information."
 								label="Additional Details (Optional)"
 							/>
 						)}
@@ -247,11 +254,9 @@ function RouteComponent() {
 						/>
 					</ClientOnly>
 
-					<form.SubmitFormButton
-						className="w-full"
-						disabled={isSubmitting || !turnstileToken}
-						label={isSubmitting ? "Submitting..." : "Submit Request"}
-					/>
+					<form.AppForm>
+						<form.SubmitFormButton className="w-full" label="Submit Request" />
+					</form.AppForm>
 				</form.FormWrapper>
 			</form.AppForm>
 		</div>
