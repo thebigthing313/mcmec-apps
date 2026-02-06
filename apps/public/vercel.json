@@ -10,5 +10,5 @@
 			"source": "/(.*)"
 		}
 	],
-	"outputDirectory": "dist"
+	"outputDirectory": ".output/public"
 }
