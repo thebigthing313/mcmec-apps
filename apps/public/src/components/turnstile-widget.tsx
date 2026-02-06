@@ -62,6 +62,8 @@ export const TurnstileWidget = forwardRef<
 		return () => {
 			isMounted = false;
 			if (widgetId.current && window.turnstile) {
+				// Reset the state before removing
+				window.turnstile.reset(widgetId.current);
 				window.turnstile.remove(widgetId.current);
 				widgetId.current = null;
 			}

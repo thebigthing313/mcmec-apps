@@ -121,6 +121,7 @@ function RouteComponent() {
 					</form.AppField>
 					<ClientOnly fallback={<div className="h-16.25" />}>
 						<TurnstileWidget
+							key={sitekey} // Force re-mount if sitekey changes
 							onSuccess={(token) => setTurnstileToken(token)}
 							ref={turnstileRef}
 							sitekey={sitekey}
