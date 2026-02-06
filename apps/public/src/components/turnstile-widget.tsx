@@ -12,9 +12,8 @@ export const TurnstileWidget = forwardRef<
 	}
 >(function TurnstileWidget({ sitekey, onSuccess }, ref) {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const widgetId = useRef<string | null>(null); // We store the ID here
+	const widgetId = useRef<string | null>(null);
 
-	// Expose reset method to parent component
 	useImperativeHandle(ref, () => ({
 		reset: () => {
 			if (widgetId.current && window.turnstile) {
@@ -24,30 +23,52 @@ export const TurnstileWidget = forwardRef<
 	}));
 
 	useEffect(() => {
-		// 1. Define the render function
+		let isMounted = true;
 		const renderWidget = () => {
-			if (window.turnstile && containerRef.current && !widgetId.current) {
+			if (
+				window.turnstile &&
+				containerRef.current &&
+				!widgetId.current &&
+				isMounted
+			) {
+				// Cast to 'any' to allow 'action' if your TS definitions are outdated
 				widgetId.current = window.turnstile.render(containerRef.current, {
+					action: "protected-form",
 					callback: onSuccess,
+					execution: "render",
+					retry: "auto",
+					"retry-interval": 1500,
 					sitekey,
-				});
+					// biome-ignore lint/suspicious/noExplicitAny: <no types for turnstile yet>
+				} as any);
 			}
 		};
 
-		// 2. Render (if script is already loaded)
+		// In production, the script might be deferred.
+		// We check for it, or wait for the 'ready' state.
 		if (window.turnstile) {
 			renderWidget();
+		} else {
+			// Fallback: Check every 100ms if the script is ready
+			const checkInterval = setInterval(() => {
+				if (window.turnstile) {
+					renderWidget();
+					clearInterval(checkInterval);
+				}
+			}, 100);
+			return () => clearInterval(checkInterval);
 		}
 
-		// 3. CLEANUP (The fix for double-rendering)
 		return () => {
+			isMounted = false;
 			if (widgetId.current && window.turnstile) {
-				// This removes the iframe and cleans up Cloudflare's internal state
 				window.turnstile.remove(widgetId.current);
 				widgetId.current = null;
 			}
 		};
 	}, [sitekey, onSuccess]);
 
-	return <div ref={containerRef} />;
+	// Adding a min-height prevents layout shift and
+	// ensures the widget container is visible to the script.
+	return <div className="min-h-16.25" ref={containerRef} />;
 });
