@@ -241,7 +241,7 @@ function MobileNavBar() {
 			</Sheet>
 			<div className="flex w-24 flex-row justify-center rounded-l-full bg-background">
 				<Link to="/">
-					<img alt="MCMEC Logo" className="m-4 h-15" src="logo512.png" />
+					<img alt="MCMEC Logo" className="m-4 h-15" src="/logo512.png" />
 				</Link>
 			</div>
 		</div>
