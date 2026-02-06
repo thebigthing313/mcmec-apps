@@ -85,7 +85,7 @@ const menuItems: MenuItem[] = [
 		subItems: [
 			{
 				description: "Meeting schedules, agenda, and minutes.",
-				linkProps: { to: "/meetings" },
+				linkProps: { to: "/notices/meetings" },
 				title: "Public Meetings",
 			},
 			{

@@ -9,9 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticesIndexRouteImport } from './routes/notices/index'
+import { Route as NoticesMeetingsRouteImport } from './routes/notices/meetings'
 import { Route as NoticesArchiveRouteImport } from './routes/notices/archive'
 import { Route as NoticesNoticeIdRouteImport } from './routes/notices/$noticeId'
 import { Route as ContactWaterManagementRequestsRouteImport } from './routes/contact/water-management-requests'
@@ -25,11 +25,6 @@ import { Route as AboutMissionRouteImport } from './routes/about/mission'
 import { Route as AboutLeadershipRouteImport } from './routes/about/leadership'
 import { Route as AboutHowWeControlMosquitoesRouteImport } from './routes/about/how-we-control-mosquitoes'
 
-const MeetingsRoute = MeetingsRouteImport.update({
-  id: '/meetings',
-  path: '/meetings',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -38,6 +33,11 @@ const IndexRoute = IndexRouteImport.update({
 const NoticesIndexRoute = NoticesIndexRouteImport.update({
   id: '/notices/',
   path: '/notices/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoticesMeetingsRoute = NoticesMeetingsRouteImport.update({
+  id: '/notices/meetings',
+  path: '/notices/meetings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticesArchiveRoute = NoticesArchiveRouteImport.update({
@@ -108,7 +108,6 @@ const AboutHowWeControlMosquitoesRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/meetings': typeof MeetingsRoute
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
@@ -121,11 +120,11 @@ export interface FileRoutesByFullPath {
   '/contact/water-management-requests': typeof ContactWaterManagementRequestsRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
+  '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/': typeof NoticesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/meetings': typeof MeetingsRoute
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
@@ -138,12 +137,12 @@ export interface FileRoutesByTo {
   '/contact/water-management-requests': typeof ContactWaterManagementRequestsRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
+  '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices': typeof NoticesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/meetings': typeof MeetingsRoute
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
@@ -156,13 +155,13 @@ export interface FileRoutesById {
   '/contact/water-management-requests': typeof ContactWaterManagementRequestsRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
+  '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/': typeof NoticesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/meetings'
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
@@ -175,11 +174,11 @@ export interface FileRouteTypes {
     | '/contact/water-management-requests'
     | '/notices/$noticeId'
     | '/notices/archive'
+    | '/notices/meetings'
     | '/notices/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/meetings'
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
@@ -192,11 +191,11 @@ export interface FileRouteTypes {
     | '/contact/water-management-requests'
     | '/notices/$noticeId'
     | '/notices/archive'
+    | '/notices/meetings'
     | '/notices'
   id:
     | '__root__'
     | '/'
-    | '/meetings'
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
@@ -209,12 +208,12 @@ export interface FileRouteTypes {
     | '/contact/water-management-requests'
     | '/notices/$noticeId'
     | '/notices/archive'
+    | '/notices/meetings'
     | '/notices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  MeetingsRoute: typeof MeetingsRoute
   AboutHowWeControlMosquitoesRoute: typeof AboutHowWeControlMosquitoesRoute
   AboutLeadershipRoute: typeof AboutLeadershipRoute
   AboutMissionRoute: typeof AboutMissionRoute
@@ -227,18 +226,12 @@ export interface RootRouteChildren {
   ContactWaterManagementRequestsRoute: typeof ContactWaterManagementRequestsRoute
   NoticesNoticeIdRoute: typeof NoticesNoticeIdRoute
   NoticesArchiveRoute: typeof NoticesArchiveRoute
+  NoticesMeetingsRoute: typeof NoticesMeetingsRoute
   NoticesIndexRoute: typeof NoticesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/meetings': {
-      id: '/meetings'
-      path: '/meetings'
-      fullPath: '/meetings'
-      preLoaderRoute: typeof MeetingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -251,6 +244,13 @@ declare module '@tanstack/react-router' {
       path: '/notices'
       fullPath: '/notices/'
       preLoaderRoute: typeof NoticesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notices/meetings': {
+      id: '/notices/meetings'
+      path: '/notices/meetings'
+      fullPath: '/notices/meetings'
+      preLoaderRoute: typeof NoticesMeetingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notices/archive': {
@@ -342,7 +342,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  MeetingsRoute: MeetingsRoute,
   AboutHowWeControlMosquitoesRoute: AboutHowWeControlMosquitoesRoute,
   AboutLeadershipRoute: AboutLeadershipRoute,
   AboutMissionRoute: AboutMissionRoute,
@@ -355,6 +354,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactWaterManagementRequestsRoute: ContactWaterManagementRequestsRoute,
   NoticesNoticeIdRoute: NoticesNoticeIdRoute,
   NoticesArchiveRoute: NoticesArchiveRoute,
+  NoticesMeetingsRoute: NoticesMeetingsRoute,
   NoticesIndexRoute: NoticesIndexRoute,
 }
 export const routeTree = rootRouteImport

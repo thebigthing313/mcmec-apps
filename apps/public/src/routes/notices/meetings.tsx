@@ -6,9 +6,9 @@ import {
 import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { meetingsQueryOptions } from "../lib/queries";
+import { meetingsQueryOptions } from "../../lib/queries";
 
-export const Route = createFileRoute("/meetings")({
+export const Route = createFileRoute("/notices/meetings")({
 	component: RouteComponent,
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(meetingsQueryOptions());
@@ -32,7 +32,7 @@ function RouteComponent() {
 	}));
 
 	return (
-		<div className="mx-auto w-full max-w-7xl p-4">
+		<div className="flex flex-col gap-4">
 			<article className="prose lg:prose-xl mb-8 max-w-none">
 				<h1>Meetings</h1>
 				<p>

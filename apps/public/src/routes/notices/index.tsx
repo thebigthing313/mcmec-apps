@@ -45,7 +45,7 @@ function RouteComponent() {
 		}));
 
 	return (
-		<div className="mx-auto w-full max-w-7xl p-4">
+		<div className="flex flex-col gap-4">
 			<article className="prose lg:prose-xl mb-8 max-w-none">
 				<h1>Current Legal Notices</h1>
 				<p>
