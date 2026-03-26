@@ -61,7 +61,7 @@ describe("verifyClaims", () => {
 		);
 	});
 
-	it("should throw INVALID_JWT when employeeId is missing", async () => {
+	it("should succeed when employeeId is missing (not yet required)", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
@@ -76,9 +76,8 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
-			"The provided authentication token is invalid.",
-		);
+		const result = await verifyClaims({ client: mockClient as any });
+		expect(result.employeeId).toBeNull();
 	});
 
 	it("should throw FORBIDDEN when permission is required but not present", async () => {
@@ -393,7 +392,7 @@ describe("verifyClaims", () => {
 		);
 	});
 
-	it("should handle when employeeId is a number instead of string", async () => {
+	it("should treat non-string employeeId as null (not yet required)", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
@@ -409,9 +408,8 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
-			"The provided authentication token is invalid.",
-		);
+		const result = await verifyClaims({ client: mockClient as any });
+		expect(result.employeeId).toBeNull();
 	});
 
 	it("should handle multiple permissions correctly", async () => {
@@ -463,4 +461,3 @@ describe("verifyClaims", () => {
 		).rejects.toThrow("You do not have permission to this action or resource.");
 	});
 });
-
