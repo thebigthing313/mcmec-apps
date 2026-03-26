@@ -1,5 +1,17 @@
 # @mcmec/supabase
 
+## 1.3.0
+
+### Minor Changes
+
+- 2affcd1: Replace user_profiles table with employees table. Employees table tracks all agency staff with optional auth user linkage. Rename profiles collection/accessor to employees across supabase package and notices app. Remove avatar_url field. Regenerated database types.
+- 184752c: Remove old auth functions (claims, session, signIn, signOut) from @mcmec/supabase. Auth is now handled by the dedicated @mcmec/auth package.
+
+### Patch Changes
+
+- Updated dependencies [a8b88f5]
+  - @mcmec/lib@0.7.1
+
 ## 1.2.0
 
 ### Minor Changes
