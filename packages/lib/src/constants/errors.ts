@@ -37,7 +37,7 @@ export const ErrorMessages = {
 		INVALID_PHONE_NUMBER: "Please enter a valid phone number.",
 		INVALID_URL: "Please enter a valid URL.",
 		INVALID_UUID: "The provided ID is not valid.",
-		PASSWORD_TOO_SHORT: "Password must be at least 8 characters long.",
+		PASSWORD_TOO_SHORT: "Password must be at least 6 characters long.",
 		REQUIRED: "This field is required.",
 	},
 } as const;
