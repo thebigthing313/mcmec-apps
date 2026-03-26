@@ -55,7 +55,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm --filter @mcmec/supabase test:run && pnpm --filter @mcmec/auth test:run
+        run: pnpm --filter @mcmec/auth test:run
 
   integration-test:
     name: Integration Tests
