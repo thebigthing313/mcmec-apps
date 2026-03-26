@@ -25,7 +25,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Lint (Biome)
-        run: pnpm biome check
+        run: pnpm biome lint
 
       - name: Type check
         run: pnpm check-types
