@@ -75,8 +75,8 @@ jobs:
         with:
           version: 2.75.0
 
-      - name: Start Supabase and seed data
-        run: supabase start && supabase db reset
+      - name: Start Supabase (minimal services for auth tests)
+        run: supabase start --exclude studio,inbucket,realtime,storage,imgproxy,logflare,vector
 
       - name: Get Supabase keys
         id: supabase-keys
