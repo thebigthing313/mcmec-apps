@@ -1,0 +1,28 @@
+{
+	"name": "@mcmec/auth",
+	"version": "0.1.0",
+	"type": "module",
+	"exports": {
+		"./verifyClaims": "./src/verifyClaims.ts",
+		"./signIn": "./src/signIn.ts",
+		"./signOut": "./src/signOut.ts",
+		"./types": "./src/types.ts",
+		"./errors": "./src/errors.ts"
+	},
+	"scripts": {
+		"test": "vitest",
+		"test:run": "vitest run"
+	},
+	"dependencies": {
+		"@mcmec/lib": "workspace:*",
+		"@supabase/supabase-js": "^2.47.14",
+		"zod": "^4.3.5"
+	},
+	"devDependencies": {
+		"@mcmec/typescript-config": "workspace:*",
+		"@types/node": "25.0.9",
+		"typescript": "^5.9.3",
+		"vitest": "^2.1.5"
+	},
+	"packageManager": "pnpm@10.19.0"
+}
