@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
 	}
 
 	try {
-		const { email, password } = await req.json();
+		const { email } = await req.json();
 
 		// Validate input
 		if (!email || typeof email !== "string") {
@@ -31,12 +31,7 @@ Deno.serve(async (req) => {
 			);
 		}
 
-		if (!password || typeof password !== "string" || password.length < 6) {
-			return Response.json(
-				{ error: "Password must be at least 6 characters." },
-				{ headers: corsHeaders, status: 400 },
-			);
-		}
+		const normalizedEmail = email.toLowerCase().trim();
 
 		// Create admin client with service role key
 		const supabaseAdmin = createClient(
@@ -48,7 +43,7 @@ Deno.serve(async (req) => {
 		const { data: employee, error: employeeError } = await supabaseAdmin
 			.from("employees")
 			.select("id, user_id")
-			.eq("email", email.toLowerCase().trim())
+			.eq("email", normalizedEmail)
 			.maybeSingle();
 
 		if (employeeError) {
@@ -72,17 +67,15 @@ Deno.serve(async (req) => {
 			);
 		}
 
-		// Create auth user
-		const { data: newUser, error: createError } =
-			await supabaseAdmin.auth.admin.createUser({
-				email: email.toLowerCase().trim(),
-				email_confirm: true,
-				password,
-			});
+		// Send invite email via Supabase Auth
+		// Creates the auth user and sends a magic link email via Resend SMTP
+		// Employee clicks the link → lands on central's /set-password page
+		const { data: inviteData, error: inviteError } =
+			await supabaseAdmin.auth.admin.inviteUserByEmail(normalizedEmail);
 
-		if (createError || !newUser.user) {
+		if (inviteError || !inviteData.user) {
 			return Response.json(
-				{ error: createError?.message ?? "Unable to create account." },
+				{ error: inviteError?.message ?? "Unable to send invite." },
 				{ headers: corsHeaders, status: 500 },
 			);
 		}
@@ -90,14 +83,14 @@ Deno.serve(async (req) => {
 		// Link employee to the new auth user
 		const { error: linkError } = await supabaseAdmin
 			.from("employees")
-			.update({ user_id: newUser.user.id })
+			.update({ user_id: inviteData.user.id })
 			.eq("id", employee.id);
 
 		if (linkError) {
-			// Attempt to clean up the created user
-			await supabaseAdmin.auth.admin.deleteUser(newUser.user.id);
+			// Clean up the created user if linking fails
+			await supabaseAdmin.auth.admin.deleteUser(inviteData.user.id);
 			return Response.json(
-				{ error: "Account created but failed to link employee record." },
+				{ error: "Invite sent but failed to link employee record." },
 				{ headers: corsHeaders, status: 500 },
 			);
 		}

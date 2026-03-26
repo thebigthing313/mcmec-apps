@@ -1,6 +1,6 @@
-import { signIn } from "@mcmec/supabase/auth/signIn";
+import { signIn } from "@mcmec/auth/signIn";
 import { LoginForm } from "@mcmec/ui/blocks/login-form";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/login")({
 	component: RouteComponent,
@@ -13,15 +13,23 @@ function RouteComponent() {
 	async function handleSubmit(email: string, password: string) {
 		try {
 			await signIn({ client: supabase, email, password });
-			// Redirect or show success message as needed
 			navigate({ to: "/" });
 		} catch (error) {
-			// Handle sign-in error (e.g., show error message)
 			console.error("Sign-in error:", error);
 		}
 	}
 
 	return (
-		<LoginForm onSignIn={(email, password) => handleSubmit(email, password)} />
+		<div className="flex min-h-svh w-full flex-col items-center justify-center gap-4 p-6 md:p-10">
+			<LoginForm
+				onSignIn={(email, password) => handleSubmit(email, password)}
+			/>
+			<Link
+				className="text-blue-600 text-sm underline hover:text-blue-800"
+				to="/forgot-password"
+			>
+				Forgot password?
+			</Link>
+		</div>
 	);
 }
