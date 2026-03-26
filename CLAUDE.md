@@ -99,36 +99,50 @@ This monorepo is live in production. Exercise caution when editing code — pref
 
 ## Development Workflow
 
-All changes go through branches and pull requests — never commit directly to `main`.
+All changes go through branches and pull requests — never commit directly to `main` or `develop`.
 
-### Branch → PR → Merge flow
-1. **Create a feature branch** from `main` (e.g., `feat/contact-form`, `fix/auth-redirect`, `chore/update-deps`)
+### Branching model
+- **`main`** — production. Vercel deploys and Supabase migrations apply on merge.
+- **`develop`** — staging. All feature branches merge here first.
+- **Feature branches** — created from `develop` (e.g., `feat/contact-form`, `fix/auth-redirect`, `chore/update-deps`)
+
+### Feature → develop → main flow
+1. **Create a feature branch** from `develop`
 2. **Make changes and commit** — pre-commit hooks auto-run Biome lint/format on staged files
 3. **Add a changeset** if the PR affects app behavior: `pnpm change` — skip for CI/config-only changes
-4. **Push and open a PR** — the PR template pre-fills a checklist; auto-labeler tags the PR by affected area
+4. **Push and open a PR to `develop`** — the PR template pre-fills a checklist; auto-labeler tags the PR by affected area
 5. **CI runs automatically** — lint, type-check, build, and tests must all pass
-6. **Review, resolve conversations, and merge** — squash merge preferred for clean history
-7. **Vercel deploys only affected apps** to production on merge to `main`
+6. **Review, resolve conversations, and squash merge** into `develop`
+7. **When ready to release**, open a PR from `develop` → `main`, review the combined diff, and merge
+8. **Vercel deploys only affected apps** to production on merge to `main`
 
 ### Preview deployments
-Vercel preview deploys are **off by default**. To trigger one, include `[deploy-preview]` in a commit message on the branch.
+Vercel preview deploys are **off by default** on all branches (including `develop`). To trigger one, include `[deploy-preview]` in a commit message.
 
 ### Database changes
-- Supabase migrations in `supabase/migrations/` **auto-apply to the production database** when merged to `main`
+- Supabase migrations in `supabase/migrations/` **auto-apply to the production database** when merged to `main` (not `develop`)
 - Always test migrations locally first: `supabase db reset` (applies migrations + seed data)
 - Seed data for local dev is in `supabase/seeds/001_seed.sql`
 - Generate updated types after schema changes: `pnpm gen-types`
 
 ### CI checks on every PR
-- **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build`
+- **Lint, Types & Build** — `pnpm biome lint`, `pnpm turbo run check-types`, `pnpm turbo run build`
 - **Tests** — `pnpm --filter @mcmec/supabase test:run`
 - **Changeset check** — warns (non-blocking) if no changeset is included
+- CI runs on PRs to both `develop` and `main`
 
-### Branch protection on `main`
+### Branch protection
+**`main`** (strict):
 - PRs required — no direct pushes
 - CI status checks must pass before merge
-- Branches must be up to date with `main` before merge
+- Branches must be up to date before merge
 - Force pushes blocked
+
+**`develop`** (relaxed):
+- PRs required — no direct pushes
+- CI status checks must pass before merge
+- Force pushes allowed
+- Branches do not need to be up to date
 
 ## Deployment
 
