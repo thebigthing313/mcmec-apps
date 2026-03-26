@@ -53,7 +53,19 @@ INSERT INTO public.user_permissions (user_id, permission_name)
 VALUES ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'public_notices');
 
 -- ---------------------------------------------------------------------------
--- 5. Notice types
+-- 5. Employees
+-- ---------------------------------------------------------------------------
+
+-- 5.1 Linked employee (has an account)
+INSERT INTO public.employees (email, user_id, display_name)
+VALUES ('admin@test.local', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Test Admin');
+
+-- 5.2 Unlinked employee (no account yet — for testing create-account flow)
+INSERT INTO public.employees (email, display_name)
+VALUES ('unlinked@test.local', 'Unlinked Employee');
+
+-- ---------------------------------------------------------------------------
+-- 6. Notice types
 -- ---------------------------------------------------------------------------
 INSERT INTO public.notice_types (name, description) VALUES
   ('General', 'General public notices'),
@@ -62,7 +74,7 @@ INSERT INTO public.notice_types (name, description) VALUES
   ('Advisory', 'Public health advisories');
 
 -- ---------------------------------------------------------------------------
--- 6. Sample notices
+-- 7. Sample notices
 -- ---------------------------------------------------------------------------
 INSERT INTO public.notices (notice_type_id, title, content, notice_date, is_published, is_archived)
 VALUES
@@ -92,7 +104,7 @@ VALUES
   );
 
 -- ---------------------------------------------------------------------------
--- 7. Sample meetings
+-- 8. Sample meetings
 -- ---------------------------------------------------------------------------
 INSERT INTO public.meetings (name, meeting_at, location, is_cancelled) VALUES
   ('Regular Commission Meeting', '2026-04-09 19:00:00+00', '1 JFK Blvd, New Brunswick, NJ', false),
@@ -100,7 +112,7 @@ INSERT INTO public.meetings (name, meeting_at, location, is_cancelled) VALUES
   ('Special Budget Meeting',     '2026-04-23 18:00:00+00', '1 JFK Blvd, New Brunswick, NJ', false);
 
 -- ---------------------------------------------------------------------------
--- 8. Sample insecticides
+-- 9. Sample insecticides
 -- ---------------------------------------------------------------------------
 INSERT INTO public.insecticides (type_name, active_ingredient, active_ingredient_url, trade_name, label_url, msds_url) VALUES
   ('Larvicide', 'Bacillus thuringiensis israelensis (Bti)', 'https://example.com/bti', 'VectoBac 12AS', 'https://example.com/vectobac-label', 'https://example.com/vectobac-msds'),
@@ -108,7 +120,7 @@ INSERT INTO public.insecticides (type_name, active_ingredient, active_ingredient
   ('Larvicide', 'Methoprene', 'https://example.com/methoprene', 'Altosid Pellets', 'https://example.com/altosid-label', 'https://example.com/altosid-msds');
 
 -- ---------------------------------------------------------------------------
--- 9. Zip codes (Middlesex County, NJ)
+-- 10. Zip codes (Middlesex County, NJ)
 -- ---------------------------------------------------------------------------
 INSERT INTO public.zip_codes (code, city, state) VALUES
   ('08901', 'New Brunswick', 'NJ'),
@@ -153,7 +165,7 @@ INSERT INTO public.zip_codes (code, city, state) VALUES
   ('08540', 'Princeton', 'NJ');
 
 -- ---------------------------------------------------------------------------
--- 10. Sample service requests (contact form, complaint, fish request)
+-- 11. Sample service requests (contact form, complaint, fish request)
 -- ---------------------------------------------------------------------------
 INSERT INTO public.contact_form_submissions (name, email, subject, message)
 VALUES ('Jane Doe', 'jane@example.com', 'Question about spraying schedule', 'When will spraying occur in the 08901 area?');
