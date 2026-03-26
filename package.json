@@ -6,12 +6,19 @@
 		"@changesets/cli": "^2.29.8",
 		"@manypkg/cli": "^0.25.1",
 		"@types/node": "25.0.9",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.4.0",
 		"shx": "^0.4.0",
 		"turbo": "^2.7.2",
 		"typescript": "^5.9.3"
 	},
 	"keywords": [],
 	"license": "ISC",
+	"lint-staged": {
+		"*.{js,ts,jsx,tsx,json,css}": [
+			"biome check --write --no-errors-on-unmatched"
+		]
+	},
 	"main": "index.js",
 	"name": "mcmec-apps",
 	"packageManager": "pnpm@10.19.0",
@@ -21,6 +28,7 @@
 		"check-pkgs": "manypkg check",
 		"fix-pkgs": "manypkg fix",
 		"gen-types": "supabase gen types typescript --local > ./packages/supabase/src/database.types.ts",
+		"prepare": "husky",
 		"version-pkgs": "changeset version"
 	},
 	"version": "0.1.0"
