@@ -1,5 +1,18 @@
 # public
 
+## 1.1.1
+
+### Patch Changes
+
+- 062f055: Turnstile hotfix.
+- 5fbfb4f: Hotfix for broken link on home page to public meetings page.
+- Updated dependencies [a8b88f5]
+- Updated dependencies [2affcd1]
+- Updated dependencies [184752c]
+  - @mcmec/lib@0.7.1
+  - @mcmec/supabase@1.3.0
+  - @mcmec/ui@1.4.1
+
 ## 1.1.0
 
 ### Minor Changes

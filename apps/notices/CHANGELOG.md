@@ -1,5 +1,20 @@
 # notices
 
+## 0.7.2
+
+### Patch Changes
+
+- 2cea2d6: Rework auth flow to use email-based invites via Resend SMTP. Replace create-account edge function with invite-employee. Add set-password, forgot-password, and reset-password pages to central. Update both apps to use @mcmec/auth package with typed errors.
+- 2affcd1: Replace user_profiles table with employees table. Employees table tracks all agency staff with optional auth user linkage. Rename profiles collection/accessor to employees across supabase package and notices app. Remove avatar_url field. Regenerated database types.
+- dcf90f1: Hotfix for explicit build output directory on Vercel configuration.
+- Updated dependencies [a8b88f5]
+- Updated dependencies [2affcd1]
+- Updated dependencies [184752c]
+  - @mcmec/auth@0.2.0
+  - @mcmec/lib@0.7.1
+  - @mcmec/supabase@1.3.0
+  - @mcmec/ui@1.4.1
+
 ## 0.7.1
 
 ### Patch Changes
