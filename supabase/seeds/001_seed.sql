@@ -35,10 +35,14 @@ INSERT INTO auth.identities (
 );
 
 -- ---------------------------------------------------------------------------
--- 2. User profile
+-- 2. Employee record (replaces user_profiles)
 -- ---------------------------------------------------------------------------
-INSERT INTO public.user_profiles (user_id, first_name, last_name, display_title)
-VALUES ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Test', 'Admin', 'Administrator');
+INSERT INTO public.employees (email, user_id, display_name, display_title)
+VALUES ('admin@test.local', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Test Admin', 'Administrator');
+
+-- Unlinked employee (no account yet — for testing create-account flow)
+INSERT INTO public.employees (email, display_name)
+VALUES ('unlinked@test.local', 'Unlinked Employee');
 
 -- ---------------------------------------------------------------------------
 -- 3. Permissions
@@ -178,9 +182,9 @@ INSERT INTO public.mosquito_fish_requests (
 
 INSERT INTO public.water_management_requests (
   full_name, phone, email, address_line_1, zip_code_id,
-  location_of_concern, is_on_public_property
+  is_on_public_property, other_location_description
 ) VALUES (
   'Bob Johnson', '732-555-0300', 'bob@example.com', '789 Elm St',
   (SELECT id FROM public.zip_codes WHERE code = '08854'),
-  'Drainage ditch along Cedar Lane', true
+  true, 'Drainage ditch along Cedar Lane'
 );
