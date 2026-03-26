@@ -97,6 +97,39 @@ The public app (`apps/public`) must be **WCAG 2.1 AA** compliant. When working o
 
 This monorepo is live in production. Exercise caution when editing code — prefer small, targeted changes and verify builds/types before committing.
 
+## Development Workflow
+
+All changes go through branches and pull requests — never commit directly to `main`.
+
+### Branch → PR → Merge flow
+1. **Create a feature branch** from `main` (e.g., `feat/contact-form`, `fix/auth-redirect`, `chore/update-deps`)
+2. **Make changes and commit** — pre-commit hooks auto-run Biome lint/format on staged files
+3. **Add a changeset** if the PR affects app behavior: `pnpm change` — skip for CI/config-only changes
+4. **Push and open a PR** — the PR template pre-fills a checklist; auto-labeler tags the PR by affected area
+5. **CI runs automatically** — lint, type-check, build, and tests must all pass
+6. **Review, resolve conversations, and merge** — squash merge preferred for clean history
+7. **Vercel deploys only affected apps** to production on merge to `main`
+
+### Preview deployments
+Vercel preview deploys are **off by default**. To trigger one, include `[deploy-preview]` in a commit message on the branch.
+
+### Database changes
+- Supabase migrations in `supabase/migrations/` **auto-apply to the production database** when merged to `main`
+- Always test migrations locally first: `supabase db reset` (applies migrations + seed data)
+- Seed data for local dev is in `supabase/seeds/001_seed.sql`
+- Generate updated types after schema changes: `pnpm gen-types`
+
+### CI checks on every PR
+- **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build`
+- **Tests** — `pnpm --filter @mcmec/supabase test:run`
+- **Changeset check** — warns (non-blocking) if no changeset is included
+
+### Branch protection on `main`
+- PRs required — no direct pushes
+- CI status checks must pass before merge
+- Branches must be up to date with `main` before merge
+- Force pushes blocked
+
 ## Deployment
 
 All apps deploy to **Vercel** with Turborepo filtering:
