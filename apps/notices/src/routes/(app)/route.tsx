@@ -15,7 +15,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/notices-sidebar";
-import { profiles } from "@/src/lib/collections/profiles";
+import { employees } from "@/src/lib/collections/employees";
 
 type CompleteClaims = {
 	userId: string;
@@ -47,7 +47,7 @@ export const Route = createFileRoute("/(app)")({
 	},
 	component: LayoutComponent,
 	loader: () => {
-		profiles.preload();
+		employees.preload();
 	},
 });
 
@@ -67,10 +67,10 @@ function LayoutComponent() {
 		navigate({ to: "/login" });
 	};
 
-	const { data: profile } = useLiveQuery((q) =>
+	const { data: employee } = useLiveQuery((q) =>
 		q
-			.from({ profile: profiles })
-			.where(({ profile }) => eq(profile.user_id, claims.userId))
+			.from({ employee: employees })
+			.where(({ employee }) => eq(employee.user_id, claims.userId))
 			.findOne(),
 	);
 
@@ -82,9 +82,8 @@ function LayoutComponent() {
 					apps: AVAILABLE_APPS,
 					onLogout: handleLogout,
 					user: {
-						avatar: profile?.avatar_url,
-						name: profile?.display_name ?? "[missing name]",
-						title: profile?.display_title ?? "[missing title]",
+						name: employee?.display_name ?? "[missing name]",
+						title: employee?.display_title ?? "[missing title]",
 					},
 				}}
 			>
