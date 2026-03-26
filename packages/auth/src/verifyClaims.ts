@@ -33,7 +33,6 @@ interface JwtClaims {
 const ClaimsSchema = z.object({
 	userId: z.uuid(ErrorMessages.VALIDATION.INVALID_UUID),
 	userEmail: z.email(ErrorMessages.VALIDATION.INVALID_EMAIL),
-	profileId: z.uuid(ErrorMessages.VALIDATION.INVALID_UUID).nullable(),
 	employeeId: z.uuid(ErrorMessages.VALIDATION.INVALID_UUID).nullable(),
 	permissions: z.array(z.string()),
 });
@@ -61,8 +60,6 @@ export const verifyClaims = async (input: {
 	const returnedClaims = {
 		userId: claims.sub,
 		userEmail: claims.email,
-		profileId:
-			typeof appMeta.profile_id === "string" ? appMeta.profile_id : null,
 		employeeId:
 			typeof appMeta.employee_id === "string" ? appMeta.employee_id : null,
 		permissions: Array.isArray(appMeta.permissions)
@@ -72,7 +69,7 @@ export const verifyClaims = async (input: {
 
 	const parsedClaims = ClaimsSchema.parse(returnedClaims);
 
-	if (!parsedClaims.profileId) {
+	if (!parsedClaims.employeeId) {
 		throw new NotOnboardedError();
 	}
 

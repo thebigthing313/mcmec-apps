@@ -26,7 +26,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["read"],
 					},
@@ -40,20 +39,18 @@ describe("verifyClaims", () => {
 		expect(result).toEqual({
 			userId: "123e4567-e89b-12d3-a456-426614174000",
 			userEmail: "user@example.com",
-			profileId: "123e4567-e89b-12d3-a456-426614174001",
 			employeeId: "123e4567-e89b-12d3-a456-426614174002",
 			permissions: ["read"],
 		});
 	});
 
-	it("should throw NotOnboardedError when profileId is missing", async () => {
+	it("should throw NotOnboardedError when employeeId is missing", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
 				},
@@ -66,25 +63,6 @@ describe("verifyClaims", () => {
 		);
 	});
 
-	it("should succeed when employeeId is missing", async () => {
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		const result = await verifyClaims({ client: mockClient as any });
-		expect(result.employeeId).toBeNull();
-	});
-
 	it("should throw ForbiddenError when permission is required but not present", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
@@ -92,7 +70,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["read"],
 					},
@@ -113,7 +90,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["read", "write"],
 					},
@@ -170,7 +146,6 @@ describe("verifyClaims", () => {
 					sub: "invalid-uuid",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
@@ -189,26 +164,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "not-an-email",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
-	});
-
-	it("should throw validation error when profileId is not a valid UUID", async () => {
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "invalid-uuid",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
@@ -227,27 +182,7 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "not-a-uuid",
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
-	});
-
-	it("should handle empty string profileId as invalid", async () => {
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "",
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
 				},
@@ -265,7 +200,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "",
 						permissions: [],
 					},
@@ -317,7 +251,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: "not-an-array",
 					},
@@ -337,7 +270,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 					},
 				},
@@ -349,14 +281,13 @@ describe("verifyClaims", () => {
 		expect(result.permissions).toEqual([]);
 	});
 
-	it("should return claims with empty permissions array when no permission check is needed", async () => {
+	it("should return claims with empty permissions when no permission check is needed", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
@@ -370,15 +301,14 @@ describe("verifyClaims", () => {
 		expect(result.userId).toBe("123e4567-e89b-12d3-a456-426614174000");
 	});
 
-	it("should handle when profileId is a number instead of string", async () => {
+	it("should treat non-string employeeId as null and throw NotOnboardedError", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: 12345,
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
+						employee_id: 12345,
 						permissions: [],
 					},
 				},
@@ -391,26 +321,6 @@ describe("verifyClaims", () => {
 		);
 	});
 
-	it("should treat non-string employeeId as null", async () => {
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
-						employee_id: 12345,
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		const result = await verifyClaims({ client: mockClient as any });
-		expect(result.employeeId).toBeNull();
-	});
-
 	it("should handle multiple permissions correctly", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
@@ -418,7 +328,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["read", "write", "delete", "admin"],
 					},
@@ -443,7 +352,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["Read"],
 					},
