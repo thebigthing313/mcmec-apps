@@ -1,7 +1,8 @@
+import { ForbiddenError, UnauthenticatedError } from "@mcmec/auth/errors";
+import { signOut } from "@mcmec/auth/signOut";
+import type { Claims } from "@mcmec/auth/types";
+import { verifyClaims } from "@mcmec/auth/verifyClaims";
 import { AVAILABLE_APPS } from "@mcmec/lib/constants/apps";
-import { verifyClaims } from "@mcmec/supabase/auth/claims";
-import { checkSession } from "@mcmec/supabase/auth/session";
-import { signOut } from "@mcmec/supabase/auth/signOut";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -17,33 +18,26 @@ import {
 import { CentralSidebar } from "@/src/components/notices-sidebar";
 import { employees } from "@/src/lib/collections/employees";
 
-type CompleteClaims = {
-	userId: string;
-	userEmail: string;
-	profileId: string;
-	employeeId: string;
-	permissions: string[];
-};
-
 export const Route = createFileRoute("/(app)")({
 	beforeLoad: async ({ context, location }) => {
-		// 1. Verify Session
-		const session = await checkSession({ client: context.supabase });
-		if (!session) {
-			throw redirect({
-				search: { redirect: location.href },
-				to: "/login",
+		try {
+			const claims = await verifyClaims({
+				client: context.supabase,
+				permission: "public_notices",
 			});
+			return { claims };
+		} catch (error) {
+			if (error instanceof UnauthenticatedError) {
+				throw redirect({
+					search: { redirect: location.href },
+					to: "/login",
+				});
+			}
+			if (error instanceof ForbiddenError) {
+				throw redirect({ to: "/login" });
+			}
+			throw error;
 		}
-
-		// 2. Verify Claims
-		const claims = await verifyClaims({
-			client: context.supabase,
-			permission: "public_notices",
-		});
-
-		// 3. Provide claims to all child routes
-		return { claims: claims as CompleteClaims };
 	},
 	component: LayoutComponent,
 	loader: () => {
@@ -53,6 +47,7 @@ export const Route = createFileRoute("/(app)")({
 
 function LayoutComponent() {
 	const { supabase, claims } = Route.useRouteContext();
+	const { userId } = claims as Claims;
 	const navigate = useNavigate();
 	const matches = useMatches();
 	const matchesWithCrumbs = matches.filter((match) =>
@@ -70,7 +65,7 @@ function LayoutComponent() {
 	const { data: employee } = useLiveQuery((q) =>
 		q
 			.from({ employee: employees })
-			.where(({ employee }) => eq(employee.user_id, claims.userId))
+			.where(({ employee }) => eq(employee.user_id, userId))
 			.findOne(),
 	);
 

@@ -1,4 +1,4 @@
-import { signIn } from "@mcmec/supabase/auth/signIn";
+import { signIn } from "@mcmec/auth/signIn";
 import { LoginForm } from "@mcmec/ui/blocks/login-form";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 

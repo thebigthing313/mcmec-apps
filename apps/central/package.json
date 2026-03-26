@@ -1,6 +1,7 @@
 {
 	"author": "Adrian Kabigting",
 	"dependencies": {
+		"@mcmec/auth": "workspace:*",
 		"@mcmec/lib": "workspace:*",
 		"@mcmec/supabase": "workspace:*",
 		"@mcmec/ui": "workspace:*",

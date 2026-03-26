@@ -38,6 +38,9 @@ importers:
 
   apps/central:
     dependencies:
+      '@mcmec/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
@@ -105,6 +108,9 @@ importers:
 
   apps/notices:
     dependencies:
+      '@mcmec/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
