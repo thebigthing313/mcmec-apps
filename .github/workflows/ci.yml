@@ -60,7 +60,7 @@ jobs:
   integration-test:
     name: Integration Tests
     runs-on: ubuntu-latest
-    if: github.base_ref == 'main'
+    if: github.base_ref == 'main' && github.head_ref == 'develop'
     steps:
       - uses: actions/checkout@v4
 
@@ -73,7 +73,7 @@ jobs:
 
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.187.8
 
       - name: Start Supabase
         run: supabase start
@@ -81,8 +81,8 @@ jobs:
       - name: Get Supabase keys
         id: supabase-keys
         run: |
-          echo "anon_key=$(supabase status -o env | grep ANON_KEY | cut -d= -f2-)" >> "$GITHUB_OUTPUT"
-          echo "service_role_key=$(supabase status -o env | grep SERVICE_ROLE_KEY | cut -d= -f2-)" >> "$GITHUB_OUTPUT"
+          echo "anon_key=$(supabase status -o env | grep ANON_KEY | cut -d= -f2- | sed 's/^\"//; s/\"$//')" >> "$GITHUB_OUTPUT"
+          echo "service_role_key=$(supabase status -o env | grep SERVICE_ROLE_KEY | cut -d= -f2- | sed 's/^\"//; s/\"$//')" >> "$GITHUB_OUTPUT"
 
       - run: pnpm install --frozen-lockfile
 

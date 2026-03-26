@@ -1,17 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import {
-	ForbiddenError,
-	NotOnboardedError,
-	UnauthenticatedError,
-} from "../errors";
+import { ForbiddenError, UnauthenticatedError } from "../errors";
 import { signIn } from "../signIn";
 import { signOut } from "../signOut";
 import { verifyClaims } from "../verifyClaims";
-import { supabase, supabaseAdmin, TEST_USER } from "./setup";
+import { supabase, TEST_USER } from "./setup";
 
 describe("auth flow (integration)", () => {
 	beforeAll(async () => {
-		// Sign in with seed user
 		await signIn({
 			client: supabase,
 			email: TEST_USER.email,
@@ -59,7 +54,6 @@ describe("auth flow (integration)", () => {
 
 describe("unauthenticated access (integration)", () => {
 	it("should throw UnauthenticatedError when not signed in", async () => {
-		// Create a fresh client with no session
 		const { createClient } = await import("@supabase/supabase-js");
 		const anonClient = createClient(
 			process.env.SUPABASE_URL ?? "http://127.0.0.1:54321",
