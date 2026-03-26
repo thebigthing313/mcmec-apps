@@ -1,5 +1,6 @@
 {
 	"buildCommand": "cd ../.. && pnpm turbo run build --filter=public",
+	"ignoreCommand": "bash ../../scripts/vercel-ignore.sh",
 	"headers": [
 		{
 			"headers": [
