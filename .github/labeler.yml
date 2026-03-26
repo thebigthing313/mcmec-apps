@@ -1,0 +1,32 @@
+"app:central":
+  - changed-files:
+      - any-glob-to-any-file: "apps/central/**"
+
+"app:notices":
+  - changed-files:
+      - any-glob-to-any-file: "apps/notices/**"
+
+"app:public":
+  - changed-files:
+      - any-glob-to-any-file: "apps/public/**"
+
+"packages":
+  - changed-files:
+      - any-glob-to-any-file: "packages/**"
+
+"migration":
+  - changed-files:
+      - any-glob-to-any-file: "supabase/migrations/**"
+
+"ci":
+  - changed-files:
+      - any-glob-to-any-file: ".github/workflows/**"
+
+"config":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "package.json"
+          - "pnpm-lock.yaml"
+          - "turbo.json"
+          - "biome.json"
+          - "tsconfig*.json"
