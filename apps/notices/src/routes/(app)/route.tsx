@@ -82,6 +82,7 @@ function LayoutComponent() {
 					apps: AVAILABLE_APPS,
 					onLogout: handleLogout,
 					user: {
+						avatar: undefined,
 						name: employee?.display_name ?? "[missing name]",
 						title: employee?.display_title ?? "[missing title]",
 					},
