@@ -35,10 +35,14 @@ INSERT INTO auth.identities (
 );
 
 -- ---------------------------------------------------------------------------
--- 2. User profile
+-- 2. Employee record (replaces user_profiles)
 -- ---------------------------------------------------------------------------
-INSERT INTO public.user_profiles (user_id, first_name, last_name, display_title)
-VALUES ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Test', 'Admin', 'Administrator');
+INSERT INTO public.employees (email, user_id, display_name, display_title)
+VALUES ('admin@test.local', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Test Admin', 'Administrator');
+
+-- Unlinked employee (no account yet — for testing create-account flow)
+INSERT INTO public.employees (email, display_name)
+VALUES ('unlinked@test.local', 'Unlinked Employee');
 
 -- ---------------------------------------------------------------------------
 -- 3. Permissions
@@ -53,19 +57,7 @@ INSERT INTO public.user_permissions (user_id, permission_name)
 VALUES ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'public_notices');
 
 -- ---------------------------------------------------------------------------
--- 5. Employees
--- ---------------------------------------------------------------------------
-
--- 5.1 Linked employee (has an account)
-INSERT INTO public.employees (email, user_id, display_name)
-VALUES ('admin@test.local', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Test Admin');
-
--- 5.2 Unlinked employee (no account yet — for testing create-account flow)
-INSERT INTO public.employees (email, display_name)
-VALUES ('unlinked@test.local', 'Unlinked Employee');
-
--- ---------------------------------------------------------------------------
--- 6. Notice types
+-- 5. Notice types
 -- ---------------------------------------------------------------------------
 INSERT INTO public.notice_types (name, description) VALUES
   ('General', 'General public notices'),
@@ -74,7 +66,7 @@ INSERT INTO public.notice_types (name, description) VALUES
   ('Advisory', 'Public health advisories');
 
 -- ---------------------------------------------------------------------------
--- 7. Sample notices
+-- 6. Sample notices
 -- ---------------------------------------------------------------------------
 INSERT INTO public.notices (notice_type_id, title, content, notice_date, is_published, is_archived)
 VALUES
@@ -104,7 +96,7 @@ VALUES
   );
 
 -- ---------------------------------------------------------------------------
--- 8. Sample meetings
+-- 7. Sample meetings
 -- ---------------------------------------------------------------------------
 INSERT INTO public.meetings (name, meeting_at, location, is_cancelled) VALUES
   ('Regular Commission Meeting', '2026-04-09 19:00:00+00', '1 JFK Blvd, New Brunswick, NJ', false),
@@ -112,7 +104,7 @@ INSERT INTO public.meetings (name, meeting_at, location, is_cancelled) VALUES
   ('Special Budget Meeting',     '2026-04-23 18:00:00+00', '1 JFK Blvd, New Brunswick, NJ', false);
 
 -- ---------------------------------------------------------------------------
--- 9. Sample insecticides
+-- 8. Sample insecticides
 -- ---------------------------------------------------------------------------
 INSERT INTO public.insecticides (type_name, active_ingredient, active_ingredient_url, trade_name, label_url, msds_url) VALUES
   ('Larvicide', 'Bacillus thuringiensis israelensis (Bti)', 'https://example.com/bti', 'VectoBac 12AS', 'https://example.com/vectobac-label', 'https://example.com/vectobac-msds'),
@@ -120,7 +112,7 @@ INSERT INTO public.insecticides (type_name, active_ingredient, active_ingredient
   ('Larvicide', 'Methoprene', 'https://example.com/methoprene', 'Altosid Pellets', 'https://example.com/altosid-label', 'https://example.com/altosid-msds');
 
 -- ---------------------------------------------------------------------------
--- 10. Zip codes (Middlesex County, NJ)
+-- 9. Zip codes (Middlesex County, NJ)
 -- ---------------------------------------------------------------------------
 INSERT INTO public.zip_codes (code, city, state) VALUES
   ('08901', 'New Brunswick', 'NJ'),
@@ -165,7 +157,7 @@ INSERT INTO public.zip_codes (code, city, state) VALUES
   ('08540', 'Princeton', 'NJ');
 
 -- ---------------------------------------------------------------------------
--- 11. Sample service requests (contact form, complaint, fish request)
+-- 10. Sample service requests (contact form, complaint, fish request)
 -- ---------------------------------------------------------------------------
 INSERT INTO public.contact_form_submissions (name, email, subject, message)
 VALUES ('Jane Doe', 'jane@example.com', 'Question about spraying schedule', 'When will spraying occur in the 08901 area?');
@@ -190,9 +182,9 @@ INSERT INTO public.mosquito_fish_requests (
 
 INSERT INTO public.water_management_requests (
   full_name, phone, email, address_line_1, zip_code_id,
-  location_of_concern, is_on_public_property
+  is_on_public_property, other_location_description
 ) VALUES (
   'Bob Johnson', '732-555-0300', 'bob@example.com', '789 Elm St',
   (SELECT id FROM public.zip_codes WHERE code = '08854'),
-  'Drainage ditch along Cedar Lane', true
+  true, 'Drainage ditch along Cedar Lane'
 );
