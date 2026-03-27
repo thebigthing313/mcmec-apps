@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { UnauthenticatedError } from "./errors";
 
 const mockSignInWithPassword = vi.fn();
 const mockClient = {
@@ -35,33 +36,24 @@ describe("signIn", () => {
 			error: null,
 		});
 
-		const result = await signIn(validInput);
+		await expect(signIn(validInput)).resolves.toBeUndefined();
 
 		expect(mockSignInWithPassword).toHaveBeenCalledWith({
 			email: "user@example.com",
 			password: "securepassword123",
 		});
-
-		expect(result).toEqual({
-			userId: "123e4567-e89b-12d3-a456-426614174000",
-			email: "user@example.com",
-			accessToken: "mock-access-token",
-			refreshToken: "mock-refresh-token",
-		});
 	});
 
-	it("should throw error when authentication fails", async () => {
+	it("should throw UnauthenticatedError when authentication fails", async () => {
 		mockSignInWithPassword.mockResolvedValue({
 			data: { user: null, session: null },
 			error: { message: "Invalid credentials" },
 		});
 
-		await expect(signIn(validInput)).rejects.toThrow(
-			"You must be logged in to access this resource.",
-		);
+		await expect(signIn(validInput)).rejects.toThrow(UnauthenticatedError);
 	});
 
-	it("should throw error when user is missing from response", async () => {
+	it("should throw UnauthenticatedError when user is missing from response", async () => {
 		mockSignInWithPassword.mockResolvedValue({
 			data: {
 				user: null,
@@ -73,12 +65,10 @@ describe("signIn", () => {
 			error: null,
 		});
 
-		await expect(signIn(validInput)).rejects.toThrow(
-			"You must be logged in to access this resource.",
-		);
+		await expect(signIn(validInput)).rejects.toThrow(UnauthenticatedError);
 	});
 
-	it("should throw error when session is missing from response", async () => {
+	it("should throw UnauthenticatedError when session is missing from response", async () => {
 		mockSignInWithPassword.mockResolvedValue({
 			data: {
 				user: {
@@ -90,9 +80,7 @@ describe("signIn", () => {
 			error: null,
 		});
 
-		await expect(signIn(validInput)).rejects.toThrow(
-			"You must be logged in to access this resource.",
-		);
+		await expect(signIn(validInput)).rejects.toThrow(UnauthenticatedError);
 	});
 
 	it("should throw error for invalid email format", async () => {
@@ -104,7 +92,7 @@ describe("signIn", () => {
 		await expect(signIn(invalidInput)).rejects.toThrow();
 	});
 
-	it("should throw error for password shorter than 8 characters", async () => {
+	it("should throw error for password shorter than 6 characters", async () => {
 		const invalidInput = {
 			...validInput,
 			password: "short",
@@ -113,7 +101,7 @@ describe("signIn", () => {
 		await expect(signIn(invalidInput)).rejects.toThrow();
 	});
 
-	it("should call createClient with correct parameters", async () => {
+	it("should accept a 6-character password", async () => {
 		mockSignInWithPassword.mockResolvedValue({
 			data: {
 				user: {
@@ -127,23 +115,9 @@ describe("signIn", () => {
 			},
 			error: null,
 		});
-	});
 
-	it("should handle missing email in user response", async () => {
-		mockSignInWithPassword.mockResolvedValue({
-			data: {
-				user: {
-					id: "123e4567-e89b-12d3-a456-426614174000",
-					email: null,
-				},
-				session: {
-					access_token: "mock-access-token",
-					refresh_token: "mock-refresh-token",
-				},
-			},
-			error: null,
-		});
-
-		await expect(signIn(validInput)).rejects.toThrow();
+		await expect(
+			signIn({ ...validInput, password: "abcdef" }),
+		).resolves.toBeUndefined();
 	});
 });

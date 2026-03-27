@@ -1,5 +1,11 @@
 # @mcmec/lib
 
+## 0.7.1
+
+### Patch Changes
+
+- a8b88f5: New @mcmec/auth package with typed errors, canonical Claims type, and dependency injection pattern. Update PasswordSchema minimum from 8 to 6 characters.
+
 ## 0.7.0
 
 ### Minor Changes

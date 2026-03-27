@@ -1,4 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	ForbiddenError,
+	NotOnboardedError,
+	UnauthenticatedError,
+} from "./errors";
 
 const mockGetClaims = vi.fn();
 const mockClient = {
@@ -7,7 +12,7 @@ const mockClient = {
 	},
 };
 
-import { verifyClaims } from "./claims";
+import { verifyClaims } from "./verifyClaims";
 
 beforeEach(() => {
 	vi.clearAllMocks();
@@ -21,7 +26,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["read"],
 					},
@@ -35,20 +39,18 @@ describe("verifyClaims", () => {
 		expect(result).toEqual({
 			userId: "123e4567-e89b-12d3-a456-426614174000",
 			userEmail: "user@example.com",
-			profileId: "123e4567-e89b-12d3-a456-426614174001",
 			employeeId: "123e4567-e89b-12d3-a456-426614174002",
 			permissions: ["read"],
 		});
 	});
 
-	it("should throw INVALID_JWT when profileId is missing", async () => {
+	it("should throw NotOnboardedError when employeeId is missing", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
 				},
@@ -57,37 +59,17 @@ describe("verifyClaims", () => {
 		});
 
 		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
-			"The provided authentication token is invalid.",
+			NotOnboardedError,
 		);
 	});
 
-	it("should succeed when employeeId is missing (not yet required)", async () => {
+	it("should throw ForbiddenError when permission is required but not present", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		const result = await verifyClaims({ client: mockClient as any });
-		expect(result.employeeId).toBeNull();
-	});
-
-	it("should throw FORBIDDEN when permission is required but not present", async () => {
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["read"],
 					},
@@ -97,11 +79,8 @@ describe("verifyClaims", () => {
 		});
 
 		await expect(
-			verifyClaims({
-				client: mockClient as any,
-				permission: "write",
-			}),
-		).rejects.toThrow("You do not have permission to this action or resource.");
+			verifyClaims({ client: mockClient as any, permission: "write" }),
+		).rejects.toThrow(ForbiddenError);
 	});
 
 	it("should return claims when permission is present", async () => {
@@ -111,7 +90,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["read", "write"],
 					},
@@ -128,34 +106,36 @@ describe("verifyClaims", () => {
 		expect(result.permissions).toContain("write");
 	});
 
-	it("should throw INVALID_JWT when getClaims returns no data", async () => {
+	it("should throw UnauthenticatedError when getClaims returns no data", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: null,
 			error: null,
 		});
 
 		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
-			"The provided authentication token is invalid.",
+			UnauthenticatedError,
 		);
 	});
 
-	it("should throw UNABLE_TO_FETCH_CLAIMS when getClaims returns an error", async () => {
+	it("should throw UnauthenticatedError when getClaims returns an error", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: null,
 			error: { message: "Network error", status: 500 },
 		});
 
-		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			UnauthenticatedError,
+		);
 	});
 
-	it("should throw INVALID_JWT when claims data is undefined", async () => {
+	it("should throw UnauthenticatedError when claims data is undefined", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: undefined,
 			error: null,
 		});
 
 		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
-			"The provided authentication token is invalid.",
+			UnauthenticatedError,
 		);
 	});
 
@@ -166,7 +146,6 @@ describe("verifyClaims", () => {
 					sub: "invalid-uuid",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
@@ -185,26 +164,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "not-an-email",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
-	});
-
-	it("should throw validation error when profileId is not a valid UUID", async () => {
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "invalid-uuid",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
@@ -223,27 +182,7 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "not-a-uuid",
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow();
-	});
-
-	it("should handle empty string profileId as invalid", async () => {
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "",
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
 				},
@@ -261,7 +200,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "",
 						permissions: [],
 					},
@@ -286,7 +224,7 @@ describe("verifyClaims", () => {
 		});
 
 		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
-			"The provided authentication token is invalid.",
+			NotOnboardedError,
 		);
 	});
 
@@ -302,7 +240,7 @@ describe("verifyClaims", () => {
 		});
 
 		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
-			"The provided authentication token is invalid.",
+			NotOnboardedError,
 		);
 	});
 
@@ -313,7 +251,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: "not-an-array",
 					},
@@ -323,8 +260,6 @@ describe("verifyClaims", () => {
 		});
 
 		const result = await verifyClaims({ client: mockClient as any });
-
-		// Should default to empty array when permissions is not an array
 		expect(result.permissions).toEqual([]);
 	});
 
@@ -335,7 +270,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 					},
 				},
@@ -344,19 +278,16 @@ describe("verifyClaims", () => {
 		});
 
 		const result = await verifyClaims({ client: mockClient as any });
-
-		// Should default to empty array when permissions is missing
 		expect(result.permissions).toEqual([]);
 	});
 
-	it("should return claims with empty permissions array when no permission check is needed", async () => {
+	it("should return claims with empty permissions when no permission check is needed", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: [],
 					},
@@ -366,40 +297,17 @@ describe("verifyClaims", () => {
 		});
 
 		const result = await verifyClaims({ client: mockClient as any });
-
 		expect(result.permissions).toEqual([]);
 		expect(result.userId).toBe("123e4567-e89b-12d3-a456-426614174000");
 	});
 
-	it("should handle when profileId is a number instead of string", async () => {
+	it("should treat non-string employeeId as null and throw NotOnboardedError", async () => {
 		mockGetClaims.mockResolvedValue({
 			data: {
 				claims: {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: 12345,
-						employee_id: "123e4567-e89b-12d3-a456-426614174002",
-						permissions: [],
-					},
-				},
-			},
-			error: null,
-		});
-
-		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
-			"The provided authentication token is invalid.",
-		);
-	});
-
-	it("should treat non-string employeeId as null (not yet required)", async () => {
-		mockGetClaims.mockResolvedValue({
-			data: {
-				claims: {
-					sub: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: 12345,
 						permissions: [],
 					},
@@ -408,8 +316,9 @@ describe("verifyClaims", () => {
 			error: null,
 		});
 
-		const result = await verifyClaims({ client: mockClient as any });
-		expect(result.employeeId).toBeNull();
+		await expect(verifyClaims({ client: mockClient as any })).rejects.toThrow(
+			NotOnboardedError,
+		);
 	});
 
 	it("should handle multiple permissions correctly", async () => {
@@ -419,7 +328,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["read", "write", "delete", "admin"],
 					},
@@ -444,7 +352,6 @@ describe("verifyClaims", () => {
 					sub: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 					app_metadata: {
-						profile_id: "123e4567-e89b-12d3-a456-426614174001",
 						employee_id: "123e4567-e89b-12d3-a456-426614174002",
 						permissions: ["Read"],
 					},
@@ -454,10 +361,7 @@ describe("verifyClaims", () => {
 		});
 
 		await expect(
-			verifyClaims({
-				client: mockClient as any,
-				permission: "read",
-			}),
-		).rejects.toThrow("You do not have permission to this action or resource.");
+			verifyClaims({ client: mockClient as any, permission: "read" }),
+		).rejects.toThrow(ForbiddenError);
 	});
 });

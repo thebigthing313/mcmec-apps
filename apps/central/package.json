@@ -1,6 +1,7 @@
 {
 	"author": "Adrian Kabigting",
 	"dependencies": {
+		"@mcmec/auth": "workspace:*",
 		"@mcmec/lib": "workspace:*",
 		"@mcmec/supabase": "workspace:*",
 		"@mcmec/ui": "workspace:*",
@@ -12,7 +13,8 @@
 		"lucide-react": "^0.475.0",
 		"react": "^19.2.3",
 		"react-dom": "^19.2.3",
-		"vite-tsconfig-paths": "^6.0.3"
+		"vite-tsconfig-paths": "^6.0.3",
+		"zod": "^4.3.5"
 	},
 	"description": "",
 	"devDependencies": {
@@ -40,5 +42,5 @@
 		"sync-assets": "shx mkdir -p public/shared && shx cp -r ../../packages/assets/images/* public/shared/"
 	},
 	"type": "module",
-	"version": "0.1.7"
+	"version": "0.2.0"
 }

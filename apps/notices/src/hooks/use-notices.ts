@@ -1,7 +1,7 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
+import { employees } from "../lib/collections/employees";
 import { notice_types } from "../lib/collections/notice_types";
 import { notices } from "../lib/collections/notices";
-import { profiles } from "../lib/collections/profiles";
 
 export function useNotices() {
 	return useLiveQuery((q) =>
@@ -10,14 +10,14 @@ export function useNotices() {
 			.innerJoin({ notice_type: notice_types }, ({ notice, notice_type }) =>
 				eq(notice.notice_type_id, notice_type.id),
 			)
-			.join({ profile: profiles }, ({ notice, profile }) =>
-				eq(notice.created_by, profile.user_id),
+			.join({ employee: employees }, ({ notice, employee }) =>
+				eq(notice.created_by, employee.user_id),
 			)
-			.select(({ notice, notice_type, profile }) => {
+			.select(({ notice, notice_type, employee }) => {
 				return {
 					content: notice.content,
 					createdById: notice.created_by,
-					createdByName: profile?.display_name,
+					createdByName: employee?.display_name,
 					id: notice.id,
 					isArchived: notice.is_archived,
 					isPublished: notice.is_published,

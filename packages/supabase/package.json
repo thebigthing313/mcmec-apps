@@ -16,7 +16,6 @@
 		"vitest": "^2.1.5"
 	},
 	"exports": {
-		"./auth/*": "./src/auth/*.ts",
 		"./client": "./src/client.ts",
 		"./database.types": "./src/database.types.ts",
 		"./db/*": "./src/db/*.ts"
@@ -31,5 +30,5 @@
 		"test:run": "vitest run"
 	},
 	"type": "module",
-	"version": "1.2.0"
+	"version": "1.3.0"
 }

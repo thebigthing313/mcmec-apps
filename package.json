@@ -9,6 +9,7 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^16.4.0",
 		"shx": "^0.4.0",
+		"tsx": "^4.21.0",
 		"turbo": "^2.7.2",
 		"typescript": "^5.9.3"
 	},
@@ -27,6 +28,7 @@
 		"change": "changeset",
 		"check-pkgs": "manypkg check",
 		"fix-pkgs": "manypkg fix",
+		"gen-seed": "supabase db reset --no-seed && tsx supabase/scripts/generate-seed.ts",
 		"gen-types": "supabase gen types typescript --local > ./packages/supabase/src/database.types.ts",
 		"prepare": "husky",
 		"version-pkgs": "changeset version"

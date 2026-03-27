@@ -1,8 +1,8 @@
+import { NotOnboardedError, UnauthenticatedError } from "@mcmec/auth/errors";
+import { signOut } from "@mcmec/auth/signOut";
+import type { Claims } from "@mcmec/auth/types";
+import { verifyClaims } from "@mcmec/auth/verifyClaims";
 import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
-import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import { verifyClaims } from "@mcmec/supabase/auth/claims";
-import { checkSession } from "@mcmec/supabase/auth/session";
-import { signOut } from "@mcmec/supabase/auth/signOut";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import {
 	createFileRoute,
@@ -12,42 +12,31 @@ import {
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/central-sidebar";
 
-type CompleteClaims = {
-	userId: string;
-	userEmail: string;
-	profileId: string;
-	employeeId: string;
-	permissions: string[];
-};
-
 export const Route = createFileRoute("/(app)")({
 	beforeLoad: async ({ context, location }) => {
-		// 1. Verify Session
-		const session = await checkSession({ client: context.supabase });
-		if (!session) {
-			throw redirect({
-				to: "/login",
-				search: { redirect: location.href },
-			});
+		try {
+			const claims = await verifyClaims({ client: context.supabase });
+			return { claims };
+		} catch (error) {
+			if (error instanceof UnauthenticatedError) {
+				throw redirect({
+					search: { redirect: location.href },
+					to: "/login",
+				});
+			}
+			throw error;
 		}
-
-		// 2. Verify Claims
-		const claims = await verifyClaims({ client: context.supabase });
-
-		// 3. Provide claims to all child routes
-		return { claims: claims as CompleteClaims };
 	},
 	component: LayoutComponent,
 	errorComponent: ({ error }) => {
-		// Handle NOT_ONBOARDED error
-		if (error.message === ErrorMessages.AUTH.NOT_ONBOARDED) {
+		if (error instanceof NotOnboardedError) {
 			return (
 				<div className="flex min-h-screen items-center justify-center">
 					<div className="text-center">
 						<h1 className="mb-4 font-bold text-2xl">Onboarding Required</h1>
 						<p className="text-gray-600">
-							Your account needs to be onboarded before you can access this
-							application.
+							Your account needs to be linked to an employee record before you
+							can access this application.
 						</p>
 						<p className="mt-2 text-gray-600">
 							Please contact your administrator for assistance.
@@ -57,7 +46,6 @@ export const Route = createFileRoute("/(app)")({
 			);
 		}
 
-		// Generic error fallback
 		return (
 			<div className="flex min-h-screen items-center justify-center">
 				<div className="text-center">
@@ -71,7 +59,7 @@ export const Route = createFileRoute("/(app)")({
 
 function LayoutComponent() {
 	const { supabase, claims } = Route.useRouteContext();
-	const { permissions } = claims;
+	const { permissions } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 
 	const navigate = useNavigate();
@@ -83,14 +71,14 @@ function LayoutComponent() {
 	return (
 		<Layout
 			value={{
-				apps: accessibleApps,
 				activeApp: "Central",
+				apps: accessibleApps,
+				onLogout: handleLogout,
 				user: {
+					avatar: undefined,
 					name: "User Name",
 					title: "Job Title",
-					avatar: "/avatar.png",
 				},
-				onLogout: handleLogout,
 			}}
 		>
 			<Layout.Sidebar>
