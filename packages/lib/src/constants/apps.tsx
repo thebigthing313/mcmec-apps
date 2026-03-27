@@ -22,6 +22,16 @@ function appUrl(subdomain: string, port: number): string {
 		: `http://localhost:${port}`;
 }
 
+export const CENTRAL_URL = appUrl("central", 3001);
+
+export function getCentralLoginUrl(redirect?: string): string {
+	const base = `${CENTRAL_URL}/login`;
+	if (redirect) {
+		return `${base}?redirect=${encodeURIComponent(redirect)}`;
+	}
+	return base;
+}
+
 export const AVAILABLE_APPS: App[] = [
 	{
 		description: "Employee self-service portal.",
