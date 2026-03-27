@@ -71,7 +71,9 @@ Deno.serve(async (req) => {
 		// Creates the auth user and sends a magic link email via Resend SMTP
 		// Employee clicks the link → lands on central's /set-password page
 		const { data: inviteData, error: inviteError } =
-			await supabaseAdmin.auth.admin.inviteUserByEmail(normalizedEmail);
+			await supabaseAdmin.auth.admin.inviteUserByEmail(normalizedEmail, {
+				redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace("127.0.0.1:54321", "localhost:3001")}/set-password`,
+			});
 
 		if (inviteError || !inviteData.user) {
 			return Response.json(
