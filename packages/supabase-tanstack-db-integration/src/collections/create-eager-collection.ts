@@ -55,7 +55,6 @@ export function createEagerCollection<
 	type Row = z.output<TSchema>;
 
 	return createCollection(
-		// @ts-expect-error TanStack DB types lag behind runtime API
 		queryCollectionOptions({
 			queryKey: [table],
 			queryFn: async (): Promise<Row[]> => {

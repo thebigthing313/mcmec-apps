@@ -32,14 +32,14 @@ SET row_security = off;
 -- Data for Name: users; Type: TABLE DATA; Schema: auth; Owner: -
 --
 
-INSERT INTO auth.users VALUES ('00000000-0000-0000-0000-000000000000', '128713a5-6eea-4fc5-b613-908418be097c', 'authenticated', 'authenticated', 'admin@test.local', '$2a$10$HJuwUCP6MPE1n06dsmFh9OlzKCI8NHK5CY9VWPcMOJ6JqxTwjyhmO', '2026-03-26 21:43:31.871342+00', NULL, '', NULL, '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"], "employee_id": "682d367c-c08d-4b66-84f6-9b5ec1f795ca", "permissions": ["public_notices"]}', '{"email_verified": true}', NULL, '2026-03-26 21:43:31.862372+00', '2026-03-26 21:43:31.916584+00', NULL, NULL, '', '', NULL, DEFAULT, '', 0, NULL, '', NULL, false, NULL, false);
+INSERT INTO auth.users VALUES ('00000000-0000-0000-0000-000000000000', 'a1d3b9ee-bcf6-47a8-8cca-4b0593018a23', 'authenticated', 'authenticated', 'admin@test.local', '$2a$10$O.d5k0hPTbuS0DV.wHXAyeJ23M50xS.KVeF1a3K8KlqkWSZ0EZPiG', '2026-03-27 17:35:32.392746+00', NULL, '', NULL, '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"], "employee_id": "4c8d114f-9763-4002-b3a1-f2f305b0b39c", "permissions": ["public_notices", "manage_employees"]}', '{"email_verified": true}', NULL, '2026-03-27 17:35:32.386349+00', '2026-03-27 17:35:32.459613+00', NULL, NULL, '', '', NULL, DEFAULT, '', 0, NULL, '', NULL, false, NULL, false);
 
 
 --
 -- Data for Name: identities; Type: TABLE DATA; Schema: auth; Owner: -
 --
 
-INSERT INTO auth.identities VALUES ('128713a5-6eea-4fc5-b613-908418be097c', '128713a5-6eea-4fc5-b613-908418be097c', '{"sub": "128713a5-6eea-4fc5-b613-908418be097c", "email": "admin@test.local", "email_verified": false, "phone_verified": false}', 'email', '2026-03-26 21:43:31.868217+00', '2026-03-26 21:43:31.868263+00', '2026-03-26 21:43:31.868263+00', DEFAULT, '82d71f4c-b9a5-4874-84c4-7c76110a8f54');
+INSERT INTO auth.identities VALUES ('a1d3b9ee-bcf6-47a8-8cca-4b0593018a23', 'a1d3b9ee-bcf6-47a8-8cca-4b0593018a23', '{"sub": "a1d3b9ee-bcf6-47a8-8cca-4b0593018a23", "email": "admin@test.local", "email_verified": false, "phone_verified": false}', 'email', '2026-03-27 17:35:32.389429+00', '2026-03-27 17:35:32.389466+00', '2026-03-27 17:35:32.389466+00', DEFAULT, '0b0b54e8-ea20-48b9-9305-af1955b0cc1f');
 
 
 --
@@ -76,133 +76,135 @@ INSERT INTO auth.identities VALUES ('128713a5-6eea-4fc5-b613-908418be097c', '128
 -- Data for Name: zip_codes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.zip_codes VALUES ('4f1e4357-c00b-4c12-923d-b27fdb61f907', '08901', 'New Brunswick', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('67d2abb3-066f-469b-9d3e-2e359107694a', '08902', 'North Brunswick', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('55f63a48-e7e0-403a-98f5-ad708fe57f22', '08903', 'New Brunswick', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('7fbd2fba-088d-48a4-baaa-c3e0e61ce29e', '08816', 'East Brunswick', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('eff5f222-7b43-48a5-8e3f-f70ec2205f41', '08817', 'Edison', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('5da30310-ac36-4926-8472-789cd2355b35', '08820', 'Edison', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('ac0e4736-2ad0-485d-822c-c19ca273da5a', '08837', 'Edison', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('eb0d2407-e9f8-49b5-a2f1-c37ff0b85514', '08840', 'Metuchen', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('b09c6036-6be3-4b1f-88b7-e5360b32497a', '08846', 'Middlesex', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('63e36480-76a6-4f03-a6fc-b4a1c69df48d', '08854', 'Piscataway', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('74fc8d55-528f-4d5d-beb5-beed267c33e1', '08855', 'Piscataway', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('dd9aeadd-de17-41b3-8164-c18800d8b6ba', '08857', 'Old Bridge', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('07c9f52d-2cf3-40de-a63e-94fcad37134f', '08859', 'Parlin', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('22e9883e-aac8-48be-8c79-e80c6ba725bb', '08861', 'Perth Amboy', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('0b512b2f-59d1-49ed-9f65-4e41d59eda23', '08862', 'Perth Amboy', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('87c49514-2ea6-4dd5-9685-930c978afb11', '08863', 'Fords', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('6e116c57-3408-4325-8b0d-4e44ecbd5b46', '08871', 'Sayreville', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('1595dd5f-3089-4697-b62a-87f9531c9796', '08872', 'Sayreville', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('3a44c4f9-43af-49ca-ac29-e66a091a5082', '08879', 'South Amboy', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('d1363f10-b222-4e5a-a494-be75989ffd41', '08882', 'South River', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('f14b4186-55d0-4650-b903-2678d783b9e7', '08884', 'Spotswood', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('f3c9506c-2578-4793-ba2b-064d514a3e59', '08899', 'Edison', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('b4e674f7-02cf-491d-9e3f-ac468017dd49', '07001', 'Avenel', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('8e254fb2-abbe-4afd-b064-bc6a3c7bbee8', '07064', 'Port Reading', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('8f38d197-4eb3-4da0-8e21-f014de0b22b5', '07067', 'Colonia', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('f06e2dc5-5600-4cce-b228-6554ca85095d', '07077', 'Sewaren', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('05628885-e133-4bdb-9b8b-c5795c29b76f', '07080', 'South Plainfield', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('0f4e8c91-ccc0-469a-9b64-3a8cf0a8ca85', '07095', 'Woodbridge', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('1a76ccf2-e305-4c50-9c16-8f27cade9d4b', '08810', 'Dayton', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('3b95044f-8bd4-41d1-9f46-3ac1fc199cdf', '08812', 'Dunellen', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('2b393caf-1ccf-4036-bb6b-c74ba9ab8de5', '08824', 'Kendall Park', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('6a278c61-e884-478a-8cb8-214c4d87d4b0', '08828', 'Helmetta', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('6e6015e2-f2e3-4a18-a6f5-5c749bfbcd48', '08830', 'Iselin', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('2b95dc59-2982-467c-8844-e0f8aad007df', '08831', 'Monroe Township', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('dfe9ecc0-d13f-4170-9f83-1efbba1eeac4', '08832', 'Jamesburg', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('be112b2a-ce53-45f9-857a-ce6eee44a920', '08850', 'Milltown', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('073f819a-f0df-4cf0-842a-6154b61aafb4', '08852', 'Monmouth Junction', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('f4fa7ed2-f4d4-4d68-8505-e8c5190cd683', '07008', 'Carteret', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('2e812bc2-1537-4abd-95b5-0790d3727d36', '08536', 'Plainsboro', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
-INSERT INTO public.zip_codes VALUES ('6169a034-0858-42c5-b5d5-bd7a84cae311', '08540', 'Princeton', 'NJ', '2026-03-26 21:43:31.973687+00', NULL, '2026-03-26 21:43:31.973687+00', NULL);
+INSERT INTO public.zip_codes VALUES ('c822540e-702c-4589-a108-ea3c63836738', '08901', 'New Brunswick', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('4fffdf36-b190-48dc-ab82-0970975b8a90', '08902', 'North Brunswick', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('fff83405-cd88-4c73-a52b-324f13534fd3', '08903', 'New Brunswick', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('a1436506-920e-4629-80b8-eeb38cdcfe63', '08816', 'East Brunswick', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('f89af47a-e48c-4e48-92ac-cf2c37cbfd09', '08817', 'Edison', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('207d8e63-3ec6-4134-8ed0-6aa3c35a655f', '08820', 'Edison', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('1a8dccdd-1caa-4d67-9ccb-0b3294fb177f', '08837', 'Edison', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('faf29456-df72-4870-86d5-b2ffa36e69e0', '08840', 'Metuchen', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('ed575f02-b837-43f0-a0a7-a1c505815bea', '08846', 'Middlesex', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('4d5d706b-4c11-488a-a01f-67f83d7bd027', '08854', 'Piscataway', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('38856dc0-d118-45e8-b4ce-cb339d0a9f2a', '08855', 'Piscataway', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('1a2a73c2-a437-453a-b369-b2587a4cc877', '08857', 'Old Bridge', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('b6f30228-774a-4bcd-9899-0afb55274c4e', '08859', 'Parlin', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('370fbc76-e31d-4a17-ae09-b75f6932cea3', '08861', 'Perth Amboy', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('99a3ead0-3a1e-44c0-9ae5-dd52f23d6ca2', '08862', 'Perth Amboy', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('c1275c78-3590-4f3e-ab3a-c7d0bb98148b', '08863', 'Fords', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('75627837-57aa-41c2-b137-54bcef158f48', '08871', 'Sayreville', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('2947b168-84f4-4fcf-8405-d620f54fd477', '08872', 'Sayreville', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('7afad72d-18b3-4de9-a373-89847b5e64e6', '08879', 'South Amboy', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('572e2631-6ebf-4142-9bb5-6cc76dda89ed', '08882', 'South River', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('898bad1c-792d-4367-ab01-4d5dfa0ad698', '08884', 'Spotswood', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('da080bb1-d69c-42a8-9ae3-c046eb25d248', '08899', 'Edison', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('b8d3ba3e-45ed-46fe-98cb-fe9f6488defa', '07001', 'Avenel', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('71fbecd8-0841-43ba-b22b-d65ea5c7fc4c', '07064', 'Port Reading', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('3d34a65e-4e09-4e96-aa52-eb61527670d2', '07067', 'Colonia', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('b908fb99-3f4b-4163-8c45-8351dfb04569', '07077', 'Sewaren', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('46bd7995-6abd-4f61-ae09-0a51a6925f50', '07080', 'South Plainfield', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('a5d8a4c9-93ae-44f4-820b-81af18c2c061', '07095', 'Woodbridge', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('b81f8122-ebfa-4214-8263-73ff76b7291f', '08810', 'Dayton', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('d582c9b7-7a3e-4979-b606-ba4d854be6ad', '08812', 'Dunellen', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('fabfb990-dbd8-4113-a292-52f986d03e12', '08824', 'Kendall Park', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('350fcfea-16f9-43bb-8eba-2413fe4c9bcd', '08828', 'Helmetta', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('4459eabd-94c7-4720-9df1-1a82225b5ad5', '08830', 'Iselin', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('ffba4927-7a34-4894-8fb2-f97a79119fc8', '08831', 'Monroe Township', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('0238a0b5-74ce-4c29-a3ee-a56ed0e3b7c0', '08832', 'Jamesburg', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('28de8974-a015-42cb-af14-982f321b3e26', '08850', 'Milltown', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('c9491289-6fd1-4d7f-a63f-d2f74664fdd9', '08852', 'Monmouth Junction', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('edb522ec-9f98-44f9-bd68-8789d3655512', '07008', 'Carteret', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('8eb575ef-27ab-4450-bab3-09af77b14eca', '08536', 'Plainsboro', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
+INSERT INTO public.zip_codes VALUES ('0ae24455-358b-48f4-b858-c6f9c088a8ae', '08540', 'Princeton', 'NJ', '2026-03-27 17:35:32.516386+00', NULL, '2026-03-27 17:35:32.516386+00', NULL);
 
 
 --
 -- Data for Name: adult_mosquito_complaints; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.adult_mosquito_complaints VALUES ('15ad99d3-ed81-4c52-9b1c-21f213049c26', 'John Smith', '732-555-0100', 'john@example.com', '123 Main St', NULL, '4f1e4357-c00b-4c12-923d-b27fdb61f907', true, false, false, true, false, false, true, false, NULL, '2026-03-26 21:43:31.993267+00', NULL, '2026-03-26 21:43:31.993267+00', NULL);
+INSERT INTO public.adult_mosquito_complaints VALUES ('fba41813-3af1-47ae-a6f6-809f3787473f', 'John Smith', '732-555-0100', 'john@example.com', '123 Main St', NULL, 'c822540e-702c-4589-a108-ea3c63836738', true, false, false, true, false, false, true, false, NULL, '2026-03-27 17:35:32.535316+00', NULL, '2026-03-27 17:35:32.535316+00', NULL);
 
 
 --
 -- Data for Name: contact_form_submissions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.contact_form_submissions VALUES ('f7a221d7-e3e6-4f5d-b9e7-8e32527c194b', 'Jane Doe', 'jane@example.com', 'Question about spraying schedule', 'When will spraying occur in the 08901 area?', false, '2026-03-26 21:43:31.986141+00', NULL, '2026-03-26 21:43:31.986141+00', NULL);
+INSERT INTO public.contact_form_submissions VALUES ('2bbbaef2-c5e6-406d-a8c2-6f685701a2f2', 'Jane Doe', 'jane@example.com', 'Question about spraying schedule', 'When will spraying occur in the 08901 area?', false, '2026-03-27 17:35:32.52826+00', NULL, '2026-03-27 17:35:32.52826+00', NULL);
 
 
 --
 -- Data for Name: employees; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.employees VALUES ('682d367c-c08d-4b66-84f6-9b5ec1f795ca', 'admin@test.local', '128713a5-6eea-4fc5-b613-908418be097c', 'Test Admin', 'Administrator', '2026-03-26 21:43:31.889602+00', NULL, '2026-03-26 21:43:31.889602+00', NULL);
-INSERT INTO public.employees VALUES ('732184fe-16ef-466e-9259-2ddf872046f1', 'unlinked@test.local', NULL, 'Unlinked Employee', NULL, '2026-03-26 21:43:31.900337+00', NULL, '2026-03-26 21:43:31.900337+00', NULL);
+INSERT INTO public.employees VALUES ('4c8d114f-9763-4002-b3a1-f2f305b0b39c', 'admin@test.local', 'a1d3b9ee-bcf6-47a8-8cca-4b0593018a23', 'Test Admin', 'Administrator', '2026-03-27 17:35:32.426302+00', NULL, '2026-03-27 17:35:32.426302+00', NULL);
+INSERT INTO public.employees VALUES ('e036f894-f92c-4ea1-a237-5c1b5bc2a3ad', 'unlinked@test.local', NULL, 'Unlinked Employee', NULL, '2026-03-27 17:35:32.442188+00', NULL, '2026-03-27 17:35:32.442188+00', NULL);
 
 
 --
 -- Data for Name: insecticides; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.insecticides VALUES ('1d2d00d5-9890-463c-860b-e1f9902be53e', 'Larvicide', 'Bacillus thuringiensis israelensis (Bti)', 'https://example.com/bti', 'VectoBac 12AS', 'https://example.com/vectobac-label', 'https://example.com/vectobac-msds', '2026-03-26 21:43:31.963838+00', NULL, '2026-03-26 21:43:31.963838+00', NULL);
-INSERT INTO public.insecticides VALUES ('3736dc6f-2f02-4dfd-8813-4ccfebbf145c', 'Adulticide', 'Sumithrin + PBO', 'https://example.com/sumithrin', 'Anvil 10+10 ULV', 'https://example.com/anvil-label', 'https://example.com/anvil-msds', '2026-03-26 21:43:31.963838+00', NULL, '2026-03-26 21:43:31.963838+00', NULL);
-INSERT INTO public.insecticides VALUES ('89223c97-45af-4c9f-8a72-cc1c0ebb888e', 'Larvicide', 'Methoprene', 'https://example.com/methoprene', 'Altosid Pellets', 'https://example.com/altosid-label', 'https://example.com/altosid-msds', '2026-03-26 21:43:31.963838+00', NULL, '2026-03-26 21:43:31.963838+00', NULL);
+INSERT INTO public.insecticides VALUES ('1d8a4ebe-3c2a-4912-a0fd-059f6e46f47f', 'Larvicide', 'Bacillus thuringiensis israelensis (Bti)', 'https://example.com/bti', 'VectoBac 12AS', 'https://example.com/vectobac-label', 'https://example.com/vectobac-msds', '2026-03-27 17:35:32.509231+00', NULL, '2026-03-27 17:35:32.509231+00', NULL);
+INSERT INTO public.insecticides VALUES ('b936d841-ee93-464c-9979-1e394b5f9e99', 'Adulticide', 'Sumithrin + PBO', 'https://example.com/sumithrin', 'Anvil 10+10 ULV', 'https://example.com/anvil-label', 'https://example.com/anvil-msds', '2026-03-27 17:35:32.509231+00', NULL, '2026-03-27 17:35:32.509231+00', NULL);
+INSERT INTO public.insecticides VALUES ('54189dc2-e018-428b-a3cb-f4156266cdfb', 'Larvicide', 'Methoprene', 'https://example.com/methoprene', 'Altosid Pellets', 'https://example.com/altosid-label', 'https://example.com/altosid-msds', '2026-03-27 17:35:32.509231+00', NULL, '2026-03-27 17:35:32.509231+00', NULL);
 
 
 --
 -- Data for Name: meetings; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.meetings VALUES ('d63d4e44-2028-4b77-815d-577424238220', 'Regular Commission Meeting', '2026-04-09 19:00:00+00', false, NULL, NULL, NULL, '2026-03-26 21:43:31.952258+00', NULL, '2026-03-26 21:43:31.952258+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
-INSERT INTO public.meetings VALUES ('98e063f5-abf5-4202-b27f-15d48f14383b', 'Regular Commission Meeting', '2026-05-14 19:00:00+00', false, NULL, NULL, NULL, '2026-03-26 21:43:31.952258+00', NULL, '2026-03-26 21:43:31.952258+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
-INSERT INTO public.meetings VALUES ('30588993-2d9d-4ff1-84fd-2e33b9cb881f', 'Special Budget Meeting', '2026-04-23 18:00:00+00', false, NULL, NULL, NULL, '2026-03-26 21:43:31.952258+00', NULL, '2026-03-26 21:43:31.952258+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
+INSERT INTO public.meetings VALUES ('d262cc18-bfbb-47f5-9f16-ac1f2d88ab28', 'Regular Commission Meeting', '2026-04-09 19:00:00+00', false, NULL, NULL, NULL, '2026-03-27 17:35:32.499476+00', NULL, '2026-03-27 17:35:32.499476+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
+INSERT INTO public.meetings VALUES ('cfa5d743-112c-4f95-926f-6136be3eb9ed', 'Regular Commission Meeting', '2026-05-14 19:00:00+00', false, NULL, NULL, NULL, '2026-03-27 17:35:32.499476+00', NULL, '2026-03-27 17:35:32.499476+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
+INSERT INTO public.meetings VALUES ('45ab4ac5-dee7-4ca2-b53e-77fac1a0f4a9', 'Special Budget Meeting', '2026-04-23 18:00:00+00', false, NULL, NULL, NULL, '2026-03-27 17:35:32.499476+00', NULL, '2026-03-27 17:35:32.499476+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
 
 
 --
 -- Data for Name: mosquito_fish_requests; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.mosquito_fish_requests VALUES ('dac16a5b-27c9-4ee1-8fcd-be8fe1f5f1e9', 'Maria Garcia', '732-555-0200', 'maria@example.com', '456 Oak Ave', NULL, '7fbd2fba-088d-48a4-baaa-c3e0e61ce29e', 'Backyard pond near fence line', 'Pond', false, NULL, '2026-03-26 21:43:32.000459+00', NULL, '2026-03-26 21:43:32.000459+00', NULL);
+INSERT INTO public.mosquito_fish_requests VALUES ('f3fabc31-b055-40f2-83f1-9aecbc74f6e4', 'Maria Garcia', '732-555-0200', 'maria@example.com', '456 Oak Ave', NULL, 'a1436506-920e-4629-80b8-eeb38cdcfe63', 'Backyard pond near fence line', 'Pond', false, NULL, '2026-03-27 17:35:32.542147+00', NULL, '2026-03-27 17:35:32.542147+00', NULL);
 
 
 --
 -- Data for Name: notice_types; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.notice_types VALUES ('d93b1ebd-3376-427c-9085-bb2496bf2c54', 'General', 'General public notices', '2026-03-26 21:43:31.926393+00', NULL, '2026-03-26 21:43:31.926393+00', NULL);
-INSERT INTO public.notice_types VALUES ('d4dfa594-4598-4617-b057-e3f97d0f69ad', 'Spraying', 'Mosquito spraying schedule notices', '2026-03-26 21:43:31.926393+00', NULL, '2026-03-26 21:43:31.926393+00', NULL);
-INSERT INTO public.notice_types VALUES ('e7415d33-56cb-4f3b-a76c-a82965b5ee9a', 'Meeting', 'Commission meeting notices', '2026-03-26 21:43:31.926393+00', NULL, '2026-03-26 21:43:31.926393+00', NULL);
-INSERT INTO public.notice_types VALUES ('58626cb7-7344-4ad3-9081-fce6b10b3855', 'Advisory', 'Public health advisories', '2026-03-26 21:43:31.926393+00', NULL, '2026-03-26 21:43:31.926393+00', NULL);
+INSERT INTO public.notice_types VALUES ('d71f5059-54d6-4825-801f-754b6e74977c', 'General', 'General public notices', '2026-03-27 17:35:32.469813+00', NULL, '2026-03-27 17:35:32.469813+00', NULL);
+INSERT INTO public.notice_types VALUES ('db4034bd-4772-4af6-adaf-9049ddca1661', 'Spraying', 'Mosquito spraying schedule notices', '2026-03-27 17:35:32.469813+00', NULL, '2026-03-27 17:35:32.469813+00', NULL);
+INSERT INTO public.notice_types VALUES ('69aee244-35ea-455b-afdc-686d4bf096da', 'Meeting', 'Commission meeting notices', '2026-03-27 17:35:32.469813+00', NULL, '2026-03-27 17:35:32.469813+00', NULL);
+INSERT INTO public.notice_types VALUES ('cd95e30f-552b-465b-a1b1-14516ce97f69', 'Advisory', 'Public health advisories', '2026-03-27 17:35:32.469813+00', NULL, '2026-03-27 17:35:32.469813+00', NULL);
 
 
 --
 -- Data for Name: notices; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.notices VALUES ('fffa170a-fbf3-4ed6-bcaf-ffc703325169', 'd4dfa594-4598-4617-b057-e3f97d0f69ad', 'Aerial Spraying Scheduled — North District', '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "Aerial spraying for adult mosquitoes will take place in the North District on the evening of March 28. Residents are advised to stay indoors during application.", "type": "text"}]}]}', '2026-03-26 21:43:31.941571+00', NULL, '2026-03-26 21:43:31.941571+00', NULL, '2026-03-28', true, false);
-INSERT INTO public.notices VALUES ('b9f533c1-641c-40fb-839c-155707a5383f', 'd93b1ebd-3376-427c-9085-bb2496bf2c54', 'Seasonal Reminder: Eliminate Standing Water', '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "As warmer weather approaches, please remove any standing water sources around your property to help reduce mosquito breeding.", "type": "text"}]}]}', '2026-03-26 21:43:31.941571+00', NULL, '2026-03-26 21:43:31.941571+00', NULL, '2026-03-15', true, false);
-INSERT INTO public.notices VALUES ('13317b7b-40fb-47de-b499-2d110c27d81d', '58626cb7-7344-4ad3-9081-fce6b10b3855', 'West Nile Virus Activity Detected', '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "West Nile Virus has been detected in mosquito samples collected from the South District. Take precautions to avoid mosquito bites.", "type": "text"}]}]}', '2026-03-26 21:43:31.941571+00', NULL, '2026-03-26 21:43:31.941571+00', NULL, '2026-04-01', false, false);
+INSERT INTO public.notices VALUES ('08e3fbd2-2718-4907-b91e-213186c5d7a1', 'db4034bd-4772-4af6-adaf-9049ddca1661', 'Aerial Spraying Scheduled — North District', '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "Aerial spraying for adult mosquitoes will take place in the North District on the evening of March 28. Residents are advised to stay indoors during application.", "type": "text"}]}]}', '2026-03-27 17:35:32.489794+00', NULL, '2026-03-27 17:35:32.489794+00', NULL, '2026-03-28', true, false);
+INSERT INTO public.notices VALUES ('f38a9db8-0609-41d5-a308-c77dc5f4f3f1', 'd71f5059-54d6-4825-801f-754b6e74977c', 'Seasonal Reminder: Eliminate Standing Water', '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "As warmer weather approaches, please remove any standing water sources around your property to help reduce mosquito breeding.", "type": "text"}]}]}', '2026-03-27 17:35:32.489794+00', NULL, '2026-03-27 17:35:32.489794+00', NULL, '2026-03-15', true, false);
+INSERT INTO public.notices VALUES ('654c841f-e766-4b63-9c87-940285f94faf', 'cd95e30f-552b-465b-a1b1-14516ce97f69', 'West Nile Virus Activity Detected', '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "West Nile Virus has been detected in mosquito samples collected from the South District. Take precautions to avoid mosquito bites.", "type": "text"}]}]}', '2026-03-27 17:35:32.489794+00', NULL, '2026-03-27 17:35:32.489794+00', NULL, '2026-04-01', false, false);
 
 
 --
 -- Data for Name: permissions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.permissions VALUES ('01052f9c-e00e-4ff9-aa26-c7d0eed82f7e', 'public_notices', '2026-03-26 21:43:31.907971+00', 'Manage public notices, meetings, insecticides, and service requests');
+INSERT INTO public.permissions VALUES ('9b93e6fb-89f0-4017-a618-c0c2b3c3c14e', 'public_notices', '2026-03-27 17:35:32.450567+00', 'Manage public notices, meetings, insecticides, and service requests');
+INSERT INTO public.permissions VALUES ('510ed8eb-c411-48f0-bfa2-b2117c85a3d3', 'manage_employees', '2026-03-27 17:35:32.450567+00', 'Manage employee records and send account invites');
 
 
 --
 -- Data for Name: user_permissions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.user_permissions VALUES ('c3c84801-6290-4047-bf43-950203763d41', '128713a5-6eea-4fc5-b613-908418be097c', '2026-03-26 21:43:31.916584+00', NULL, 'public_notices');
+INSERT INTO public.user_permissions VALUES ('503248bb-21f2-4c84-aa76-c9bc5d03a3cc', 'a1d3b9ee-bcf6-47a8-8cca-4b0593018a23', '2026-03-27 17:35:32.459613+00', NULL, 'public_notices');
+INSERT INTO public.user_permissions VALUES ('4bfbb4b3-0ecc-4ebb-8f38-2d9dc8005ba1', 'a1d3b9ee-bcf6-47a8-8cca-4b0593018a23', '2026-03-27 17:35:32.459613+00', NULL, 'manage_employees');
 
 
 --
 -- Data for Name: water_management_requests; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.water_management_requests VALUES ('432fa0b2-0592-4022-9ef3-6eccb90136c6', 'Bob Johnson', '732-555-0300', 'bob@example.com', '789 Elm St', NULL, '63e36480-76a6-4f03-a6fc-b4a1c69df48d', false, false, true, 'Drainage ditch along Cedar Lane', false, NULL, '2026-03-26 21:43:32.009172+00', NULL, '2026-03-26 21:43:32.009172+00', NULL);
+INSERT INTO public.water_management_requests VALUES ('fdec9a1f-77ce-4af8-97a8-6770bd8c1728', 'Bob Johnson', '732-555-0300', 'bob@example.com', '789 Elm St', NULL, '4d5d706b-4c11-488a-a01f-67f83d7bd027', false, false, true, 'Drainage ditch along Cedar Lane', false, NULL, '2026-03-27 17:35:32.549179+00', NULL, '2026-03-27 17:35:32.549179+00', NULL);
 
 
 --

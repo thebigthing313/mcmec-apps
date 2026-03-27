@@ -53,6 +53,10 @@ const PERMISSIONS = [
 		permission_description:
 			"Manage public notices, meetings, insecticides, and service requests",
 	},
+	{
+		permission_name: "manage_employees",
+		permission_description: "Manage employee records and send account invites",
+	},
 ];
 
 const NOTICE_TYPES = [
@@ -155,10 +159,10 @@ async function main() {
 
 	// 4. Grant permissions to test user
 	console.log("4. Granting permissions...");
-	const { error: grantError } = await supabase.from("user_permissions").insert({
-		user_id: userId,
-		permission_name: "public_notices",
-	});
+	const { error: grantError } = await supabase.from("user_permissions").insert([
+		{ user_id: userId, permission_name: "public_notices" },
+		{ user_id: userId, permission_name: "manage_employees" },
+	]);
 	if (grantError)
 		throw new Error(`Failed to grant permission: ${grantError.message}`);
 
