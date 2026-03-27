@@ -256,7 +256,6 @@ export function createOnDemandCollection<
 	const fields = Object.keys(schema.shape).join(",");
 
 	return createCollection(
-		// @ts-expect-error TanStack DB types lag behind runtime API
 		queryCollectionOptions({
 			queryKey: (opts) => {
 				const { filters, sorts, limit, offset } = parseSubsetOptions(opts);
