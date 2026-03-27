@@ -1,0 +1,6 @@
+{
+	"buildCommand": "cd ../.. && pnpm turbo run build --filter=admin",
+	"ignoreCommand": "bash ../../scripts/vercel-ignore.sh admin",
+	"outputDirectory": "dist",
+	"rewrites": [{ "destination": "/index.html", "source": "/(.*)" }]
+}

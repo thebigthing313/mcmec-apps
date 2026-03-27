@@ -5,10 +5,11 @@
 		"@biomejs/biome": "2.3.11",
 		"@changesets/cli": "^2.29.8",
 		"@manypkg/cli": "^0.25.1",
+		"@tanstack/db": "^0.5.33",
+		"@tanstack/intent": "^0.0.23",
 		"@types/node": "25.0.9",
 		"husky": "^9.1.7",
 		"lint-staged": "^16.4.0",
-		"shx": "^0.4.0",
 		"tsx": "^4.21.0",
 		"turbo": "^2.7.2",
 		"typescript": "^5.9.3"
@@ -32,6 +33,12 @@
 		"gen-types": "supabase gen types typescript --local > ./packages/supabase/src/database.types.ts",
 		"prepare": "husky",
 		"version-pkgs": "changeset version"
+	},
+	"pnpm": {
+		"overrides": {
+			"@tanstack/db": "^0.5.33",
+			"@tanstack/query-db-collection": "^1.0.30"
+		}
 	},
 	"version": "0.1.0"
 }

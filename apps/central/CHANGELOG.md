@@ -1,5 +1,18 @@
 # central
 
+## 0.2.1
+
+### Patch Changes
+
+- 95e01c3: Move shared assets to Supabase Storage. Remove packages/assets, sync-assets build step, and shx dependency. Apps now import asset URLs from @mcmec/lib/constants/assets.
+- Updated dependencies [187f5d9]
+- Updated dependencies [95e01c3]
+- Updated dependencies [501ef75]
+  - @mcmec/lib@0.7.2
+  - @mcmec/supabase@1.3.1
+  - @mcmec/ui@1.4.2
+  - @mcmec/auth@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

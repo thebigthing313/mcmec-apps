@@ -34,13 +34,12 @@
 	"name": "central",
 	"packageManager": "pnpm@10.19.0",
 	"scripts": {
-		"build": "pnpm sync-assets && vite build",
+		"build": "vite build",
 		"check-types": "tsc --noEmit",
-		"dev": "pnpm sync-assets && vite",
+		"dev": "vite",
 		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
-		"sync-assets": "shx mkdir -p public/shared && shx cp -r ../../packages/assets/images/* public/shared/"
+		"lint:fix": "biome check --write ."
 	},
 	"type": "module",
-	"version": "0.2.0"
+	"version": "0.2.1"
 }

@@ -12,12 +12,6 @@ create table if not exists public.employees (
 
 alter table public.employees enable row level security;
 
-create policy "select: all authenticated users"
-on public.employees
-for select
-to authenticated
-using (true);
-
 create trigger updated_employees
     before update or insert
     on public.employees

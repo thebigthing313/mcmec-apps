@@ -37,21 +37,86 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 // Seed data definitions
 // ============================================================================
 
-const TEST_USER = {
-	email: "admin@test.local",
-	password: "password123",
-};
+// All test users share the same password
+const TEST_PASSWORD = "password123";
 
-const UNLINKED_EMPLOYEE = {
-	email: "unlinked@test.local",
-	display_name: "Unlinked Employee",
-};
+// Employees with accounts (will be created via GoTrue + linked)
+const LINKED_EMPLOYEES = [
+	{
+		email: "admin@test.local",
+		display_name: "Adrian Kabigting",
+		display_title: "Administrator",
+		permissions: ["public_notices", "manage_employees", "admin_rights"],
+	},
+	{
+		email: "jsmith@test.local",
+		display_name: "John Smith",
+		display_title: "Field Supervisor",
+		permissions: ["public_notices"],
+	},
+	{
+		email: "mgarcia@test.local",
+		display_name: "Maria Garcia",
+		display_title: "Lab Technician",
+		permissions: ["public_notices"],
+	},
+	{
+		email: "rjohnson@test.local",
+		display_name: "Robert Johnson",
+		display_title: "Operations Manager",
+		permissions: ["public_notices", "manage_employees"],
+	},
+	{
+		email: "ljones@test.local",
+		display_name: "Lisa Jones",
+		display_title: "Office Manager",
+		permissions: ["public_notices", "manage_employees", "admin_rights"],
+	},
+	{
+		email: "dwilliams@test.local",
+		display_name: "David Williams",
+		display_title: "Entomologist",
+		permissions: [],
+	},
+];
+
+// Employees without accounts (for testing invite flow)
+const UNLINKED_EMPLOYEES = [
+	{
+		email: "kbrown@test.local",
+		display_name: "Karen Brown",
+		display_title: "Field Technician",
+	},
+	{
+		email: "jdavis@test.local",
+		display_name: "James Davis",
+		display_title: "Seasonal Worker",
+	},
+	{
+		email: "smartinez@test.local",
+		display_name: "Sofia Martinez",
+		display_title: "Lab Assistant",
+	},
+	{
+		email: "tanderson@test.local",
+		display_name: "Tom Anderson",
+		display_title: null,
+	},
+];
 
 const PERMISSIONS = [
 	{
 		permission_name: "public_notices",
 		permission_description:
 			"Manage public notices, meetings, insecticides, and service requests",
+	},
+	{
+		permission_name: "manage_employees",
+		permission_description: "Manage employee records and send account invites",
+	},
+	{
+		permission_name: "admin_rights",
+		permission_description: "Manage user permission assignments",
 	},
 ];
 
@@ -112,55 +177,82 @@ const ZIP_CODES = [
 async function main() {
 	console.log("=== Generating seed data ===\n");
 
-	// 1. Create auth user via GoTrue
-	console.log("1. Creating auth user...");
-	const { data: userData, error: userError } =
-		await supabase.auth.admin.createUser({
-			email: TEST_USER.email,
-			password: TEST_USER.password,
-			email_confirm: true,
-		});
-	if (userError) throw new Error(`Failed to create user: ${userError.message}`);
-	const userId = userData.user.id;
-	console.log(`   Created user: ${TEST_USER.email} (${userId})`);
-
-	// 2. Create employee record (linked to auth user)
-	console.log("2. Creating employees...");
-	const { error: empError } = await supabase.from("employees").insert({
-		email: TEST_USER.email,
-		user_id: userId,
-		display_name: "Test Admin",
-		display_title: "Administrator",
-	});
-	if (empError)
-		throw new Error(`Failed to create employee: ${empError.message}`);
-
-	// Unlinked employee (for testing invite flow)
-	const { error: unlinkError } = await supabase
-		.from("employees")
-		.insert(UNLINKED_EMPLOYEE);
-	if (unlinkError)
-		throw new Error(
-			`Failed to create unlinked employee: ${unlinkError.message}`,
-		);
-	console.log("   Created 2 employees");
-
-	// 3. Create permissions
-	console.log("3. Creating permissions...");
+	// 1. Create permissions first (needed before granting)
+	console.log("1. Creating permissions...");
 	const { error: permError } = await supabase
 		.from("permissions")
 		.insert(PERMISSIONS);
 	if (permError)
 		throw new Error(`Failed to create permissions: ${permError.message}`);
 
-	// 4. Grant permissions to test user
+	// 2. Create auth users via GoTrue and link to employees
+	console.log("2. Creating linked employees (with accounts)...");
+	const allPermissionGrants: Array<{
+		user_id: string;
+		permission_name: string;
+	}> = [];
+
+	for (const emp of LINKED_EMPLOYEES) {
+		const { data: userData, error: userError } =
+			await supabase.auth.admin.createUser({
+				email: emp.email,
+				password: TEST_PASSWORD,
+				email_confirm: true,
+			});
+		if (userError)
+			throw new Error(
+				`Failed to create user ${emp.email}: ${userError.message}`,
+			);
+
+		const userId = userData.user.id;
+
+		const { error: empError } = await supabase.from("employees").insert({
+			email: emp.email,
+			user_id: userId,
+			display_name: emp.display_name,
+			display_title: emp.display_title,
+		});
+		if (empError)
+			throw new Error(
+				`Failed to create employee ${emp.email}: ${empError.message}`,
+			);
+
+		for (const perm of emp.permissions) {
+			allPermissionGrants.push({ user_id: userId, permission_name: perm });
+		}
+
+		console.log(`   ${emp.display_name} (${emp.email})`);
+	}
+
+	// 3. Create unlinked employees (no accounts)
+	console.log("3. Creating unlinked employees...");
+	const { error: unlinkError } = await supabase.from("employees").insert(
+		UNLINKED_EMPLOYEES.map((e) => ({
+			email: e.email,
+			display_name: e.display_name,
+			display_title: e.display_title,
+		})),
+	);
+	if (unlinkError)
+		throw new Error(
+			`Failed to create unlinked employees: ${unlinkError.message}`,
+		);
+	for (const emp of UNLINKED_EMPLOYEES) {
+		console.log(`   ${emp.display_name} (${emp.email}) — no account`);
+	}
+
+	// 4. Grant permissions
 	console.log("4. Granting permissions...");
-	const { error: grantError } = await supabase.from("user_permissions").insert({
-		user_id: userId,
-		permission_name: "public_notices",
-	});
-	if (grantError)
-		throw new Error(`Failed to grant permission: ${grantError.message}`);
+	if (allPermissionGrants.length > 0) {
+		const { error: grantError } = await supabase
+			.from("user_permissions")
+			.insert(allPermissionGrants);
+		if (grantError)
+			throw new Error(`Failed to grant permissions: ${grantError.message}`);
+	}
+	console.log(
+		`   Granted ${allPermissionGrants.length} permission assignments`,
+	);
 
 	// 5. Create notice types
 	console.log("5. Creating notice types...");

@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./*"],
+			"@mcmec/lib/*": ["../../packages/lib/src/*"],
+			"@mcmec/supabase/*": ["../../packages/supabase/src/*"],
+			"@mcmec/ui/*": ["../../packages/ui/src/*"]
+		},
+		"types": ["vite/client"]
+	},
+	"exclude": ["node_modules"],
+	"extends": "@mcmec/typescript-config/tanstack-start.json",
+	"include": ["**/*.ts", "**/*.tsx", "src/env.d.ts"]
+}

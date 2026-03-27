@@ -1,0 +1,6 @@
+{
+	"buildCommand": "cd ../.. && pnpm turbo run build --filter=hr",
+	"ignoreCommand": "bash ../../scripts/vercel-ignore.sh hr",
+	"outputDirectory": "dist",
+	"rewrites": [{ "destination": "/index.html", "source": "/(.*)" }]
+}

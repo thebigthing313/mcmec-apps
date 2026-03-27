@@ -157,3 +157,21 @@ Required (set via `.env` files per app):
 - `VITE_CLOUDFLARE_TURNSTILE_SITEKEY` — public app
 - `VITE_APP_NAME`, `VITE_DOMAIN_NAME` — central app
 - `SUPABASE_SERVICE_ROLE_KEY`, `CLOUDFLARE_TURNSTILE_SECRETKEY` — server-side only
+
+<!-- intent-skills:start -->
+## TanStack DB Skill Mappings
+
+When working in these areas, load the linked skill file into context.
+
+skills:
+  - task: "Creating or configuring TanStack DB collections (eager, on-demand, collection setup)"
+    load: "node_modules/@tanstack/db/skills/db-core/collection-setup/SKILL.md"
+  - task: "Writing live queries (from, where, join, select, groupBy, orderBy, operators)"
+    load: "node_modules/@tanstack/db/skills/db-core/live-queries/SKILL.md"
+  - task: "Optimistic mutations (insert, update, delete, transactions, createOptimisticAction)"
+    load: "node_modules/@tanstack/db/skills/db-core/mutations-optimistic/SKILL.md"
+  - task: "Integrating TanStack DB with route loaders and meta-frameworks (preloading, SSR caveats)"
+    load: "node_modules/@tanstack/db/skills/meta-framework/SKILL.md"
+  - task: "Building custom collection adapters or understanding sync internals"
+    load: "node_modules/@tanstack/db/skills/db-core/custom-adapter/SKILL.md"
+<!-- intent-skills:end -->
