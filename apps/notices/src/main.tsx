@@ -7,6 +7,7 @@ import {
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "@mcmec/ui/styles/globals.css";
+import { favicon } from "@mcmec/lib/constants/assets";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { ErrorDisplay } from "@mcmec/ui/blocks/error";
 import { NotFound } from "@mcmec/ui/blocks/not-found";
@@ -21,7 +22,7 @@ const faviconLink = document.querySelector(
 	"link[rel='icon']",
 ) as HTMLLinkElement;
 if (faviconLink) {
-	faviconLink.href = "/shared/favicon.ico";
+	faviconLink.href = favicon;
 }
 
 // Create a new router instance

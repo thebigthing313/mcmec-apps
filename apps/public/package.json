@@ -1,7 +1,6 @@
 {
 	"author": "Adrian Kabigting",
 	"dependencies": {
-		"@mcmec/assets": "workspace:*",
 		"@mcmec/lib": "workspace:*",
 		"@mcmec/supabase": "workspace:*",
 		"@mcmec/ui": "workspace:*",
@@ -45,13 +44,12 @@
 	"name": "public",
 	"packageManager": "pnpm@10.19.0",
 	"scripts": {
-		"build": "pnpm sync-assets && vite build",
+		"build": "vite build",
 		"check-types": "tsc --noEmit",
-		"dev": "pnpm sync-assets && vite dev",
+		"dev": "vite dev",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
-		"start": "pnpx srvx --prod -s ../client dist/server/server.js",
-		"sync-assets": "shx mkdir -p public && shx cp -r ../../packages/assets/images/* public/"
+		"start": "pnpx srvx --prod -s ../client dist/server/server.js"
 	},
 	"type": "module",
 	"version": "1.1.1"

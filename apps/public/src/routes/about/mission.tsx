@@ -1,3 +1,4 @@
+import { building } from "@mcmec/lib/constants/assets";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/about/mission")({
@@ -12,7 +13,7 @@ function RouteComponent() {
 				<img
 					alt="MCMEC Building"
 					className="w-full rounded-sm drop-shadow-accent drop-shadow-xl md:float-right md:ml-6 md:w-1/2"
-					src="/building.webp"
+					src={building}
 				/>
 				The Middlesex County Mosquito Extermination Commission (MCMEC) was
 				created in 1914. In accordance with the laws of the State of New Jersey,
