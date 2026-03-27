@@ -1,4 +1,4 @@
-import { Newspaper, Users } from "lucide-react";
+import { Home, Newspaper, Shield, Users } from "lucide-react";
 
 export type App = {
 	name: string;
@@ -24,6 +24,13 @@ function appUrl(subdomain: string, port: number): string {
 
 export const AVAILABLE_APPS: App[] = [
 	{
+		description: "Employee self-service portal.",
+		href: appUrl("central", 3001),
+		logo: <Home />,
+		name: "Central",
+		requiredPermission: null,
+	},
+	{
 		description: "Manage and publish public notices for the agency.",
 		href: appUrl("notices", 3002),
 		logo: <Newspaper />,
@@ -36,6 +43,13 @@ export const AVAILABLE_APPS: App[] = [
 		logo: <Users />,
 		name: "HR",
 		requiredPermission: "manage_employees",
+	},
+	{
+		description: "Manage user permission assignments.",
+		href: appUrl("admin", 3004),
+		logo: <Shield />,
+		name: "Admin",
+		requiredPermission: "admin_rights",
 	},
 ];
 
