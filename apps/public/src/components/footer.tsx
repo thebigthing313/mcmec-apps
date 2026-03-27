@@ -1,3 +1,4 @@
+import { countyLogo } from "@mcmec/lib/constants/assets";
 import { COMPANY_INFO } from "@mcmec/lib/constants/company";
 import { Link } from "@tanstack/react-router";
 import { parsePhoneNumberWithError } from "libphonenumber-js";
@@ -18,7 +19,7 @@ export function Footer() {
 					rel="noreferrer"
 					target="_blank"
 				>
-					<img alt="Logo" className="h-12" src="/county-logo.png" />
+					<img alt="Logo" className="h-12" src={countyLogo} />
 				</a>
 				<div className="flex flex-col gap-0 leading-tight">
 					<span className="font-extrabold uppercase tracking-wide">

@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 
+import { favicon, logo192, logo512 } from "@mcmec/lib/constants/assets";
 import { Toaster } from "@mcmec/ui/components/sonner";
 import appCss from "@mcmec/ui/styles/globals.css?url";
 import type { QueryClient } from "@tanstack/react-query";
@@ -27,13 +28,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({
 		links: [
 			{ href: appCss, rel: "stylesheet" },
-			{ href: "/favicon.ico", rel: "icon", type: "image/x-icon" },
+			{ href: favicon, rel: "icon", type: "image/x-icon" },
 			{
-				href: "/logo192.png",
+				href: logo192,
 				rel: "apple-touch-icon",
 				sizes: "192x192",
 			},
-			{ href: "/logo512.png", rel: "icon", sizes: "512x512" },
+			{ href: logo512, rel: "icon", sizes: "512x512" },
 			// { href: "/site.webmanifest", rel: "manifest" },
 		],
 		meta: [
