@@ -3,3 +3,5 @@
 .turbo/
 dist/
 .tanstack/
+**/routeTree.gen.ts
+settings.local.json
