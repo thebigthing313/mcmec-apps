@@ -1,6 +1,4 @@
-import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import z from "zod";
-import type { SupabaseClient } from "../client";
 
 export const MeetingsRowSchema = z.object({
 	agenda_url: z.url().nullable(),
@@ -50,16 +48,3 @@ export const MeetingsUpdateSchema = z.object({
 export type MeetingsRowType = z.infer<typeof MeetingsRowSchema>;
 export type MeetingsInsertType = z.infer<typeof MeetingsInsertSchema>;
 export type MeetingsUpdateType = z.infer<typeof MeetingsUpdateSchema>;
-
-export async function fetchMeetings(
-	supabase: SupabaseClient,
-): Promise<Array<MeetingsRowType>> {
-	const { data, error } = await supabase.from("meetings").select("*");
-
-	if (error) {
-		throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("meetings"));
-	}
-
-	const parsedData = MeetingsRowSchema.array().parse(data);
-	return parsedData;
-}

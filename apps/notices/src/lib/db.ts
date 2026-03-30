@@ -20,7 +20,11 @@ import {
 	NoticesUpdateSchema,
 } from "@mcmec/supabase/db/notices";
 import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
-import { queryClient, supabaseUntyped as supabase } from "./queryClient";
+import { queryClient, supabase } from "./queryClient";
+
+// ---------------------------------------------------------------------------
+// Collections (singleton)
+// ---------------------------------------------------------------------------
 
 export const employees = createEagerCollection({
 	queryClient,
@@ -82,6 +86,10 @@ const db = {
 } as const;
 
 export type Db = typeof db;
+
+export function getDb(): Db {
+	return db;
+}
 
 export function useDb(): Db {
 	return db;

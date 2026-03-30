@@ -17,14 +17,14 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/notices-sidebar";
-import { employees } from "@/src/lib/db";
+import { supabase } from "@/src/lib/queryClient";
 
 export const Route = createFileRoute("/(app)")({
-	beforeLoad: async ({ context }) => {
-		await processAuthRedirect(context.supabase);
+	beforeLoad: async () => {
+		await processAuthRedirect(supabase);
 		try {
 			const claims = await verifyClaims({
-				client: context.supabase,
+				client: supabase,
 				permission: "public_notices",
 			});
 			return { claims };
@@ -38,13 +38,13 @@ export const Route = createFileRoute("/(app)")({
 		}
 	},
 	component: LayoutComponent,
-	loader: () => {
-		employees.preload();
+	loader: async ({ context }) => {
+		await context.db.employees.preload();
 	},
 });
 
 function LayoutComponent() {
-	const { supabase, claims } = Route.useRouteContext();
+	const { claims, db } = Route.useRouteContext();
 	const { userId } = claims as Claims;
 	const navigate = useNavigate();
 	const matches = useMatches();
@@ -62,15 +62,10 @@ function LayoutComponent() {
 
 	const { data: employee } = useLiveQuery((q) =>
 		q
-			.from({ employee: employees })
+			.from({ employee: db.employees })
 			.where(({ employee }) => eq(employee.user_id, userId))
-			.select(({ employee }) => ({
-				display_name: employee.display_name,
-				display_title: employee.display_title,
-			})),
+			.findOne(),
 	);
-
-	const emp = employee?.[0];
 
 	return (
 		<TooltipProvider>
@@ -81,8 +76,8 @@ function LayoutComponent() {
 					onLogout: handleLogout,
 					user: {
 						avatar: undefined,
-						name: emp?.display_name ?? "[missing name]",
-						title: emp?.display_title ?? "[missing title]",
+						name: employee?.display_name ?? "[missing name]",
+						title: employee?.display_title ?? "[missing title]",
 					},
 				}}
 			>
