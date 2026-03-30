@@ -5,7 +5,7 @@ import {
 } from "@mcmec/supabase/db/meetings";
 import { createFileRoute } from "@tanstack/react-router";
 import { MeetingsForm } from "@/src/components/meetings-form";
-import { meetings } from "@/src/lib/collections/meetings";
+import { meetings } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/meetings/create")({
 	component: RouteComponent,

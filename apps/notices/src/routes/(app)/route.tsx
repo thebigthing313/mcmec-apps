@@ -17,7 +17,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/notices-sidebar";
-import { employees } from "@/src/lib/collections/employees";
+import { employees } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)")({
 	beforeLoad: async ({ context }) => {

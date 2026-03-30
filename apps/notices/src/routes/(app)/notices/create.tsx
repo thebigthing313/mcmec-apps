@@ -2,8 +2,7 @@ import type { NoticesRowType } from "@mcmec/supabase/db/notices";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { NoticeForm } from "@/src/components/notice-form";
-import { notice_types } from "@/src/lib/collections/notice_types";
-import { notices } from "@/src/lib/collections/notices";
+import { notices, noticeTypes } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/notices/create")({
 	component: RouteComponent,
@@ -16,7 +15,7 @@ function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const { data: categories } = useLiveQuery((q) =>
 		q
-			.from({ notice_type: notice_types })
+			.from({ notice_type: noticeTypes })
 			.orderBy(({ notice_type }) => notice_type.name),
 	);
 

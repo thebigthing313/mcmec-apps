@@ -19,13 +19,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useNotices } from "@/src/hooks/use-notices";
-import { notice_types } from "@/src/lib/collections/notice_types";
-import { notices } from "@/src/lib/collections/notices";
+import { notices, noticeTypes } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/")({
 	component: RouteComponent,
 	loader: async () => {
-		await Promise.all([notices.preload(), notice_types.preload()]);
+		await Promise.all([notices.preload(), noticeTypes.preload()]);
 		return { crumb: "Dashboard" };
 	},
 });

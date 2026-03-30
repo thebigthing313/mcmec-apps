@@ -1,13 +1,11 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { employees } from "../lib/collections/employees";
-import { notice_types } from "../lib/collections/notice_types";
-import { notices } from "../lib/collections/notices";
+import { employees, notices, noticeTypes } from "../lib/db";
 
 export function useNotices() {
 	return useLiveQuery((q) =>
 		q
 			.from({ notice: notices })
-			.innerJoin({ notice_type: notice_types }, ({ notice, notice_type }) =>
+			.innerJoin({ notice_type: noticeTypes }, ({ notice, notice_type }) =>
 				eq(notice.notice_type_id, notice_type.id),
 			)
 			.join({ employee: employees }, ({ notice, employee }) =>
