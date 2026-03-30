@@ -1,6 +1,6 @@
 import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
 import z from "zod";
-import { queryClient, supabase } from "./queryClient";
+import { queryClient, supabaseUntyped as supabase } from "./queryClient";
 
 // ---------------------------------------------------------------------------
 // Schemas
