@@ -1,5 +1,3 @@
-import type { SupabaseClient as SupabaseClientBase } from "@supabase/supabase-js";
-
 export interface Claims {
 	userId: string;
 	userEmail: string;
@@ -7,4 +5,5 @@ export interface Claims {
 	permissions: string[];
 }
 
-export type SupabaseClient = SupabaseClientBase<any, any, any>;
+// biome-ignore lint/suspicious/noExplicitAny: accepts any SupabaseClient regardless of Database generic
+export type SupabaseClient = { auth: any; from: any; [key: string]: any };
