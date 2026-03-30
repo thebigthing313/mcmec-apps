@@ -3,6 +3,7 @@
 	"version": "0.2.1",
 	"type": "module",
 	"exports": {
+		"./handleCrossAppAuth": "./src/handleCrossAppAuth.ts",
 		"./verifyClaims": "./src/verifyClaims.ts",
 		"./signIn": "./src/signIn.ts",
 		"./signOut": "./src/signOut.ts",

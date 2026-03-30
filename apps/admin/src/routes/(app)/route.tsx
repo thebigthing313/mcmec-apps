@@ -1,8 +1,12 @@
 import { UnauthenticatedError } from "@mcmec/auth/errors";
+import { processAuthRedirect } from "@mcmec/auth/handleCrossAppAuth";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
-import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
+import {
+	filterAppsByPermissions,
+	getCentralLoginUrl,
+} from "@mcmec/lib/constants/apps";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import {
@@ -15,7 +19,9 @@ import { AdminSidebar } from "@/src/components/admin-sidebar";
 import { employees, permissions, userPermissions } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)")({
-	beforeLoad: async ({ context, location }) => {
+	beforeLoad: async ({ context }) => {
+		await processAuthRedirect(context.supabase);
+
 		try {
 			const claims = await verifyClaims({
 				client: context.supabase,
@@ -25,8 +31,7 @@ export const Route = createFileRoute("/(app)")({
 		} catch (error) {
 			if (error instanceof UnauthenticatedError) {
 				throw redirect({
-					search: { redirect: location.href },
-					to: "/login",
+					href: getCentralLoginUrl(window.location.origin),
 				});
 			}
 			throw error;

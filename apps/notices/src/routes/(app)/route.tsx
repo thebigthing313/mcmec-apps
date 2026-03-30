@@ -1,8 +1,9 @@
-import { ForbiddenError, UnauthenticatedError } from "@mcmec/auth/errors";
+import { UnauthenticatedError } from "@mcmec/auth/errors";
+import { processAuthRedirect } from "@mcmec/auth/handleCrossAppAuth";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
-import { AVAILABLE_APPS } from "@mcmec/lib/constants/apps";
+import { AVAILABLE_APPS, getCentralLoginUrl } from "@mcmec/lib/constants/apps";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -19,7 +20,8 @@ import { CentralSidebar } from "@/src/components/notices-sidebar";
 import { employees } from "@/src/lib/collections/employees";
 
 export const Route = createFileRoute("/(app)")({
-	beforeLoad: async ({ context, location }) => {
+	beforeLoad: async ({ context }) => {
+		await processAuthRedirect(context.supabase);
 		try {
 			const claims = await verifyClaims({
 				client: context.supabase,
@@ -29,12 +31,8 @@ export const Route = createFileRoute("/(app)")({
 		} catch (error) {
 			if (error instanceof UnauthenticatedError) {
 				throw redirect({
-					search: { redirect: location.href },
-					to: "/login",
+					href: getCentralLoginUrl(window.location.origin),
 				});
-			}
-			if (error instanceof ForbiddenError) {
-				throw redirect({ to: "/login" });
 			}
 			throw error;
 		}
@@ -66,8 +64,13 @@ function LayoutComponent() {
 		q
 			.from({ employee: employees })
 			.where(({ employee }) => eq(employee.user_id, userId))
-			.findOne(),
+			.select(({ employee }) => ({
+				display_name: employee.display_name,
+				display_title: employee.display_title,
+			})),
 	);
+
+	const emp = employee?.[0];
 
 	return (
 		<TooltipProvider>
@@ -78,8 +81,8 @@ function LayoutComponent() {
 					onLogout: handleLogout,
 					user: {
 						avatar: undefined,
-						name: employee?.display_name ?? "[missing name]",
-						title: employee?.display_title ?? "[missing title]",
+						name: emp?.display_name ?? "[missing name]",
+						title: emp?.display_title ?? "[missing title]",
 					},
 				}}
 			>
