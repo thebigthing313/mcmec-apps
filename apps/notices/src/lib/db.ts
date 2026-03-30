@@ -20,19 +20,12 @@ import {
 	NoticesUpdateSchema,
 } from "@mcmec/supabase/db/notices";
 import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { queryClient, supabase } from "./queryClient";
-
-// ---------------------------------------------------------------------------
-// Collections (singleton)
-// ---------------------------------------------------------------------------
-
-const typedSupabase = supabase as unknown as SupabaseClient;
 
 export const employees = createEagerCollection({
 	queryClient,
 	schema: EmployeesRowSchema,
-	supabase: typedSupabase,
+	supabase,
 	table: "employees",
 });
 
@@ -41,7 +34,7 @@ export const noticeTypes = createEagerCollection({
 	insertSchema: NoticeTypesInsertSchema,
 	queryClient,
 	schema: NoticeTypesRowSchema,
-	supabase: typedSupabase,
+	supabase,
 	table: "notice_types",
 	updateSchema: NoticeTypesUpdateSchema,
 });
@@ -51,7 +44,7 @@ export const notices = createEagerCollection({
 	insertSchema: NoticesInsertSchema,
 	queryClient,
 	schema: NoticesRowSchema,
-	supabase: typedSupabase,
+	supabase,
 	table: "notices",
 	updateSchema: NoticesUpdateSchema,
 });
@@ -61,7 +54,7 @@ export const meetings = createEagerCollection({
 	insertSchema: MeetingsInsertSchema,
 	queryClient,
 	schema: MeetingsRowSchema,
-	supabase: typedSupabase,
+	supabase,
 	table: "meetings",
 	updateSchema: MeetingsUpdateSchema,
 });
@@ -71,7 +64,7 @@ export const insecticides = createEagerCollection({
 	insertSchema: InsecticidesInsertSchema,
 	queryClient,
 	schema: InsecticidesRowSchema,
-	supabase: typedSupabase,
+	supabase,
 	table: "insecticides",
 	updateSchema: InsecticidesUpdateSchema,
 });
