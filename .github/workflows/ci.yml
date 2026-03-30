@@ -30,7 +30,7 @@ jobs:
       - name: Type check
         run: pnpm turbo run check-types
         env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_OPTIONS: "--max-old-space-size=8192"
 
       - name: Build all apps
         run: pnpm turbo run build
