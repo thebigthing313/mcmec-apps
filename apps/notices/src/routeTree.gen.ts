@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
+import { Route as appDocumentCategoriesRouteImport } from './routes/(app)/document-categories'
 import { Route as appCategoriesRouteImport } from './routes/(app)/categories'
 import { Route as appServiceRequestsRouteRouteImport } from './routes/(app)/service-requests/route'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
@@ -22,6 +23,7 @@ import { Route as appServiceRequestsIndexRouteImport } from './routes/(app)/serv
 import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
 import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/index'
 import { Route as appInsecticidesIndexRouteImport } from './routes/(app)/insecticides/index'
+import { Route as appDocumentsIndexRouteImport } from './routes/(app)/documents/index'
 import { Route as appContactSubmissionsIndexRouteImport } from './routes/(app)/contact-submissions/index'
 import { Route as appNoticesCreateRouteImport } from './routes/(app)/notices/create'
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
@@ -29,6 +31,8 @@ import { Route as appMeetingsCreateRouteImport } from './routes/(app)/meetings/c
 import { Route as appMeetingsMeetingIdRouteImport } from './routes/(app)/meetings/$meetingId'
 import { Route as appInsecticidesCreateRouteImport } from './routes/(app)/insecticides/create'
 import { Route as appInsecticidesInsecticideIdRouteImport } from './routes/(app)/insecticides/$insecticideId'
+import { Route as appDocumentsCreateRouteImport } from './routes/(app)/documents/create'
+import { Route as appDocumentsDocumentIdRouteImport } from './routes/(app)/documents/$documentId'
 import { Route as appContactSubmissionsCreateRouteImport } from './routes/(app)/contact-submissions/create'
 import { Route as appContactSubmissionsSubmissionIdRouteImport } from './routes/(app)/contact-submissions/$submissionId'
 import { Route as appServiceRequestsWaterManagementCreateRouteImport } from './routes/(app)/service-requests/water-management/create'
@@ -38,6 +42,7 @@ import { Route as appServiceRequestsMosquitofishRequestIdRouteImport } from './r
 import { Route as appServiceRequestsAdultMosquitoCreateRouteImport } from './routes/(app)/service-requests/adult-mosquito/create'
 import { Route as appServiceRequestsAdultMosquitoRequestIdRouteImport } from './routes/(app)/service-requests/adult-mosquito/$requestId'
 import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
+import { Route as appDocumentsDocumentIdEditRouteImport } from './routes/(app)/documents/$documentId_.edit'
 import { Route as appContactSubmissionsSubmissionIdEditRouteImport } from './routes/(app)/contact-submissions/$submissionId_.edit'
 import { Route as appServiceRequestsWaterManagementRequestIdEditRouteImport } from './routes/(app)/service-requests/water-management/$requestId_.edit'
 import { Route as appServiceRequestsMosquitofishRequestIdEditRouteImport } from './routes/(app)/service-requests/mosquitofish/$requestId_.edit'
@@ -55,6 +60,11 @@ const appRouteRoute = appRouteRouteImport.update({
 const appIndexRoute = appIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appDocumentCategoriesRoute = appDocumentCategoriesRouteImport.update({
+  id: '/document-categories',
+  path: '/document-categories',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appCategoriesRoute = appCategoriesRouteImport.update({
@@ -108,6 +118,11 @@ const appInsecticidesIndexRoute = appInsecticidesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appInsecticidesRouteRoute,
 } as any)
+const appDocumentsIndexRoute = appDocumentsIndexRouteImport.update({
+  id: '/documents/',
+  path: '/documents/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appContactSubmissionsIndexRoute =
   appContactSubmissionsIndexRouteImport.update({
     id: '/',
@@ -145,6 +160,16 @@ const appInsecticidesInsecticideIdRoute =
     path: '/$insecticideId',
     getParentRoute: () => appInsecticidesRouteRoute,
   } as any)
+const appDocumentsCreateRoute = appDocumentsCreateRouteImport.update({
+  id: '/documents/create',
+  path: '/documents/create',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appDocumentsDocumentIdRoute = appDocumentsDocumentIdRouteImport.update({
+  id: '/documents/$documentId',
+  path: '/documents/$documentId',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appContactSubmissionsCreateRoute =
   appContactSubmissionsCreateRouteImport.update({
     id: '/create',
@@ -198,6 +223,12 @@ const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
   path: '/$noticeId/edit',
   getParentRoute: () => appNoticesRouteRoute,
 } as any)
+const appDocumentsDocumentIdEditRoute =
+  appDocumentsDocumentIdEditRouteImport.update({
+    id: '/documents/$documentId_/edit',
+    path: '/documents/$documentId/edit',
+    getParentRoute: () => appRouteRoute,
+  } as any)
 const appContactSubmissionsSubmissionIdEditRoute =
   appContactSubmissionsSubmissionIdEditRouteImport.update({
     id: '/$submissionId_/edit',
@@ -231,9 +262,12 @@ export interface FileRoutesByFullPath {
   '/notices': typeof appNoticesRouteRouteWithChildren
   '/service-requests': typeof appServiceRequestsRouteRouteWithChildren
   '/categories': typeof appCategoriesRoute
+  '/document-categories': typeof appDocumentCategoriesRoute
   '/': typeof appIndexRoute
   '/contact-submissions/$submissionId': typeof appContactSubmissionsSubmissionIdRoute
   '/contact-submissions/create': typeof appContactSubmissionsCreateRoute
+  '/documents/$documentId': typeof appDocumentsDocumentIdRoute
+  '/documents/create': typeof appDocumentsCreateRoute
   '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/insecticides/create': typeof appInsecticidesCreateRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
@@ -241,11 +275,13 @@ export interface FileRoutesByFullPath {
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
   '/contact-submissions/': typeof appContactSubmissionsIndexRoute
+  '/documents': typeof appDocumentsIndexRoute
   '/insecticides/': typeof appInsecticidesIndexRoute
   '/meetings/': typeof appMeetingsIndexRoute
   '/notices/': typeof appNoticesIndexRoute
   '/service-requests/': typeof appServiceRequestsIndexRoute
   '/contact-submissions/$submissionId/edit': typeof appContactSubmissionsSubmissionIdEditRoute
+  '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
   '/service-requests/adult-mosquito/$requestId': typeof appServiceRequestsAdultMosquitoRequestIdRoute
   '/service-requests/adult-mosquito/create': typeof appServiceRequestsAdultMosquitoCreateRoute
@@ -260,9 +296,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/categories': typeof appCategoriesRoute
+  '/document-categories': typeof appDocumentCategoriesRoute
   '/': typeof appIndexRoute
   '/contact-submissions/$submissionId': typeof appContactSubmissionsSubmissionIdRoute
   '/contact-submissions/create': typeof appContactSubmissionsCreateRoute
+  '/documents/$documentId': typeof appDocumentsDocumentIdRoute
+  '/documents/create': typeof appDocumentsCreateRoute
   '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/insecticides/create': typeof appInsecticidesCreateRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
@@ -270,11 +309,13 @@ export interface FileRoutesByTo {
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
   '/contact-submissions': typeof appContactSubmissionsIndexRoute
+  '/documents': typeof appDocumentsIndexRoute
   '/insecticides': typeof appInsecticidesIndexRoute
   '/meetings': typeof appMeetingsIndexRoute
   '/notices': typeof appNoticesIndexRoute
   '/service-requests': typeof appServiceRequestsIndexRoute
   '/contact-submissions/$submissionId/edit': typeof appContactSubmissionsSubmissionIdEditRoute
+  '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
   '/service-requests/adult-mosquito/$requestId': typeof appServiceRequestsAdultMosquitoRequestIdRoute
   '/service-requests/adult-mosquito/create': typeof appServiceRequestsAdultMosquitoCreateRoute
@@ -296,9 +337,12 @@ export interface FileRoutesById {
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/(app)/service-requests': typeof appServiceRequestsRouteRouteWithChildren
   '/(app)/categories': typeof appCategoriesRoute
+  '/(app)/document-categories': typeof appDocumentCategoriesRoute
   '/(app)/': typeof appIndexRoute
   '/(app)/contact-submissions/$submissionId': typeof appContactSubmissionsSubmissionIdRoute
   '/(app)/contact-submissions/create': typeof appContactSubmissionsCreateRoute
+  '/(app)/documents/$documentId': typeof appDocumentsDocumentIdRoute
+  '/(app)/documents/create': typeof appDocumentsCreateRoute
   '/(app)/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/(app)/insecticides/create': typeof appInsecticidesCreateRoute
   '/(app)/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
@@ -306,11 +350,13 @@ export interface FileRoutesById {
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/(app)/notices/create': typeof appNoticesCreateRoute
   '/(app)/contact-submissions/': typeof appContactSubmissionsIndexRoute
+  '/(app)/documents/': typeof appDocumentsIndexRoute
   '/(app)/insecticides/': typeof appInsecticidesIndexRoute
   '/(app)/meetings/': typeof appMeetingsIndexRoute
   '/(app)/notices/': typeof appNoticesIndexRoute
   '/(app)/service-requests/': typeof appServiceRequestsIndexRoute
   '/(app)/contact-submissions/$submissionId_/edit': typeof appContactSubmissionsSubmissionIdEditRoute
+  '/(app)/documents/$documentId_/edit': typeof appDocumentsDocumentIdEditRoute
   '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
   '/(app)/service-requests/adult-mosquito/$requestId': typeof appServiceRequestsAdultMosquitoRequestIdRoute
   '/(app)/service-requests/adult-mosquito/create': typeof appServiceRequestsAdultMosquitoCreateRoute
@@ -332,9 +378,12 @@ export interface FileRouteTypes {
     | '/notices'
     | '/service-requests'
     | '/categories'
+    | '/document-categories'
     | '/'
     | '/contact-submissions/$submissionId'
     | '/contact-submissions/create'
+    | '/documents/$documentId'
+    | '/documents/create'
     | '/insecticides/$insecticideId'
     | '/insecticides/create'
     | '/meetings/$meetingId'
@@ -342,11 +391,13 @@ export interface FileRouteTypes {
     | '/notices/$noticeId'
     | '/notices/create'
     | '/contact-submissions/'
+    | '/documents'
     | '/insecticides/'
     | '/meetings/'
     | '/notices/'
     | '/service-requests/'
     | '/contact-submissions/$submissionId/edit'
+    | '/documents/$documentId/edit'
     | '/notices/$noticeId/edit'
     | '/service-requests/adult-mosquito/$requestId'
     | '/service-requests/adult-mosquito/create'
@@ -361,9 +412,12 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/categories'
+    | '/document-categories'
     | '/'
     | '/contact-submissions/$submissionId'
     | '/contact-submissions/create'
+    | '/documents/$documentId'
+    | '/documents/create'
     | '/insecticides/$insecticideId'
     | '/insecticides/create'
     | '/meetings/$meetingId'
@@ -371,11 +425,13 @@ export interface FileRouteTypes {
     | '/notices/$noticeId'
     | '/notices/create'
     | '/contact-submissions'
+    | '/documents'
     | '/insecticides'
     | '/meetings'
     | '/notices'
     | '/service-requests'
     | '/contact-submissions/$submissionId/edit'
+    | '/documents/$documentId/edit'
     | '/notices/$noticeId/edit'
     | '/service-requests/adult-mosquito/$requestId'
     | '/service-requests/adult-mosquito/create'
@@ -396,9 +452,12 @@ export interface FileRouteTypes {
     | '/(app)/notices'
     | '/(app)/service-requests'
     | '/(app)/categories'
+    | '/(app)/document-categories'
     | '/(app)/'
     | '/(app)/contact-submissions/$submissionId'
     | '/(app)/contact-submissions/create'
+    | '/(app)/documents/$documentId'
+    | '/(app)/documents/create'
     | '/(app)/insecticides/$insecticideId'
     | '/(app)/insecticides/create'
     | '/(app)/meetings/$meetingId'
@@ -406,11 +465,13 @@ export interface FileRouteTypes {
     | '/(app)/notices/$noticeId'
     | '/(app)/notices/create'
     | '/(app)/contact-submissions/'
+    | '/(app)/documents/'
     | '/(app)/insecticides/'
     | '/(app)/meetings/'
     | '/(app)/notices/'
     | '/(app)/service-requests/'
     | '/(app)/contact-submissions/$submissionId_/edit'
+    | '/(app)/documents/$documentId_/edit'
     | '/(app)/notices/$noticeId_/edit'
     | '/(app)/service-requests/adult-mosquito/$requestId'
     | '/(app)/service-requests/adult-mosquito/create'
@@ -449,6 +510,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof appIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/document-categories': {
+      id: '/(app)/document-categories'
+      path: '/document-categories'
+      fullPath: '/document-categories'
+      preLoaderRoute: typeof appDocumentCategoriesRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/categories': {
@@ -521,6 +589,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appInsecticidesIndexRouteImport
       parentRoute: typeof appInsecticidesRouteRoute
     }
+    '/(app)/documents/': {
+      id: '/(app)/documents/'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof appDocumentsIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/contact-submissions/': {
       id: '/(app)/contact-submissions/'
       path: '/'
@@ -569,6 +644,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/insecticides/$insecticideId'
       preLoaderRoute: typeof appInsecticidesInsecticideIdRouteImport
       parentRoute: typeof appInsecticidesRouteRoute
+    }
+    '/(app)/documents/create': {
+      id: '/(app)/documents/create'
+      path: '/documents/create'
+      fullPath: '/documents/create'
+      preLoaderRoute: typeof appDocumentsCreateRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/documents/$documentId': {
+      id: '/(app)/documents/$documentId'
+      path: '/documents/$documentId'
+      fullPath: '/documents/$documentId'
+      preLoaderRoute: typeof appDocumentsDocumentIdRouteImport
+      parentRoute: typeof appRouteRoute
     }
     '/(app)/contact-submissions/create': {
       id: '/(app)/contact-submissions/create'
@@ -632,6 +721,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/notices/$noticeId/edit'
       preLoaderRoute: typeof appNoticesNoticeIdEditRouteImport
       parentRoute: typeof appNoticesRouteRoute
+    }
+    '/(app)/documents/$documentId_/edit': {
+      id: '/(app)/documents/$documentId_/edit'
+      path: '/documents/$documentId/edit'
+      fullPath: '/documents/$documentId/edit'
+      preLoaderRoute: typeof appDocumentsDocumentIdEditRouteImport
+      parentRoute: typeof appRouteRoute
     }
     '/(app)/contact-submissions/$submissionId_/edit': {
       id: '/(app)/contact-submissions/$submissionId_/edit'
@@ -782,7 +878,12 @@ interface appRouteRouteChildren {
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appServiceRequestsRouteRoute: typeof appServiceRequestsRouteRouteWithChildren
   appCategoriesRoute: typeof appCategoriesRoute
+  appDocumentCategoriesRoute: typeof appDocumentCategoriesRoute
   appIndexRoute: typeof appIndexRoute
+  appDocumentsDocumentIdRoute: typeof appDocumentsDocumentIdRoute
+  appDocumentsCreateRoute: typeof appDocumentsCreateRoute
+  appDocumentsIndexRoute: typeof appDocumentsIndexRoute
+  appDocumentsDocumentIdEditRoute: typeof appDocumentsDocumentIdEditRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
@@ -792,7 +893,12 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appServiceRequestsRouteRoute: appServiceRequestsRouteRouteWithChildren,
   appCategoriesRoute: appCategoriesRoute,
+  appDocumentCategoriesRoute: appDocumentCategoriesRoute,
   appIndexRoute: appIndexRoute,
+  appDocumentsDocumentIdRoute: appDocumentsDocumentIdRoute,
+  appDocumentsCreateRoute: appDocumentsCreateRoute,
+  appDocumentsIndexRoute: appDocumentsIndexRoute,
+  appDocumentsDocumentIdEditRoute: appDocumentsDocumentIdEditRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(

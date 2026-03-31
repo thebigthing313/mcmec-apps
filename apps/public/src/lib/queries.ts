@@ -1,4 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
+import { DocumentTypesRowSchema } from "@mcmec/supabase/db/document-types";
+import { DocumentsRowSchema } from "@mcmec/supabase/db/documents";
 import { InsecticidesRowSchema } from "@mcmec/supabase/db/insecticides";
 import { MeetingsRowSchema } from "@mcmec/supabase/db/meetings";
 import { NoticeTypesRowSchema } from "@mcmec/supabase/db/notice-types";
@@ -123,4 +125,52 @@ export const zipCodesQueryOptions = () =>
 		queryFn: () => getZipCodesServerFn(),
 		queryKey: ["zip_codes"],
 		staleTime: 1000 * 60 * 60, // 1 hour
+	});
+
+const getDocumentsServerFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const supabase = getSupabaseServerClient();
+		async function fetchDocuments() {
+			const { data, error } = await supabase.from("documents").select("*");
+			if (error) {
+				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("documents"));
+			}
+			return data.map((document) => {
+				return DocumentsRowSchema.parse(document);
+			});
+		}
+		return fetchDocuments();
+	},
+);
+
+const getDocumentTypesServerFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const supabase = getSupabaseServerClient();
+		async function fetchDocumentTypes() {
+			const { data, error } = await supabase.from("document_types").select("*");
+			if (error) {
+				throw new Error(
+					ErrorMessages.DATABASE.UNABLE_TO_FETCH("document_types"),
+				);
+			}
+			return data.map((documentType) => {
+				return DocumentTypesRowSchema.parse(documentType);
+			});
+		}
+		return fetchDocumentTypes();
+	},
+);
+
+export const documentsQueryOptions = () =>
+	queryOptions({
+		queryFn: () => getDocumentsServerFn(),
+		queryKey: ["documents"],
+		staleTime: 1000 * 60 * 30, // 30 minutes
+	});
+
+export const documentTypesQueryOptions = () =>
+	queryOptions({
+		queryFn: () => getDocumentTypesServerFn(),
+		queryKey: ["document_types"],
+		staleTime: 1000 * 60 * 30, // 30 minutes
 	});

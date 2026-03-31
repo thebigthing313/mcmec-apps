@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TransparencyIndexRouteImport } from './routes/transparency/index'
 import { Route as NoticesIndexRouteImport } from './routes/notices/index'
 import { Route as NoticesMeetingsRouteImport } from './routes/notices/meetings'
 import { Route as NoticesArchiveRouteImport } from './routes/notices/archive'
@@ -28,6 +29,11 @@ import { Route as AboutHowWeControlMosquitoesRouteImport } from './routes/about/
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransparencyIndexRoute = TransparencyIndexRouteImport.update({
+  id: '/transparency/',
+  path: '/transparency/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticesIndexRoute = NoticesIndexRouteImport.update({
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/': typeof NoticesIndexRoute
+  '/transparency/': typeof TransparencyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices': typeof NoticesIndexRoute
+  '/transparency': typeof TransparencyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/': typeof NoticesIndexRoute
+  '/transparency/': typeof TransparencyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/notices/archive'
     | '/notices/meetings'
     | '/notices/'
+    | '/transparency/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/notices/archive'
     | '/notices/meetings'
     | '/notices'
+    | '/transparency'
   id:
     | '__root__'
     | '/'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/notices/archive'
     | '/notices/meetings'
     | '/notices/'
+    | '/transparency/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -228,6 +240,7 @@ export interface RootRouteChildren {
   NoticesArchiveRoute: typeof NoticesArchiveRoute
   NoticesMeetingsRoute: typeof NoticesMeetingsRoute
   NoticesIndexRoute: typeof NoticesIndexRoute
+  TransparencyIndexRoute: typeof TransparencyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -237,6 +250,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transparency/': {
+      id: '/transparency/'
+      path: '/transparency'
+      fullPath: '/transparency/'
+      preLoaderRoute: typeof TransparencyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notices/': {
@@ -356,6 +376,7 @@ const rootRouteChildren: RootRouteChildren = {
   NoticesArchiveRoute: NoticesArchiveRoute,
   NoticesMeetingsRoute: NoticesMeetingsRoute,
   NoticesIndexRoute: NoticesIndexRoute,
+  TransparencyIndexRoute: TransparencyIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
