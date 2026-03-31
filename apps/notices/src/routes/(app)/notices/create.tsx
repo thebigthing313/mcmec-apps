@@ -14,9 +14,10 @@ export const Route = createFileRoute("/(app)/notices/create")({
 function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const { data: categories } = useLiveQuery((q) =>
-		q
-			.from({ notice_type: noticeTypes })
-			.orderBy(({ notice_type }) => notice_type.name),
+		q.from({ notice_type: noticeTypes }).select(({ notice_type }) => ({
+			id: notice_type.id,
+			name: notice_type.name,
+		})),
 	);
 
 	const items = categories.map((category) => ({
