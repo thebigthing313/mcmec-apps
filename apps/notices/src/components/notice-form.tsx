@@ -105,8 +105,43 @@ export function NoticeForm({
 						/>
 					)}
 				</form.AppField>
+				<form.Subscribe
+					selector={(state) => ({
+						isArchived: state.values.is_archived,
+						noticeDate: state.values.notice_date,
+					})}
+				>
+					{({ isArchived, noticeDate }) => (
+						<RetentionWarning isArchived={isArchived} noticeDate={noticeDate} />
+					)}
+				</form.Subscribe>
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
 			</form.FormWrapper>
 		</form.AppForm>
+	);
+}
+
+function RetentionWarning({
+	isArchived,
+	noticeDate,
+}: {
+	isArchived: boolean;
+	noticeDate: Date;
+}) {
+	if (!isArchived || !noticeDate) return null;
+
+	const daysSincePosted = Math.floor(
+		(Date.now() - new Date(noticeDate).getTime()) / (1000 * 60 * 60 * 24),
+	);
+
+	if (daysSincePosted >= 7) return null;
+
+	return (
+		<div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-amber-800 text-sm">
+			This notice was posted {daysSincePosted} day
+			{daysSincePosted !== 1 ? "s" : ""} ago. Per P.L. 2025, c.72, legal notices
+			must remain on the current notices page for at least 7 days before
+			archiving.
+		</div>
 	);
 }

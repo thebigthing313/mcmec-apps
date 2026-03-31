@@ -10,6 +10,8 @@ import { Link, type LinkProps } from "@tanstack/react-router";
 import {
 	BookOpen,
 	Bug,
+	FileText,
+	FolderOpen,
 	Group,
 	Home,
 	Mail,
@@ -36,6 +38,16 @@ const items: SidebarItem[] = [
 		icon: <SprayCan />,
 		label: "Insecticides",
 		linkProps: { to: "/insecticides" },
+	},
+	{
+		icon: <FileText />,
+		label: "Documents",
+		linkProps: { to: "/documents" },
+	},
+	{
+		icon: <FolderOpen />,
+		label: "Document Categories",
+		linkProps: { to: "/document-categories" },
 	},
 	{
 		icon: <Bug />,

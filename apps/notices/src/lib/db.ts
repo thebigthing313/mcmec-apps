@@ -28,6 +28,8 @@ const db = getDb();
 export const {
 	adultMosquitoRequests,
 	contactFormSubmissions,
+	documentTypes,
+	documents,
 	employees,
 	insecticides,
 	meetings,

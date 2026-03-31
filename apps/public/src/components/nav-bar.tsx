@@ -102,6 +102,10 @@ const menuItems: MenuItem[] = [
 		],
 		title: "Public Notices",
 	},
+	{
+		linkProps: { to: "/transparency" },
+		title: "Transparency",
+	},
 ];
 
 export function Navbar() {

@@ -150,6 +150,80 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			document_types: {
+				Row: {
+					created_at: string;
+					created_by: string | null;
+					description: string | null;
+					id: string;
+					name: string;
+					updated_at: string;
+					updated_by: string | null;
+				};
+				Insert: {
+					created_at?: string;
+					created_by?: string | null;
+					description?: string | null;
+					id?: string;
+					name: string;
+					updated_at?: string;
+					updated_by?: string | null;
+				};
+				Update: {
+					created_at?: string;
+					created_by?: string | null;
+					description?: string | null;
+					id?: string;
+					name?: string;
+					updated_at?: string;
+					updated_by?: string | null;
+				};
+				Relationships: [];
+			};
+			documents: {
+				Row: {
+					created_at: string;
+					created_by: string | null;
+					document_type_id: string;
+					fiscal_year: number;
+					id: string;
+					is_published: boolean;
+					updated_at: string;
+					updated_by: string | null;
+					url: string;
+				};
+				Insert: {
+					created_at?: string;
+					created_by?: string | null;
+					document_type_id: string;
+					fiscal_year: number;
+					id?: string;
+					is_published?: boolean;
+					updated_at?: string;
+					updated_by?: string | null;
+					url: string;
+				};
+				Update: {
+					created_at?: string;
+					created_by?: string | null;
+					document_type_id?: string;
+					fiscal_year?: number;
+					id?: string;
+					is_published?: boolean;
+					updated_at?: string;
+					updated_by?: string | null;
+					url?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "documents_document_type_id_fkey";
+						columns: ["document_type_id"];
+						isOneToOne: false;
+						referencedRelation: "document_types";
+						referencedColumns: ["id"];
+					},
+				];
+			};
 			employees: {
 				Row: {
 					created_at: string;

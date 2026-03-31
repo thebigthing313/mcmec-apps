@@ -15,6 +15,16 @@ import {
 	ContactFormSubmissionsRowSchema,
 	ContactFormSubmissionsUpdateSchema,
 } from "../db/contact-form-submissions";
+import {
+	DocumentTypesInsertSchema,
+	DocumentTypesRowSchema,
+	DocumentTypesUpdateSchema,
+} from "../db/document-types";
+import {
+	DocumentsInsertSchema,
+	DocumentsRowSchema,
+	DocumentsUpdateSchema,
+} from "../db/documents";
 import { EmployeesRowSchema } from "../db/employees";
 import {
 	InsecticidesInsertSchema,
@@ -94,6 +104,26 @@ export function createNoticesCollections({
 		updateSchema: MeetingsUpdateSchema,
 	});
 
+	const documentTypes = createEagerCollection({
+		allowDelete: true,
+		insertSchema: DocumentTypesInsertSchema,
+		queryClient,
+		schema: DocumentTypesRowSchema,
+		supabase,
+		table: "document_types",
+		updateSchema: DocumentTypesUpdateSchema,
+	});
+
+	const documents = createEagerCollection({
+		allowDelete: true,
+		insertSchema: DocumentsInsertSchema,
+		queryClient,
+		schema: DocumentsRowSchema,
+		supabase,
+		table: "documents",
+		updateSchema: DocumentsUpdateSchema,
+	});
+
 	const insecticides = createEagerCollection({
 		allowDelete: true,
 		insertSchema: InsecticidesInsertSchema,
@@ -154,6 +184,8 @@ export function createNoticesCollections({
 	return {
 		adultMosquitoRequests,
 		contactFormSubmissions,
+		documentTypes,
+		documents,
 		employees,
 		insecticides,
 		meetings,
