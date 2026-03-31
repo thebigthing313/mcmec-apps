@@ -6,7 +6,7 @@ import {
 } from "@mcmec/lib/constants/validators";
 import z from "zod";
 
-const BaseSchema = z.object({
+export const WaterManagementRequestsBaseSchema = z.object({
 	additional_details: z.string().nullable(),
 	address_line_1: NonEmptyStringSchema(2),
 	address_line_2: z.string().nullable(),
@@ -26,50 +26,53 @@ const BaseSchema = z.object({
 	zip_code_id: NonEmptyUUID,
 });
 
-export const WaterManagementRequestsRowSchema = BaseSchema.refine(
-	(data) => {
-		return (
-			data.is_on_my_property ||
-			data.is_on_neighbor_property ||
-			data.is_on_public_property ||
-			data.other_location_description
-		);
-	},
-	{
-		message:
-			"At least one location option must be selected or other location description must be provided.",
-		path: ["is_on_my_property"],
-	},
-);
+export const WaterManagementRequestsRowSchema =
+	WaterManagementRequestsBaseSchema.refine(
+		(data) => {
+			return (
+				data.is_on_my_property ||
+				data.is_on_neighbor_property ||
+				data.is_on_public_property ||
+				data.other_location_description
+			);
+		},
+		{
+			message:
+				"At least one location option must be selected or other location description must be provided.",
+			path: ["is_on_my_property"],
+		},
+	);
 
-export const WaterManagementRequestsInsertSchema = BaseSchema.omit({
-	created_at: true,
-	created_by: true,
-	updated_at: true,
-	updated_by: true,
-}).refine(
-	(data) => {
-		return (
-			data.is_on_my_property ||
-			data.is_on_neighbor_property ||
-			data.is_on_public_property ||
-			data.other_location_description
-		);
-	},
-	{
-		message:
-			"At least one location option must be selected or other location description must be provided.",
-		path: ["is_on_my_property"],
-	},
-);
+export const WaterManagementRequestsInsertSchema =
+	WaterManagementRequestsBaseSchema.omit({
+		created_at: true,
+		created_by: true,
+		updated_at: true,
+		updated_by: true,
+	}).refine(
+		(data) => {
+			return (
+				data.is_on_my_property ||
+				data.is_on_neighbor_property ||
+				data.is_on_public_property ||
+				data.other_location_description
+			);
+		},
+		{
+			message:
+				"At least one location option must be selected or other location description must be provided.",
+			path: ["is_on_my_property"],
+		},
+	);
 
-export const WaterManagementRequestsUpdateSchema = BaseSchema.omit({
-	created_at: true,
-	created_by: true,
-	id: true,
-	updated_at: true,
-	updated_by: true,
-}).partial();
+export const WaterManagementRequestsUpdateSchema =
+	WaterManagementRequestsBaseSchema.omit({
+		created_at: true,
+		created_by: true,
+		id: true,
+		updated_at: true,
+		updated_by: true,
+	}).partial();
 
 export type WaterManagementRequestsRowType = z.infer<
 	typeof WaterManagementRequestsRowSchema

@@ -6,7 +6,7 @@ import {
 } from "@mcmec/lib/constants/validators";
 import z from "zod";
 
-const BaseSchema = z.object({
+export const AdultMosquitoRequestsBaseSchema = z.object({
 	additional_details: z.string().nullable(),
 	address_line_1: NonEmptyStringSchema(2),
 	address_line_2: z.string().nullable(),
@@ -28,44 +28,16 @@ const BaseSchema = z.object({
 	updated_by: NonEmptyUUID.nullable(),
 	zip_code_id: NonEmptyUUID,
 });
-export const AdultMosquitoRequestsRowSchema = BaseSchema.refine(
-	(data) => {
-		return data.is_daytime || data.is_dusk_dawn || data.is_nighttime;
-	},
-	{
-		message: "At least one time of day must be selected.",
-		path: ["is_dusk_dawn"],
-	},
-).refine(
-	(data) => {
-		return (
-			data.is_front_of_property ||
-			data.is_rear_of_property ||
-			data.is_general_vicinity
-		);
-	},
-	{
-		message: "At least one location option must be selected.",
-		path: ["is_front_of_property"],
-	},
-);
-
-export const AdultMosquitoRequestsInsertSchema = BaseSchema.omit({
-	created_at: true,
-	created_by: true,
-	updated_at: true,
-	updated_by: true,
-})
-	.refine(
+export const AdultMosquitoRequestsRowSchema =
+	AdultMosquitoRequestsBaseSchema.refine(
 		(data) => {
 			return data.is_daytime || data.is_dusk_dawn || data.is_nighttime;
 		},
 		{
 			message: "At least one time of day must be selected.",
-			path: ["is_daytime"],
+			path: ["is_dusk_dawn"],
 		},
-	)
-	.refine(
+	).refine(
 		(data) => {
 			return (
 				data.is_front_of_property ||
@@ -79,13 +51,44 @@ export const AdultMosquitoRequestsInsertSchema = BaseSchema.omit({
 		},
 	);
 
-export const AdultMosquitoRequestsUpdateSchema = BaseSchema.omit({
-	created_at: true,
-	created_by: true,
-	id: true,
-	updated_at: true,
-	updated_by: true,
-}).partial();
+export const AdultMosquitoRequestsInsertSchema =
+	AdultMosquitoRequestsBaseSchema.omit({
+		created_at: true,
+		created_by: true,
+		updated_at: true,
+		updated_by: true,
+	})
+		.refine(
+			(data) => {
+				return data.is_daytime || data.is_dusk_dawn || data.is_nighttime;
+			},
+			{
+				message: "At least one time of day must be selected.",
+				path: ["is_daytime"],
+			},
+		)
+		.refine(
+			(data) => {
+				return (
+					data.is_front_of_property ||
+					data.is_rear_of_property ||
+					data.is_general_vicinity
+				);
+			},
+			{
+				message: "At least one location option must be selected.",
+				path: ["is_front_of_property"],
+			},
+		);
+
+export const AdultMosquitoRequestsUpdateSchema =
+	AdultMosquitoRequestsBaseSchema.omit({
+		created_at: true,
+		created_by: true,
+		id: true,
+		updated_at: true,
+		updated_by: true,
+	}).partial();
 
 export type AdultMosquitoRequestsRowType = z.infer<
 	typeof AdultMosquitoRequestsRowSchema

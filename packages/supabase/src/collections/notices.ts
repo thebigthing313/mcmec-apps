@@ -1,7 +1,20 @@
-import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
+import {
+	createEagerCollection,
+	createOnDemandCollection,
+} from "@mcmec/supabase-tanstack-db-integration";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { QueryClient } from "@tanstack/query-core";
 import type { Database } from "../database.types.ts";
+import {
+	AdultMosquitoRequestsBaseSchema,
+	AdultMosquitoRequestsInsertSchema,
+	AdultMosquitoRequestsUpdateSchema,
+} from "../db/adult-mosquito-requests";
+import {
+	ContactFormSubmissionsInsertSchema,
+	ContactFormSubmissionsRowSchema,
+	ContactFormSubmissionsUpdateSchema,
+} from "../db/contact-form-submissions";
 import { EmployeesRowSchema } from "../db/employees";
 import {
 	InsecticidesInsertSchema,
@@ -14,6 +27,11 @@ import {
 	MeetingsUpdateSchema,
 } from "../db/meetings";
 import {
+	MosquitofishRequestsInsertSchema,
+	MosquitofishRequestsRowSchema,
+	MosquitofishRequestsUpdateSchema,
+} from "../db/mosquitofish-requests";
+import {
 	NoticeTypesInsertSchema,
 	NoticeTypesRowSchema,
 	NoticeTypesUpdateSchema,
@@ -23,6 +41,12 @@ import {
 	NoticesRowSchema,
 	NoticesUpdateSchema,
 } from "../db/notices";
+import {
+	WaterManagementRequestsBaseSchema,
+	WaterManagementRequestsInsertSchema,
+	WaterManagementRequestsUpdateSchema,
+} from "../db/water-management-requests";
+import { ZipCodesRowSchema } from "../db/zip-codes";
 
 export interface CreateNoticesCollectionsOptions {
 	supabase: SupabaseClient<Database>;
@@ -80,12 +104,64 @@ export function createNoticesCollections({
 		updateSchema: InsecticidesUpdateSchema,
 	});
 
+	const zipCodes = createEagerCollection({
+		queryClient,
+		schema: ZipCodesRowSchema,
+		supabase,
+		table: "zip_codes",
+	});
+
+	const adultMosquitoRequests = createOnDemandCollection({
+		allowDelete: true,
+		insertSchema: AdultMosquitoRequestsInsertSchema,
+		queryClient,
+		schema: AdultMosquitoRequestsBaseSchema,
+		supabase,
+		table: "adult_mosquito_complaints",
+		updateSchema: AdultMosquitoRequestsUpdateSchema,
+	});
+
+	const mosquitofishRequests = createOnDemandCollection({
+		allowDelete: true,
+		insertSchema: MosquitofishRequestsInsertSchema,
+		queryClient,
+		schema: MosquitofishRequestsRowSchema,
+		supabase,
+		table: "mosquito_fish_requests",
+		updateSchema: MosquitofishRequestsUpdateSchema,
+	});
+
+	const waterManagementRequests = createOnDemandCollection({
+		allowDelete: true,
+		insertSchema: WaterManagementRequestsInsertSchema,
+		queryClient,
+		schema: WaterManagementRequestsBaseSchema,
+		supabase,
+		table: "water_management_requests",
+		updateSchema: WaterManagementRequestsUpdateSchema,
+	});
+
+	const contactFormSubmissions = createOnDemandCollection({
+		allowDelete: true,
+		insertSchema: ContactFormSubmissionsInsertSchema,
+		queryClient,
+		schema: ContactFormSubmissionsRowSchema,
+		supabase,
+		table: "contact_form_submissions",
+		updateSchema: ContactFormSubmissionsUpdateSchema,
+	});
+
 	return {
+		adultMosquitoRequests,
+		contactFormSubmissions,
 		employees,
 		insecticides,
 		meetings,
+		mosquitofishRequests,
 		noticeTypes,
 		notices,
+		waterManagementRequests,
+		zipCodes,
 	};
 }
 

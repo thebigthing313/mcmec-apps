@@ -25,4 +25,15 @@ export type Db = NoticesCollections;
 
 // Re-export individual collections for direct import
 const db = getDb();
-export const { employees, insecticides, meetings, noticeTypes, notices } = db;
+export const {
+	adultMosquitoRequests,
+	contactFormSubmissions,
+	employees,
+	insecticides,
+	meetings,
+	mosquitofishRequests,
+	noticeTypes,
+	notices,
+	waterManagementRequests,
+	zipCodes,
+} = db;
