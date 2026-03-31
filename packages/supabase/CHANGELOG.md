@@ -1,5 +1,36 @@
 # @mcmec/supabase
 
+## 1.4.0
+
+### Minor Changes
+
+- b9b91e2: Centralize login through central app with branded auth layout. PKCE flow with shared cookie domain for production, hash fragment tokens for local dev. Add processAuthRedirect and getCentralLoginUrl helpers.
+- 1a77b67: Add documents system, archive search, and retention warning for LFN 2026-01 compliance
+
+  - Add document_types and documents tables with RLS policies and admin CRUD in the notices app
+  - Add Document Categories management page mirroring the existing notice categories pattern
+  - Add public /transparency page displaying published documents grouped by type and fiscal year
+  - Add text search filter to the notice archive feed (NoticeFeed component)
+  - Add inline retention warning when archiving notices posted less than 7 days ago
+
+- 8dc9b46: Migrate notices app to supabase-tanstack-db-integration via collection factory in @mcmec/supabase. Remove individual collection files, add unified db.ts with getDb()/useDb() singleton pattern. Remove fetch functions and SupabaseClient imports from schema files (pure Zod). Deduplicate supabase-js and react-router versions via pnpm overrides. Align supabase-js to ^2.100.1 across all packages.
+- 5c3f9fd: Add service requests and contact submissions management to the notices app
+
+  - Add on-demand collections for adult mosquito complaints, mosquitofish requests, water management requests, and contact form submissions
+  - Add full CRUD routes for all 3 service request types and contact submissions with detail, edit, and create pages
+  - Restyle dashboard with stat cards, pending requests, open submissions, recent notices, and meetings
+  - Add mutation error toasts via TanStack DB isPersisted — only shown when server rejects and optimistic state rolls back
+  - Fix useNotices join duplication bug causing cartesian products with employee left join
+  - Fix on-demand collection queryKey prefix validation warnings
+  - Replace table cell links with clickable rows using navigate
+
+### Patch Changes
+
+- Updated dependencies [b9b91e2]
+- Updated dependencies [5c3f9fd]
+  - @mcmec/lib@0.7.3
+  - @mcmec/supabase-tanstack-db-integration@0.2.1
+
 ## 1.3.1
 
 ### Patch Changes

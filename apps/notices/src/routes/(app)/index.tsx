@@ -1,5 +1,9 @@
-import { formatDateShort, getTodayUTC } from "@mcmec/lib/functions/date-fns";
-import { PublicNoticeCard } from "@mcmec/ui/blocks/public-notice-card";
+import {
+	formatDateShort,
+	formatDateTime,
+	getTodayUTC,
+} from "@mcmec/lib/functions/date-fns";
+import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	Card,
@@ -8,256 +12,429 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@mcmec/ui/components/card";
-import {
-	Empty,
-	EmptyDescription,
-	EmptyHeader,
-	EmptyTitle,
-} from "@mcmec/ui/components/empty";
 import { eq, lte, useLiveQuery } from "@tanstack/react-db";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { useNotices } from "@/src/hooks/use-notices";
-import { notice_types } from "@/src/lib/collections/notice_types";
-import { notices } from "@/src/lib/collections/notices";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+	BookOpen,
+	Bug,
+	CheckCircle,
+	Clock,
+	Mail,
+	MailOpen,
+	Users,
+} from "lucide-react";
 
 export const Route = createFileRoute("/(app)/")({
 	component: RouteComponent,
-	loader: async () => {
-		await Promise.all([notices.preload(), notice_types.preload()]);
+	loader: () => {
 		return { crumb: "Dashboard" };
 	},
 });
 
 function RouteComponent() {
-	const navigate = useNavigate();
-	const { collection: allNotices } = useNotices();
-	const [currentPage, setCurrentPage] = useState(1);
-	const noticesPerPage = 5;
+	const { db } = Route.useRouteContext();
 	const now = getTodayUTC();
 
-	const { data: currentNotices } = useLiveQuery((q) =>
+	// Notices data
+	const { data: publishedNotices } = useLiveQuery((q) =>
 		q
-			.from({ notice: allNotices })
-			.where(({ notice }) => eq(notice.isPublished, true))
-			.where(({ notice }) => eq(notice.isArchived, false))
-			.where(({ notice }) => lte(notice.noticeDate, now))
-			.orderBy(({ notice }) => notice.noticeDate, "desc"),
+			.from({ n: db.notices })
+			.where(({ n }) => eq(n.is_published, true))
+			.where(({ n }) => eq(n.is_archived, false))
+			.where(({ n }) => lte(n.notice_date, now))
+			.orderBy(({ n }) => n.notice_date, "desc")
+			.limit(5),
 	);
 
-	// Get draft notices
 	const { data: draftNotices } = useLiveQuery((q) =>
 		q
-			.from({ notice: allNotices })
-			.where(({ notice }) => eq(notice.isPublished, false))
-			.orderBy(({ notice }) => notice.noticeDate, "desc")
-			.limit(10),
+			.from({ n: db.notices })
+			.where(({ n }) => eq(n.is_published, false))
+			.orderBy(({ n }) => n.notice_date, "desc")
+			.limit(5),
 	);
 
-	// Get archived notices
-	const { data: archivedNotices } = useLiveQuery((q) =>
+	// Service requests data
+	const { data: pendingAdultMosquito } = useLiveQuery((q) =>
 		q
-			.from({ notice: allNotices })
-			.where(({ notice }) => eq(notice.isArchived, true))
-			.orderBy(({ notice }) => notice.noticeDate, "desc")
-			.limit(10),
+			.from({ r: db.adultMosquitoRequests })
+			.where(({ r }) => eq(r.is_processed, false))
+			.orderBy(({ r }) => r.created_at, "desc"),
 	);
 
-	// Pagination calculations
-	const totalNotices = currentNotices?.length ?? 0;
-	const totalPages = Math.ceil(totalNotices / noticesPerPage);
-	const startIndex = (currentPage - 1) * noticesPerPage;
-	const endIndex = startIndex + noticesPerPage;
-	const paginatedNotices = currentNotices?.slice(startIndex, endIndex);
+	const { data: pendingMosquitofish } = useLiveQuery((q) =>
+		q
+			.from({ r: db.mosquitofishRequests })
+			.where(({ r }) => eq(r.is_processed, false))
+			.orderBy(({ r }) => r.created_at, "desc"),
+	);
 
-	const handlePreviousPage = () => {
-		setCurrentPage((prev) => Math.max(1, prev - 1));
-	};
+	const { data: pendingWaterMgmt } = useLiveQuery((q) =>
+		q
+			.from({ r: db.waterManagementRequests })
+			.where(({ r }) => eq(r.is_processed, false))
+			.orderBy(({ r }) => r.created_at, "desc"),
+	);
 
-	const handleNextPage = () => {
-		setCurrentPage((prev) => Math.min(totalPages, prev + 1));
-	};
+	// Contact submissions data
+	const { data: openSubmissions } = useLiveQuery((q) =>
+		q
+			.from({ s: db.contactFormSubmissions })
+			.where(({ s }) => eq(s.is_closed, false))
+			.orderBy(({ s }) => s.created_at, "desc")
+			.limit(5),
+	);
+
+	const { data: closedSubmissions } = useLiveQuery((q) =>
+		q
+			.from({ s: db.contactFormSubmissions })
+			.where(({ s }) => eq(s.is_closed, true)),
+	);
+
+	// Meetings data
+	const { data: upcomingMeetings } = useLiveQuery((q) =>
+		q
+			.from({ m: db.meetings })
+			.where(({ m }) => eq(m.is_cancelled, false))
+			.orderBy(({ m }) => m.meeting_at, "desc")
+			.limit(5),
+	);
+
+	const totalPendingRequests =
+		pendingAdultMosquito.length +
+		pendingMosquitofish.length +
+		pendingWaterMgmt.length;
 
 	return (
-		<div className="container mx-auto space-y-6 py-6">
-			<div className="mb-6">
+		<div className="space-y-6">
+			<div>
 				<h1 className="font-bold text-3xl">Dashboard</h1>
-				<p className="text-muted-foreground">Overview of your public notices</p>
+				<p className="text-muted-foreground">
+					Overview of notices, requests, and submissions
+				</p>
 			</div>
 
-			<div className="flex flex-row flex-wrap gap-6">
-				{/* Left Column: Current Notices */}
-				<div
-					className="flex flex-1 flex-col space-y-4"
-					style={{ minWidth: "400px" }}
-				>
-					<h2 className="font-semibold text-2xl">Current Notices</h2>
-					{paginatedNotices && paginatedNotices.length > 0 ? (
-						<>
-							<div className="space-y-4">
-								{paginatedNotices.map((notice) => {
-									return (
+			{/* Stats Row */}
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+				<Card>
+					<CardHeader className="flex flex-row items-center justify-between pb-2">
+						<CardTitle className="font-medium text-sm">
+							Published Notices
+						</CardTitle>
+						<BookOpen className="h-4 w-4 text-muted-foreground" />
+					</CardHeader>
+					<CardContent>
+						<div className="font-bold text-2xl">{publishedNotices.length}</div>
+						<p className="text-muted-foreground text-xs">
+							{draftNotices.length} draft{draftNotices.length !== 1 && "s"}
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card>
+					<CardHeader className="flex flex-row items-center justify-between pb-2">
+						<CardTitle className="font-medium text-sm">
+							Pending Requests
+						</CardTitle>
+						<Bug className="h-4 w-4 text-muted-foreground" />
+					</CardHeader>
+					<CardContent>
+						<div className="font-bold text-2xl">{totalPendingRequests}</div>
+						<p className="text-muted-foreground text-xs">
+							{pendingAdultMosquito.length} mosquito,{" "}
+							{pendingMosquitofish.length} fish, {pendingWaterMgmt.length} water
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card>
+					<CardHeader className="flex flex-row items-center justify-between pb-2">
+						<CardTitle className="font-medium text-sm">
+							Open Submissions
+						</CardTitle>
+						<Mail className="h-4 w-4 text-muted-foreground" />
+					</CardHeader>
+					<CardContent>
+						<div className="font-bold text-2xl">{openSubmissions.length}</div>
+						<p className="text-muted-foreground text-xs">
+							{closedSubmissions.length} closed
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card>
+					<CardHeader className="flex flex-row items-center justify-between pb-2">
+						<CardTitle className="font-medium text-sm">
+							Upcoming Meetings
+						</CardTitle>
+						<Users className="h-4 w-4 text-muted-foreground" />
+					</CardHeader>
+					<CardContent>
+						<div className="font-bold text-2xl">{upcomingMeetings.length}</div>
+						<p className="text-muted-foreground text-xs">scheduled</p>
+					</CardContent>
+				</Card>
+			</div>
+
+			{/* Main Content Grid */}
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+				{/* Pending Service Requests */}
+				<Card>
+					<CardHeader>
+						<div className="flex items-center justify-between">
+							<div>
+								<CardTitle>Pending Service Requests</CardTitle>
+								<CardDescription>Requests awaiting processing</CardDescription>
+							</div>
+							<Button asChild size="sm" variant="outline">
+								<Link to="/service-requests">View All</Link>
+							</Button>
+						</div>
+					</CardHeader>
+					<CardContent>
+						{totalPendingRequests > 0 ? (
+							<ul className="space-y-3">
+								{pendingAdultMosquito.slice(0, 3).map((r) => (
+									<li key={r.id}>
 										<Link
-											key={notice.id}
-											params={{ noticeId: notice.id }}
+											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+											params={{ requestId: r.id }}
+											to="/service-requests/adult-mosquito/$requestId"
+										>
+											<div className="flex-1">
+												<p className="font-medium">{r.full_name}</p>
+												<p className="text-muted-foreground text-sm">
+													{r.address_line_1}
+												</p>
+											</div>
+											<div className="flex items-center gap-2">
+												<Badge variant="outline">Mosquito</Badge>
+												<span className="text-muted-foreground text-xs">
+													{formatDateShort(r.created_at)}
+												</span>
+											</div>
+										</Link>
+									</li>
+								))}
+								{pendingMosquitofish.slice(0, 3).map((r) => (
+									<li key={r.id}>
+										<Link
+											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+											params={{ requestId: r.id }}
+											to="/service-requests/mosquitofish/$requestId"
+										>
+											<div className="flex-1">
+												<p className="font-medium">{r.full_name}</p>
+												<p className="text-muted-foreground text-sm">
+													{r.address_line_1}
+												</p>
+											</div>
+											<div className="flex items-center gap-2">
+												<Badge variant="outline">Fish</Badge>
+												<span className="text-muted-foreground text-xs">
+													{formatDateShort(r.created_at)}
+												</span>
+											</div>
+										</Link>
+									</li>
+								))}
+								{pendingWaterMgmt.slice(0, 3).map((r) => (
+									<li key={r.id}>
+										<Link
+											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+											params={{ requestId: r.id }}
+											to="/service-requests/water-management/$requestId"
+										>
+											<div className="flex-1">
+												<p className="font-medium">{r.full_name}</p>
+												<p className="text-muted-foreground text-sm">
+													{r.address_line_1}
+												</p>
+											</div>
+											<div className="flex items-center gap-2">
+												<Badge variant="outline">Water</Badge>
+												<span className="text-muted-foreground text-xs">
+													{formatDateShort(r.created_at)}
+												</span>
+											</div>
+										</Link>
+									</li>
+								))}
+							</ul>
+						) : (
+							<div className="flex flex-col items-center justify-center py-8 text-center">
+								<CheckCircle className="mb-2 h-8 w-8 text-muted-foreground" />
+								<p className="text-muted-foreground text-sm">
+									All requests have been processed
+								</p>
+							</div>
+						)}
+					</CardContent>
+				</Card>
+
+				{/* Open Contact Submissions */}
+				<Card>
+					<CardHeader>
+						<div className="flex items-center justify-between">
+							<div>
+								<CardTitle>Open Contact Submissions</CardTitle>
+								<CardDescription>Messages awaiting response</CardDescription>
+							</div>
+							<Button asChild size="sm" variant="outline">
+								<Link to="/contact-submissions">View All</Link>
+							</Button>
+						</div>
+					</CardHeader>
+					<CardContent>
+						{openSubmissions.length > 0 ? (
+							<ul className="space-y-3">
+								{openSubmissions.map((s) => (
+									<li key={s.id}>
+										<Link
+											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+											params={{ submissionId: s.id }}
+											to="/contact-submissions/$submissionId"
+										>
+											<div className="flex-1">
+												<p className="font-medium">{s.subject}</p>
+												<p className="text-muted-foreground text-sm">
+													{s.name} &mdash; {s.email}
+												</p>
+											</div>
+											<span className="text-muted-foreground text-xs">
+												{formatDateShort(s.created_at)}
+											</span>
+										</Link>
+									</li>
+								))}
+							</ul>
+						) : (
+							<div className="flex flex-col items-center justify-center py-8 text-center">
+								<MailOpen className="mb-2 h-8 w-8 text-muted-foreground" />
+								<p className="text-muted-foreground text-sm">
+									No open submissions
+								</p>
+							</div>
+						)}
+					</CardContent>
+				</Card>
+
+				{/* Recent Notices */}
+				<Card>
+					<CardHeader>
+						<div className="flex items-center justify-between">
+							<div>
+								<CardTitle>Recent Notices</CardTitle>
+								<CardDescription>Latest published notices</CardDescription>
+							</div>
+							<Button asChild size="sm" variant="outline">
+								<Link to="/notices">View All</Link>
+							</Button>
+						</div>
+					</CardHeader>
+					<CardContent>
+						{publishedNotices.length > 0 ? (
+							<ul className="space-y-3">
+								{publishedNotices.map((n) => (
+									<li key={n.id}>
+										<Link
+											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+											params={{ noticeId: n.id }}
 											to="/notices/$noticeId"
 										>
-											<PublicNoticeCard
-												className="transition-shadow hover:shadow-lg"
-												content={notice.content}
-												isArchived={notice.isArchived}
-												isPublished={notice.isPublished}
-												noticeDate={notice.noticeDate}
-												onNoticeClick={() =>
-													navigate({
-														params: { noticeId: notice.id },
-														to: "/notices/$noticeId",
-													})
-												}
-												showShare={false}
-												title={notice.title}
-												type={notice.noticeType}
-											/>
+											<div className="flex-1">
+												<p className="font-medium">{n.title}</p>
+											</div>
+											<div className="flex items-center gap-2">
+												<Badge variant="default">Published</Badge>
+												<span className="text-muted-foreground text-xs">
+													{formatDateShort(n.notice_date)}
+												</span>
+											</div>
 										</Link>
-									);
-								})}
+									</li>
+								))}
+							</ul>
+						) : (
+							<div className="flex flex-col items-center justify-center py-8 text-center">
+								<BookOpen className="mb-2 h-8 w-8 text-muted-foreground" />
+								<p className="text-muted-foreground text-sm">
+									No published notices
+								</p>
 							</div>
-							{totalPages > 1 && (
-								<div className="flex items-center justify-between">
-									<p className="text-muted-foreground text-sm">
-										Page {currentPage} of {totalPages}
-									</p>
-									<div className="flex gap-2">
-										<Button
-											disabled={currentPage === 1}
-											onClick={handlePreviousPage}
-											size="sm"
-											variant="outline"
-										>
-											<ChevronLeft className="h-4 w-4" />
-											Previous
-										</Button>
-										<Button
-											disabled={currentPage === totalPages}
-											onClick={handleNextPage}
-											size="sm"
-											variant="outline"
-										>
-											Next
-											<ChevronRight className="h-4 w-4" />
-										</Button>
-									</div>
-								</div>
-							)}
-						</>
-					) : (
-						<Empty>
-							<EmptyHeader>
-								<EmptyTitle>No current notices</EmptyTitle>
-								<EmptyDescription>
-									There are no published notices at the moment
-								</EmptyDescription>
-							</EmptyHeader>
-						</Empty>
-					)}
-				</div>
+						)}
 
-				{/* Right Column: Drafts and Archive */}
-				<div
-					className="flex flex-col space-y-6"
-					style={{ minWidth: "400px", width: "400px" }}
-				>
-					{/* Open Drafts Widget */}
-					<Card>
-						<CardHeader>
-							<CardTitle>Open Drafts</CardTitle>
-							<CardDescription>
-								Notices that haven't been published
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							{draftNotices && draftNotices.length > 0 ? (
+						{draftNotices.length > 0 && (
+							<div className="mt-4 border-t pt-4">
+								<p className="mb-2 font-medium text-muted-foreground text-sm">
+									Drafts
+								</p>
 								<ul className="space-y-2">
-									{draftNotices.map((notice) => {
-										return (
-											<li key={notice.id}>
-												<Link
-													className="flex items-start justify-between rounded-md p-2 transition-colors hover:bg-muted"
-													params={{ noticeId: notice.id }}
-													to="/notices/$noticeId"
-												>
-													<div className="flex-1">
-														<p className="font-medium">{notice.title}</p>
-														<p className="text-muted-foreground text-sm">
-															{notice.noticeType}
-														</p>
-													</div>
-													<span className="text-muted-foreground text-xs">
-														{formatDateShort(notice.noticeDate)}
-													</span>
-												</Link>
-											</li>
-										);
-									})}
+									{draftNotices.map((n) => (
+										<li key={n.id}>
+											<Link
+												className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+												params={{ noticeId: n.id }}
+												to="/notices/$noticeId"
+											>
+												<p className="font-medium text-sm">{n.title}</p>
+												<Badge variant="outline">Draft</Badge>
+											</Link>
+										</li>
+									))}
 								</ul>
-							) : (
-								<Empty>
-									<EmptyHeader>
-										<EmptyTitle>No drafts</EmptyTitle>
-										<EmptyDescription>
-											All notices have been published
-										</EmptyDescription>
-									</EmptyHeader>
-								</Empty>
-							)}
-						</CardContent>
-					</Card>
+							</div>
+						)}
+					</CardContent>
+				</Card>
 
-					{/* Archived Notices Widget */}
-					<Card>
-						<CardHeader>
-							<CardTitle>Archived Notices</CardTitle>
-							<CardDescription>Recently archived notices</CardDescription>
-						</CardHeader>
-						<CardContent>
-							{archivedNotices && archivedNotices.length > 0 ? (
-								<ul className="space-y-2">
-									{archivedNotices.map((notice) => {
-										return (
-											<li key={notice.id}>
-												<Link
-													className="flex items-start justify-between rounded-md p-2 transition-colors hover:bg-muted"
-													params={{ noticeId: notice.id }}
-													to="/notices/$noticeId"
-												>
-													<div className="flex-1">
-														<p className="font-medium">{notice.title}</p>
-														<p className="text-muted-foreground text-sm">
-															{notice.noticeType}
-														</p>
-													</div>
-													<span className="text-muted-foreground text-xs">
-														{formatDateShort(notice.noticeDate)}
-													</span>
-												</Link>
-											</li>
-										);
-									})}
-								</ul>
-							) : (
-								<Empty>
-									<EmptyHeader>
-										<EmptyTitle>No archived notices</EmptyTitle>
-										<EmptyDescription>
-											Archived notices will appear here
-										</EmptyDescription>
-									</EmptyHeader>
-								</Empty>
-							)}
-						</CardContent>
-					</Card>
-				</div>
+				{/* Upcoming Meetings */}
+				<Card>
+					<CardHeader>
+						<div className="flex items-center justify-between">
+							<div>
+								<CardTitle>Meetings</CardTitle>
+								<CardDescription>Recent and upcoming meetings</CardDescription>
+							</div>
+							<Button asChild size="sm" variant="outline">
+								<Link to="/meetings">View All</Link>
+							</Button>
+						</div>
+					</CardHeader>
+					<CardContent>
+						{upcomingMeetings.length > 0 ? (
+							<ul className="space-y-3">
+								{upcomingMeetings.map((m) => (
+									<li key={m.id}>
+										<Link
+											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+											params={{ meetingId: m.id }}
+											to="/meetings/$meetingId"
+										>
+											<div className="flex-1">
+												<p className="font-medium">{m.name}</p>
+												<div className="flex items-center gap-1 text-muted-foreground text-sm">
+													<Clock className="h-3 w-3" />
+													{formatDateTime(m.meeting_at)}
+												</div>
+											</div>
+											<p className="text-muted-foreground text-xs">
+												{m.location}
+											</p>
+										</Link>
+									</li>
+								))}
+							</ul>
+						) : (
+							<div className="flex flex-col items-center justify-center py-8 text-center">
+								<Users className="mb-2 h-8 w-8 text-muted-foreground" />
+								<p className="text-muted-foreground text-sm">
+									No upcoming meetings
+								</p>
+							</div>
+						)}
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	);

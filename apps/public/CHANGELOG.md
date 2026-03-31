@@ -1,5 +1,27 @@
 # public
 
+## 1.2.0
+
+### Minor Changes
+
+- 1a77b67: Add documents system, archive search, and retention warning for LFN 2026-01 compliance
+
+  - Add document_types and documents tables with RLS policies and admin CRUD in the notices app
+  - Add Document Categories management page mirroring the existing notice categories pattern
+  - Add public /transparency page displaying published documents grouped by type and fiscal year
+  - Add text search filter to the notice archive feed (NoticeFeed component)
+  - Add inline retention warning when archiving notices posted less than 7 days ago
+
+### Patch Changes
+
+- Updated dependencies [b9b91e2]
+- Updated dependencies [1a77b67]
+- Updated dependencies [8dc9b46]
+- Updated dependencies [5c3f9fd]
+  - @mcmec/lib@0.7.3
+  - @mcmec/supabase@1.4.0
+  - @mcmec/ui@1.4.3
+
 ## 1.1.2
 
 ### Patch Changes

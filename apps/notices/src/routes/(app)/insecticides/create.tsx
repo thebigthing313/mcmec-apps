@@ -4,7 +4,8 @@ import {
 } from "@mcmec/supabase/db/insecticides";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
-import { insecticides } from "@/src/lib/collections/insecticides";
+import { insecticides } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/insecticides/create")({
 	component: RouteComponent,
@@ -17,7 +18,8 @@ function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const handleSubmit = async (value: InsecticidesRowType) => {
 		const parsedItems = InsecticidesRowSchema.parse(value);
-		insecticides.insert(parsedItems);
+		const tx = insecticides.insert(parsedItems);
+		toastOnError(tx, "Failed to create insecticide.");
 		navigate({ to: "/insecticides" });
 	};
 

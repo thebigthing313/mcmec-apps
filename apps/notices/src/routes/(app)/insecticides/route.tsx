@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { insecticides } from "@/src/lib/collections/insecticides";
+import { insecticides } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/insecticides")({
 	component: RouteComponent,

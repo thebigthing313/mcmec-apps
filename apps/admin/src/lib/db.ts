@@ -1,5 +1,4 @@
 import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import z from "zod";
 import { queryClient, supabase } from "./queryClient";
 
@@ -46,19 +45,17 @@ const UserPermissionsInsertSchema = z.object({
 // Collections (singleton)
 // ---------------------------------------------------------------------------
 
-const typedSupabase = supabase as unknown as SupabaseClient;
-
 export const employees = createEagerCollection({
 	queryClient,
 	schema: EmployeesRowSchema,
-	supabase: typedSupabase,
+	supabase,
 	table: "employees",
 });
 
 export const permissions = createEagerCollection({
 	queryClient,
 	schema: PermissionsRowSchema,
-	supabase: typedSupabase,
+	supabase,
 	table: "permissions",
 });
 
@@ -67,7 +64,7 @@ export const userPermissions = createEagerCollection({
 	insertSchema: UserPermissionsInsertSchema,
 	queryClient,
 	schema: UserPermissionsRowSchema,
-	supabase: typedSupabase,
+	supabase,
 	table: "user_permissions",
 });
 

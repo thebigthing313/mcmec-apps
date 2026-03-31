@@ -3,7 +3,7 @@ import { InsecticidesTable } from "@mcmec/ui/blocks/insecticides-table";
 import { Button } from "@mcmec/ui/components/button";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
-import { insecticides } from "@/src/lib/collections/insecticides";
+import { insecticides } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/insecticides/")({
 	component: RouteComponent,

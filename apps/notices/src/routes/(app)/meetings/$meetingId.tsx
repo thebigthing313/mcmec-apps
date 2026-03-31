@@ -14,7 +14,8 @@ import {
 import { Button } from "@mcmec/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { MeetingsForm } from "@/src/components/meetings-form";
-import { meetings } from "@/src/lib/collections/meetings";
+import { meetings } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/meetings/$meetingId")({
 	component: RouteComponent,
@@ -34,14 +35,16 @@ function RouteComponent() {
 	const { meetingId } = Route.useParams();
 
 	const handleSubmit = async (value: MeetingsRowType) => {
-		meetings.update(meetingId, (draft) => {
+		const tx = meetings.update(meetingId, (draft) => {
 			Object.assign(draft, value);
 		});
+		toastOnError(tx, "Failed to update meeting.");
 		navigate({ to: "/meetings" });
 	};
 
 	const handleDelete = async () => {
-		meetings.delete(meetingId);
+		const tx = meetings.delete(meetingId);
+		toastOnError(tx, "Failed to delete meeting.");
 		navigate({ to: "/meetings" });
 	};
 

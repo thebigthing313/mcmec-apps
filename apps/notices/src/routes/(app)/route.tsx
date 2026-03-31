@@ -1,8 +1,9 @@
-import { ForbiddenError, UnauthenticatedError } from "@mcmec/auth/errors";
+import { UnauthenticatedError } from "@mcmec/auth/errors";
+import { processAuthRedirect } from "@mcmec/auth/handleCrossAppAuth";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
-import { AVAILABLE_APPS } from "@mcmec/lib/constants/apps";
+import { AVAILABLE_APPS, getCentralLoginUrl } from "@mcmec/lib/constants/apps";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -16,37 +17,34 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/notices-sidebar";
-import { employees } from "@/src/lib/collections/employees";
+import { supabase } from "@/src/lib/queryClient";
 
 export const Route = createFileRoute("/(app)")({
-	beforeLoad: async ({ context, location }) => {
+	beforeLoad: async () => {
+		await processAuthRedirect(supabase);
 		try {
 			const claims = await verifyClaims({
-				client: context.supabase,
+				client: supabase,
 				permission: "public_notices",
 			});
 			return { claims };
 		} catch (error) {
 			if (error instanceof UnauthenticatedError) {
 				throw redirect({
-					search: { redirect: location.href },
-					to: "/login",
+					href: getCentralLoginUrl(window.location.origin),
 				});
-			}
-			if (error instanceof ForbiddenError) {
-				throw redirect({ to: "/login" });
 			}
 			throw error;
 		}
 	},
 	component: LayoutComponent,
-	loader: () => {
-		employees.preload();
+	loader: async ({ context }) => {
+		await context.db.employees.preload();
 	},
 });
 
 function LayoutComponent() {
-	const { supabase, claims } = Route.useRouteContext();
+	const { claims, db } = Route.useRouteContext();
 	const { userId } = claims as Claims;
 	const navigate = useNavigate();
 	const matches = useMatches();
@@ -64,7 +62,7 @@ function LayoutComponent() {
 
 	const { data: employee } = useLiveQuery((q) =>
 		q
-			.from({ employee: employees })
+			.from({ employee: db.employees })
 			.where(({ employee }) => eq(employee.user_id, userId))
 			.findOne(),
 	);

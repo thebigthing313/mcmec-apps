@@ -9,13 +9,13 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { ArchiveX, ArrowLeft, Edit, Upload } from "lucide-react";
-import { notice_types } from "@/src/lib/collections/notice_types";
-import { notices } from "@/src/lib/collections/notices";
+import { notices, noticeTypes } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/notices/$noticeId")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
-		await Promise.all([notices.preload(), notice_types.preload()]);
+		await Promise.all([notices.preload(), noticeTypes.preload()]);
 		const notice = notices.get(params.noticeId);
 		if (!notice) {
 			throw notFound();
@@ -37,12 +37,13 @@ function RouteComponent() {
 		is_published,
 		is_archived,
 	} = notice;
-	const type = notice_types.get(notice_type_id)?.name;
+	const type = noticeTypes.get(notice_type_id)?.name;
 
 	const handlePublish = async () => {
 		const tx = notices.update(id, (draft) => {
 			draft.is_published = true;
 		});
+		toastOnError(tx, "Failed to publish notice.");
 		await tx.isPersisted.promise;
 		navigate({ to: "/notices" });
 	};
@@ -51,6 +52,7 @@ function RouteComponent() {
 		const tx = notices.update(id, (draft) => {
 			draft.is_published = false;
 		});
+		toastOnError(tx, "Failed to unpublish notice.");
 		await tx.isPersisted.promise;
 		navigate({ to: "/notices" });
 	};

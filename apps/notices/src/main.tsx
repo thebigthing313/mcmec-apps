@@ -13,11 +13,11 @@ import { ErrorDisplay } from "@mcmec/ui/blocks/error";
 import { NotFound } from "@mcmec/ui/blocks/not-found";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { queryClient, supabase } from "./lib/queryClient";
-// Import the generated route tree
+import { getDb } from "./lib/db";
+import { queryClient } from "./lib/queryClient";
 import { routeTree } from "./routeTree.gen";
 
-// Set favicon from constants
+// Set favicon
 const faviconLink = document.querySelector(
 	"link[rel='icon']",
 ) as HTMLLinkElement;
@@ -25,25 +25,22 @@ if (faviconLink) {
 	faviconLink.href = favicon;
 }
 
-// Create a new router instance
 const router = createRouter({
 	context: {
-		queryClient: queryClient,
-		supabase: supabase,
+		queryClient,
+		db: getDb(),
 	},
 	defaultErrorComponent: (error) => <ErrorComponent {...error} />,
 	defaultNotFoundComponent: () => <NotFoundComponent />,
 	routeTree,
 });
 
-// Register the router instance for type safety
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;
 	}
 }
 
-// Render the app
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error(ErrorMessages.BROWSER.ROOT_ELEMENT_NOT_FOUND);
 if (!rootElement.innerHTML) {
@@ -60,7 +57,6 @@ if (!rootElement.innerHTML) {
 
 function NotFoundComponent() {
 	const navigate = useNavigate();
-
 	return <NotFound onAction={() => navigate({ to: "/" })} />;
 }
 

@@ -1,5 +1,6 @@
 import { PublicNoticeCard } from "@mcmec/ui/blocks/public-notice-card";
 import { Button } from "@mcmec/ui/components/button";
+import { Input } from "@mcmec/ui/components/input";
 import { Label } from "@mcmec/ui/components/label";
 import {
 	Pagination,
@@ -17,7 +18,7 @@ import {
 	SelectValue,
 } from "@mcmec/ui/components/select";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 interface NoticeData {
 	content: object; // JSON content for tiptap renderer
@@ -36,6 +37,7 @@ interface NoticeFeedProps {
 export function NoticeFeed({ notices }: NoticeFeedProps) {
 	const navigate = useNavigate();
 	const [currentPage, setCurrentPage] = useState(1);
+	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [selectedType, setSelectedType] = useState<string>("");
 	const [selectedYear, setSelectedYear] = useState<string>("");
 	const itemsPerPage = 5;
@@ -62,14 +64,17 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 		if (!notices) return [];
 
 		return notices.filter((notice) => {
+			const matchesSearch =
+				!searchQuery ||
+				notice.title.toLowerCase().includes(searchQuery.toLowerCase());
 			const matchesType = !selectedType || notice.type === selectedType;
 			const matchesYear =
 				!selectedYear ||
 				notice.noticeDate.getFullYear().toString() === selectedYear;
 
-			return matchesType && matchesYear;
+			return matchesSearch && matchesType && matchesYear;
 		});
-	}, [notices, selectedType, selectedYear]);
+	}, [notices, searchQuery, selectedType, selectedYear]);
 
 	// Calculate pagination
 	const totalPages = Math.ceil(filteredNotices.length / itemsPerPage);
@@ -80,9 +85,20 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 	);
 
 	// Reset to first page when filters change
-	useEffect(() => {
+	const handleSearchChange = (value: string) => {
+		setSearchQuery(value);
 		setCurrentPage(1);
-	}, []);
+	};
+
+	const handleTypeChange = (value: string) => {
+		setSelectedType(value);
+		setCurrentPage(1);
+	};
+
+	const handleYearChange = (value: string) => {
+		setSelectedYear(value);
+		setCurrentPage(1);
+	};
 
 	const handlePreviousPage = () => {
 		setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -93,8 +109,10 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 	};
 
 	const clearFilters = () => {
+		setSearchQuery("");
 		setSelectedType("");
 		setSelectedYear("");
+		setCurrentPage(1);
 	};
 
 	return (
@@ -102,9 +120,19 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 			{/* Filters */}
 			<div className="flex flex-col gap-4 rounded-lg bg-gray-50 p-4">
 				<div className="flex flex-wrap items-end gap-4">
+					<div className="flex min-w-50 flex-col gap-2">
+						<Label htmlFor="search-filter">Search by title</Label>
+						<Input
+							id="search-filter"
+							onChange={(e) => handleSearchChange(e.target.value)}
+							placeholder="Search..."
+							value={searchQuery}
+						/>
+					</div>
+
 					<div className="flex min-w-35 flex-col gap-2">
 						<Label htmlFor="type-filter">Filter by Type</Label>
-						<Select onValueChange={setSelectedType} value={selectedType}>
+						<Select onValueChange={handleTypeChange} value={selectedType}>
 							<SelectTrigger id="type-filter">
 								<SelectValue placeholder="All Types" />
 							</SelectTrigger>
@@ -120,7 +148,7 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 
 					<div className="flex min-w-35 flex-col gap-2">
 						<Label htmlFor="year-filter">Filter by Year</Label>
-						<Select onValueChange={setSelectedYear} value={selectedYear}>
+						<Select onValueChange={handleYearChange} value={selectedYear}>
 							<SelectTrigger id="year-filter">
 								<SelectValue placeholder="All Years" />
 							</SelectTrigger>
@@ -134,7 +162,7 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 						</Select>
 					</div>
 
-					{(selectedType || selectedYear) && (
+					{(searchQuery || selectedType || selectedYear) && (
 						<Button onClick={clearFilters} variant="outline">
 							Clear Filters
 						</Button>

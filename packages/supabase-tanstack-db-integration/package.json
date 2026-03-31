@@ -1,6 +1,6 @@
 {
 	"name": "@mcmec/supabase-tanstack-db-integration",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"private": true,
 	"type": "module",
 	"main": "./src/index.ts",
@@ -19,6 +19,6 @@
 		"@tanstack/db": "^0.5.33",
 		"@tanstack/query-core": "^5.90.20",
 		"@tanstack/query-db-collection": "^1.0.30",
-		"zod": "^4.3.6"
+		"zod": "^4.3.5"
 	}
 }

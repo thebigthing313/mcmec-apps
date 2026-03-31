@@ -1,5 +1,4 @@
 import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import z from "zod";
 import { queryClient, supabase } from "./queryClient";
 
@@ -40,7 +39,7 @@ export const employees = createEagerCollection({
 	insertSchema: EmployeesInsertSchema,
 	queryClient,
 	schema: EmployeesRowSchema,
-	supabase: supabase as unknown as SupabaseClient,
+	supabase,
 	table: "employees",
 	updateSchema: EmployeesUpdateSchema,
 });

@@ -1,5 +1,11 @@
 # @mcmec/lib
 
+## 0.7.3
+
+### Patch Changes
+
+- b9b91e2: Centralize login through central app with branded auth layout. PKCE flow with shared cookie domain for production, hash fragment tokens for local dev. Add processAuthRedirect and getCentralLoginUrl helpers.
+
 ## 0.7.2
 
 ### Patch Changes

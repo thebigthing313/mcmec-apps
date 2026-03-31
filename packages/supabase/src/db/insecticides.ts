@@ -1,6 +1,4 @@
-import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import z from "zod";
-import type { SupabaseClient } from "../client";
 
 export const InsecticidesRowSchema = z.object({
 	active_ingredient: z.string(),
@@ -38,16 +36,3 @@ export const InsecticidesUpdateSchema = z.object({
 export type InsecticidesRowType = z.infer<typeof InsecticidesRowSchema>;
 export type InsecticidesInsertType = z.infer<typeof InsecticidesInsertSchema>;
 export type InsecticidesUpdateType = z.infer<typeof InsecticidesUpdateSchema>;
-
-export async function fetchInsecticides(
-	supabase: SupabaseClient,
-): Promise<Array<InsecticidesRowType>> {
-	const { data, error } = await supabase.from("insecticides").select("*");
-
-	if (error) {
-		throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("insecticides"));
-	}
-
-	const parsedData = InsecticidesRowSchema.array().parse(data);
-	return parsedData;
-}

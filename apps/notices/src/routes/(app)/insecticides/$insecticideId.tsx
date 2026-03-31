@@ -14,7 +14,8 @@ import {
 import { Button } from "@mcmec/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
-import { insecticides } from "@/src/lib/collections/insecticides";
+import { insecticides } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/insecticides/$insecticideId")({
 	component: RouteComponent,
@@ -34,14 +35,16 @@ function RouteComponent() {
 	const { insecticideId } = Route.useParams();
 
 	const handleSubmit = async (value: InsecticidesRowType) => {
-		insecticides.update(insecticideId, (draft) => {
+		const tx = insecticides.update(insecticideId, (draft) => {
 			Object.assign(draft, value);
 		});
+		toastOnError(tx, "Failed to update insecticide.");
 		navigate({ to: "/insecticides" });
 	};
 
 	const handleDelete = async () => {
-		insecticides.delete(insecticideId);
+		const tx = insecticides.delete(insecticideId);
+		toastOnError(tx, "Failed to delete insecticide.");
 		navigate({ to: "/insecticides" });
 	};
 

@@ -27,13 +27,13 @@ import { count, eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { notice_types } from "@/src/lib/collections/notice_types";
-import { notices } from "@/src/lib/collections/notices";
+import { notices, noticeTypes } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/categories")({
 	component: RouteComponent,
 	loader: async () => {
-		await Promise.all([notice_types.preload(), notices.preload()]);
+		await Promise.all([noticeTypes.preload(), notices.preload()]);
 		return { crumb: "Categories" };
 	},
 });
@@ -48,7 +48,7 @@ type Category = {
 function RouteComponent() {
 	const { data: categories } = useLiveQuery((q) =>
 		q
-			.from({ notice_type: notice_types })
+			.from({ notice_type: noticeTypes })
 			.leftJoin({ notice: notices }, ({ notice_type, notice }) =>
 				eq(notice_type.id, notice.notice_type_id),
 			)
@@ -83,10 +83,11 @@ function RouteComponent() {
 	const handleEditSave = () => {
 		if (!editingCategory) return;
 
-		notice_types.update(editingCategory.id, (draft) => {
+		const tx = noticeTypes.update(editingCategory.id, (draft) => {
 			draft.name = editForm.name;
 			draft.description = editForm.description || null;
 		});
+		toastOnError(tx, "Failed to update category.");
 
 		setEditingCategory(null);
 	};
@@ -98,7 +99,7 @@ function RouteComponent() {
 
 	const handleCreateSave = () => {
 		console.log("Creating category:", createForm);
-		notice_types.insert({
+		const tx = noticeTypes.insert({
 			created_at: new Date(),
 			created_by: null,
 			description: createForm.description || null,
@@ -107,13 +108,15 @@ function RouteComponent() {
 			updated_at: new Date(),
 			updated_by: null,
 		});
+		toastOnError(tx, "Failed to create category.");
 		setIsCreating(false);
 	};
 
 	const handleDelete = (categoryId: string) => {
 		setIsDeleting(true);
 		try {
-			notice_types.delete(categoryId);
+			const tx = noticeTypes.delete(categoryId);
+			toastOnError(tx, "Failed to delete category.");
 		} finally {
 			setIsDeleting(false);
 		}
