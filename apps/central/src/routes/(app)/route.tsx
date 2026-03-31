@@ -4,6 +4,7 @@ import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
 import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
 import { Layout } from "@mcmec/ui/mcmec-layout";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
 	createFileRoute,
 	Outlet,
@@ -58,8 +59,8 @@ export const Route = createFileRoute("/(app)")({
 });
 
 function LayoutComponent() {
-	const { supabase, claims } = Route.useRouteContext();
-	const { permissions } = claims as Claims;
+	const { supabase, claims, db } = Route.useRouteContext();
+	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 
 	const navigate = useNavigate();
@@ -67,6 +68,13 @@ function LayoutComponent() {
 		await signOut({ client: supabase });
 		navigate({ to: "/login" });
 	};
+
+	const { data: employee } = useLiveQuery((q) =>
+		q
+			.from({ employee: db.employees })
+			.where(({ employee }) => eq(employee.user_id, userId))
+			.findOne(),
+	);
 
 	return (
 		<Layout
@@ -76,8 +84,8 @@ function LayoutComponent() {
 				onLogout: handleLogout,
 				user: {
 					avatar: undefined,
-					name: "User Name",
-					title: "Job Title",
+					name: employee?.display_name ?? "[missing name]",
+					title: employee?.display_title ?? "[missing title]",
 				},
 			}}
 		>

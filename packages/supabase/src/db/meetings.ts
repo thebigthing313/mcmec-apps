@@ -2,18 +2,18 @@ import z from "zod";
 
 export const MeetingsRowSchema = z.object({
 	agenda_url: z.url().nullable(),
-	created_at: z.coerce.date(),
+	created_at: z.coerce.date<Date>(),
 	created_by: z.string().nullable(),
 	id: z.uuid(),
 	is_cancelled: z.boolean(),
 	location: z.string(),
-	meeting_at: z.coerce.date(),
+	meeting_at: z.coerce.date<Date>(),
 	minutes_url: z.url().nullable(),
 	name: z.string(),
 	notes: z.string().nullable(),
 	notice_url: z.url().nullable(),
 	report_url: z.url().nullable(),
-	updated_at: z.coerce.date(),
+	updated_at: z.coerce.date<Date>(),
 	updated_by: z.string().nullable(),
 });
 
@@ -22,7 +22,7 @@ export const MeetingsInsertSchema = z.object({
 	id: z.uuid(),
 	is_cancelled: z.boolean(),
 	location: z.string(),
-	meeting_at: z.coerce.date().transform((date) => date.toISOString()),
+	meeting_at: z.coerce.date<Date>().transform((date) => date.toISOString()),
 	minutes_url: z.url().nullable().optional(),
 	name: z.string(),
 	notes: z.string().nullable().optional(),
