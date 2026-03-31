@@ -1,3 +1,4 @@
+import { hero, heroMobile } from "@mcmec/lib/constants/assets";
 import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
 import { cn } from "@mcmec/ui/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
@@ -19,7 +20,7 @@ function RouteComponent() {
 					alt="Woodbridge River cleanup project"
 					className="absolute inset-0 h-full w-full object-cover"
 					fetchPriority="high"
-					src={isMobile ? "hero-mobile.avif" : "hero.avif"}
+					src={isMobile ? heroMobile : hero}
 				/>
 
 				{/* Dark gradient overlay */}
