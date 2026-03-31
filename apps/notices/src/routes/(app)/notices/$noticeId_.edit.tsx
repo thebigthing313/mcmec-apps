@@ -15,13 +15,12 @@ import { Button } from "@mcmec/ui/components/button";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { NoticeForm } from "@/src/components/notice-form";
-import { notice_types } from "@/src/lib/collections/notice_types";
-import { notices } from "@/src/lib/collections/notices";
+import { notices, noticeTypes } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
-		await Promise.all([notices.preload(), notice_types.preload()]);
+		await Promise.all([notices.preload(), noticeTypes.preload()]);
 		const notice = notices.get(params.noticeId);
 		if (!notice) {
 			throw new Error(ErrorMessages.DATABASE.RECORD_NOT_AVAILABLE);
@@ -37,7 +36,7 @@ function RouteComponent() {
 
 	const { data: categories } = useLiveQuery((q) =>
 		q
-			.from({ notice_type: notice_types })
+			.from({ notice_type: noticeTypes })
 			.orderBy(({ notice_type }) => notice_type.name),
 	);
 

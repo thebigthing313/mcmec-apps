@@ -4,7 +4,7 @@ import {
 } from "@mcmec/supabase/db/insecticides";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
-import { insecticides } from "@/src/lib/collections/insecticides";
+import { insecticides } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/insecticides/create")({
 	component: RouteComponent,

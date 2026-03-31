@@ -8,7 +8,7 @@ import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { meetings } from "@/src/lib/collections/meetings";
+import { meetings } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/meetings/")({
 	component: RouteComponent,

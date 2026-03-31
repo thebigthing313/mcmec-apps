@@ -27,11 +27,13 @@ jobs:
       - name: Lint (Biome)
         run: pnpm biome lint
 
-      - name: Build all apps
-        run: pnpm turbo run build
-
       - name: Type check
         run: pnpm turbo run check-types
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
+
+      - name: Build all apps
+        run: pnpm turbo run build
         env:
           VITE_SUPABASE_URL: http://localhost:54321
           VITE_SUPABASE_PUBLISHABLE_KEY: placeholder

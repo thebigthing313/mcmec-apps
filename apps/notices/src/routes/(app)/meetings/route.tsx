@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { meetings } from "@/src/lib/collections/meetings";
+import { meetings } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/meetings")({
 	component: RouteComponent,

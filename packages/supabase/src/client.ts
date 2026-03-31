@@ -29,11 +29,17 @@ const cookieStorage = {
 	},
 };
 
-export function createClient(
+/**
+ * Creates a Supabase browser client.
+ *
+ * Generic so the returned client is directly assignable to SupabaseClient<any>
+ * without casting (avoids TypeScript class invariance issues with protected members).
+ */
+export function createClient<TDatabase = Database>(
 	supabaseUrl: string,
 	supabaseKey: string,
-): SupabaseClient {
-	return createSupabaseClient<Database>(supabaseUrl, supabaseKey, {
+) {
+	return createSupabaseClient<TDatabase>(supabaseUrl, supabaseKey, {
 		auth: isProduction
 			? {
 					flowType: "pkce",

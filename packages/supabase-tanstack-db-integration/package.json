@@ -19,6 +19,6 @@
 		"@tanstack/db": "^0.5.33",
 		"@tanstack/query-core": "^5.90.20",
 		"@tanstack/query-db-collection": "^1.0.30",
-		"zod": "^4.3.6"
+		"zod": "^4.3.5"
 	}
 }
