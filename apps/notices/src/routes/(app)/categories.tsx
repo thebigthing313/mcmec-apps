@@ -28,6 +28,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { notices, noticeTypes } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/categories")({
 	component: RouteComponent,
@@ -82,10 +83,11 @@ function RouteComponent() {
 	const handleEditSave = () => {
 		if (!editingCategory) return;
 
-		noticeTypes.update(editingCategory.id, (draft) => {
+		const tx = noticeTypes.update(editingCategory.id, (draft) => {
 			draft.name = editForm.name;
 			draft.description = editForm.description || null;
 		});
+		toastOnError(tx, "Failed to update category.");
 
 		setEditingCategory(null);
 	};
@@ -97,7 +99,7 @@ function RouteComponent() {
 
 	const handleCreateSave = () => {
 		console.log("Creating category:", createForm);
-		noticeTypes.insert({
+		const tx = noticeTypes.insert({
 			created_at: new Date(),
 			created_by: null,
 			description: createForm.description || null,
@@ -106,13 +108,15 @@ function RouteComponent() {
 			updated_at: new Date(),
 			updated_by: null,
 		});
+		toastOnError(tx, "Failed to create category.");
 		setIsCreating(false);
 	};
 
 	const handleDelete = (categoryId: string) => {
 		setIsDeleting(true);
 		try {
-			noticeTypes.delete(categoryId);
+			const tx = noticeTypes.delete(categoryId);
+			toastOnError(tx, "Failed to delete category.");
 		} finally {
 			setIsDeleting(false);
 		}

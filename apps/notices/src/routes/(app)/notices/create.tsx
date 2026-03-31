@@ -3,6 +3,7 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { NoticeForm } from "@/src/components/notice-form";
 import { notices, noticeTypes } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/notices/create")({
 	component: RouteComponent,
@@ -26,7 +27,8 @@ function RouteComponent() {
 	}));
 
 	const handleSubmit = async (value: NoticesRowType) => {
-		notices.insert(value);
+		const tx = notices.insert(value);
+		toastOnError(tx, "Failed to create notice.");
 		navigate({ to: "/notices" });
 	};
 

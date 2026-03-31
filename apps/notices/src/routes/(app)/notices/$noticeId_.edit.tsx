@@ -16,6 +16,7 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { NoticeForm } from "@/src/components/notice-form";
 import { notices, noticeTypes } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 	component: RouteComponent,
@@ -46,14 +47,16 @@ function RouteComponent() {
 	}));
 
 	const handleSubmit = async (value: NoticesRowType) => {
-		notices.update(noticeId, (draft) => {
+		const tx = notices.update(noticeId, (draft) => {
 			Object.assign(draft, value);
 		});
+		toastOnError(tx, "Failed to update notice.");
 		navigate({ to: "/notices" });
 	};
 
 	const handleDelete = async () => {
-		notices.delete(noticeId);
+		const tx = notices.delete(noticeId);
+		toastOnError(tx, "Failed to delete notice.");
 		navigate({ to: "/notices" });
 	};
 

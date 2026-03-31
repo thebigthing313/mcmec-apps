@@ -274,6 +274,16 @@ export function createOnDemandCollection<
 					};
 				};
 
+				const hasOpts =
+					filters.length > 0 ||
+					sorts.length > 0 ||
+					limit !== undefined ||
+					offset !== undefined;
+
+				if (!hasOpts) {
+					return [table];
+				}
+
 				return [
 					table,
 					{

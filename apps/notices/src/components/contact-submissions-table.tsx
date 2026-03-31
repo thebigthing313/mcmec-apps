@@ -1,8 +1,4 @@
-import {
-	formatDateShort,
-	getTodayUTC,
-	isOnOrBeforeDay,
-} from "@mcmec/lib/functions/date-fns";
+import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -33,58 +29,32 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 
-type Notice = {
+export type ContactSubmission = {
 	id: string;
-	title: string;
-	noticeTypeId: string;
-	noticeType: string;
-	noticeDate: Date;
-	creator: string | null | undefined;
-	isPublished: boolean;
-	isArchived: boolean;
+	name: string;
+	email: string;
+	subject: string;
+	createdAt: Date;
+	isClosed: boolean;
 };
 
-interface NoticesTableProps {
-	data: Notice[];
+interface ContactSubmissionsTableProps {
+	data: ContactSubmission[];
 }
 
-function getPublicationStatus(
-	isPublished: boolean,
-	isArchived: boolean,
-	noticeDate: Date,
-): { label: string; variant: "default" | "secondary" | "outline" } {
-	if (!isPublished) {
-		return { label: "Draft", variant: "outline" };
-	}
-
-	const today = getTodayUTC();
-
-	if (isOnOrBeforeDay(noticeDate, today)) {
-		if (isArchived) {
-			return { label: "Archived", variant: "secondary" };
-		} else {
-			return { label: "Published", variant: "default" };
-		}
-	}
-
-	return { label: "Pending", variant: "secondary" };
-}
-
-export function NoticesTable({ data }: NoticesTableProps) {
+export function ContactSubmissionsTable({
+	data,
+}: ContactSubmissionsTableProps) {
 	const navigate = useNavigate();
 	const [sorting, setSorting] = useState<SortingState>([
-		{
-			desc: true,
-			id: "noticeDate",
-		},
-		{ desc: false, id: "title" },
+		{ desc: true, id: "createdAt" },
 	]);
 
-	const columns: ColumnDef<Notice>[] = [
+	const columns: ColumnDef<ContactSubmission>[] = [
 		{
-			accessorKey: "title",
+			accessorKey: "name",
 			cell: ({ row }) => {
-				return <span className="font-medium">{row.getValue("title")}</span>;
+				return <span className="font-medium">{row.getValue("name")}</span>;
 			},
 			header: ({ column }) => {
 				const sortState = column.getIsSorted();
@@ -94,7 +64,7 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						variant="ghost"
 					>
-						Title
+						Name
 						{sortState === "asc" ? (
 							<ArrowUp className="ml-2 h-4 w-4" />
 						) : sortState === "desc" ? (
@@ -107,7 +77,11 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			},
 		},
 		{
-			accessorKey: "noticeType",
+			accessorKey: "email",
+			header: "Email",
+		},
+		{
+			accessorKey: "subject",
 			header: ({ column }) => {
 				const sortState = column.getIsSorted();
 				return (
@@ -116,7 +90,7 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						variant="ghost"
 					>
-						Notice Type
+						Subject
 						{sortState === "asc" ? (
 							<ArrowUp className="ml-2 h-4 w-4" />
 						) : sortState === "desc" ? (
@@ -129,9 +103,9 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			},
 		},
 		{
-			accessorKey: "noticeDate",
+			accessorKey: "createdAt",
 			cell: ({ row }) => {
-				const date = row.getValue("noticeDate") as Date;
+				const date = row.getValue("createdAt") as Date;
 				return formatDateShort(date);
 			},
 			header: ({ column }) => {
@@ -142,7 +116,7 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						variant="ghost"
 					>
-						Notice Date
+						Submitted
 						{sortState === "asc" ? (
 							<ArrowUp className="ml-2 h-4 w-4" />
 						) : sortState === "desc" ? (
@@ -155,43 +129,14 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			},
 		},
 		{
-			accessorKey: "creator",
+			accessorKey: "isClosed",
 			cell: ({ row }) => {
-				return row.getValue("creator") || "—";
-			},
-			header: ({ column }) => {
-				const sortState = column.getIsSorted();
+				const isClosed = row.getValue("isClosed") as boolean;
 				return (
-					<Button
-						className="-ml-4"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						variant="ghost"
-					>
-						Creator
-						{sortState === "asc" ? (
-							<ArrowUp className="ml-2 h-4 w-4" />
-						) : sortState === "desc" ? (
-							<ArrowDown className="ml-2 h-4 w-4" />
-						) : (
-							<ArrowUpDown className="ml-2 h-4 w-4" />
-						)}
-					</Button>
+					<Badge variant={isClosed ? "secondary" : "default"}>
+						{isClosed ? "Closed" : "Open"}
+					</Badge>
 				);
-			},
-		},
-		{
-			accessorKey: "isPublished",
-			cell: ({ row }) => {
-				const isPublished = row.getValue("isPublished") as boolean;
-				const isArchived = row.original.isArchived;
-				const noticeDate = row.original.noticeDate;
-				const status = getPublicationStatus(
-					isPublished,
-					isArchived,
-					noticeDate,
-				);
-
-				return <Badge variant={status.variant}>{status.label}</Badge>;
 			},
 			header: ({ column }) => {
 				const sortState = column.getIsSorted();
@@ -211,19 +156,6 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						)}
 					</Button>
 				);
-			},
-			sortingFn: (rowA, rowB) => {
-				const statusA = getPublicationStatus(
-					rowA.original.isPublished,
-					rowA.original.isArchived,
-					rowA.original.noticeDate,
-				);
-				const statusB = getPublicationStatus(
-					rowB.original.isPublished,
-					rowB.original.isArchived,
-					rowB.original.noticeDate,
-				);
-				return statusA.label.localeCompare(statusB.label);
 			},
 		},
 	];
@@ -276,8 +208,8 @@ export function NoticesTable({ data }: NoticesTableProps) {
 									key={row.id}
 									onClick={() =>
 										navigate({
-											params: { noticeId: row.original.id },
-											to: "/notices/$noticeId",
+											params: { submissionId: row.original.id },
+											to: "/contact-submissions/$submissionId",
 										})
 									}
 								>

@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { ArchiveX, ArrowLeft, Edit, Upload } from "lucide-react";
 import { notices, noticeTypes } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/notices/$noticeId")({
 	component: RouteComponent,
@@ -42,6 +43,7 @@ function RouteComponent() {
 		const tx = notices.update(id, (draft) => {
 			draft.is_published = true;
 		});
+		toastOnError(tx, "Failed to publish notice.");
 		await tx.isPersisted.promise;
 		navigate({ to: "/notices" });
 	};
@@ -50,6 +52,7 @@ function RouteComponent() {
 		const tx = notices.update(id, (draft) => {
 			draft.is_published = false;
 		});
+		toastOnError(tx, "Failed to unpublish notice.");
 		await tx.isPersisted.promise;
 		navigate({ to: "/notices" });
 	};

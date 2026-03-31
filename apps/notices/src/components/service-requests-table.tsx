@@ -1,8 +1,4 @@
-import {
-	formatDateShort,
-	getTodayUTC,
-	isOnOrBeforeDay,
-} from "@mcmec/lib/functions/date-fns";
+import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -33,58 +29,63 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 
-type Notice = {
+export type ServiceRequestType =
+	| "adult-mosquito"
+	| "mosquitofish"
+	| "water-management";
+
+export type ServiceRequest = {
 	id: string;
-	title: string;
-	noticeTypeId: string;
-	noticeType: string;
-	noticeDate: Date;
-	creator: string | null | undefined;
-	isPublished: boolean;
-	isArchived: boolean;
+	fullName: string;
+	email: string | null;
+	phone: string;
+	createdAt: Date;
+	isProcessed: boolean;
+	type: ServiceRequestType;
 };
 
-interface NoticesTableProps {
-	data: Notice[];
+interface ServiceRequestsTableProps {
+	data: ServiceRequest[];
 }
 
-function getPublicationStatus(
-	isPublished: boolean,
-	isArchived: boolean,
-	noticeDate: Date,
-): { label: string; variant: "default" | "secondary" | "outline" } {
-	if (!isPublished) {
-		return { label: "Draft", variant: "outline" };
+function getRequestTypeLabel(type: ServiceRequestType): string {
+	switch (type) {
+		case "adult-mosquito":
+			return "Adult Mosquito";
+		case "mosquitofish":
+			return "Mosquitofish";
+		case "water-management":
+			return "Water Management";
 	}
-
-	const today = getTodayUTC();
-
-	if (isOnOrBeforeDay(noticeDate, today)) {
-		if (isArchived) {
-			return { label: "Archived", variant: "secondary" };
-		} else {
-			return { label: "Published", variant: "default" };
-		}
-	}
-
-	return { label: "Pending", variant: "secondary" };
 }
 
-export function NoticesTable({ data }: NoticesTableProps) {
+function getDetailRoute(
+	type: ServiceRequestType,
+):
+	| "/service-requests/adult-mosquito/$requestId"
+	| "/service-requests/mosquitofish/$requestId"
+	| "/service-requests/water-management/$requestId" {
+	switch (type) {
+		case "adult-mosquito":
+			return "/service-requests/adult-mosquito/$requestId";
+		case "mosquitofish":
+			return "/service-requests/mosquitofish/$requestId";
+		case "water-management":
+			return "/service-requests/water-management/$requestId";
+	}
+}
+
+export function ServiceRequestsTable({ data }: ServiceRequestsTableProps) {
 	const navigate = useNavigate();
 	const [sorting, setSorting] = useState<SortingState>([
-		{
-			desc: true,
-			id: "noticeDate",
-		},
-		{ desc: false, id: "title" },
+		{ desc: true, id: "createdAt" },
 	]);
 
-	const columns: ColumnDef<Notice>[] = [
+	const columns: ColumnDef<ServiceRequest>[] = [
 		{
-			accessorKey: "title",
+			accessorKey: "fullName",
 			cell: ({ row }) => {
-				return <span className="font-medium">{row.getValue("title")}</span>;
+				return <span className="font-medium">{row.getValue("fullName")}</span>;
 			},
 			header: ({ column }) => {
 				const sortState = column.getIsSorted();
@@ -94,7 +95,7 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						variant="ghost"
 					>
-						Title
+						Name
 						{sortState === "asc" ? (
 							<ArrowUp className="ml-2 h-4 w-4" />
 						) : sortState === "desc" ? (
@@ -107,7 +108,10 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			},
 		},
 		{
-			accessorKey: "noticeType",
+			accessorKey: "type",
+			cell: ({ row }) => {
+				return getRequestTypeLabel(row.getValue("type"));
+			},
 			header: ({ column }) => {
 				const sortState = column.getIsSorted();
 				return (
@@ -116,7 +120,7 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						variant="ghost"
 					>
-						Notice Type
+						Type
 						{sortState === "asc" ? (
 							<ArrowUp className="ml-2 h-4 w-4" />
 						) : sortState === "desc" ? (
@@ -129,9 +133,18 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			},
 		},
 		{
-			accessorKey: "noticeDate",
+			accessorKey: "email",
+			cell: ({ row }) => row.getValue("email") || "—",
+			header: "Email",
+		},
+		{
+			accessorKey: "phone",
+			header: "Phone",
+		},
+		{
+			accessorKey: "createdAt",
 			cell: ({ row }) => {
-				const date = row.getValue("noticeDate") as Date;
+				const date = row.getValue("createdAt") as Date;
 				return formatDateShort(date);
 			},
 			header: ({ column }) => {
@@ -142,7 +155,7 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 						variant="ghost"
 					>
-						Notice Date
+						Submitted
 						{sortState === "asc" ? (
 							<ArrowUp className="ml-2 h-4 w-4" />
 						) : sortState === "desc" ? (
@@ -155,43 +168,14 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			},
 		},
 		{
-			accessorKey: "creator",
+			accessorKey: "isProcessed",
 			cell: ({ row }) => {
-				return row.getValue("creator") || "—";
-			},
-			header: ({ column }) => {
-				const sortState = column.getIsSorted();
+				const isProcessed = row.getValue("isProcessed") as boolean;
 				return (
-					<Button
-						className="-ml-4"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						variant="ghost"
-					>
-						Creator
-						{sortState === "asc" ? (
-							<ArrowUp className="ml-2 h-4 w-4" />
-						) : sortState === "desc" ? (
-							<ArrowDown className="ml-2 h-4 w-4" />
-						) : (
-							<ArrowUpDown className="ml-2 h-4 w-4" />
-						)}
-					</Button>
+					<Badge variant={isProcessed ? "default" : "secondary"}>
+						{isProcessed ? "Processed" : "Pending"}
+					</Badge>
 				);
-			},
-		},
-		{
-			accessorKey: "isPublished",
-			cell: ({ row }) => {
-				const isPublished = row.getValue("isPublished") as boolean;
-				const isArchived = row.original.isArchived;
-				const noticeDate = row.original.noticeDate;
-				const status = getPublicationStatus(
-					isPublished,
-					isArchived,
-					noticeDate,
-				);
-
-				return <Badge variant={status.variant}>{status.label}</Badge>;
 			},
 			header: ({ column }) => {
 				const sortState = column.getIsSorted();
@@ -211,19 +195,6 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						)}
 					</Button>
 				);
-			},
-			sortingFn: (rowA, rowB) => {
-				const statusA = getPublicationStatus(
-					rowA.original.isPublished,
-					rowA.original.isArchived,
-					rowA.original.noticeDate,
-				);
-				const statusB = getPublicationStatus(
-					rowB.original.isPublished,
-					rowB.original.isArchived,
-					rowB.original.noticeDate,
-				);
-				return statusA.label.localeCompare(statusB.label);
 			},
 		},
 	];
@@ -276,8 +247,8 @@ export function NoticesTable({ data }: NoticesTableProps) {
 									key={row.id}
 									onClick={() =>
 										navigate({
-											params: { noticeId: row.original.id },
-											to: "/notices/$noticeId",
+											params: { requestId: row.original.id },
+											to: getDetailRoute(row.original.type),
 										})
 									}
 								>
