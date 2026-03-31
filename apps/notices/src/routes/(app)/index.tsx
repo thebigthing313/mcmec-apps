@@ -12,7 +12,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@mcmec/ui/components/card";
-import { eq, lte, useLiveQuery } from "@tanstack/react-db";
+import { eq, gt, lte, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
 	BookOpen,
@@ -44,6 +44,15 @@ function RouteComponent() {
 			.where(({ n }) => lte(n.notice_date, now))
 			.orderBy(({ n }) => n.notice_date, "desc")
 			.limit(5),
+	);
+
+	const { data: pendingNotices } = useLiveQuery((q) =>
+		q
+			.from({ n: db.notices })
+			.where(({ n }) => eq(n.is_published, true))
+			.where(({ n }) => eq(n.is_archived, false))
+			.where(({ n }) => gt(n.notice_date, now))
+			.orderBy(({ n }) => n.notice_date, "asc"),
 	);
 
 	const { data: draftNotices } = useLiveQuery((q) =>
@@ -126,7 +135,8 @@ function RouteComponent() {
 					<CardContent>
 						<div className="font-bold text-2xl">{publishedNotices.length}</div>
 						<p className="text-muted-foreground text-xs">
-							{draftNotices.length} draft{draftNotices.length !== 1 && "s"}
+							{pendingNotices.length} pending, {draftNotices.length} draft
+							{draftNotices.length !== 1 && "s"}
 						</p>
 					</CardContent>
 				</Card>
@@ -361,6 +371,33 @@ function RouteComponent() {
 								<p className="text-muted-foreground text-sm">
 									No published notices
 								</p>
+							</div>
+						)}
+
+						{pendingNotices.length > 0 && (
+							<div className="mt-4 border-t pt-4">
+								<p className="mb-2 font-medium text-muted-foreground text-sm">
+									Pending (future date)
+								</p>
+								<ul className="space-y-2">
+									{pendingNotices.map((n) => (
+										<li key={n.id}>
+											<Link
+												className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+												params={{ noticeId: n.id }}
+												to="/notices/$noticeId"
+											>
+												<p className="font-medium text-sm">{n.title}</p>
+												<div className="flex items-center gap-2">
+													<Badge variant="secondary">Pending</Badge>
+													<span className="text-muted-foreground text-xs">
+														{formatDateShort(n.notice_date)}
+													</span>
+												</div>
+											</Link>
+										</li>
+									))}
+								</ul>
 							</div>
 						)}
 

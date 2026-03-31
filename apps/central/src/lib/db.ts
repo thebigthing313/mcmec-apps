@@ -1,27 +1,27 @@
 import {
-	createHrCollections,
-	type HrCollections,
-} from "@mcmec/supabase/collections/hr";
+	type CentralCollections,
+	createCentralCollections,
+} from "@mcmec/supabase/collections/central";
 import { queryClient, supabase } from "./queryClient";
 
 // ---------------------------------------------------------------------------
 // Db singleton
 // ---------------------------------------------------------------------------
 
-let instance: HrCollections | null = null;
+let instance: CentralCollections | null = null;
 
-export function getDb(): HrCollections {
+export function getDb(): CentralCollections {
 	if (!instance) {
-		instance = createHrCollections({ supabase, queryClient });
+		instance = createCentralCollections({ supabase, queryClient });
 	}
 	return instance;
 }
 
-export function useDb(): HrCollections {
+export function useDb(): CentralCollections {
 	return getDb();
 }
 
-export type Db = HrCollections;
+export type Db = CentralCollections;
 
 // Re-export individual collections for direct import
 const db = getDb();

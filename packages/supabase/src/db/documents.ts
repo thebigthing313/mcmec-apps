@@ -1,13 +1,13 @@
 import z from "zod";
 
 export const DocumentsRowSchema = z.object({
-	created_at: z.coerce.date(),
+	created_at: z.coerce.date<Date>(),
 	created_by: z.string().nullable(),
 	document_type_id: z.uuid(),
 	fiscal_year: z.number().int(),
 	id: z.uuid(),
 	is_published: z.boolean(),
-	updated_at: z.coerce.date(),
+	updated_at: z.coerce.date<Date>(),
 	updated_by: z.string().nullable(),
 	url: z.url(),
 });
