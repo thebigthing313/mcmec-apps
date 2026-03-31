@@ -6,6 +6,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { MeetingsForm } from "@/src/components/meetings-form";
 import { meetings } from "@/src/lib/db";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/meetings/create")({
 	component: RouteComponent,
@@ -18,7 +19,8 @@ function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const handleSubmit = async (value: MeetingsRowType) => {
 		const parsedItems = MeetingsRowSchema.parse(value);
-		meetings.insert(parsedItems);
+		const tx = meetings.insert(parsedItems);
+		toastOnError(tx, "Failed to create meeting.");
 		navigate({ to: "/meetings" });
 	};
 
