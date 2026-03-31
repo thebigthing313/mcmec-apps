@@ -8,7 +8,6 @@ import {
 	type NoticesRowType,
 } from "@mcmec/supabase/db/notices";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
-import { useStore } from "@tanstack/react-form";
 
 interface NoticeFormProps {
 	defaultValues: {
@@ -106,7 +105,16 @@ export function NoticeForm({
 						/>
 					)}
 				</form.AppField>
-				<RetentionWarning form={form} />
+				<form.Subscribe
+					selector={(state) => ({
+						isArchived: state.values.is_archived,
+						noticeDate: state.values.notice_date,
+					})}
+				>
+					{({ isArchived, noticeDate }) => (
+						<RetentionWarning isArchived={isArchived} noticeDate={noticeDate} />
+					)}
+				</form.Subscribe>
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
 			</form.FormWrapper>
 		</form.AppForm>
@@ -114,13 +122,12 @@ export function NoticeForm({
 }
 
 function RetentionWarning({
-	form,
+	isArchived,
+	noticeDate,
 }: {
-	form: ReturnType<typeof useAppForm<NoticeFormProps["defaultValues"]>>;
+	isArchived: boolean;
+	noticeDate: Date;
 }) {
-	const isArchived = useStore(form.store, (state) => state.values.is_archived);
-	const noticeDate = useStore(form.store, (state) => state.values.notice_date);
-
 	if (!isArchived || !noticeDate) return null;
 
 	const daysSincePosted = Math.floor(
