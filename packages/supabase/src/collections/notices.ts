@@ -86,7 +86,7 @@ export function createNoticesCollections({
 		meetings,
 		noticeTypes,
 		notices,
-	} as const;
+	};
 }
 
 export type NoticesCollections = ReturnType<typeof createNoticesCollections>;

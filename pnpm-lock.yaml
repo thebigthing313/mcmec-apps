@@ -9,7 +9,6 @@ overrides:
   '@tanstack/db': ^0.5.33
   '@tanstack/query-db-collection': ^1.0.30
   '@tanstack/react-router': ^1.157.18
-  zod: 4.3.5
 
 importers:
 
@@ -115,7 +114,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -188,7 +187,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -285,7 +284,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -370,7 +369,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -473,7 +472,7 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -516,7 +515,7 @@ importers:
         specifier: ^2.100.1
         version: 2.100.1
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -541,7 +540,7 @@ importers:
         specifier: ^0.475.0
         version: 0.475.0(react@19.2.3)
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -562,9 +561,15 @@ importers:
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../lib
+      '@mcmec/supabase-tanstack-db-integration':
+        specifier: workspace:*
+        version: link:../supabase-tanstack-db-integration
       '@supabase/supabase-js':
         specifier: ^2.100.1
         version: 2.100.1
+      '@tanstack/query-core':
+        specifier: ^5.90.20
+        version: 5.95.2
       '@tanstack/query-db-collection':
         specifier: ^1.0.30
         version: 1.0.31(@tanstack/query-core@5.95.2)(typescript@5.9.3)
@@ -575,7 +580,7 @@ importers:
         specifier: ^5.90.16
         version: 5.90.16(react@19.2.3)
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -606,7 +611,7 @@ importers:
         specifier: ^1.0.30
         version: 1.0.31(@tanstack/query-core@5.95.2)(typescript@5.9.3)
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -783,7 +788,7 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       zod:
-        specifier: 4.3.5
+        specifier: ^4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -5713,6 +5718,9 @@ packages:
     resolution: {integrity: sha512-4LCcse/U2MHZ63HAJVE+v71o7yOdIe4cZ70Wpf8D/IyjDKYQLV5GD46B+hSTjJsvV5PztjvHoU580EftxjDZFQ==}
     engines: {node: '>=12.20'}
 
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
   zod@4.3.5:
     resolution: {integrity: sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g==}
 
@@ -7612,7 +7620,7 @@ snapshots:
       recast: 0.23.11
       source-map: 0.7.6
       tsx: 4.21.0
-      zod: 4.3.5
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -7625,7 +7633,7 @@ snapshots:
       recast: 0.23.11
       source-map: 0.7.6
       tsx: 4.21.0
-      zod: 4.3.5
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -7644,7 +7652,7 @@ snapshots:
       babel-dead-code-elimination: 1.0.11
       chokidar: 3.6.0
       unplugin: 2.3.11
-      zod: 4.3.5
+      zod: 3.25.76
     optionalDependencies:
       '@tanstack/react-router': 1.157.18(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       vite: 7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3)
@@ -7666,7 +7674,7 @@ snapshots:
       babel-dead-code-elimination: 1.0.11
       chokidar: 3.6.0
       unplugin: 2.3.11
-      zod: 4.3.5
+      zod: 3.25.76
     optionalDependencies:
       '@tanstack/react-router': 1.157.18(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       vite: 7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3)
@@ -7735,7 +7743,7 @@ snapshots:
       vite: 7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3)
       vitefu: 1.1.1(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       xmlbuilder2: 4.0.3
-      zod: 4.3.5
+      zod: 3.25.76
     transitivePeerDependencies:
       - '@rsbuild/core'
       - '@tanstack/react-router'
@@ -10623,5 +10631,7 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.2.2: {}
+
+  zod@3.25.76: {}
 
   zod@4.3.5: {}

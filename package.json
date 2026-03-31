@@ -39,8 +39,7 @@
 			"@supabase/supabase-js": "^2.100.1",
 			"@tanstack/db": "^0.5.33",
 			"@tanstack/query-db-collection": "^1.0.30",
-			"@tanstack/react-router": "^1.157.18",
-			"zod": "4.3.5"
+			"@tanstack/react-router": "^1.157.18"
 		}
 	},
 	"version": "0.1.0"
