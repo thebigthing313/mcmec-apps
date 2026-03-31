@@ -3,11 +3,11 @@ import z from "zod";
 export const ZipCodesRowSchema = z.object({
 	city: z.string(),
 	code: z.string(),
-	created_at: z.coerce.date(),
+	created_at: z.coerce.date<Date>(),
 	created_by: z.string().nullable(),
 	id: z.uuid(),
 	state: z.string(),
-	updated_at: z.coerce.date(),
+	updated_at: z.coerce.date<Date>(),
 	updated_by: z.string().nullable(),
 });
 

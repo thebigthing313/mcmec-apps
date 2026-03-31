@@ -105,20 +105,26 @@ export function TiptapEditor({
 			return;
 		}
 
+		// Auto-prefix https:// if no protocol is provided
+		const url =
+			linkUrl.startsWith("http://") || linkUrl.startsWith("https://")
+				? linkUrl
+				: `https://${linkUrl}`;
+
 		// If there's link text, insert it with the link
 		if (linkText?.trim()) {
 			editor
 				.chain()
 				.focus()
 				.insertContent({
-					marks: [{ attrs: { href: linkUrl }, type: "link" }],
+					marks: [{ attrs: { href: url }, type: "link" }],
 					text: linkText,
 					type: "text",
 				})
 				.run();
 		} else {
 			// If no text, just set link on current selection
-			editor.chain().focus().setLink({ href: linkUrl }).run();
+			editor.chain().focus().setLink({ href: url }).run();
 		}
 
 		setLinkDialogOpen(false);

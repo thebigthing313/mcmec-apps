@@ -2,15 +2,15 @@ import z from "zod";
 
 export const NoticesRowSchema = z.object({
 	content: z.any(),
-	created_at: z.coerce.date(),
+	created_at: z.coerce.date<Date>(),
 	created_by: z.string().nullable(),
 	id: z.uuid(),
 	is_archived: z.boolean(),
 	is_published: z.boolean(),
-	notice_date: z.coerce.date(),
+	notice_date: z.coerce.date<Date>(),
 	notice_type_id: z.uuid(),
 	title: z.string(),
-	updated_at: z.coerce.date(),
+	updated_at: z.coerce.date<Date>(),
 	updated_by: z.string().nullable(),
 });
 
@@ -19,7 +19,7 @@ export const NoticesInsertSchema = z.object({
 	id: z.uuid(),
 	is_archived: z.boolean(),
 	is_published: z.boolean(),
-	notice_date: z.coerce.date().transform((date) => date.toISOString()),
+	notice_date: z.coerce.date<Date>().transform((date) => date.toISOString()),
 	notice_type_id: z.uuid(),
 	title: z.string(),
 });

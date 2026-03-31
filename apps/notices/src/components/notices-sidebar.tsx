@@ -32,7 +32,11 @@ const items: SidebarItem[] = [
 		label: "Public Notices",
 		linkProps: { to: "/notices" },
 	},
-	{ icon: <Group />, label: "Categories", linkProps: { to: "/categories" } },
+	{
+		icon: <Group />,
+		label: "Notice Categories",
+		linkProps: { to: "/categories" },
+	},
 	{ icon: <Users />, label: "Meetings", linkProps: { to: "/meetings" } },
 	{
 		icon: <SprayCan />,

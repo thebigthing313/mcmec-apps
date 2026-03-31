@@ -9,6 +9,7 @@ import {
 } from "@mcmec/lib/constants/apps";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
 	createFileRoute,
 	Outlet,
@@ -16,7 +17,6 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { HrSidebar } from "@/src/components/hr-sidebar";
-import { employees } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)")({
 	beforeLoad: async ({ context }) => {
@@ -37,14 +37,14 @@ export const Route = createFileRoute("/(app)")({
 		}
 	},
 	component: LayoutComponent,
-	loader: () => {
-		employees.stateWhenReady();
+	loader: ({ context }) => {
+		context.db.employees.stateWhenReady();
 	},
 });
 
 function LayoutComponent() {
-	const { supabase, claims } = Route.useRouteContext();
-	const { permissions } = claims as Claims;
+	const { supabase, claims, db } = Route.useRouteContext();
+	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 
 	const navigate = useNavigate();
@@ -52,6 +52,13 @@ function LayoutComponent() {
 		await signOut({ client: supabase });
 		navigate({ to: "/login" });
 	};
+
+	const { data: employee } = useLiveQuery((q) =>
+		q
+			.from({ employee: db.employees })
+			.where(({ employee }) => eq(employee.user_id, userId))
+			.findOne(),
+	);
 
 	return (
 		<TooltipProvider>
@@ -62,8 +69,8 @@ function LayoutComponent() {
 					onLogout: handleLogout,
 					user: {
 						avatar: undefined,
-						name: "User Name",
-						title: "Job Title",
+						name: employee?.display_name ?? "[missing name]",
+						title: employee?.display_title ?? "[missing title]",
 					},
 				}}
 			>

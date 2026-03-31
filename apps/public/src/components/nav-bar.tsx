@@ -6,14 +6,10 @@ import {
 	CollapsibleTrigger,
 } from "@mcmec/ui/components/collapsible";
 import {
-	NavigationMenu,
-	NavigationMenuContent,
-	NavigationMenuItem,
-	NavigationMenuLink,
-	NavigationMenuList,
-	NavigationMenuTrigger,
-	navigationMenuTriggerStyle,
-} from "@mcmec/ui/components/navigation-menu";
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@mcmec/ui/components/popover";
 import { Separator } from "@mcmec/ui/components/separator";
 import {
 	Sheet,
@@ -99,12 +95,14 @@ const menuItems: MenuItem[] = [
 				linkProps: { to: "/notices/archive" },
 				title: "Archived Notices",
 			},
+			{
+				description:
+					"Budgets, financial reports, audits, and consultant disclosures.",
+				linkProps: { to: "/notices/transparency" },
+				title: "Transparency",
+			},
 		],
 		title: "Public Notices",
-	},
-	{
-		linkProps: { to: "/transparency" },
-		title: "Transparency",
 	},
 ];
 
@@ -117,6 +115,9 @@ export function Navbar() {
 	}
 }
 
+const navLinkClass =
+	"inline-flex h-12 items-center justify-center rounded-md px-4 py-2 text-2xl text-primary-foreground font-bold uppercase tracking-wider hover:bg-accent/40 focus:bg-accent/40 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px]";
+
 function WebNavBar() {
 	return (
 		<div className="sticky top-0 z-50 flex h-30 flex-row items-center justify-start bg-primary py-2 drop-shadow-accent drop-shadow-xl">
@@ -126,51 +127,58 @@ function WebNavBar() {
 				</Link>
 			</div>
 
-			<div className="ml-8 flex flex-1 flex-row items-center justify-start gap-4">
-				<NavigationMenu>
-					<NavigationMenuList>
-						{menuItems.map((item) =>
-							item.subItems ? (
-								<NavigationMenuItem key={item.title}>
-									<NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-									<NavigationMenuContent>
-										<ul className="grid w-100 gap-2">
-											{item.subItems.map((subItem) => (
-												<li key={subItem.title}>
-													<NavigationMenuLink asChild>
-														<Link to={subItem.linkProps.to}>
-															<div className="font-semibold text-xl">
-																{subItem.title}
-															</div>
-															{subItem.description && (
-																<div className="text-muted-foreground">
-																	{subItem.description}
-																</div>
-															)}
-														</Link>
-													</NavigationMenuLink>
-												</li>
-											))}
-										</ul>
-									</NavigationMenuContent>
-								</NavigationMenuItem>
-							) : (
-								<NavigationMenuItem key={item.title}>
-									<NavigationMenuLink
-										asChild
-										className={navigationMenuTriggerStyle()}
-									>
-										<Link to={item.linkProps?.to}>
-											<span>{item.title}</span>
-										</Link>
-									</NavigationMenuLink>
-								</NavigationMenuItem>
-							),
-						)}
-					</NavigationMenuList>
-				</NavigationMenu>
-			</div>
+			<nav className="ml-8 flex flex-1 flex-row items-center justify-start gap-1">
+				{menuItems.map((item) =>
+					item.subItems ? (
+						<NavPopover item={item} key={item.title} />
+					) : (
+						<Link
+							className={navLinkClass}
+							key={item.title}
+							to={item.linkProps?.to}
+						>
+							{item.title}
+						</Link>
+					),
+				)}
+			</nav>
 		</div>
+	);
+}
+
+function NavPopover({ item }: { item: MenuItem }) {
+	const [open, setOpen] = useState(false);
+
+	return (
+		<Popover onOpenChange={setOpen} open={open}>
+			<PopoverTrigger className={navLinkClass}>
+				{item.title}
+				<ChevronDown
+					aria-hidden="true"
+					className={`ml-1 size-4 transition duration-200 ${open ? "rotate-180" : ""}`}
+				/>
+			</PopoverTrigger>
+			<PopoverContent align="start" className="w-100" sideOffset={8}>
+				<ul className="grid gap-2">
+					{item.subItems?.map((subItem) => (
+						<li key={subItem.title}>
+							<Link
+								className="flex flex-col gap-1 rounded-sm p-2 transition-all hover:bg-accent"
+								onClick={() => setOpen(false)}
+								to={subItem.linkProps.to}
+							>
+								<div className="font-semibold text-xl">{subItem.title}</div>
+								{subItem.description && (
+									<div className="text-muted-foreground">
+										{subItem.description}
+									</div>
+								)}
+							</Link>
+						</li>
+					))}
+				</ul>
+			</PopoverContent>
+		</Popover>
 	);
 }
 

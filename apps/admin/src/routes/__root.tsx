@@ -2,10 +2,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import type { Db } from "@/src/lib/db";
 
 export interface MyRouterContext {
-	supabase: SupabaseClient;
+	db: Db;
 	queryClient: QueryClient;
+	supabase: SupabaseClient;
 }
 
 const RootLayout = () => (

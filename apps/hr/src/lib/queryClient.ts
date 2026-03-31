@@ -1,5 +1,5 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@mcmec/supabase/client";
 import { QueryClient } from "@tanstack/react-query";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;

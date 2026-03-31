@@ -6,7 +6,7 @@ import {
 	documentTypesQueryOptions,
 } from "../../lib/queries";
 
-export const Route = createFileRoute("/transparency/")({
+export const Route = createFileRoute("/notices/transparency")({
 	component: RouteComponent,
 	loader: async ({ context }) => {
 		await Promise.all([
