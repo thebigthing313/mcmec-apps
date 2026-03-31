@@ -20,7 +20,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@mcmec/ui/components/table";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import {
 	type ColumnDef,
 	flexRender,
@@ -71,6 +71,7 @@ function getPublicationStatus(
 }
 
 export function NoticesTable({ data }: NoticesTableProps) {
+	const navigate = useNavigate();
 	const [sorting, setSorting] = useState<SortingState>([
 		{
 			desc: true,
@@ -83,15 +84,7 @@ export function NoticesTable({ data }: NoticesTableProps) {
 		{
 			accessorKey: "title",
 			cell: ({ row }) => {
-				return (
-					<Link
-						className="font-medium text-primary hover:underline"
-						params={{ noticeId: row.original.id }}
-						to="/notices/$noticeId"
-					>
-						{row.getValue("title")}
-					</Link>
-				);
+				return <span className="font-medium">{row.getValue("title")}</span>;
 			},
 			header: ({ column }) => {
 				const sortState = column.getIsSorted();
@@ -278,8 +271,15 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow
+									className="cursor-pointer"
 									data-state={row.getIsSelected() && "selected"}
 									key={row.id}
+									onClick={() =>
+										navigate({
+											params: { noticeId: row.original.id },
+											to: "/notices/$noticeId",
+										})
+									}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id}>
