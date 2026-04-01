@@ -1,5 +1,12 @@
 # @mcmec/auth
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [b37462b]
+  - @mcmec/lib@0.8.0
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # public
 
+## 1.4.0
+
+### Minor Changes
+
+- b37462b: Add job postings feature with HR management CRUD and public careers pages
+
+### Patch Changes
+
+- Updated dependencies [b37462b]
+  - @mcmec/supabase@1.6.0
+  - @mcmec/lib@0.8.0
+  - @mcmec/ui@1.4.5
+
 ## 1.3.1
 
 ### Patch Changes
