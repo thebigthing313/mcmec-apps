@@ -2,6 +2,7 @@ import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { DocumentTypesRowSchema } from "@mcmec/supabase/db/document-types";
 import { DocumentsRowSchema } from "@mcmec/supabase/db/documents";
 import { InsecticidesRowSchema } from "@mcmec/supabase/db/insecticides";
+import { JobPostingsRowSchema } from "@mcmec/supabase/db/job-postings";
 import { MeetingsRowSchema } from "@mcmec/supabase/db/meetings";
 import { NoticeTypesRowSchema } from "@mcmec/supabase/db/notice-types";
 import { NoticesRowSchema } from "@mcmec/supabase/db/notices";
@@ -173,4 +174,27 @@ export const documentTypesQueryOptions = () =>
 		queryFn: () => getDocumentTypesServerFn(),
 		queryKey: ["document_types"],
 		staleTime: 1000 * 60 * 30, // 30 minutes
+	});
+
+const getJobPostingsServerFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const supabase = getSupabaseServerClient();
+		async function fetchJobPostings() {
+			const { data, error } = await supabase.from("job_postings").select("*");
+			if (error) {
+				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("job_postings"));
+			}
+			return data.map((posting) => {
+				return JobPostingsRowSchema.parse(posting);
+			});
+		}
+		return fetchJobPostings();
+	},
+);
+
+export const jobPostingsQueryOptions = () =>
+	queryOptions({
+		queryFn: () => getJobPostingsServerFn(),
+		queryKey: ["job_postings"],
+		staleTime: 1000 * 60 * 60, // 1 hour
 	});

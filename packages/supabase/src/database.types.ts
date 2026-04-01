@@ -302,6 +302,42 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			job_postings: {
+				Row: {
+					content: Json;
+					created_at: string;
+					created_by: string | null;
+					id: string;
+					is_closed: boolean;
+					published_at: string | null;
+					title: string;
+					updated_at: string;
+					updated_by: string | null;
+				};
+				Insert: {
+					content: Json;
+					created_at?: string;
+					created_by?: string | null;
+					id?: string;
+					is_closed?: boolean;
+					published_at?: string | null;
+					title: string;
+					updated_at?: string;
+					updated_by?: string | null;
+				};
+				Update: {
+					content?: Json;
+					created_at?: string;
+					created_by?: string | null;
+					id?: string;
+					is_closed?: boolean;
+					published_at?: string | null;
+					title?: string;
+					updated_at?: string;
+					updated_by?: string | null;
+				};
+				Relationships: [];
+			};
 			meetings: {
 				Row: {
 					agenda_url: string | null;

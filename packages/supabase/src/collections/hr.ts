@@ -7,6 +7,11 @@ import {
 	EmployeesRowSchema,
 	EmployeesUpdateSchema,
 } from "../db/employees";
+import {
+	JobPostingsInsertSchema,
+	JobPostingsRowSchema,
+	JobPostingsUpdateSchema,
+} from "../db/job-postings";
 
 export interface CreateHrCollectionsOptions {
 	supabase: SupabaseClient<Database>;
@@ -27,8 +32,19 @@ export function createHrCollections({
 		updateSchema: EmployeesUpdateSchema,
 	});
 
+	const jobPostings = createEagerCollection({
+		allowDelete: true,
+		insertSchema: JobPostingsInsertSchema,
+		queryClient,
+		schema: JobPostingsRowSchema,
+		supabase,
+		table: "job_postings",
+		updateSchema: JobPostingsUpdateSchema,
+	});
+
 	return {
 		employees,
+		jobPostings,
 	};
 }
 
