@@ -38,14 +38,22 @@ export default defineConfig({
 	],
 	webServer: [
 		{
+			command: "pnpm --filter central dev",
+			port: 3001,
+			reuseExistingServer: !process.env.CI,
+			timeout: 120000,
+		},
+		{
 			command: "pnpm --filter public dev",
 			port: 3000,
 			reuseExistingServer: !process.env.CI,
+			timeout: 120000,
 		},
 		{
 			command: "pnpm --filter hr dev",
 			port: 3003,
 			reuseExistingServer: !process.env.CI,
+			timeout: 120000,
 		},
 	],
 });
