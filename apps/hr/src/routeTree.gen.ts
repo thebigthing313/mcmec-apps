@@ -12,8 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
+import { Route as appJobPostingsIndexRouteImport } from './routes/(app)/job-postings/index'
 import { Route as appEmployeesIndexRouteImport } from './routes/(app)/employees/index'
+import { Route as appJobPostingsNewRouteImport } from './routes/(app)/job-postings/new'
+import { Route as appJobPostingsPostingIdRouteImport } from './routes/(app)/job-postings/$postingId'
 import { Route as appEmployeesEmployeeIdRouteImport } from './routes/(app)/employees/$employeeId'
+import { Route as appJobPostingsPostingIdEditRouteImport } from './routes/(app)/job-postings/$postingId_.edit'
 import { Route as appEmployeesEmployeeIdEditRouteImport } from './routes/(app)/employees/$employeeId_.edit'
 
 const LoginRoute = LoginRouteImport.update({
@@ -30,9 +34,24 @@ const appIndexRoute = appIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appJobPostingsIndexRoute = appJobPostingsIndexRouteImport.update({
+  id: '/job-postings/',
+  path: '/job-postings/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appEmployeesIndexRoute = appEmployeesIndexRouteImport.update({
   id: '/employees/',
   path: '/employees/',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appJobPostingsNewRoute = appJobPostingsNewRouteImport.update({
+  id: '/job-postings/new',
+  path: '/job-postings/new',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appJobPostingsPostingIdRoute = appJobPostingsPostingIdRouteImport.update({
+  id: '/job-postings/$postingId',
+  path: '/job-postings/$postingId',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appEmployeesEmployeeIdRoute = appEmployeesEmployeeIdRouteImport.update({
@@ -40,6 +59,12 @@ const appEmployeesEmployeeIdRoute = appEmployeesEmployeeIdRouteImport.update({
   path: '/employees/$employeeId',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appJobPostingsPostingIdEditRoute =
+  appJobPostingsPostingIdEditRouteImport.update({
+    id: '/job-postings/$postingId_/edit',
+    path: '/job-postings/$postingId/edit',
+    getParentRoute: () => appRouteRoute,
+  } as any)
 const appEmployeesEmployeeIdEditRoute =
   appEmployeesEmployeeIdEditRouteImport.update({
     id: '/employees/$employeeId_/edit',
@@ -51,15 +76,23 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/': typeof appIndexRoute
   '/employees/$employeeId': typeof appEmployeesEmployeeIdRoute
+  '/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
+  '/job-postings/new': typeof appJobPostingsNewRoute
   '/employees/': typeof appEmployeesIndexRoute
+  '/job-postings/': typeof appJobPostingsIndexRoute
   '/employees/$employeeId/edit': typeof appEmployeesEmployeeIdEditRoute
+  '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/': typeof appIndexRoute
   '/employees/$employeeId': typeof appEmployeesEmployeeIdRoute
+  '/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
+  '/job-postings/new': typeof appJobPostingsNewRoute
   '/employees': typeof appEmployeesIndexRoute
+  '/job-postings': typeof appJobPostingsIndexRoute
   '/employees/$employeeId/edit': typeof appEmployeesEmployeeIdEditRoute
+  '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,8 +100,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/(app)/': typeof appIndexRoute
   '/(app)/employees/$employeeId': typeof appEmployeesEmployeeIdRoute
+  '/(app)/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
+  '/(app)/job-postings/new': typeof appJobPostingsNewRoute
   '/(app)/employees/': typeof appEmployeesIndexRoute
+  '/(app)/job-postings/': typeof appJobPostingsIndexRoute
   '/(app)/employees/$employeeId_/edit': typeof appEmployeesEmployeeIdEditRoute
+  '/(app)/job-postings/$postingId_/edit': typeof appJobPostingsPostingIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -76,23 +113,35 @@ export interface FileRouteTypes {
     | '/login'
     | '/'
     | '/employees/$employeeId'
+    | '/job-postings/$postingId'
+    | '/job-postings/new'
     | '/employees/'
+    | '/job-postings/'
     | '/employees/$employeeId/edit'
+    | '/job-postings/$postingId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/'
     | '/employees/$employeeId'
+    | '/job-postings/$postingId'
+    | '/job-postings/new'
     | '/employees'
+    | '/job-postings'
     | '/employees/$employeeId/edit'
+    | '/job-postings/$postingId/edit'
   id:
     | '__root__'
     | '/(app)'
     | '/login'
     | '/(app)/'
     | '/(app)/employees/$employeeId'
+    | '/(app)/job-postings/$postingId'
+    | '/(app)/job-postings/new'
     | '/(app)/employees/'
+    | '/(app)/job-postings/'
     | '/(app)/employees/$employeeId_/edit'
+    | '/(app)/job-postings/$postingId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -123,6 +172,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/job-postings/': {
+      id: '/(app)/job-postings/'
+      path: '/job-postings'
+      fullPath: '/job-postings/'
+      preLoaderRoute: typeof appJobPostingsIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/employees/': {
       id: '/(app)/employees/'
       path: '/employees'
@@ -130,11 +186,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appEmployeesIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/job-postings/new': {
+      id: '/(app)/job-postings/new'
+      path: '/job-postings/new'
+      fullPath: '/job-postings/new'
+      preLoaderRoute: typeof appJobPostingsNewRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/job-postings/$postingId': {
+      id: '/(app)/job-postings/$postingId'
+      path: '/job-postings/$postingId'
+      fullPath: '/job-postings/$postingId'
+      preLoaderRoute: typeof appJobPostingsPostingIdRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/employees/$employeeId': {
       id: '/(app)/employees/$employeeId'
       path: '/employees/$employeeId'
       fullPath: '/employees/$employeeId'
       preLoaderRoute: typeof appEmployeesEmployeeIdRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/job-postings/$postingId_/edit': {
+      id: '/(app)/job-postings/$postingId_/edit'
+      path: '/job-postings/$postingId/edit'
+      fullPath: '/job-postings/$postingId/edit'
+      preLoaderRoute: typeof appJobPostingsPostingIdEditRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/employees/$employeeId_/edit': {
@@ -150,15 +227,23 @@ declare module '@tanstack/react-router' {
 interface appRouteRouteChildren {
   appIndexRoute: typeof appIndexRoute
   appEmployeesEmployeeIdRoute: typeof appEmployeesEmployeeIdRoute
+  appJobPostingsPostingIdRoute: typeof appJobPostingsPostingIdRoute
+  appJobPostingsNewRoute: typeof appJobPostingsNewRoute
   appEmployeesIndexRoute: typeof appEmployeesIndexRoute
+  appJobPostingsIndexRoute: typeof appJobPostingsIndexRoute
   appEmployeesEmployeeIdEditRoute: typeof appEmployeesEmployeeIdEditRoute
+  appJobPostingsPostingIdEditRoute: typeof appJobPostingsPostingIdEditRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
   appIndexRoute: appIndexRoute,
   appEmployeesEmployeeIdRoute: appEmployeesEmployeeIdRoute,
+  appJobPostingsPostingIdRoute: appJobPostingsPostingIdRoute,
+  appJobPostingsNewRoute: appJobPostingsNewRoute,
   appEmployeesIndexRoute: appEmployeesIndexRoute,
+  appJobPostingsIndexRoute: appJobPostingsIndexRoute,
   appEmployeesEmployeeIdEditRoute: appEmployeesEmployeeIdEditRoute,
+  appJobPostingsPostingIdEditRoute: appJobPostingsPostingIdEditRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
