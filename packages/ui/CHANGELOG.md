@@ -1,5 +1,12 @@
 # @mcmec/ui
 
+## 1.4.5
+
+### Patch Changes
+
+- Updated dependencies [b37462b]
+  - @mcmec/lib@0.8.0
+
 ## 1.4.4
 
 ### Patch Changes

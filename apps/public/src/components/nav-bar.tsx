@@ -59,6 +59,11 @@ const menuItems: MenuItem[] = [
 				linkProps: { to: "/about/mosquito-control-products" },
 				title: "Mosquito Control Products",
 			},
+			{
+				description: "View current job openings at MCMEC.",
+				linkProps: { to: "/about/job-opportunities" },
+				title: "Job Opportunities",
+			},
 		],
 		title: "About",
 	},

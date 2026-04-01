@@ -25,6 +25,8 @@ import { Route as AboutMosquitoControlProductsRouteImport } from './routes/about
 import { Route as AboutMissionRouteImport } from './routes/about/mission'
 import { Route as AboutLeadershipRouteImport } from './routes/about/leadership'
 import { Route as AboutHowWeControlMosquitoesRouteImport } from './routes/about/how-we-control-mosquitoes'
+import { Route as AboutJobOpportunitiesIndexRouteImport } from './routes/about/job-opportunities/index'
+import { Route as AboutJobOpportunitiesPostingIdRouteImport } from './routes/about/job-opportunities/$postingId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -111,6 +113,18 @@ const AboutHowWeControlMosquitoesRoute =
     path: '/about/how-we-control-mosquitoes',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AboutJobOpportunitiesIndexRoute =
+  AboutJobOpportunitiesIndexRouteImport.update({
+    id: '/about/job-opportunities/',
+    path: '/about/job-opportunities/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AboutJobOpportunitiesPostingIdRoute =
+  AboutJobOpportunitiesPostingIdRouteImport.update({
+    id: '/about/job-opportunities/$postingId',
+    path: '/about/job-opportunities/$postingId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -129,6 +143,8 @@ export interface FileRoutesByFullPath {
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/transparency': typeof NoticesTransparencyRoute
   '/notices/': typeof NoticesIndexRoute
+  '/about/job-opportunities/$postingId': typeof AboutJobOpportunitiesPostingIdRoute
+  '/about/job-opportunities/': typeof AboutJobOpportunitiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -147,6 +163,8 @@ export interface FileRoutesByTo {
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/transparency': typeof NoticesTransparencyRoute
   '/notices': typeof NoticesIndexRoute
+  '/about/job-opportunities/$postingId': typeof AboutJobOpportunitiesPostingIdRoute
+  '/about/job-opportunities': typeof AboutJobOpportunitiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -166,6 +184,8 @@ export interface FileRoutesById {
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/transparency': typeof NoticesTransparencyRoute
   '/notices/': typeof NoticesIndexRoute
+  '/about/job-opportunities/$postingId': typeof AboutJobOpportunitiesPostingIdRoute
+  '/about/job-opportunities/': typeof AboutJobOpportunitiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -186,6 +206,8 @@ export interface FileRouteTypes {
     | '/notices/meetings'
     | '/notices/transparency'
     | '/notices/'
+    | '/about/job-opportunities/$postingId'
+    | '/about/job-opportunities/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -204,6 +226,8 @@ export interface FileRouteTypes {
     | '/notices/meetings'
     | '/notices/transparency'
     | '/notices'
+    | '/about/job-opportunities/$postingId'
+    | '/about/job-opportunities'
   id:
     | '__root__'
     | '/'
@@ -222,6 +246,8 @@ export interface FileRouteTypes {
     | '/notices/meetings'
     | '/notices/transparency'
     | '/notices/'
+    | '/about/job-opportunities/$postingId'
+    | '/about/job-opportunities/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -241,6 +267,8 @@ export interface RootRouteChildren {
   NoticesMeetingsRoute: typeof NoticesMeetingsRoute
   NoticesTransparencyRoute: typeof NoticesTransparencyRoute
   NoticesIndexRoute: typeof NoticesIndexRoute
+  AboutJobOpportunitiesPostingIdRoute: typeof AboutJobOpportunitiesPostingIdRoute
+  AboutJobOpportunitiesIndexRoute: typeof AboutJobOpportunitiesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -357,6 +385,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutHowWeControlMosquitoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about/job-opportunities/': {
+      id: '/about/job-opportunities/'
+      path: '/about/job-opportunities'
+      fullPath: '/about/job-opportunities/'
+      preLoaderRoute: typeof AboutJobOpportunitiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about/job-opportunities/$postingId': {
+      id: '/about/job-opportunities/$postingId'
+      path: '/about/job-opportunities/$postingId'
+      fullPath: '/about/job-opportunities/$postingId'
+      preLoaderRoute: typeof AboutJobOpportunitiesPostingIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -377,6 +419,8 @@ const rootRouteChildren: RootRouteChildren = {
   NoticesMeetingsRoute: NoticesMeetingsRoute,
   NoticesTransparencyRoute: NoticesTransparencyRoute,
   NoticesIndexRoute: NoticesIndexRoute,
+  AboutJobOpportunitiesPostingIdRoute: AboutJobOpportunitiesPostingIdRoute,
+  AboutJobOpportunitiesIndexRoute: AboutJobOpportunitiesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

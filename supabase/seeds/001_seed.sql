@@ -235,6 +235,16 @@ INSERT INTO public.water_management_requests VALUES ('17bf7a1f-8106-4182-8041-f5
 
 
 --
+-- Data for Name: job_postings; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.job_postings VALUES ('a1b2c3d4-0000-0000-0000-000000000001', 'Seasonal Field Worker', '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"The Middlesex County Mosquito Extermination Commission is seeking seasonal field workers for the upcoming mosquito control season. Duties include larviciding, adulticiding, and habitat management."}]},{"type":"heading","attrs":{"level":2},"content":[{"type":"text","text":"Requirements"}]},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Valid NJ driver license"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Ability to work outdoors in various weather conditions"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Must be available from May through September"}]}]}]}]}', '2026-03-15 00:00:00+00', false, '2026-03-27 19:58:58.08+00', '5e84a53d-0d00-4fe5-907c-68ef6654139b', '2026-03-27 19:58:58.08+00', '5e84a53d-0d00-4fe5-907c-68ef6654139b');
+INSERT INTO public.job_postings VALUES ('a1b2c3d4-0000-0000-0000-000000000002', 'Lab Technician', '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Full-time lab technician position available. Responsible for mosquito identification, disease surveillance testing, and maintaining laboratory records."}]}]}', '2026-04-01 00:00:00+00', false, '2026-03-27 19:58:58.08+00', '5e84a53d-0d00-4fe5-907c-68ef6654139b', '2026-03-27 19:58:58.08+00', '5e84a53d-0d00-4fe5-907c-68ef6654139b');
+INSERT INTO public.job_postings VALUES ('a1b2c3d4-0000-0000-0000-000000000003', 'Equipment Mechanic (Closed)', '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"This position has been filled."}]}]}', '2026-02-01 00:00:00+00', true, '2026-03-27 19:58:58.08+00', '5e84a53d-0d00-4fe5-907c-68ef6654139b', '2026-03-27 19:58:58.08+00', '5e84a53d-0d00-4fe5-907c-68ef6654139b');
+INSERT INTO public.job_postings VALUES ('a1b2c3d4-0000-0000-0000-000000000004', 'Summer Intern (Draft)', '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Summer internship opportunity for college students studying entomology or environmental science."}]}]}', NULL, false, '2026-03-27 19:58:58.08+00', '5e84a53d-0d00-4fe5-907c-68ef6654139b', '2026-03-27 19:58:58.08+00', '5e84a53d-0d00-4fe5-907c-68ef6654139b');
+
+
+--
 -- Name: refresh_tokens_id_seq; Type: SEQUENCE SET; Schema: auth; Owner: -
 --
 

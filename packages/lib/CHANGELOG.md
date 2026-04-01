@@ -1,5 +1,11 @@
 # @mcmec/lib
 
+## 0.8.0
+
+### Minor Changes
+
+- b37462b: Add job postings feature with HR management CRUD and public careers pages
+
 ## 0.7.3
 
 ### Patch Changes

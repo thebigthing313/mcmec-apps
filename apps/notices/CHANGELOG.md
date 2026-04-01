@@ -1,5 +1,15 @@
 # notices
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [b37462b]
+  - @mcmec/supabase@1.6.0
+  - @mcmec/lib@0.8.0
+  - @mcmec/auth@0.3.1
+  - @mcmec/ui@1.4.5
+
 ## 0.9.0
 
 ### Minor Changes
