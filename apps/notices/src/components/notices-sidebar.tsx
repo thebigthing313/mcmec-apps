@@ -8,6 +8,7 @@ import {
 } from "@mcmec/ui/components/sidebar";
 import { Link, type LinkProps } from "@tanstack/react-router";
 import {
+	BarChart3,
 	BookOpen,
 	Bug,
 	Calendar,
@@ -48,6 +49,11 @@ const items: SidebarItem[] = [
 		icon: <Calendar />,
 		label: "Spray Schedule",
 		linkProps: { to: "/spray-schedule" },
+	},
+	{
+		icon: <BarChart3 />,
+		label: "Weekly Activity",
+		linkProps: { to: "/weekly-activity" },
 	},
 	{
 		icon: <FileText />,

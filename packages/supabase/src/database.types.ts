@@ -389,6 +389,48 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			mosquito_activity_data: {
+				Row: {
+					created_at: string;
+					created_by: string | null;
+					id: string;
+					mosquito_count: number;
+					rainfall_inches: number;
+					species_group: string;
+					species_name: string;
+					updated_at: string;
+					updated_by: string | null;
+					week_number: number;
+					year: number;
+				};
+				Insert: {
+					created_at?: string;
+					created_by?: string | null;
+					id?: string;
+					mosquito_count?: number;
+					rainfall_inches?: number;
+					species_group: string;
+					species_name: string;
+					updated_at?: string;
+					updated_by?: string | null;
+					week_number: number;
+					year: number;
+				};
+				Update: {
+					created_at?: string;
+					created_by?: string | null;
+					id?: string;
+					mosquito_count?: number;
+					rainfall_inches?: number;
+					species_group?: string;
+					species_name?: string;
+					updated_at?: string;
+					updated_by?: string | null;
+					week_number?: number;
+					year?: number;
+				};
+				Relationships: [];
+			};
 			mosquito_fish_requests: {
 				Row: {
 					additional_details: string | null;
