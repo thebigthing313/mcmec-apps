@@ -12,10 +12,20 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SprayScheduleRouteImport } from './routes/spray-schedule'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticesIndexRouteImport } from './routes/notices/index'
+import { Route as JobOpportunitiesIndexRouteImport } from './routes/job-opportunities/index'
 import { Route as NoticesTransparencyRouteImport } from './routes/notices/transparency'
 import { Route as NoticesMeetingsRouteImport } from './routes/notices/meetings'
 import { Route as NoticesArchiveRouteImport } from './routes/notices/archive'
 import { Route as NoticesNoticeIdRouteImport } from './routes/notices/$noticeId'
+import { Route as MosquitoSurveillanceWeeklyActivityRouteImport } from './routes/mosquito-surveillance/weekly-activity'
+import { Route as MosquitoSurveillanceMunicipalPacketRouteImport } from './routes/mosquito-surveillance/municipal-packet'
+import { Route as MosquitoSurveillanceMosquitoSourceChecklistRouteImport } from './routes/mosquito-surveillance/mosquito-source-checklist'
+import { Route as MosquitoControlSprayScheduleRouteImport } from './routes/mosquito-control/spray-schedule'
+import { Route as MosquitoControlSprayNoticeRouteImport } from './routes/mosquito-control/spray-notice'
+import { Route as MosquitoControlMosquitoControlProductsRouteImport } from './routes/mosquito-control/mosquito-control-products'
+import { Route as MosquitoControlHowWeControlMosquitoesRouteImport } from './routes/mosquito-control/how-we-control-mosquitoes'
+import { Route as MosquitoControlAerialLarvicidingNoticeRouteImport } from './routes/mosquito-control/aerial-larviciding-notice'
+import { Route as JobOpportunitiesPostingIdRouteImport } from './routes/job-opportunities/$postingId'
 import { Route as ContactWaterManagementRequestsRouteImport } from './routes/contact/water-management-requests'
 import { Route as ContactServiceRequestRouteImport } from './routes/contact/service-request'
 import { Route as ContactRequestSuccessRouteImport } from './routes/contact/request-success'
@@ -23,6 +33,7 @@ import { Route as ContactMosquitofishRequestsRouteImport } from './routes/contac
 import { Route as ContactContactUsRouteImport } from './routes/contact/contact-us'
 import { Route as ContactAdultMosquitoRequestsRouteImport } from './routes/contact/adult-mosquito-requests'
 import { Route as AboutMosquitoControlProductsRouteImport } from './routes/about/mosquito-control-products'
+import { Route as AboutMissionStatementRouteImport } from './routes/about/mission-statement'
 import { Route as AboutMissionRouteImport } from './routes/about/mission'
 import { Route as AboutLeadershipRouteImport } from './routes/about/leadership'
 import { Route as AboutHowWeControlMosquitoesRouteImport } from './routes/about/how-we-control-mosquitoes'
@@ -42,6 +53,11 @@ const IndexRoute = IndexRouteImport.update({
 const NoticesIndexRoute = NoticesIndexRouteImport.update({
   id: '/notices/',
   path: '/notices/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobOpportunitiesIndexRoute = JobOpportunitiesIndexRouteImport.update({
+  id: '/job-opportunities/',
+  path: '/job-opportunities/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticesTransparencyRoute = NoticesTransparencyRouteImport.update({
@@ -64,6 +80,60 @@ const NoticesNoticeIdRoute = NoticesNoticeIdRouteImport.update({
   path: '/notices/$noticeId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MosquitoSurveillanceWeeklyActivityRoute =
+  MosquitoSurveillanceWeeklyActivityRouteImport.update({
+    id: '/mosquito-surveillance/weekly-activity',
+    path: '/mosquito-surveillance/weekly-activity',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MosquitoSurveillanceMunicipalPacketRoute =
+  MosquitoSurveillanceMunicipalPacketRouteImport.update({
+    id: '/mosquito-surveillance/municipal-packet',
+    path: '/mosquito-surveillance/municipal-packet',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MosquitoSurveillanceMosquitoSourceChecklistRoute =
+  MosquitoSurveillanceMosquitoSourceChecklistRouteImport.update({
+    id: '/mosquito-surveillance/mosquito-source-checklist',
+    path: '/mosquito-surveillance/mosquito-source-checklist',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MosquitoControlSprayScheduleRoute =
+  MosquitoControlSprayScheduleRouteImport.update({
+    id: '/mosquito-control/spray-schedule',
+    path: '/mosquito-control/spray-schedule',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MosquitoControlSprayNoticeRoute =
+  MosquitoControlSprayNoticeRouteImport.update({
+    id: '/mosquito-control/spray-notice',
+    path: '/mosquito-control/spray-notice',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MosquitoControlMosquitoControlProductsRoute =
+  MosquitoControlMosquitoControlProductsRouteImport.update({
+    id: '/mosquito-control/mosquito-control-products',
+    path: '/mosquito-control/mosquito-control-products',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MosquitoControlHowWeControlMosquitoesRoute =
+  MosquitoControlHowWeControlMosquitoesRouteImport.update({
+    id: '/mosquito-control/how-we-control-mosquitoes',
+    path: '/mosquito-control/how-we-control-mosquitoes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MosquitoControlAerialLarvicidingNoticeRoute =
+  MosquitoControlAerialLarvicidingNoticeRouteImport.update({
+    id: '/mosquito-control/aerial-larviciding-notice',
+    path: '/mosquito-control/aerial-larviciding-notice',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const JobOpportunitiesPostingIdRoute =
+  JobOpportunitiesPostingIdRouteImport.update({
+    id: '/job-opportunities/$postingId',
+    path: '/job-opportunities/$postingId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ContactWaterManagementRequestsRoute =
   ContactWaterManagementRequestsRouteImport.update({
     id: '/contact/water-management-requests',
@@ -103,6 +173,11 @@ const AboutMosquitoControlProductsRoute =
     path: '/about/mosquito-control-products',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AboutMissionStatementRoute = AboutMissionStatementRouteImport.update({
+  id: '/about/mission-statement',
+  path: '/about/mission-statement',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutMissionRoute = AboutMissionRouteImport.update({
   id: '/about/mission',
   path: '/about/mission',
@@ -138,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
+  '/about/mission-statement': typeof AboutMissionStatementRoute
   '/about/mosquito-control-products': typeof AboutMosquitoControlProductsRoute
   '/contact/adult-mosquito-requests': typeof ContactAdultMosquitoRequestsRoute
   '/contact/contact-us': typeof ContactContactUsRoute
@@ -145,10 +221,20 @@ export interface FileRoutesByFullPath {
   '/contact/request-success': typeof ContactRequestSuccessRoute
   '/contact/service-request': typeof ContactServiceRequestRoute
   '/contact/water-management-requests': typeof ContactWaterManagementRequestsRoute
+  '/job-opportunities/$postingId': typeof JobOpportunitiesPostingIdRoute
+  '/mosquito-control/aerial-larviciding-notice': typeof MosquitoControlAerialLarvicidingNoticeRoute
+  '/mosquito-control/how-we-control-mosquitoes': typeof MosquitoControlHowWeControlMosquitoesRoute
+  '/mosquito-control/mosquito-control-products': typeof MosquitoControlMosquitoControlProductsRoute
+  '/mosquito-control/spray-notice': typeof MosquitoControlSprayNoticeRoute
+  '/mosquito-control/spray-schedule': typeof MosquitoControlSprayScheduleRoute
+  '/mosquito-surveillance/mosquito-source-checklist': typeof MosquitoSurveillanceMosquitoSourceChecklistRoute
+  '/mosquito-surveillance/municipal-packet': typeof MosquitoSurveillanceMunicipalPacketRoute
+  '/mosquito-surveillance/weekly-activity': typeof MosquitoSurveillanceWeeklyActivityRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/transparency': typeof NoticesTransparencyRoute
+  '/job-opportunities/': typeof JobOpportunitiesIndexRoute
   '/notices/': typeof NoticesIndexRoute
   '/about/job-opportunities/$postingId': typeof AboutJobOpportunitiesPostingIdRoute
   '/about/job-opportunities/': typeof AboutJobOpportunitiesIndexRoute
@@ -159,6 +245,7 @@ export interface FileRoutesByTo {
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
+  '/about/mission-statement': typeof AboutMissionStatementRoute
   '/about/mosquito-control-products': typeof AboutMosquitoControlProductsRoute
   '/contact/adult-mosquito-requests': typeof ContactAdultMosquitoRequestsRoute
   '/contact/contact-us': typeof ContactContactUsRoute
@@ -166,10 +253,20 @@ export interface FileRoutesByTo {
   '/contact/request-success': typeof ContactRequestSuccessRoute
   '/contact/service-request': typeof ContactServiceRequestRoute
   '/contact/water-management-requests': typeof ContactWaterManagementRequestsRoute
+  '/job-opportunities/$postingId': typeof JobOpportunitiesPostingIdRoute
+  '/mosquito-control/aerial-larviciding-notice': typeof MosquitoControlAerialLarvicidingNoticeRoute
+  '/mosquito-control/how-we-control-mosquitoes': typeof MosquitoControlHowWeControlMosquitoesRoute
+  '/mosquito-control/mosquito-control-products': typeof MosquitoControlMosquitoControlProductsRoute
+  '/mosquito-control/spray-notice': typeof MosquitoControlSprayNoticeRoute
+  '/mosquito-control/spray-schedule': typeof MosquitoControlSprayScheduleRoute
+  '/mosquito-surveillance/mosquito-source-checklist': typeof MosquitoSurveillanceMosquitoSourceChecklistRoute
+  '/mosquito-surveillance/municipal-packet': typeof MosquitoSurveillanceMunicipalPacketRoute
+  '/mosquito-surveillance/weekly-activity': typeof MosquitoSurveillanceWeeklyActivityRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/transparency': typeof NoticesTransparencyRoute
+  '/job-opportunities': typeof JobOpportunitiesIndexRoute
   '/notices': typeof NoticesIndexRoute
   '/about/job-opportunities/$postingId': typeof AboutJobOpportunitiesPostingIdRoute
   '/about/job-opportunities': typeof AboutJobOpportunitiesIndexRoute
@@ -181,6 +278,7 @@ export interface FileRoutesById {
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
+  '/about/mission-statement': typeof AboutMissionStatementRoute
   '/about/mosquito-control-products': typeof AboutMosquitoControlProductsRoute
   '/contact/adult-mosquito-requests': typeof ContactAdultMosquitoRequestsRoute
   '/contact/contact-us': typeof ContactContactUsRoute
@@ -188,10 +286,20 @@ export interface FileRoutesById {
   '/contact/request-success': typeof ContactRequestSuccessRoute
   '/contact/service-request': typeof ContactServiceRequestRoute
   '/contact/water-management-requests': typeof ContactWaterManagementRequestsRoute
+  '/job-opportunities/$postingId': typeof JobOpportunitiesPostingIdRoute
+  '/mosquito-control/aerial-larviciding-notice': typeof MosquitoControlAerialLarvicidingNoticeRoute
+  '/mosquito-control/how-we-control-mosquitoes': typeof MosquitoControlHowWeControlMosquitoesRoute
+  '/mosquito-control/mosquito-control-products': typeof MosquitoControlMosquitoControlProductsRoute
+  '/mosquito-control/spray-notice': typeof MosquitoControlSprayNoticeRoute
+  '/mosquito-control/spray-schedule': typeof MosquitoControlSprayScheduleRoute
+  '/mosquito-surveillance/mosquito-source-checklist': typeof MosquitoSurveillanceMosquitoSourceChecklistRoute
+  '/mosquito-surveillance/municipal-packet': typeof MosquitoSurveillanceMunicipalPacketRoute
+  '/mosquito-surveillance/weekly-activity': typeof MosquitoSurveillanceWeeklyActivityRoute
   '/notices/$noticeId': typeof NoticesNoticeIdRoute
   '/notices/archive': typeof NoticesArchiveRoute
   '/notices/meetings': typeof NoticesMeetingsRoute
   '/notices/transparency': typeof NoticesTransparencyRoute
+  '/job-opportunities/': typeof JobOpportunitiesIndexRoute
   '/notices/': typeof NoticesIndexRoute
   '/about/job-opportunities/$postingId': typeof AboutJobOpportunitiesPostingIdRoute
   '/about/job-opportunities/': typeof AboutJobOpportunitiesIndexRoute
@@ -204,6 +312,7 @@ export interface FileRouteTypes {
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
+    | '/about/mission-statement'
     | '/about/mosquito-control-products'
     | '/contact/adult-mosquito-requests'
     | '/contact/contact-us'
@@ -211,10 +320,20 @@ export interface FileRouteTypes {
     | '/contact/request-success'
     | '/contact/service-request'
     | '/contact/water-management-requests'
+    | '/job-opportunities/$postingId'
+    | '/mosquito-control/aerial-larviciding-notice'
+    | '/mosquito-control/how-we-control-mosquitoes'
+    | '/mosquito-control/mosquito-control-products'
+    | '/mosquito-control/spray-notice'
+    | '/mosquito-control/spray-schedule'
+    | '/mosquito-surveillance/mosquito-source-checklist'
+    | '/mosquito-surveillance/municipal-packet'
+    | '/mosquito-surveillance/weekly-activity'
     | '/notices/$noticeId'
     | '/notices/archive'
     | '/notices/meetings'
     | '/notices/transparency'
+    | '/job-opportunities/'
     | '/notices/'
     | '/about/job-opportunities/$postingId'
     | '/about/job-opportunities/'
@@ -225,6 +344,7 @@ export interface FileRouteTypes {
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
+    | '/about/mission-statement'
     | '/about/mosquito-control-products'
     | '/contact/adult-mosquito-requests'
     | '/contact/contact-us'
@@ -232,10 +352,20 @@ export interface FileRouteTypes {
     | '/contact/request-success'
     | '/contact/service-request'
     | '/contact/water-management-requests'
+    | '/job-opportunities/$postingId'
+    | '/mosquito-control/aerial-larviciding-notice'
+    | '/mosquito-control/how-we-control-mosquitoes'
+    | '/mosquito-control/mosquito-control-products'
+    | '/mosquito-control/spray-notice'
+    | '/mosquito-control/spray-schedule'
+    | '/mosquito-surveillance/mosquito-source-checklist'
+    | '/mosquito-surveillance/municipal-packet'
+    | '/mosquito-surveillance/weekly-activity'
     | '/notices/$noticeId'
     | '/notices/archive'
     | '/notices/meetings'
     | '/notices/transparency'
+    | '/job-opportunities'
     | '/notices'
     | '/about/job-opportunities/$postingId'
     | '/about/job-opportunities'
@@ -246,6 +376,7 @@ export interface FileRouteTypes {
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
+    | '/about/mission-statement'
     | '/about/mosquito-control-products'
     | '/contact/adult-mosquito-requests'
     | '/contact/contact-us'
@@ -253,10 +384,20 @@ export interface FileRouteTypes {
     | '/contact/request-success'
     | '/contact/service-request'
     | '/contact/water-management-requests'
+    | '/job-opportunities/$postingId'
+    | '/mosquito-control/aerial-larviciding-notice'
+    | '/mosquito-control/how-we-control-mosquitoes'
+    | '/mosquito-control/mosquito-control-products'
+    | '/mosquito-control/spray-notice'
+    | '/mosquito-control/spray-schedule'
+    | '/mosquito-surveillance/mosquito-source-checklist'
+    | '/mosquito-surveillance/municipal-packet'
+    | '/mosquito-surveillance/weekly-activity'
     | '/notices/$noticeId'
     | '/notices/archive'
     | '/notices/meetings'
     | '/notices/transparency'
+    | '/job-opportunities/'
     | '/notices/'
     | '/about/job-opportunities/$postingId'
     | '/about/job-opportunities/'
@@ -268,6 +409,7 @@ export interface RootRouteChildren {
   AboutHowWeControlMosquitoesRoute: typeof AboutHowWeControlMosquitoesRoute
   AboutLeadershipRoute: typeof AboutLeadershipRoute
   AboutMissionRoute: typeof AboutMissionRoute
+  AboutMissionStatementRoute: typeof AboutMissionStatementRoute
   AboutMosquitoControlProductsRoute: typeof AboutMosquitoControlProductsRoute
   ContactAdultMosquitoRequestsRoute: typeof ContactAdultMosquitoRequestsRoute
   ContactContactUsRoute: typeof ContactContactUsRoute
@@ -275,10 +417,20 @@ export interface RootRouteChildren {
   ContactRequestSuccessRoute: typeof ContactRequestSuccessRoute
   ContactServiceRequestRoute: typeof ContactServiceRequestRoute
   ContactWaterManagementRequestsRoute: typeof ContactWaterManagementRequestsRoute
+  JobOpportunitiesPostingIdRoute: typeof JobOpportunitiesPostingIdRoute
+  MosquitoControlAerialLarvicidingNoticeRoute: typeof MosquitoControlAerialLarvicidingNoticeRoute
+  MosquitoControlHowWeControlMosquitoesRoute: typeof MosquitoControlHowWeControlMosquitoesRoute
+  MosquitoControlMosquitoControlProductsRoute: typeof MosquitoControlMosquitoControlProductsRoute
+  MosquitoControlSprayNoticeRoute: typeof MosquitoControlSprayNoticeRoute
+  MosquitoControlSprayScheduleRoute: typeof MosquitoControlSprayScheduleRoute
+  MosquitoSurveillanceMosquitoSourceChecklistRoute: typeof MosquitoSurveillanceMosquitoSourceChecklistRoute
+  MosquitoSurveillanceMunicipalPacketRoute: typeof MosquitoSurveillanceMunicipalPacketRoute
+  MosquitoSurveillanceWeeklyActivityRoute: typeof MosquitoSurveillanceWeeklyActivityRoute
   NoticesNoticeIdRoute: typeof NoticesNoticeIdRoute
   NoticesArchiveRoute: typeof NoticesArchiveRoute
   NoticesMeetingsRoute: typeof NoticesMeetingsRoute
   NoticesTransparencyRoute: typeof NoticesTransparencyRoute
+  JobOpportunitiesIndexRoute: typeof JobOpportunitiesIndexRoute
   NoticesIndexRoute: typeof NoticesIndexRoute
   AboutJobOpportunitiesPostingIdRoute: typeof AboutJobOpportunitiesPostingIdRoute
   AboutJobOpportunitiesIndexRoute: typeof AboutJobOpportunitiesIndexRoute
@@ -307,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/job-opportunities/': {
+      id: '/job-opportunities/'
+      path: '/job-opportunities'
+      fullPath: '/job-opportunities/'
+      preLoaderRoute: typeof JobOpportunitiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notices/transparency': {
       id: '/notices/transparency'
       path: '/notices/transparency'
@@ -333,6 +492,69 @@ declare module '@tanstack/react-router' {
       path: '/notices/$noticeId'
       fullPath: '/notices/$noticeId'
       preLoaderRoute: typeof NoticesNoticeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mosquito-surveillance/weekly-activity': {
+      id: '/mosquito-surveillance/weekly-activity'
+      path: '/mosquito-surveillance/weekly-activity'
+      fullPath: '/mosquito-surveillance/weekly-activity'
+      preLoaderRoute: typeof MosquitoSurveillanceWeeklyActivityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mosquito-surveillance/municipal-packet': {
+      id: '/mosquito-surveillance/municipal-packet'
+      path: '/mosquito-surveillance/municipal-packet'
+      fullPath: '/mosquito-surveillance/municipal-packet'
+      preLoaderRoute: typeof MosquitoSurveillanceMunicipalPacketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mosquito-surveillance/mosquito-source-checklist': {
+      id: '/mosquito-surveillance/mosquito-source-checklist'
+      path: '/mosquito-surveillance/mosquito-source-checklist'
+      fullPath: '/mosquito-surveillance/mosquito-source-checklist'
+      preLoaderRoute: typeof MosquitoSurveillanceMosquitoSourceChecklistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mosquito-control/spray-schedule': {
+      id: '/mosquito-control/spray-schedule'
+      path: '/mosquito-control/spray-schedule'
+      fullPath: '/mosquito-control/spray-schedule'
+      preLoaderRoute: typeof MosquitoControlSprayScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mosquito-control/spray-notice': {
+      id: '/mosquito-control/spray-notice'
+      path: '/mosquito-control/spray-notice'
+      fullPath: '/mosquito-control/spray-notice'
+      preLoaderRoute: typeof MosquitoControlSprayNoticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mosquito-control/mosquito-control-products': {
+      id: '/mosquito-control/mosquito-control-products'
+      path: '/mosquito-control/mosquito-control-products'
+      fullPath: '/mosquito-control/mosquito-control-products'
+      preLoaderRoute: typeof MosquitoControlMosquitoControlProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mosquito-control/how-we-control-mosquitoes': {
+      id: '/mosquito-control/how-we-control-mosquitoes'
+      path: '/mosquito-control/how-we-control-mosquitoes'
+      fullPath: '/mosquito-control/how-we-control-mosquitoes'
+      preLoaderRoute: typeof MosquitoControlHowWeControlMosquitoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mosquito-control/aerial-larviciding-notice': {
+      id: '/mosquito-control/aerial-larviciding-notice'
+      path: '/mosquito-control/aerial-larviciding-notice'
+      fullPath: '/mosquito-control/aerial-larviciding-notice'
+      preLoaderRoute: typeof MosquitoControlAerialLarvicidingNoticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/job-opportunities/$postingId': {
+      id: '/job-opportunities/$postingId'
+      path: '/job-opportunities/$postingId'
+      fullPath: '/job-opportunities/$postingId'
+      preLoaderRoute: typeof JobOpportunitiesPostingIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact/water-management-requests': {
@@ -384,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutMosquitoControlProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about/mission-statement': {
+      id: '/about/mission-statement'
+      path: '/about/mission-statement'
+      fullPath: '/about/mission-statement'
+      preLoaderRoute: typeof AboutMissionStatementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about/mission': {
       id: '/about/mission'
       path: '/about/mission'
@@ -428,6 +657,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutHowWeControlMosquitoesRoute: AboutHowWeControlMosquitoesRoute,
   AboutLeadershipRoute: AboutLeadershipRoute,
   AboutMissionRoute: AboutMissionRoute,
+  AboutMissionStatementRoute: AboutMissionStatementRoute,
   AboutMosquitoControlProductsRoute: AboutMosquitoControlProductsRoute,
   ContactAdultMosquitoRequestsRoute: ContactAdultMosquitoRequestsRoute,
   ContactContactUsRoute: ContactContactUsRoute,
@@ -435,10 +665,26 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRequestSuccessRoute: ContactRequestSuccessRoute,
   ContactServiceRequestRoute: ContactServiceRequestRoute,
   ContactWaterManagementRequestsRoute: ContactWaterManagementRequestsRoute,
+  JobOpportunitiesPostingIdRoute: JobOpportunitiesPostingIdRoute,
+  MosquitoControlAerialLarvicidingNoticeRoute:
+    MosquitoControlAerialLarvicidingNoticeRoute,
+  MosquitoControlHowWeControlMosquitoesRoute:
+    MosquitoControlHowWeControlMosquitoesRoute,
+  MosquitoControlMosquitoControlProductsRoute:
+    MosquitoControlMosquitoControlProductsRoute,
+  MosquitoControlSprayNoticeRoute: MosquitoControlSprayNoticeRoute,
+  MosquitoControlSprayScheduleRoute: MosquitoControlSprayScheduleRoute,
+  MosquitoSurveillanceMosquitoSourceChecklistRoute:
+    MosquitoSurveillanceMosquitoSourceChecklistRoute,
+  MosquitoSurveillanceMunicipalPacketRoute:
+    MosquitoSurveillanceMunicipalPacketRoute,
+  MosquitoSurveillanceWeeklyActivityRoute:
+    MosquitoSurveillanceWeeklyActivityRoute,
   NoticesNoticeIdRoute: NoticesNoticeIdRoute,
   NoticesArchiveRoute: NoticesArchiveRoute,
   NoticesMeetingsRoute: NoticesMeetingsRoute,
   NoticesTransparencyRoute: NoticesTransparencyRoute,
+  JobOpportunitiesIndexRoute: JobOpportunitiesIndexRoute,
   NoticesIndexRoute: NoticesIndexRoute,
   AboutJobOpportunitiesPostingIdRoute: AboutJobOpportunitiesPostingIdRoute,
   AboutJobOpportunitiesIndexRoute: AboutJobOpportunitiesIndexRoute,
