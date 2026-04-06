@@ -127,6 +127,34 @@ const NOTICE_TYPES = [
 	{ name: "Advisory", description: "Public health advisories" },
 ];
 
+const MUNICIPALITIES = [
+	"Carteret",
+	"Cranbury",
+	"Dunellen",
+	"East Brunswick",
+	"Edison",
+	"Helmetta",
+	"Highland Park",
+	"Jamesburg",
+	"Metuchen",
+	"Middlesex Borough",
+	"Milltown",
+	"Monroe",
+	"New Brunswick",
+	"North Brunswick",
+	"Old Bridge",
+	"Perth Amboy",
+	"Piscataway",
+	"Plainsboro",
+	"Sayreville",
+	"South Amboy",
+	"South Brunswick",
+	"South Plainfield",
+	"South River",
+	"Spotswood",
+	"Woodbridge",
+];
+
 const ZIP_CODES = [
 	{ code: "08901", city: "New Brunswick", state: "NJ" },
 	{ code: "08902", city: "North Brunswick", state: "NJ" },
@@ -457,9 +485,90 @@ async function main() {
 	if (waterError)
 		throw new Error(`Failed to create water request: ${waterError.message}`);
 
+	// 11. Create municipalities
+	console.log("11. Creating municipalities...");
+	const { error: muniError } = await supabase
+		.from("municipalities")
+		.insert(MUNICIPALITIES.map((name) => ({ name })));
+	if (muniError)
+		throw new Error(`Failed to create municipalities: ${muniError.message}`);
+
+	// 12. Create sample spray schedules
+	console.log("12. Creating spray schedules...");
+	const { data: insecticideData } = await supabase
+		.from("insecticides")
+		.select("id, trade_name");
+	const insecticideMap = Object.fromEntries(
+		(insecticideData ?? []).map((i) => [i.trade_name, i.id]),
+	);
+
+	const { data: muniData } = await supabase
+		.from("municipalities")
+		.select("id, name");
+	const muniMap = Object.fromEntries(
+		(muniData ?? []).map((m) => [m.name, m.id]),
+	);
+
+	const spraySchedules = [
+		{
+			mission_date: "2026-04-10",
+			start_time: "19:00",
+			end_time: "23:00",
+			rain_date: "2026-04-11",
+			area_description:
+				"North District — residential areas along Route 1 corridor",
+			status: "scheduled",
+			insecticide_id: insecticideMap["Anvil 10+10 ULV"],
+			municipalities: ["Edison", "Metuchen", "Highland Park"],
+		},
+		{
+			mission_date: "2026-04-15",
+			start_time: "20:00",
+			end_time: "23:30",
+			area_description: "South District — wetland buffer zones and parks",
+			status: "scheduled",
+			insecticide_id: insecticideMap["Anvil 10+10 ULV"],
+			municipalities: ["Old Bridge", "Sayreville", "South Amboy"],
+		},
+		{
+			mission_date: "2026-03-25",
+			start_time: "19:30",
+			end_time: "22:30",
+			area_description:
+				"Central District — downtown and surrounding neighborhoods",
+			map_url: "https://maps.example.com/spray-central",
+			status: "completed",
+			insecticide_id: insecticideMap["Anvil 10+10 ULV"],
+			municipalities: ["New Brunswick", "North Brunswick"],
+		},
+	];
+
+	for (const schedule of spraySchedules) {
+		const { municipalities: muniNames, ...scheduleData } = schedule;
+		const { data: inserted, error: schedError } = await supabase
+			.from("spray_schedules")
+			.insert(scheduleData)
+			.select("id")
+			.single();
+		if (schedError)
+			throw new Error(`Failed to create spray schedule: ${schedError.message}`);
+
+		const joinRows = muniNames.map((name) => ({
+			spray_schedule_id: inserted.id,
+			municipality_id: muniMap[name],
+		}));
+		const { error: joinError } = await supabase
+			.from("spray_schedule_municipalities")
+			.insert(joinRows);
+		if (joinError)
+			throw new Error(
+				`Failed to link municipalities to spray schedule: ${joinError.message}`,
+			);
+	}
+
 	console.log("\n=== All seed data created ===\n");
 
-	// 11. Dump the database
+	// 13. Dump the database
 	console.log("Dumping database...");
 	// Use docker exec to run pg_dump inside the Supabase postgres container
 	// Only dump auth and public schemas — exclude all Supabase internal schemas

@@ -64,6 +64,11 @@ const menuItems: MenuItem[] = [
 				linkProps: { to: "/about/job-opportunities" },
 				title: "Job Opportunities",
 			},
+			{
+				description: "View upcoming mosquito spray missions.",
+				linkProps: { to: "/spray-schedule" },
+				title: "Spray Schedule",
+			},
 		],
 		title: "About",
 	},

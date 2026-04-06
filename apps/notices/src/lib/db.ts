@@ -34,8 +34,10 @@ export const {
 	insecticides,
 	meetings,
 	mosquitofishRequests,
+	municipalities,
 	noticeTypes,
 	notices,
+	spraySchedules,
 	waterManagementRequests,
 	zipCodes,
 } = db;

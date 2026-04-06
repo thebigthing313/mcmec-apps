@@ -19,12 +19,15 @@ import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/rout
 import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
 import { Route as appInsecticidesRouteRouteImport } from './routes/(app)/insecticides/route'
 import { Route as appContactSubmissionsRouteRouteImport } from './routes/(app)/contact-submissions/route'
+import { Route as appSprayScheduleIndexRouteImport } from './routes/(app)/spray-schedule/index'
 import { Route as appServiceRequestsIndexRouteImport } from './routes/(app)/service-requests/index'
 import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
 import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/index'
 import { Route as appInsecticidesIndexRouteImport } from './routes/(app)/insecticides/index'
 import { Route as appDocumentsIndexRouteImport } from './routes/(app)/documents/index'
 import { Route as appContactSubmissionsIndexRouteImport } from './routes/(app)/contact-submissions/index'
+import { Route as appSprayScheduleCreateRouteImport } from './routes/(app)/spray-schedule/create'
+import { Route as appSprayScheduleSprayScheduleIdRouteImport } from './routes/(app)/spray-schedule/$sprayScheduleId'
 import { Route as appNoticesCreateRouteImport } from './routes/(app)/notices/create'
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
 import { Route as appMeetingsCreateRouteImport } from './routes/(app)/meetings/create'
@@ -98,6 +101,11 @@ const appContactSubmissionsRouteRoute =
     path: '/contact-submissions',
     getParentRoute: () => appRouteRoute,
   } as any)
+const appSprayScheduleIndexRoute = appSprayScheduleIndexRouteImport.update({
+  id: '/spray-schedule/',
+  path: '/spray-schedule/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appServiceRequestsIndexRoute = appServiceRequestsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -128,6 +136,17 @@ const appContactSubmissionsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => appContactSubmissionsRouteRoute,
+  } as any)
+const appSprayScheduleCreateRoute = appSprayScheduleCreateRouteImport.update({
+  id: '/spray-schedule/create',
+  path: '/spray-schedule/create',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appSprayScheduleSprayScheduleIdRoute =
+  appSprayScheduleSprayScheduleIdRouteImport.update({
+    id: '/spray-schedule/$sprayScheduleId',
+    path: '/spray-schedule/$sprayScheduleId',
+    getParentRoute: () => appRouteRoute,
   } as any)
 const appNoticesCreateRoute = appNoticesCreateRouteImport.update({
   id: '/create',
@@ -274,12 +293,15 @@ export interface FileRoutesByFullPath {
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
+  '/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
+  '/spray-schedule/create': typeof appSprayScheduleCreateRoute
   '/contact-submissions/': typeof appContactSubmissionsIndexRoute
   '/documents': typeof appDocumentsIndexRoute
   '/insecticides/': typeof appInsecticidesIndexRoute
   '/meetings/': typeof appMeetingsIndexRoute
   '/notices/': typeof appNoticesIndexRoute
   '/service-requests/': typeof appServiceRequestsIndexRoute
+  '/spray-schedule': typeof appSprayScheduleIndexRoute
   '/contact-submissions/$submissionId/edit': typeof appContactSubmissionsSubmissionIdEditRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
@@ -308,12 +330,15 @@ export interface FileRoutesByTo {
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
+  '/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
+  '/spray-schedule/create': typeof appSprayScheduleCreateRoute
   '/contact-submissions': typeof appContactSubmissionsIndexRoute
   '/documents': typeof appDocumentsIndexRoute
   '/insecticides': typeof appInsecticidesIndexRoute
   '/meetings': typeof appMeetingsIndexRoute
   '/notices': typeof appNoticesIndexRoute
   '/service-requests': typeof appServiceRequestsIndexRoute
+  '/spray-schedule': typeof appSprayScheduleIndexRoute
   '/contact-submissions/$submissionId/edit': typeof appContactSubmissionsSubmissionIdEditRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
@@ -349,12 +374,15 @@ export interface FileRoutesById {
   '/(app)/meetings/create': typeof appMeetingsCreateRoute
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/(app)/notices/create': typeof appNoticesCreateRoute
+  '/(app)/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
+  '/(app)/spray-schedule/create': typeof appSprayScheduleCreateRoute
   '/(app)/contact-submissions/': typeof appContactSubmissionsIndexRoute
   '/(app)/documents/': typeof appDocumentsIndexRoute
   '/(app)/insecticides/': typeof appInsecticidesIndexRoute
   '/(app)/meetings/': typeof appMeetingsIndexRoute
   '/(app)/notices/': typeof appNoticesIndexRoute
   '/(app)/service-requests/': typeof appServiceRequestsIndexRoute
+  '/(app)/spray-schedule/': typeof appSprayScheduleIndexRoute
   '/(app)/contact-submissions/$submissionId_/edit': typeof appContactSubmissionsSubmissionIdEditRoute
   '/(app)/documents/$documentId_/edit': typeof appDocumentsDocumentIdEditRoute
   '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
@@ -390,12 +418,15 @@ export interface FileRouteTypes {
     | '/meetings/create'
     | '/notices/$noticeId'
     | '/notices/create'
+    | '/spray-schedule/$sprayScheduleId'
+    | '/spray-schedule/create'
     | '/contact-submissions/'
     | '/documents'
     | '/insecticides/'
     | '/meetings/'
     | '/notices/'
     | '/service-requests/'
+    | '/spray-schedule'
     | '/contact-submissions/$submissionId/edit'
     | '/documents/$documentId/edit'
     | '/notices/$noticeId/edit'
@@ -424,12 +455,15 @@ export interface FileRouteTypes {
     | '/meetings/create'
     | '/notices/$noticeId'
     | '/notices/create'
+    | '/spray-schedule/$sprayScheduleId'
+    | '/spray-schedule/create'
     | '/contact-submissions'
     | '/documents'
     | '/insecticides'
     | '/meetings'
     | '/notices'
     | '/service-requests'
+    | '/spray-schedule'
     | '/contact-submissions/$submissionId/edit'
     | '/documents/$documentId/edit'
     | '/notices/$noticeId/edit'
@@ -464,12 +498,15 @@ export interface FileRouteTypes {
     | '/(app)/meetings/create'
     | '/(app)/notices/$noticeId'
     | '/(app)/notices/create'
+    | '/(app)/spray-schedule/$sprayScheduleId'
+    | '/(app)/spray-schedule/create'
     | '/(app)/contact-submissions/'
     | '/(app)/documents/'
     | '/(app)/insecticides/'
     | '/(app)/meetings/'
     | '/(app)/notices/'
     | '/(app)/service-requests/'
+    | '/(app)/spray-schedule/'
     | '/(app)/contact-submissions/$submissionId_/edit'
     | '/(app)/documents/$documentId_/edit'
     | '/(app)/notices/$noticeId_/edit'
@@ -561,6 +598,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appContactSubmissionsRouteRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/spray-schedule/': {
+      id: '/(app)/spray-schedule/'
+      path: '/spray-schedule'
+      fullPath: '/spray-schedule'
+      preLoaderRoute: typeof appSprayScheduleIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/service-requests/': {
       id: '/(app)/service-requests/'
       path: '/'
@@ -602,6 +646,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/contact-submissions/'
       preLoaderRoute: typeof appContactSubmissionsIndexRouteImport
       parentRoute: typeof appContactSubmissionsRouteRoute
+    }
+    '/(app)/spray-schedule/create': {
+      id: '/(app)/spray-schedule/create'
+      path: '/spray-schedule/create'
+      fullPath: '/spray-schedule/create'
+      preLoaderRoute: typeof appSprayScheduleCreateRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/spray-schedule/$sprayScheduleId': {
+      id: '/(app)/spray-schedule/$sprayScheduleId'
+      path: '/spray-schedule/$sprayScheduleId'
+      fullPath: '/spray-schedule/$sprayScheduleId'
+      preLoaderRoute: typeof appSprayScheduleSprayScheduleIdRouteImport
+      parentRoute: typeof appRouteRoute
     }
     '/(app)/notices/create': {
       id: '/(app)/notices/create'
@@ -882,7 +940,10 @@ interface appRouteRouteChildren {
   appIndexRoute: typeof appIndexRoute
   appDocumentsDocumentIdRoute: typeof appDocumentsDocumentIdRoute
   appDocumentsCreateRoute: typeof appDocumentsCreateRoute
+  appSprayScheduleSprayScheduleIdRoute: typeof appSprayScheduleSprayScheduleIdRoute
+  appSprayScheduleCreateRoute: typeof appSprayScheduleCreateRoute
   appDocumentsIndexRoute: typeof appDocumentsIndexRoute
+  appSprayScheduleIndexRoute: typeof appSprayScheduleIndexRoute
   appDocumentsDocumentIdEditRoute: typeof appDocumentsDocumentIdEditRoute
 }
 
@@ -897,7 +958,10 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appIndexRoute: appIndexRoute,
   appDocumentsDocumentIdRoute: appDocumentsDocumentIdRoute,
   appDocumentsCreateRoute: appDocumentsCreateRoute,
+  appSprayScheduleSprayScheduleIdRoute: appSprayScheduleSprayScheduleIdRoute,
+  appSprayScheduleCreateRoute: appSprayScheduleCreateRoute,
   appDocumentsIndexRoute: appDocumentsIndexRoute,
+  appSprayScheduleIndexRoute: appSprayScheduleIndexRoute,
   appDocumentsDocumentIdEditRoute: appDocumentsDocumentIdEditRoute,
 }
 
