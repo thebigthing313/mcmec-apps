@@ -451,6 +451,33 @@ export type Database = {
 					},
 				];
 			};
+			municipalities: {
+				Row: {
+					created_at: string;
+					created_by: string | null;
+					id: string;
+					name: string;
+					updated_at: string;
+					updated_by: string | null;
+				};
+				Insert: {
+					created_at?: string;
+					created_by?: string | null;
+					id?: string;
+					name: string;
+					updated_at?: string;
+					updated_by?: string | null;
+				};
+				Update: {
+					created_at?: string;
+					created_by?: string | null;
+					id?: string;
+					name?: string;
+					updated_at?: string;
+					updated_by?: string | null;
+				};
+				Relationships: [];
+			};
 			notice_types: {
 				Row: {
 					created_at: string;
@@ -551,6 +578,92 @@ export type Database = {
 					permission_name?: string;
 				};
 				Relationships: [];
+			};
+			spray_schedule_municipalities: {
+				Row: {
+					municipality_id: string;
+					spray_schedule_id: string;
+				};
+				Insert: {
+					municipality_id: string;
+					spray_schedule_id: string;
+				};
+				Update: {
+					municipality_id?: string;
+					spray_schedule_id?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "spray_schedule_municipalities_municipality_id_fkey";
+						columns: ["municipality_id"];
+						isOneToOne: false;
+						referencedRelation: "municipalities";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "spray_schedule_municipalities_spray_schedule_id_fkey";
+						columns: ["spray_schedule_id"];
+						isOneToOne: false;
+						referencedRelation: "spray_schedules";
+						referencedColumns: ["id"];
+					},
+				];
+			};
+			spray_schedules: {
+				Row: {
+					area_description: string;
+					created_at: string;
+					created_by: string | null;
+					end_time: string;
+					id: string;
+					insecticide_id: string;
+					map_url: string | null;
+					mission_date: string;
+					rain_date: string | null;
+					start_time: string;
+					status: Database["public"]["Enums"]["spray_schedule_status"];
+					updated_at: string;
+					updated_by: string | null;
+				};
+				Insert: {
+					area_description: string;
+					created_at?: string;
+					created_by?: string | null;
+					end_time: string;
+					id?: string;
+					insecticide_id: string;
+					map_url?: string | null;
+					mission_date: string;
+					rain_date?: string | null;
+					start_time: string;
+					status?: Database["public"]["Enums"]["spray_schedule_status"];
+					updated_at?: string;
+					updated_by?: string | null;
+				};
+				Update: {
+					area_description?: string;
+					created_at?: string;
+					created_by?: string | null;
+					end_time?: string;
+					id?: string;
+					insecticide_id?: string;
+					map_url?: string | null;
+					mission_date?: string;
+					rain_date?: string | null;
+					start_time?: string;
+					status?: Database["public"]["Enums"]["spray_schedule_status"];
+					updated_at?: string;
+					updated_by?: string | null;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "spray_schedules_insecticide_id_fkey";
+						columns: ["insecticide_id"];
+						isOneToOne: false;
+						referencedRelation: "insecticides";
+						referencedColumns: ["id"];
+					},
+				];
 			};
 			user_permissions: {
 				Row: {
@@ -699,7 +812,11 @@ export type Database = {
 			has_permission: { Args: { p_permission_name: string }; Returns: boolean };
 		};
 		Enums: {
-			[_ in never]: never;
+			spray_schedule_status:
+				| "scheduled"
+				| "delayed"
+				| "cancelled"
+				| "completed";
 		};
 		CompositeTypes: {
 			[_ in never]: never;
@@ -832,6 +949,8 @@ export const Constants = {
 		Enums: {},
 	},
 	public: {
-		Enums: {},
+		Enums: {
+			spray_schedule_status: ["scheduled", "delayed", "cancelled", "completed"],
+		},
 	},
 } as const;

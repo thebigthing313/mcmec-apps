@@ -42,6 +42,11 @@ import {
 	MosquitofishRequestsUpdateSchema,
 } from "../db/mosquitofish-requests";
 import {
+	MunicipalitiesInsertSchema,
+	MunicipalitiesRowSchema,
+	MunicipalitiesUpdateSchema,
+} from "../db/municipalities";
+import {
 	NoticeTypesInsertSchema,
 	NoticeTypesRowSchema,
 	NoticeTypesUpdateSchema,
@@ -51,6 +56,11 @@ import {
 	NoticesRowSchema,
 	NoticesUpdateSchema,
 } from "../db/notices";
+import {
+	SpraySchedulesInsertSchema,
+	SpraySchedulesRowSchema,
+	SpraySchedulesUpdateSchema,
+} from "../db/spray-schedules";
 import {
 	WaterManagementRequestsBaseSchema,
 	WaterManagementRequestsInsertSchema,
@@ -181,6 +191,25 @@ export function createNoticesCollections({
 		updateSchema: ContactFormSubmissionsUpdateSchema,
 	});
 
+	const municipalities = createEagerCollection({
+		insertSchema: MunicipalitiesInsertSchema,
+		queryClient,
+		schema: MunicipalitiesRowSchema,
+		supabase,
+		table: "municipalities",
+		updateSchema: MunicipalitiesUpdateSchema,
+	});
+
+	const spraySchedules = createEagerCollection({
+		allowDelete: true,
+		insertSchema: SpraySchedulesInsertSchema,
+		queryClient,
+		schema: SpraySchedulesRowSchema,
+		supabase,
+		table: "spray_schedules",
+		updateSchema: SpraySchedulesUpdateSchema,
+	});
+
 	return {
 		adultMosquitoRequests,
 		contactFormSubmissions,
@@ -190,8 +219,10 @@ export function createNoticesCollections({
 		insecticides,
 		meetings,
 		mosquitofishRequests,
+		municipalities,
 		noticeTypes,
 		notices,
+		spraySchedules,
 		waterManagementRequests,
 		zipCodes,
 	};

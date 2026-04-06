@@ -17,10 +17,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
 	BookOpen,
 	Bug,
+	Calendar,
 	CheckCircle,
 	Clock,
 	Mail,
 	MailOpen,
+	SprayCan,
 	Users,
 } from "lucide-react";
 
@@ -109,6 +111,43 @@ function RouteComponent() {
 			.limit(5),
 	);
 
+	// Spray schedule data
+	const { data: scheduledMissions } = useLiveQuery((q) =>
+		q
+			.from({ s: db.spraySchedules })
+			.where(({ s }) => eq(s.status, "scheduled"))
+			.orderBy(({ s }) => s.mission_date, "asc"),
+	);
+
+	const { data: delayedMissions } = useLiveQuery((q) =>
+		q.from({ s: db.spraySchedules }).where(({ s }) => eq(s.status, "delayed")),
+	);
+
+	const { data: completedMissions } = useLiveQuery((q) =>
+		q
+			.from({ s: db.spraySchedules })
+			.where(({ s }) => eq(s.status, "completed")),
+	);
+
+	const { data: recentMissions } = useLiveQuery((q) =>
+		q
+			.from({ s: db.spraySchedules })
+			.innerJoin({ i: db.insecticides }, ({ s, i }) =>
+				eq(s.insecticide_id, i.id),
+			)
+			.select(({ s, i }) => ({
+				areaDescription: s.area_description,
+				endTime: s.end_time,
+				id: s.id,
+				insecticideName: i?.trade_name ?? "",
+				missionDate: s.mission_date,
+				startTime: s.start_time,
+				status: s.status,
+			}))
+			.orderBy(({ s }) => s.mission_date, "desc")
+			.limit(5),
+	);
+
 	const totalPendingRequests =
 		pendingAdultMosquito.length +
 		pendingMosquitofish.length +
@@ -124,7 +163,7 @@ function RouteComponent() {
 			</div>
 
 			{/* Stats Row */}
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between pb-2">
 						<CardTitle className="font-medium text-sm">
@@ -182,6 +221,22 @@ function RouteComponent() {
 					<CardContent>
 						<div className="font-bold text-2xl">{upcomingMeetings.length}</div>
 						<p className="text-muted-foreground text-xs">scheduled</p>
+					</CardContent>
+				</Card>
+
+				<Card>
+					<CardHeader className="flex flex-row items-center justify-between pb-2">
+						<CardTitle className="font-medium text-sm">
+							Spray Missions
+						</CardTitle>
+						<SprayCan className="h-4 w-4 text-muted-foreground" />
+					</CardHeader>
+					<CardContent>
+						<div className="font-bold text-2xl">{scheduledMissions.length}</div>
+						<p className="text-muted-foreground text-xs">
+							{delayedMissions.length} delayed, {completedMissions.length}{" "}
+							completed
+						</p>
 					</CardContent>
 				</Card>
 			</div>
@@ -467,6 +522,65 @@ function RouteComponent() {
 								<Users className="mb-2 h-8 w-8 text-muted-foreground" />
 								<p className="text-muted-foreground text-sm">
 									No upcoming meetings
+								</p>
+							</div>
+						)}
+					</CardContent>
+				</Card>
+				{/* Spray Schedule */}
+				<Card>
+					<CardHeader>
+						<div className="flex items-center justify-between">
+							<div>
+								<CardTitle>Spray Schedule</CardTitle>
+								<CardDescription>Recent and upcoming missions</CardDescription>
+							</div>
+							<Button asChild size="sm" variant="outline">
+								<Link to="/spray-schedule">View All</Link>
+							</Button>
+						</div>
+					</CardHeader>
+					<CardContent>
+						{recentMissions.length > 0 ? (
+							<ul className="space-y-3">
+								{recentMissions.map((m) => (
+									<li key={m.id}>
+										<Link
+											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
+											params={{ sprayScheduleId: m.id }}
+											to="/spray-schedule/$sprayScheduleId"
+										>
+											<div className="flex-1">
+												<p className="line-clamp-1 font-medium">
+													{m.areaDescription}
+												</p>
+												<div className="flex items-center gap-1 text-muted-foreground text-sm">
+													<Calendar className="h-3 w-3" />
+													{formatDateShort(m.missionDate)}
+												</div>
+											</div>
+											<Badge
+												variant={
+													m.status === "scheduled"
+														? "default"
+														: m.status === "delayed"
+															? "outline"
+															: m.status === "cancelled"
+																? "destructive"
+																: "secondary"
+												}
+											>
+												{m.status.charAt(0).toUpperCase() + m.status.slice(1)}
+											</Badge>
+										</Link>
+									</li>
+								))}
+							</ul>
+						) : (
+							<div className="flex flex-col items-center justify-center py-8 text-center">
+								<SprayCan className="mb-2 h-8 w-8 text-muted-foreground" />
+								<p className="text-muted-foreground text-sm">
+									No spray missions
 								</p>
 							</div>
 						)}

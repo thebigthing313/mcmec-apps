@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SprayScheduleRouteImport } from './routes/spray-schedule'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticesIndexRouteImport } from './routes/notices/index'
 import { Route as NoticesTransparencyRouteImport } from './routes/notices/transparency'
@@ -28,6 +29,11 @@ import { Route as AboutHowWeControlMosquitoesRouteImport } from './routes/about/
 import { Route as AboutJobOpportunitiesIndexRouteImport } from './routes/about/job-opportunities/index'
 import { Route as AboutJobOpportunitiesPostingIdRouteImport } from './routes/about/job-opportunities/$postingId'
 
+const SprayScheduleRoute = SprayScheduleRouteImport.update({
+  id: '/spray-schedule',
+  path: '/spray-schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -128,6 +134,7 @@ const AboutJobOpportunitiesPostingIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/spray-schedule': typeof SprayScheduleRoute
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/spray-schedule': typeof SprayScheduleRoute
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
@@ -169,6 +177,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/spray-schedule': typeof SprayScheduleRoute
   '/about/how-we-control-mosquitoes': typeof AboutHowWeControlMosquitoesRoute
   '/about/leadership': typeof AboutLeadershipRoute
   '/about/mission': typeof AboutMissionRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/spray-schedule'
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/spray-schedule'
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/spray-schedule'
     | '/about/how-we-control-mosquitoes'
     | '/about/leadership'
     | '/about/mission'
@@ -252,6 +264,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SprayScheduleRoute: typeof SprayScheduleRoute
   AboutHowWeControlMosquitoesRoute: typeof AboutHowWeControlMosquitoesRoute
   AboutLeadershipRoute: typeof AboutLeadershipRoute
   AboutMissionRoute: typeof AboutMissionRoute
@@ -273,6 +286,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/spray-schedule': {
+      id: '/spray-schedule'
+      path: '/spray-schedule'
+      fullPath: '/spray-schedule'
+      preLoaderRoute: typeof SprayScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -404,6 +424,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SprayScheduleRoute: SprayScheduleRoute,
   AboutHowWeControlMosquitoesRoute: AboutHowWeControlMosquitoesRoute,
   AboutLeadershipRoute: AboutLeadershipRoute,
   AboutMissionRoute: AboutMissionRoute,

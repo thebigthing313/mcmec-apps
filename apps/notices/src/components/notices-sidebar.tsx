@@ -10,6 +10,7 @@ import { Link, type LinkProps } from "@tanstack/react-router";
 import {
 	BookOpen,
 	Bug,
+	Calendar,
 	FileText,
 	FolderOpen,
 	Group,
@@ -42,6 +43,11 @@ const items: SidebarItem[] = [
 		icon: <SprayCan />,
 		label: "Insecticides",
 		linkProps: { to: "/insecticides" },
+	},
+	{
+		icon: <Calendar />,
+		label: "Spray Schedule",
+		linkProps: { to: "/spray-schedule" },
 	},
 	{
 		icon: <FileText />,
