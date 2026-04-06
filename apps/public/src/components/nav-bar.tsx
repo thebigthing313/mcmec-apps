@@ -41,33 +41,13 @@ const menuItems: MenuItem[] = [
 		subItems: [
 			{
 				description: "Our purpose and goals.",
-				linkProps: { to: "/about/mission" },
+				linkProps: { to: "/about/mission-statement" },
 				title: "Mission Statement",
 			},
 			{
 				description: "Meet our board of commissioners.",
 				linkProps: { to: "/about/leadership" },
 				title: "Leadership",
-			},
-			{
-				description: "Overview of our mosquito control methods.",
-				linkProps: { to: "/about/how-we-control-mosquitoes" },
-				title: "How We Control Mosquitoes",
-			},
-			{
-				description: "Insecticides and other products we commonly use.",
-				linkProps: { to: "/about/mosquito-control-products" },
-				title: "Mosquito Control Products",
-			},
-			{
-				description: "View current job openings at MCMEC.",
-				linkProps: { to: "/about/job-opportunities" },
-				title: "Job Opportunities",
-			},
-			{
-				description: "View upcoming mosquito spray missions.",
-				linkProps: { to: "/spray-schedule" },
-				title: "Spray Schedule",
 			},
 		],
 		title: "About",
@@ -113,6 +93,61 @@ const menuItems: MenuItem[] = [
 			},
 		],
 		title: "Public Notices",
+	},
+	{
+		subItems: [
+			{
+				description: "Overview of our mosquito control methods.",
+				linkProps: { to: "/mosquito-control/how-we-control-mosquitoes" },
+				title: "How We Control Mosquitoes",
+			},
+			{
+				description: "Insecticides and other products we commonly use.",
+				linkProps: { to: "/mosquito-control/mosquito-control-products" },
+				title: "Mosquito Control Products",
+			},
+			{
+				description:
+					"Public notice for upcoming adult mosquito control treatments.",
+				linkProps: { to: "/mosquito-control/spray-notice" },
+				title: "Public Notice for Adult Mosquito Control Treatment",
+			},
+			{
+				description: "View upcoming mosquito spray missions.",
+				linkProps: { to: "/mosquito-control/spray-schedule" },
+				title: "Spray Schedule",
+			},
+			{
+				description: "Notice for aerial larviciding operations.",
+				linkProps: { to: "/mosquito-control/aerial-larviciding-notice" },
+				title: "Aerial Larviciding Notice",
+			},
+		],
+		title: "Mosquito Control",
+	},
+	{
+		subItems: [
+			{
+				description: "Weekly mosquito activity reports for the county.",
+				linkProps: { to: "/mosquito-surveillance/weekly-activity" },
+				title: "Weekly Mosquito Activity",
+			},
+			{
+				description: "Checklist for identifying mosquito breeding sources.",
+				linkProps: { to: "/mosquito-surveillance/mosquito-source-checklist" },
+				title: "Mosquito Source Checklist",
+			},
+			{
+				description: "Municipal mosquito surveillance data packets.",
+				linkProps: { to: "/mosquito-surveillance/municipal-packet" },
+				title: "Municipal Packet",
+			},
+		],
+		title: "Mosquito Surveillance",
+	},
+	{
+		linkProps: { to: "/job-opportunities" },
+		title: "Job Opportunities",
 	},
 ];
 
