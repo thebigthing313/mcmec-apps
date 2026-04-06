@@ -4,6 +4,7 @@ import { DocumentsRowSchema } from "@mcmec/supabase/db/documents";
 import { InsecticidesRowSchema } from "@mcmec/supabase/db/insecticides";
 import { JobPostingsRowSchema } from "@mcmec/supabase/db/job-postings";
 import { MeetingsRowSchema } from "@mcmec/supabase/db/meetings";
+import { MosquitoActivityDataRowSchema } from "@mcmec/supabase/db/mosquito-activity-data";
 import { MunicipalitiesRowSchema } from "@mcmec/supabase/db/municipalities";
 import { NoticeTypesRowSchema } from "@mcmec/supabase/db/notice-types";
 import { NoticesRowSchema } from "@mcmec/supabase/db/notices";
@@ -234,6 +235,39 @@ export const spraySchedulesQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getSpraySchedulesServerFn(),
 		queryKey: ["spray_schedules"],
+		staleTime: 1000 * 60 * 30, // 30 minutes
+	});
+
+const getMosquitoActivityServerFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const supabase = getSupabaseServerClient();
+		const allRows: unknown[] = [];
+		const PAGE_SIZE = 1000;
+		let from = 0;
+
+		while (true) {
+			const { data, error } = await supabase
+				.from("mosquito_activity_data")
+				.select("*")
+				.range(from, from + PAGE_SIZE - 1);
+			if (error) {
+				throw new Error(
+					ErrorMessages.DATABASE.UNABLE_TO_FETCH("mosquito_activity_data"),
+				);
+			}
+			allRows.push(...data);
+			if (data.length < PAGE_SIZE) break;
+			from += PAGE_SIZE;
+		}
+
+		return allRows.map((row) => MosquitoActivityDataRowSchema.parse(row));
+	},
+);
+
+export const mosquitoActivityQueryOptions = () =>
+	queryOptions({
+		queryFn: () => getMosquitoActivityServerFn(),
+		queryKey: ["mosquito_activity_data"],
 		staleTime: 1000 * 60 * 30, // 30 minutes
 	});
 
