@@ -1,7 +1,17 @@
 import { createFileRoute, Link, type LinkProps } from "@tanstack/react-router";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute("/contact/service-request")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Service Request - MCMEC",
+			description:
+				"Request mosquito control service from MCMEC. Report nuisance mosquitoes, standing water, or request mosquitofish.",
+			url: "/contact/service-request",
+		}),
+		links: [canonical("/contact/service-request")],
+	}),
 });
 
 type ServiceRequestOption = {

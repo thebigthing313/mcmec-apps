@@ -7,9 +7,19 @@ import {
 	municipalitiesQueryOptions,
 	spraySchedulesQueryOptions,
 } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute("/mosquito-control/spray-schedule")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Spray Schedule - MCMEC",
+			description:
+				"View upcoming mosquito spray missions scheduled by the Middlesex County Mosquito Extermination Commission.",
+			url: "/mosquito-control/spray-schedule",
+		}),
+		links: [canonical("/mosquito-control/spray-schedule")],
+	}),
 	loader: async ({ context }) => {
 		await Promise.all([
 			context.queryClient.ensureQueryData(spraySchedulesQueryOptions()),

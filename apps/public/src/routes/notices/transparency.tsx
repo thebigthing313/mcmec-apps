@@ -5,9 +5,19 @@ import {
 	documentsQueryOptions,
 	documentTypesQueryOptions,
 } from "../../lib/queries";
+import { canonical, seo } from "../../lib/seo";
 
 export const Route = createFileRoute("/notices/transparency")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Transparency - MCMEC",
+			description:
+				"Transparency documents and public information from the Middlesex County Mosquito Extermination Commission.",
+			url: "/notices/transparency",
+		}),
+		links: [canonical("/notices/transparency")],
+	}),
 	loader: async ({ context }) => {
 		await Promise.all([
 			context.queryClient.ensureQueryData(documentsQueryOptions()),

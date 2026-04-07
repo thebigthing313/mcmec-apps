@@ -1,7 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { canonical, seo } from "../../lib/seo";
 
 export const Route = createFileRoute("/about/leadership")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Leadership - MCMEC",
+			description:
+				"Meet the commissioners and staff of the Middlesex County Mosquito Extermination Commission.",
+			url: "/about/leadership",
+		}),
+		links: [canonical("/about/leadership")],
+	}),
 });
 
 type Commissioner = {

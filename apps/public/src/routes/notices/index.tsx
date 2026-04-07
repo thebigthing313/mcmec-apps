@@ -5,9 +5,19 @@ import {
 	noticesQueryOptions,
 	noticeTypesQueryOptions,
 } from "../../lib/queries";
+import { canonical, seo } from "../../lib/seo";
 
 export const Route = createFileRoute("/notices/")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Legal Notices - MCMEC",
+			description:
+				"Current legal notices and announcements from the Middlesex County Mosquito Extermination Commission.",
+			url: "/notices",
+		}),
+		links: [canonical("/notices")],
+	}),
 	loader: async ({ context }) => {
 		await Promise.all([
 			context.queryClient.ensureQueryData(noticesQueryOptions()),

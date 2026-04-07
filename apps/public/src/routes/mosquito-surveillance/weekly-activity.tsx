@@ -6,9 +6,19 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { mosquitoActivityQueryOptions } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute("/mosquito-surveillance/weekly-activity")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Weekly Mosquito Activity - MCMEC",
+			description:
+				"Weekly mosquito activity reports and surveillance data for Middlesex County.",
+			url: "/mosquito-surveillance/weekly-activity",
+		}),
+		links: [canonical("/mosquito-surveillance/weekly-activity")],
+	}),
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(mosquitoActivityQueryOptions());
 	},

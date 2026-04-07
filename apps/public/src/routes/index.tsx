@@ -9,9 +9,41 @@ import {
 	Newspaper,
 	Users,
 } from "lucide-react";
+import { canonical, seo } from "../lib/seo";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "MCMEC - Middlesex County Mosquito Extermination Commission",
+			description:
+				"Protecting Middlesex County, NJ from mosquitoes and mosquito-borne diseases since 1914. Request service, view spray schedules, and access public notices.",
+			url: "/",
+		}),
+		links: [canonical("/")],
+	}),
+});
+
+const organizationJsonLd = JSON.stringify({
+	"@context": "https://schema.org",
+	"@type": "GovernmentOrganization",
+	name: "Middlesex County Mosquito Extermination Commission",
+	alternateName: "MCMEC",
+	url: "https://middlesexmosquito.org",
+	telephone: "+1-732-549-0665",
+	faxNumber: "+1-732-603-0280",
+	address: {
+		"@type": "PostalAddress",
+		streetAddress: "200 Parsonage Road",
+		addressLocality: "Edison",
+		addressRegion: "NJ",
+		postalCode: "08837",
+		addressCountry: "US",
+	},
+	areaServed: {
+		"@type": "AdministrativeArea",
+		name: "Middlesex County, New Jersey",
+	},
 });
 
 function RouteComponent() {
@@ -19,6 +51,11 @@ function RouteComponent() {
 
 	return (
 		<div className="-my-8 w-full">
+			<script
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD structured data
+				dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
+				type="application/ld+json"
+			/>
 			{/* Hero Banner */}
 			<div className="relative h-[60vh] min-h-80 w-full overflow-hidden">
 				<img
