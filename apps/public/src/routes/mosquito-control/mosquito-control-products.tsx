@@ -32,7 +32,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Commonly Used Mosquito Control Products</h1>
 				<p>
 					The Commission uses insecticides with low environmental risk for

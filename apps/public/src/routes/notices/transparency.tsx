@@ -49,7 +49,7 @@ function RouteComponent() {
 
 	return (
 		<div className="mx-auto max-w-4xl">
-			<article className="prose lg:prose-xl mb-8 max-w-none">
+			<article className="prose lg:prose-base mb-8 max-w-none">
 				<h1>Transparency</h1>
 				<p>
 					In compliance with N.J.S.A. 40A:5A-17.1 and L. 2011, c.167, the

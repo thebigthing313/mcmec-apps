@@ -8,7 +8,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	return (
-		<article className="prose lg:prose-xl max-w-none">
+		<article className="prose lg:prose-base max-w-none">
 			<h1>Aerial Larviciding Notice</h1>
 			<p>This page is under construction. Please check back soon.</p>
 		</article>

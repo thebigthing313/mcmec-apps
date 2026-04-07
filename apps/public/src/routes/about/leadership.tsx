@@ -49,7 +49,7 @@ const commissioners: Commissioner[] = [
 
 function RouteComponent() {
 	return (
-		<article className="prose lg:prose-xl max-w-none">
+		<article className="prose lg:prose-base max-w-none">
 			<h1>Leadership</h1>
 			<p>
 				The Middlesex County Mosquito Extermination Commission (MCMEC) is led by

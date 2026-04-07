@@ -55,7 +55,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Mosquito Spray Schedule</h1>
 				<p>
 					View upcoming and past mosquito spray missions conducted by the

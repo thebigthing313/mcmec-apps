@@ -23,7 +23,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl mb-8 max-w-none">
+			<article className="prose lg:prose-base mb-8 max-w-none">
 				<h1>Job Opportunities</h1>
 				<p>
 					The Middlesex County Mosquito Extermination Commission is an equal

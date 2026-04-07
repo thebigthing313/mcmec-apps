@@ -46,7 +46,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl mb-8 max-w-none">
+			<article className="prose lg:prose-base mb-8 max-w-none">
 				<h1>Archived Legal Notices</h1>
 				<p>
 					This website and the public notices contained herein are maintained in

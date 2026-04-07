@@ -36,7 +36,7 @@ const options: Array<ServiceRequestOption> = [
 function RouteComponent() {
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Service Request</h1>
 				<p>
 					Residents can submit an official service request through this page.

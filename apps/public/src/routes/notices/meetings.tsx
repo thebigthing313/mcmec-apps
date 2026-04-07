@@ -33,7 +33,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl mb-8 max-w-none">
+			<article className="prose lg:prose-base mb-8 max-w-none">
 				<h1>Meetings</h1>
 				<p>
 					In accordance with the New Jersey Open Public Meetings Act (N.J.S.A.

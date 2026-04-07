@@ -167,7 +167,7 @@ export function MosquitoActivityChart({
 				{description && <CardDescription>{description}</CardDescription>}
 			</CardHeader>
 			<CardContent>
-				<ChartContainer className="h-[350px] w-full" config={chartConfig}>
+				<ChartContainer className="h-55 w-full" config={chartConfig}>
 					<ComposedChart
 						data={chartData}
 						margin={{ top: 5, right: 10, left: 10, bottom: 5 }}

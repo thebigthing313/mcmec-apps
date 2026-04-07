@@ -7,7 +7,7 @@ export const Route = createFileRoute("/about/mission-statement")({
 
 function RouteComponent() {
 	return (
-		<article className="prose lg:prose-xl max-w-none">
+		<article className="prose lg:prose-base max-w-none">
 			<h1>Mission Statement</h1>
 			<p>
 				<img

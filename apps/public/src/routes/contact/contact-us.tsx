@@ -77,7 +77,7 @@ function RouteComponent() {
 
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Contact Us</h1>
 				<p>
 					The Middlesex County Mosquito Extermination Commission is dedicated to
