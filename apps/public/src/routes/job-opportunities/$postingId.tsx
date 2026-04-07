@@ -37,7 +37,7 @@ function RouteComponent() {
 				</Button>
 			</div>
 
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>{posting.title}</h1>
 				<p className="text-muted-foreground">
 					{posting.published_at && (

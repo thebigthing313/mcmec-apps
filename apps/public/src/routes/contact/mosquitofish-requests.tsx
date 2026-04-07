@@ -111,7 +111,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Mosquitofish Request</h1>
 				<p>
 					Mosquitofish are small fish that feed on mosquito larvae and can be an

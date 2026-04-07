@@ -89,7 +89,7 @@ function RouteComponent() {
 				/>
 			</div>
 
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h2>{title}</h2>
 				<div className="flex flex-row items-center gap-2">
 					<Label>Status: </Label>
@@ -103,7 +103,7 @@ function RouteComponent() {
 				<h3>Notice Date: {formatDate(notice_date)}</h3>
 				<TiptapRenderer content={content} />
 			</article>
-			<div className="flex flex-col text-muted text-sm italic">
+			<div className="flex flex-col text-foreground/70 text-sm italic">
 				<p>Notice Type: {type}</p>
 				<p>Notice ID: {id}</p>
 				<p>

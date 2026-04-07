@@ -120,7 +120,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Adult Mosquito Nuisance Request</h1>
 				<p>
 					Use this form to report a high number of adult mosquitoes on your

@@ -115,7 +115,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Water Management Request</h1>
 				<p>
 					Please use this form to report significant areas of blocked waterways,

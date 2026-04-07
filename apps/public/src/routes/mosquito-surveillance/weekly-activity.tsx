@@ -32,7 +32,7 @@ function RouteComponent() {
 
 	if (chartData.length === 0) {
 		return (
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Weekly Mosquito Activity</h1>
 				<p>
 					No mosquito activity data is currently available. Please check back

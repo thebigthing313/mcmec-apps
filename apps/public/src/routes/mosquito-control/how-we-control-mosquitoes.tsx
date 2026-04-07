@@ -8,7 +8,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	return (
-		<article className="prose lg:prose-xl max-w-none">
+		<article className="prose lg:prose-base max-w-none">
 			<h1>How We Control Mosquitoes</h1>
 			<h2>Integrated Mosquito Management</h2>
 			<p>
