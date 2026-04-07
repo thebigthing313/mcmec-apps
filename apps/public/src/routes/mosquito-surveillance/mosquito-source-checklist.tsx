@@ -1,9 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute(
 	"/mosquito-surveillance/mosquito-source-checklist",
 )({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Mosquito Source Checklist - MCMEC",
+			description:
+				"Checklist for identifying and eliminating mosquito breeding sources around your property.",
+			url: "/mosquito-surveillance/mosquito-source-checklist",
+		}),
+		links: [canonical("/mosquito-surveillance/mosquito-source-checklist")],
+	}),
 });
 
 function RouteComponent() {

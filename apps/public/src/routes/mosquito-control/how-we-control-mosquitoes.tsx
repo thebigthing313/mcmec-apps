@@ -1,9 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute(
 	"/mosquito-control/how-we-control-mosquitoes",
 )({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "How We Control Mosquitoes - MCMEC",
+			description:
+				"Learn about MCMEC's integrated approach to mosquito control including surveillance, water management, biological and chemical methods.",
+			url: "/mosquito-control/how-we-control-mosquitoes",
+		}),
+		links: [canonical("/mosquito-control/how-we-control-mosquitoes")],
+	}),
 });
 
 function RouteComponent() {

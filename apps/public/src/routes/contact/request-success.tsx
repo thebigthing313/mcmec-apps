@@ -4,6 +4,12 @@ import { ChevronLeft } from "lucide-react";
 
 export const Route = createFileRoute("/contact/request-success")({
 	component: RouteComponent,
+	head: () => ({
+		meta: [
+			{ title: "Request Submitted - MCMEC" },
+			{ content: "noindex", name: "robots" },
+		],
+	}),
 });
 
 function RouteComponent() {

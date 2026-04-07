@@ -7,9 +7,19 @@ import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { meetingsQueryOptions } from "../../lib/queries";
+import { canonical, seo } from "../../lib/seo";
 
 export const Route = createFileRoute("/notices/meetings")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Public Meetings - MCMEC",
+			description:
+				"Meeting schedules, agendas, and minutes for the Middlesex County Mosquito Extermination Commission.",
+			url: "/notices/meetings",
+		}),
+		links: [canonical("/notices/meetings")],
+	}),
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(meetingsQueryOptions());
 	},

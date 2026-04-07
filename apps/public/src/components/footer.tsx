@@ -25,6 +25,7 @@ export function Footer() {
 							<img
 								alt="Middlesex County Logo"
 								className="h-12"
+								loading="lazy"
 								src={countyLogo}
 							/>
 						</a>

@@ -1,9 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute(
 	"/mosquito-control/aerial-larviciding-notice",
 )({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Aerial Larviciding Notice - MCMEC",
+			description:
+				"Notice regarding aerial larviciding operations by the Middlesex County Mosquito Extermination Commission.",
+			url: "/mosquito-control/aerial-larviciding-notice",
+		}),
+		links: [canonical("/mosquito-control/aerial-larviciding-notice")],
+	}),
 });
 
 function RouteComponent() {

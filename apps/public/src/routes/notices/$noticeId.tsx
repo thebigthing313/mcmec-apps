@@ -17,6 +17,7 @@ import {
 	noticesQueryOptions,
 	noticeTypesQueryOptions,
 } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute("/notices/$noticeId")({
 	component: RouteComponent,
@@ -31,6 +32,18 @@ export const Route = createFileRoute("/notices/$noticeId")({
 		}
 		return { notice };
 	},
+	head: ({ loaderData, params }) => ({
+		meta: seo({
+			title: loaderData?.notice
+				? `${loaderData.notice.title} - MCMEC`
+				: "Notice - MCMEC",
+			description: loaderData?.notice
+				? `Public notice from the Middlesex County Mosquito Extermination Commission: ${loaderData.notice.title}.`
+				: "Public notice from the Middlesex County Mosquito Extermination Commission.",
+			url: `/notices/${params.noticeId}`,
+		}),
+		links: [canonical(`/notices/${params.noticeId}`)],
+	}),
 });
 
 function RouteComponent() {

@@ -2,9 +2,19 @@ import { formatDate } from "@mcmec/lib/functions/date-fns";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { jobPostingsQueryOptions } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute("/job-opportunities/")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Job Opportunities - MCMEC",
+			description:
+				"Current job openings at the Middlesex County Mosquito Extermination Commission.",
+			url: "/job-opportunities",
+		}),
+		links: [canonical("/job-opportunities")],
+	}),
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(jobPostingsQueryOptions());
 	},

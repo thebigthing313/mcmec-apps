@@ -1,8 +1,18 @@
 import { building } from "@mcmec/lib/constants/assets";
 import { createFileRoute } from "@tanstack/react-router";
+import { canonical, seo } from "../../lib/seo";
 
 export const Route = createFileRoute("/about/mission-statement")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Mission Statement - MCMEC",
+			description:
+				"Learn about MCMEC's mission to eliminate mosquito breeding areas and protect Middlesex County residents from mosquito-borne diseases.",
+			url: "/about/mission-statement",
+		}),
+		links: [canonical("/about/mission-statement")],
+	}),
 });
 
 function RouteComponent() {
@@ -13,6 +23,7 @@ function RouteComponent() {
 				<img
 					alt="MCMEC Building"
 					className="w-full rounded-sm drop-shadow-accent drop-shadow-xl md:float-right md:ml-6 md:w-1/2"
+					loading="lazy"
 					src={building}
 				/>
 				The Middlesex County Mosquito Extermination Commission (MCMEC) was

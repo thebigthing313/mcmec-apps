@@ -3,11 +3,21 @@ import { InsecticidesTable } from "@mcmec/ui/blocks/insecticides-table";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { insecticidesQueryOptions } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute(
 	"/mosquito-control/mosquito-control-products",
 )({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Mosquito Control Products - MCMEC",
+			description:
+				"Information about insecticides and products used by MCMEC for mosquito control in Middlesex County.",
+			url: "/mosquito-control/mosquito-control-products",
+		}),
+		links: [canonical("/mosquito-control/mosquito-control-products")],
+	}),
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(insecticidesQueryOptions());
 	},
