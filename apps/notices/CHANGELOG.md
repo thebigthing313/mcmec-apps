@@ -1,5 +1,21 @@
 # notices
 
+## 0.10.0
+
+### Minor Changes
+
+- 74f924d: Add mosquito spray schedule feature with admin CRUD in notices app, public display with filters at /spray-schedule, new TimeField and MultiComboboxField UI components, and dashboard integration.
+- d7980a2: Add weekly mosquito activity feature with CSV upload in notices app and recharts-powered visualization on the public site at /mosquito-surveillance/weekly-activity.
+
+### Patch Changes
+
+- Updated dependencies [705816d]
+- Updated dependencies [744da27]
+- Updated dependencies [74f924d]
+- Updated dependencies [d7980a2]
+  - @mcmec/ui@1.5.0
+  - @mcmec/supabase@1.7.0
+
 ## 0.9.1
 
 ### Patch Changes

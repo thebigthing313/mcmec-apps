@@ -1,5 +1,16 @@
 # hr
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [705816d]
+- Updated dependencies [744da27]
+- Updated dependencies [74f924d]
+- Updated dependencies [d7980a2]
+  - @mcmec/ui@1.5.0
+  - @mcmec/supabase@1.7.0
+
 ## 0.4.0
 
 ### Minor Changes
