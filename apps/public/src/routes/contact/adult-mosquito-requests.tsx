@@ -29,9 +29,20 @@ import {
 	type TurnstileWidgetRef,
 } from "@/src/components/turnstile-widget";
 import { zipCodesQueryOptions } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 import { submitAdultMosquitoRequestServerFn } from "@/src/lib/submit-adult-mosquito-request";
+
 export const Route = createFileRoute("/contact/adult-mosquito-requests")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Adult Mosquito Nuisance Request - MCMEC",
+			description:
+				"Report adult mosquito nuisance in your area to the Middlesex County Mosquito Extermination Commission.",
+			url: "/contact/adult-mosquito-requests",
+		}),
+		links: [canonical("/contact/adult-mosquito-requests")],
+	}),
 	loader: ({ context }) => {
 		return context.queryClient.ensureQueryData(zipCodesQueryOptions());
 	},
@@ -120,7 +131,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Adult Mosquito Nuisance Request</h1>
 				<p>
 					Use this form to report a high number of adult mosquitoes on your

@@ -17,6 +17,7 @@ import {
 	noticesQueryOptions,
 	noticeTypesQueryOptions,
 } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute("/notices/$noticeId")({
 	component: RouteComponent,
@@ -31,6 +32,18 @@ export const Route = createFileRoute("/notices/$noticeId")({
 		}
 		return { notice };
 	},
+	head: ({ loaderData, params }) => ({
+		meta: seo({
+			title: loaderData?.notice
+				? `${loaderData.notice.title} - MCMEC`
+				: "Notice - MCMEC",
+			description: loaderData?.notice
+				? `Public notice from the Middlesex County Mosquito Extermination Commission: ${loaderData.notice.title}.`
+				: "Public notice from the Middlesex County Mosquito Extermination Commission.",
+			url: `/notices/${params.noticeId}`,
+		}),
+		links: [canonical(`/notices/${params.noticeId}`)],
+	}),
 });
 
 function RouteComponent() {
@@ -89,7 +102,7 @@ function RouteComponent() {
 				/>
 			</div>
 
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h2>{title}</h2>
 				<div className="flex flex-row items-center gap-2">
 					<Label>Status: </Label>
@@ -103,7 +116,7 @@ function RouteComponent() {
 				<h3>Notice Date: {formatDate(notice_date)}</h3>
 				<TiptapRenderer content={content} />
 			</article>
-			<div className="flex flex-col text-muted text-sm italic">
+			<div className="flex flex-col text-foreground/70 text-sm italic">
 				<p>Notice Type: {type}</p>
 				<p>Notice ID: {id}</p>
 				<p>

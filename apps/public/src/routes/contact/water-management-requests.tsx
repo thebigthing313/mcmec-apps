@@ -29,10 +29,20 @@ import {
 	type TurnstileWidgetRef,
 } from "@/src/components/turnstile-widget";
 import { zipCodesQueryOptions } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 import { submitWaterManagementRequestServerFn } from "@/src/lib/submit-water-management-request";
 
 export const Route = createFileRoute("/contact/water-management-requests")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Water Management Request - MCMEC",
+			description:
+				"Report standing water or mosquito breeding habitats to the Middlesex County Mosquito Extermination Commission.",
+			url: "/contact/water-management-requests",
+		}),
+		links: [canonical("/contact/water-management-requests")],
+	}),
 	loader: ({ context }) => {
 		return context.queryClient.ensureQueryData(zipCodesQueryOptions());
 	},
@@ -115,7 +125,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Water Management Request</h1>
 				<p>
 					Please use this form to report significant areas of blocked waterways,

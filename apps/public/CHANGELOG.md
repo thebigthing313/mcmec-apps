@@ -1,5 +1,25 @@
 # public
 
+## 1.5.0
+
+### Minor Changes
+
+- 705816d: Refresh public website design: add Roboto font, refine color palette and shadows, reduce desktop typography scale, add section sidebar navigation, restructure home page with action cards, expand footer with site-wide links, and improve mobile navigation.
+- aea9286: Improve SEO for the public website: add per-page meta tags, canonical URLs, robots.txt, sitemap.xml, structured data (JSON-LD), custom 404 page, lazy loading, and cache headers
+- 74f924d: Add mosquito spray schedule feature with admin CRUD in notices app, public display with filters at /spray-schedule, new TimeField and MultiComboboxField UI components, and dashboard integration.
+- abc06a4: Restructure public website navigation: add Mosquito Control, Mosquito Surveillance, and Job Opportunities sections; move existing pages to new URL paths with 301 redirects from old URLs; add stub pages for spray notice, aerial larviciding, weekly activity, source checklist, and municipal packet.
+- d7980a2: Add weekly mosquito activity feature with CSV upload in notices app and recharts-powered visualization on the public site at /mosquito-surveillance/weekly-activity.
+
+### Patch Changes
+
+- 744da27: Add content to under-construction public pages: spray notice, aerial larviciding notice, mosquito source checklist, and municipal packet. Fix CSS @import ordering in globals.css.
+- Updated dependencies [705816d]
+- Updated dependencies [744da27]
+- Updated dependencies [74f924d]
+- Updated dependencies [d7980a2]
+  - @mcmec/ui@1.5.0
+  - @mcmec/supabase@1.7.0
+
 ## 1.4.0
 
 ### Minor Changes

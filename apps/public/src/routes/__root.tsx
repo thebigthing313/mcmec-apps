@@ -17,6 +17,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
 import { Footer } from "../components/footer";
 import { Navbar } from "../components/nav-bar";
+import { NotFound } from "../components/not-found";
 import { seo } from "../lib/seo";
 
 export interface MyRouterContext {
@@ -25,6 +26,7 @@ export interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	component: RootComponent,
+	notFoundComponent: NotFound,
 	head: () => ({
 		links: [
 			{ href: appCss, rel: "stylesheet" },

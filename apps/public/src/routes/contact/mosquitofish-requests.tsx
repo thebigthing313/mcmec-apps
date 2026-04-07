@@ -29,10 +29,20 @@ import {
 	type TurnstileWidgetRef,
 } from "@/src/components/turnstile-widget";
 import { zipCodesQueryOptions } from "@/src/lib/queries";
+import { canonical, seo } from "@/src/lib/seo";
 import { submitMosquitofishRequestServerFn } from "@/src/lib/submit-mosquitofish-request";
 
 export const Route = createFileRoute("/contact/mosquitofish-requests")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Mosquitofish Request - MCMEC",
+			description:
+				"Request mosquitofish for natural mosquito larvae control in ornamental ponds and contained water bodies.",
+			url: "/contact/mosquitofish-requests",
+		}),
+		links: [canonical("/contact/mosquitofish-requests")],
+	}),
 	loader: ({ context }) => {
 		return context.queryClient.ensureQueryData(zipCodesQueryOptions());
 	},
@@ -111,7 +121,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Mosquitofish Request</h1>
 				<p>
 					Mosquitofish are small fish that feed on mosquito larvae and can be an

@@ -4,13 +4,19 @@ import { ChevronLeft } from "lucide-react";
 
 export const Route = createFileRoute("/contact/request-success")({
 	component: RouteComponent,
+	head: () => ({
+		meta: [
+			{ title: "Request Submitted - MCMEC" },
+			{ content: "noindex", name: "robots" },
+		],
+	}),
 });
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl max-w-none">
+			<article className="prose lg:prose-base max-w-none">
 				<h1>Request Submitted Successfully!</h1>
 				<p>
 					Thank you for submitting your request. Your request has been forwarded

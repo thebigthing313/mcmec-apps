@@ -4,8 +4,11 @@ import { DocumentsRowSchema } from "@mcmec/supabase/db/documents";
 import { InsecticidesRowSchema } from "@mcmec/supabase/db/insecticides";
 import { JobPostingsRowSchema } from "@mcmec/supabase/db/job-postings";
 import { MeetingsRowSchema } from "@mcmec/supabase/db/meetings";
+import { MosquitoActivityDataRowSchema } from "@mcmec/supabase/db/mosquito-activity-data";
+import { MunicipalitiesRowSchema } from "@mcmec/supabase/db/municipalities";
 import { NoticeTypesRowSchema } from "@mcmec/supabase/db/notice-types";
 import { NoticesRowSchema } from "@mcmec/supabase/db/notices";
+import { SpraySchedulesRowSchema } from "@mcmec/supabase/db/spray-schedules";
 import { ZipCodesRowSchema } from "@mcmec/supabase/db/zip-codes";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
@@ -196,5 +199,95 @@ export const jobPostingsQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getJobPostingsServerFn(),
 		queryKey: ["job_postings"],
+		staleTime: 1000 * 60 * 60, // 1 hour
+	});
+
+const getSpraySchedulesServerFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const supabase = getSupabaseServerClient();
+		const currentYear = new Date().getFullYear();
+		const { data, error } = await supabase
+			.from("spray_schedules")
+			.select(
+				"*, insecticides(trade_name, label_url, msds_url), spray_schedule_municipalities(municipality_id, municipalities(name))",
+			)
+			.gte("mission_date", `${currentYear}-01-01`)
+			.lte("mission_date", `${currentYear}-12-31`);
+		if (error) {
+			throw new Error(
+				ErrorMessages.DATABASE.UNABLE_TO_FETCH("spray_schedules"),
+			);
+		}
+		return data.map((row) => ({
+			...SpraySchedulesRowSchema.parse(row),
+			insecticideLabelUrl: row.insecticides?.label_url ?? null,
+			insecticideMsdsUrl: row.insecticides?.msds_url ?? null,
+			insecticideName: row.insecticides?.trade_name ?? "",
+			municipalities: row.spray_schedule_municipalities.map((m) => ({
+				id: m.municipality_id,
+				name: m.municipalities?.name ?? "",
+			})),
+		}));
+	},
+);
+
+export const spraySchedulesQueryOptions = () =>
+	queryOptions({
+		queryFn: () => getSpraySchedulesServerFn(),
+		queryKey: ["spray_schedules"],
+		staleTime: 1000 * 60 * 30, // 30 minutes
+	});
+
+const getMosquitoActivityServerFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const supabase = getSupabaseServerClient();
+		const allRows: unknown[] = [];
+		const PAGE_SIZE = 1000;
+		let from = 0;
+
+		while (true) {
+			const { data, error } = await supabase
+				.from("mosquito_activity_data")
+				.select("*")
+				.range(from, from + PAGE_SIZE - 1);
+			if (error) {
+				throw new Error(
+					ErrorMessages.DATABASE.UNABLE_TO_FETCH("mosquito_activity_data"),
+				);
+			}
+			allRows.push(...data);
+			if (data.length < PAGE_SIZE) break;
+			from += PAGE_SIZE;
+		}
+
+		return allRows.map((row) => MosquitoActivityDataRowSchema.parse(row));
+	},
+);
+
+export const mosquitoActivityQueryOptions = () =>
+	queryOptions({
+		queryFn: () => getMosquitoActivityServerFn(),
+		queryKey: ["mosquito_activity_data"],
+		staleTime: 1000 * 60 * 30, // 30 minutes
+	});
+
+const getMunicipalitiesServerFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const supabase = getSupabaseServerClient();
+		const { data, error } = await supabase
+			.from("municipalities")
+			.select("*")
+			.order("name");
+		if (error) {
+			throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("municipalities"));
+		}
+		return data.map((m) => MunicipalitiesRowSchema.parse(m));
+	},
+);
+
+export const municipalitiesQueryOptions = () =>
+	queryOptions({
+		queryFn: () => getMunicipalitiesServerFn(),
+		queryKey: ["municipalities"],
 		staleTime: 1000 * 60 * 60, // 1 hour
 	});

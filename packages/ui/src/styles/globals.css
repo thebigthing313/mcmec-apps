@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -8,66 +9,62 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-	--background: oklch(100% 0.00011 271.152);
+	--background: oklch(0.985 0.002 150);
 	--foreground: oklch(0.2537 0.0035 164.7797);
-	--card: oklch(0.8555 0.0035 67.7765);
+	--card: oklch(0.98 0.005 150);
 	--card-foreground: oklch(0.2537 0.0035 164.7797);
-	--popover: oklch(0.8555 0.0035 67.7765);
+	--popover: oklch(0.98 0.005 150);
 	--popover-foreground: oklch(0.2537 0.0035 164.7797);
 	--primary: oklch(0.5364 0.1457 150.5842);
 	--primary-foreground: oklch(0.9556 0.0199 112.9333);
-	--secondary: oklch(0.8176 0.1 116.5842);
+	--secondary: oklch(0.92 0.03 150);
 	--secondary-foreground: oklch(0.2537 0.0035 164.7797);
-	--muted: oklch(0.83 0.0307 164.1343);
-	--muted-foreground: oklch(0.3538 0.0069 118.171);
+	--muted: oklch(0.94 0.01 150);
+	--muted-foreground: oklch(0.45 0.02 150);
 	--accent: oklch(0.6638 0.0267 183.8599);
-	--accent-foreground: oklch(0.3394 0.0441 1.7583);
+	--accent-foreground: oklch(0.98 0.005 150);
 	--destructive: oklch(0.5046 0.2053 29.0423);
 	--destructive-foreground: oklch(0.8852 0.0042 91.4508);
-	--border: oklch(36.07% 0.06071 159.857);
-	--input: oklch(0.9329 0.0124 301.2783);
+	--border: oklch(0.8 0.02 150);
+	--input: oklch(0.92 0.01 150);
 	--ring: oklch(0.5353 0.1357 153.5529);
 	--chart-1: oklch(0.6104 0.0767 299.7335);
 	--chart-2: oklch(0.7889 0.0802 359.9375);
 	--chart-3: oklch(0.7321 0.0749 169.867);
 	--chart-4: oklch(0.854 0.0882 76.8292);
 	--chart-5: oklch(0.7857 0.0645 258.0839);
-	--sidebar: oklch(0.9427 0.0054 95.1019);
+	--sidebar: oklch(0.96 0.01 150);
 	--sidebar-foreground: oklch(0.2713 0.0023 145.5111);
 	--sidebar-primary: oklch(0.5353 0.1357 153.5529);
-	--sidebar-primary-foreground: oklch(0.8852 0.0042 91.4508);
-	--sidebar-accent: oklch(0.8114 0.0992 114.1476);
+	--sidebar-primary-foreground: oklch(0.98 0.005 150);
+	--sidebar-accent: oklch(0.92 0.03 150);
 	--sidebar-accent-foreground: oklch(0.3867 0.0191 145.1951);
-	--sidebar-border: oklch(0.7231 0.1679 137.4158);
+	--sidebar-border: oklch(0.8 0.02 150);
 	--sidebar-ring: oklch(0.5353 0.1357 153.5529);
-	--font-sans: "Arial Nova", system-ui, sans-serif;
+	--font-sans: "Roboto", system-ui, sans-serif;
 	--font-serif: "Lora", Georgia, serif;
 	--font-mono: "Fira Code", "Courier New", monospace;
-	--radius: 1.5rem;
-	--shadow-x: 2px;
-	--shadow-y: 2px;
-	--shadow-blur: 11px;
+	--radius: 0.625rem;
+	--shadow-x: 0px;
+	--shadow-y: 1px;
+	--shadow-blur: 8px;
 	--shadow-spread: 0px;
-	--shadow-opacity: 0.19;
+	--shadow-opacity: 0.12;
 	--shadow-color: #212322;
-	--shadow-2xs: 2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.1);
-	--shadow-xs: 2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.1);
+	--shadow-2xs: 0 1px 2px 0 hsl(150 3% 13% / 0.05);
+	--shadow-xs: 0 1px 3px 0 hsl(150 3% 13% / 0.06);
 	--shadow-sm:
-		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
-		2px 1px 2px -1px hsl(150 2.9412% 13.3333% / 0.19);
+		0 1px 3px 0 hsl(150 3% 13% / 0.08), 0 1px 2px -1px hsl(150 3% 13% / 0.08);
 	--shadow:
-		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
-		2px 1px 2px -1px hsl(150 2.9412% 13.3333% / 0.19);
+		0 2px 6px 0 hsl(150 3% 13% / 0.1), 0 1px 2px -1px hsl(150 3% 13% / 0.1);
 	--shadow-md:
-		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
-		2px 2px 4px -1px hsl(150 2.9412% 13.3333% / 0.19);
+		0 4px 8px -1px hsl(150 3% 13% / 0.1), 0 2px 4px -2px hsl(150 3% 13% / 0.08);
 	--shadow-lg:
-		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
-		2px 4px 6px -1px hsl(150 2.9412% 13.3333% / 0.19);
+		0 8px 16px -2px hsl(150 3% 13% / 0.1), 0 4px 6px -2px hsl(150 3% 13% / 0.06);
 	--shadow-xl:
-		2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.19),
-		2px 8px 10px -1px hsl(150 2.9412% 13.3333% / 0.19);
-	--shadow-2xl: 2px 2px 11px 0px hsl(150 2.9412% 13.3333% / 0.47);
+		0 16px 32px -4px hsl(150 3% 13% / 0.1),
+		0 8px 12px -4px hsl(150 3% 13% / 0.06);
+	--shadow-2xl: 0 24px 48px -8px hsl(150 3% 13% / 0.2);
 	--tracking-normal: 0em;
 	--spacing: 0.25rem;
 }
@@ -152,5 +149,15 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+	.prose p {
+		@apply my-2 leading-normal;
+	}
+	.prose ul,
+	.prose ol {
+		@apply my-2;
+	}
+	.prose li {
+		@apply my-0.5;
 	}
 }

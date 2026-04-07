@@ -1,7 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { canonical, seo } from "../../lib/seo";
 
 export const Route = createFileRoute("/about/leadership")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Leadership - MCMEC",
+			description:
+				"Meet the commissioners and staff of the Middlesex County Mosquito Extermination Commission.",
+			url: "/about/leadership",
+		}),
+		links: [canonical("/about/leadership")],
+	}),
 });
 
 type Commissioner = {
@@ -49,7 +59,7 @@ const commissioners: Commissioner[] = [
 
 function RouteComponent() {
 	return (
-		<article className="prose lg:prose-xl max-w-none">
+		<article className="prose lg:prose-base max-w-none">
 			<h1>Leadership</h1>
 			<p>
 				The Middlesex County Mosquito Extermination Commission (MCMEC) is led by

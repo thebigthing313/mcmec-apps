@@ -18,7 +18,6 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@mcmec/ui/components/sheet";
-import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
 import { Link, type LinkProps } from "@tanstack/react-router";
 import { ChevronDown, Menu } from "lucide-react";
 import { useState } from "react";
@@ -41,28 +40,13 @@ const menuItems: MenuItem[] = [
 		subItems: [
 			{
 				description: "Our purpose and goals.",
-				linkProps: { to: "/about/mission" },
+				linkProps: { to: "/about/mission-statement" },
 				title: "Mission Statement",
 			},
 			{
 				description: "Meet our board of commissioners.",
 				linkProps: { to: "/about/leadership" },
 				title: "Leadership",
-			},
-			{
-				description: "Overview of our mosquito control methods.",
-				linkProps: { to: "/about/how-we-control-mosquitoes" },
-				title: "How We Control Mosquitoes",
-			},
-			{
-				description: "Insecticides and other products we commonly use.",
-				linkProps: { to: "/about/mosquito-control-products" },
-				title: "Mosquito Control Products",
-			},
-			{
-				description: "View current job openings at MCMEC.",
-				linkProps: { to: "/about/job-opportunities" },
-				title: "Job Opportunities",
 			},
 		],
 		title: "About",
@@ -109,26 +93,87 @@ const menuItems: MenuItem[] = [
 		],
 		title: "Public Notices",
 	},
+	{
+		subItems: [
+			{
+				description: "Overview of our mosquito control methods.",
+				linkProps: { to: "/mosquito-control/how-we-control-mosquitoes" },
+				title: "How We Control Mosquitoes",
+			},
+			{
+				description: "Insecticides and other products we commonly use.",
+				linkProps: { to: "/mosquito-control/mosquito-control-products" },
+				title: "Mosquito Control Products",
+			},
+			{
+				description:
+					"Public notice for upcoming adult mosquito control treatments.",
+				linkProps: { to: "/mosquito-control/spray-notice" },
+				title: "Public Notice for Adult Mosquito Control Treatment",
+			},
+			{
+				description: "View upcoming mosquito spray missions.",
+				linkProps: { to: "/mosquito-control/spray-schedule" },
+				title: "Spray Schedule",
+			},
+			{
+				description: "Notice for aerial larviciding operations.",
+				linkProps: { to: "/mosquito-control/aerial-larviciding-notice" },
+				title: "Aerial Larviciding Notice",
+			},
+		],
+		title: "Mosquito Control",
+	},
+	{
+		subItems: [
+			{
+				description: "Weekly mosquito activity reports for the county.",
+				linkProps: { to: "/mosquito-surveillance/weekly-activity" },
+				title: "Weekly Mosquito Activity",
+			},
+			{
+				description: "Checklist for identifying mosquito breeding sources.",
+				linkProps: { to: "/mosquito-surveillance/mosquito-source-checklist" },
+				title: "Mosquito Source Checklist",
+			},
+			{
+				description: "Municipal mosquito surveillance data packets.",
+				linkProps: { to: "/mosquito-surveillance/municipal-packet" },
+				title: "Municipal Packet",
+			},
+		],
+		title: "Mosquito Surveillance",
+	},
+	{
+		linkProps: { to: "/job-opportunities" },
+		title: "Job Opportunities",
+	},
 ];
 
 export function Navbar() {
-	const isMobile = useIsMobile();
-	if (isMobile) {
-		return <MobileNavBar />;
-	} else {
-		return <WebNavBar />;
-	}
+	return (
+		<>
+			{/* Mobile: menu button + sheet */}
+			<div className="md:hidden">
+				<MobileNavBar />
+			</div>
+			{/* Desktop: full nav bar */}
+			<div className="hidden md:block">
+				<WebNavBar />
+			</div>
+		</>
+	);
 }
 
 const navLinkClass =
-	"inline-flex h-12 items-center justify-center rounded-md px-4 py-2 text-2xl text-primary-foreground font-bold uppercase tracking-wider hover:bg-accent/40 focus:bg-accent/40 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px]";
+	"inline-flex h-10 items-center justify-center rounded-md px-3 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-accent/40 focus:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 function WebNavBar() {
 	return (
-		<div className="sticky top-0 z-50 flex h-30 flex-row items-center justify-start bg-primary py-2 drop-shadow-accent drop-shadow-xl">
-			<div className="flex w-50 flex-row justify-center rounded-r-full bg-background">
+		<div className="sticky top-0 z-50 flex h-16 flex-row items-center justify-start bg-primary py-2 shadow-md">
+			<div className="flex w-20 flex-row justify-center rounded-r-full bg-background">
 				<Link to="/">
-					<img alt="MCMEC Logo" className="m-4 h-26" src={logo512} />
+					<img alt="MCMEC Logo" className="m-2 h-12" src={logo512} />
 				</Link>
 			</div>
 
@@ -163,7 +208,7 @@ function NavPopover({ item }: { item: MenuItem }) {
 					className={`ml-1 size-4 transition duration-200 ${open ? "rotate-180" : ""}`}
 				/>
 			</PopoverTrigger>
-			<PopoverContent align="start" className="w-100" sideOffset={8}>
+			<PopoverContent align="start" className="w-80" sideOffset={8}>
 				<ul className="grid gap-2">
 					{item.subItems?.map((subItem) => (
 						<li key={subItem.title}>
@@ -172,9 +217,9 @@ function NavPopover({ item }: { item: MenuItem }) {
 								onClick={() => setOpen(false)}
 								to={subItem.linkProps.to}
 							>
-								<div className="font-semibold text-xl">{subItem.title}</div>
+								<div className="font-semibold text-sm">{subItem.title}</div>
 								{subItem.description && (
-									<div className="text-muted-foreground">
+									<div className="text-muted-foreground text-xs">
 										{subItem.description}
 									</div>
 								)}
@@ -191,12 +236,14 @@ function MobileNavBar() {
 	const [open, setOpen] = useState(false);
 
 	return (
-		<div className="flex h-15 flex-row items-center justify-between bg-primary py-2 pl-2">
+		<div className="sticky top-0 z-50 flex h-14 flex-row items-center justify-between bg-primary pl-3">
 			<Sheet aria-describedby="Mobile Menu" onOpenChange={setOpen} open={open}>
 				<SheetTrigger>
 					<div className="flex flex-row items-center gap-2 text-primary-foreground">
-						<Menu />
-						<span className="text-2xl uppercase tracking-tight">Menu</span>
+						<Menu className="size-5" />
+						<span className="font-semibold text-sm uppercase tracking-wide">
+							Menu
+						</span>
 					</div>
 				</SheetTrigger>
 				<SheetContent side="left">
@@ -218,20 +265,15 @@ function MobileNavBar() {
 											</Button>
 										</CollapsibleTrigger>
 										<CollapsibleContent className="pt-2 pl-4">
-											<div className="flex flex-col gap-2">
+											<div className="flex flex-col gap-1">
 												{item.subItems.map((subItem) => (
 													<Link
-														className="block rounded-md p-2 hover:bg-accent"
+														className="block rounded-md p-2 text-sm hover:bg-muted"
 														key={subItem.title}
 														onClick={() => setOpen(false)}
 														to={subItem.linkProps.to}
 													>
-														<div className="font-semibold">{subItem.title}</div>
-														{subItem.description && (
-															<div className="text-muted-foreground text-xs">
-																{subItem.description}
-															</div>
-														)}
+														{subItem.title}
 													</Link>
 												))}
 											</div>
@@ -251,17 +293,18 @@ function MobileNavBar() {
 										</Link>
 									</Button>
 								)}
-								{index < menuItems.length - 1 && <Separator className="my-2" />}
+								{index < menuItems.length - 1 && <Separator className="my-1" />}
 							</div>
 						))}
 					</div>
 				</SheetContent>
 			</Sheet>
-			<div className="flex w-24 flex-row justify-center rounded-l-full bg-background">
-				<Link to="/">
-					<img alt="MCMEC Logo" className="m-4 h-15" src={logo512} />
-				</Link>
-			</div>
+			<Link
+				className="flex h-14 w-16 items-center justify-center rounded-l-full bg-background"
+				to="/"
+			>
+				<img alt="MCMEC Logo" className="h-10" src={logo512} />
+			</Link>
 		</div>
 	);
 }

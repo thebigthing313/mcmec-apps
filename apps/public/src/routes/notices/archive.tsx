@@ -5,9 +5,19 @@ import {
 	noticesQueryOptions,
 	noticeTypesQueryOptions,
 } from "../../lib/queries";
+import { canonical, seo } from "../../lib/seo";
 
 export const Route = createFileRoute("/notices/archive")({
 	component: RouteComponent,
+	head: () => ({
+		meta: seo({
+			title: "Archived Notices - MCMEC",
+			description:
+				"Archive of past legal notices from the Middlesex County Mosquito Extermination Commission.",
+			url: "/notices/archive",
+		}),
+		links: [canonical("/notices/archive")],
+	}),
 	loader: async ({ context }) => {
 		await Promise.all([
 			context.queryClient.ensureQueryData(noticesQueryOptions()),
@@ -46,7 +56,7 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<article className="prose lg:prose-xl mb-8 max-w-none">
+			<article className="prose lg:prose-base mb-8 max-w-none">
 				<h1>Archived Legal Notices</h1>
 				<p>
 					This website and the public notices contained herein are maintained in

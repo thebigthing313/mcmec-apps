@@ -1,5 +1,12 @@
 # @mcmec/supabase
 
+## 1.7.0
+
+### Minor Changes
+
+- 74f924d: Add mosquito spray schedule feature with admin CRUD in notices app, public display with filters at /spray-schedule, new TimeField and MultiComboboxField UI components, and dashboard integration.
+- d7980a2: Add weekly mosquito activity feature with CSV upload in notices app and recharts-powered visualization on the public site at /mosquito-surveillance/weekly-activity.
+
 ## 1.6.0
 
 ### Minor Changes
