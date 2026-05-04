@@ -36,9 +36,17 @@ function RouteComponent() {
 			<article className="prose lg:prose-base mb-8 max-w-none">
 				<h1>Job Opportunities</h1>
 				<p>
-					The Middlesex County Mosquito Extermination Commission is an equal
-					opportunity employer. Below are our current job openings. Click on a
-					posting to view full details.
+					The Middlesex County Mosquito Extermination Commission has
+					opportunities for people who want to make a tangible difference in
+					their community. Our work protects public health by limiting the
+					spread of mosquito-borne diseases like West Nile virus and Eastern
+					Equine Encephalitis, and improves quality of life by keeping nuisance
+					mosquito populations in check across Middlesex County. MCMEC offers a
+					competitive benefits package, including enrollment in the New Jersey
+					Public Employees' Retirement System (PERS), health and dental
+					insurance, and generous paid vacation, sick, and holiday leave. MCMEC
+					is an equal opportunity employer. Below are our current job openings —
+					click any posting to view full details.
 				</p>
 			</article>
 

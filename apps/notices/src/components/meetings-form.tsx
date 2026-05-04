@@ -55,22 +55,10 @@ export function MeetingsForm({
 					)}
 				</form.AppField>
 				<form.AppField
-					name="agenda_url"
-					validators={{ onBlur: ValidURLSchema.nullable() }}
-				>
-					{(field) => <field.TextField label="Agenda Link" showPaste={true} />}
-				</form.AppField>
-				<form.AppField
 					name="minutes_url"
 					validators={{ onBlur: ValidURLSchema.nullable() }}
 				>
 					{(field) => <field.TextField label="Minutes Link" showPaste={true} />}
-				</form.AppField>
-				<form.AppField
-					name="report_url"
-					validators={{ onBlur: ValidURLSchema.nullable() }}
-				>
-					{(field) => <field.TextField label="Report Link" showPaste={true} />}
 				</form.AppField>
 				<form.AppField
 					name="notice_url"
