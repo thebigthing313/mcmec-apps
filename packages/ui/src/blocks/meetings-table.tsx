@@ -33,9 +33,7 @@ export type MeetingTableRowType = {
 	name: string;
 	meetingAt: Date;
 	isCancelled: boolean;
-	agendaUrl: string | null | undefined;
 	minutesUrl: string | null | undefined;
-	reportUrl: string | null | undefined;
 	noticeUrl: string | null | undefined;
 	notes: string | null | undefined;
 };
@@ -185,11 +183,9 @@ export function MeetingsTable({
 		},
 		{
 			cell: ({ row }) => {
-				const { agendaUrl, minutesUrl, reportUrl, noticeUrl } = row.original;
+				const { minutesUrl, noticeUrl } = row.original;
 				const links = [
-					{ label: "Agenda", url: agendaUrl },
 					{ label: "Minutes", url: minutesUrl },
-					{ label: "Report", url: reportUrl },
 					{ label: "48-Hour Notice", url: noticeUrl },
 				].filter((link) => link.url);
 

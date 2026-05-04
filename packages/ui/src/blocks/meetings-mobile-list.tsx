@@ -106,9 +106,7 @@ export function MeetingsMobileList({
 							meeting.meetingAt,
 						);
 						const links = [
-							{ label: "Agenda", url: meeting.agendaUrl },
 							{ label: "Minutes", url: meeting.minutesUrl },
-							{ label: "Report", url: meeting.reportUrl },
 							{ label: "48-Hour Notice", url: meeting.noticeUrl },
 						].filter((link) => link.url);
 

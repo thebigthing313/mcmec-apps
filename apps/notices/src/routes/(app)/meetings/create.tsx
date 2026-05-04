@@ -29,7 +29,6 @@ function RouteComponent() {
 	defaultMeetingAt.setHours(12, 0, 0, 0);
 
 	const defaultValues: MeetingsRowType = {
-		agenda_url: null,
 		created_at: new Date(),
 		created_by: null,
 		id: crypto.randomUUID(),
@@ -40,7 +39,6 @@ function RouteComponent() {
 		name: "",
 		notes: null,
 		notice_url: null,
-		report_url: null,
 		updated_at: new Date(),
 		updated_by: null,
 	};
