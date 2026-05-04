@@ -189,9 +189,9 @@ INSERT INTO public.insecticides VALUES ('628447da-d880-4013-933c-902172b4052f', 
 -- Data for Name: meetings; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.meetings VALUES ('6cd00d12-9356-428a-83cf-d8c9179f6ae0', 'Regular Commission Meeting', '2026-04-09 19:00:00+00', false, NULL, NULL, NULL, '2026-04-06 16:00:13.927787+00', NULL, '2026-04-06 16:00:13.927787+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
-INSERT INTO public.meetings VALUES ('2692050b-9c7d-4816-aaf9-3361a68abab0', 'Regular Commission Meeting', '2026-05-14 19:00:00+00', false, NULL, NULL, NULL, '2026-04-06 16:00:13.927787+00', NULL, '2026-04-06 16:00:13.927787+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
-INSERT INTO public.meetings VALUES ('33298031-5efb-4db6-bf63-d0d692cde3ca', 'Special Budget Meeting', '2026-04-23 18:00:00+00', false, NULL, NULL, NULL, '2026-04-06 16:00:13.927787+00', NULL, '2026-04-06 16:00:13.927787+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL, NULL);
+INSERT INTO public.meetings VALUES ('6cd00d12-9356-428a-83cf-d8c9179f6ae0', 'Regular Commission Meeting', '2026-04-09 19:00:00+00', false, NULL, NULL, '2026-04-06 16:00:13.927787+00', NULL, '2026-04-06 16:00:13.927787+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL);
+INSERT INTO public.meetings VALUES ('2692050b-9c7d-4816-aaf9-3361a68abab0', 'Regular Commission Meeting', '2026-05-14 19:00:00+00', false, NULL, NULL, '2026-04-06 16:00:13.927787+00', NULL, '2026-04-06 16:00:13.927787+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL);
+INSERT INTO public.meetings VALUES ('33298031-5efb-4db6-bf63-d0d692cde3ca', 'Special Budget Meeting', '2026-04-23 18:00:00+00', false, NULL, NULL, '2026-04-06 16:00:13.927787+00', NULL, '2026-04-06 16:00:13.927787+00', NULL, '1 JFK Blvd, New Brunswick, NJ', NULL);
 
 
 --
