@@ -22,7 +22,6 @@ function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { data } = useLiveQuery((q) => q.from({ meeting: meetings }));
 	const mappedData: MeetingTableRowType[] = data.map((meeting) => ({
-		agendaUrl: meeting.agenda_url,
 		id: meeting.id,
 		isCancelled: meeting.is_cancelled,
 		meetingAt: meeting.meeting_at,
@@ -30,7 +29,6 @@ function RouteComponent() {
 		name: meeting.name,
 		notes: meeting.notes,
 		noticeUrl: meeting.notice_url,
-		reportUrl: meeting.report_url,
 	}));
 
 	return (

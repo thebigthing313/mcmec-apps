@@ -340,7 +340,6 @@ export type Database = {
 			};
 			meetings: {
 				Row: {
-					agenda_url: string | null;
 					created_at: string;
 					created_by: string | null;
 					id: string;
@@ -351,12 +350,10 @@ export type Database = {
 					name: string;
 					notes: string | null;
 					notice_url: string | null;
-					report_url: string | null;
 					updated_at: string;
 					updated_by: string | null;
 				};
 				Insert: {
-					agenda_url?: string | null;
 					created_at?: string;
 					created_by?: string | null;
 					id?: string;
@@ -367,12 +364,10 @@ export type Database = {
 					name: string;
 					notes?: string | null;
 					notice_url?: string | null;
-					report_url?: string | null;
 					updated_at?: string;
 					updated_by?: string | null;
 				};
 				Update: {
-					agenda_url?: string | null;
 					created_at?: string;
 					created_by?: string | null;
 					id?: string;
@@ -383,7 +378,6 @@ export type Database = {
 					name?: string;
 					notes?: string | null;
 					notice_url?: string | null;
-					report_url?: string | null;
 					updated_at?: string;
 					updated_by?: string | null;
 				};

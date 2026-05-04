@@ -30,7 +30,6 @@ function RouteComponent() {
 	const { data: meetings } = useSuspenseQuery(meetingsQueryOptions());
 
 	const mappedData: MeetingTableRowType[] = meetings.map((meeting) => ({
-		agendaUrl: meeting.agenda_url,
 		id: meeting.id,
 		isCancelled: meeting.is_cancelled,
 		meetingAt: meeting.meeting_at,
@@ -38,7 +37,6 @@ function RouteComponent() {
 		name: meeting.name,
 		notes: meeting.notes,
 		noticeUrl: meeting.notice_url,
-		reportUrl: meeting.report_url,
 	}));
 
 	return (
