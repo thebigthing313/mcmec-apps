@@ -1,5 +1,13 @@
 # central
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [c45311a]
+  - @mcmec/ui@1.5.1
+  - @mcmec/supabase@1.7.1
+
 ## 0.4.2
 
 ### Patch Changes
