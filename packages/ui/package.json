@@ -91,5 +91,5 @@
 		"lint": "biome check --write ."
 	},
 	"type": "module",
-	"version": "1.5.1"
+	"version": "1.5.2"
 }

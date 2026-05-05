@@ -1,5 +1,12 @@
 # hr
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [803e1f7]
+  - @mcmec/ui@1.5.2
+
 ## 0.4.2
 
 ### Patch Changes
