@@ -1,5 +1,12 @@
 # admin
 
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies [803e1f7]
+  - @mcmec/ui@1.5.2
+
 ## 0.3.3
 
 ### Patch Changes
