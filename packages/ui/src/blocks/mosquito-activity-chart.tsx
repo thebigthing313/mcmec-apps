@@ -278,16 +278,22 @@ export function MosquitoActivityCharts({ data }: MosquitoActivityChartsProps) {
 		return [...groups].sort();
 	}, [data]);
 
-	// Compute global week range from the selected year across all groups
+	// Compute global week range across the selected year and the 5-year
+	// historical window so charts still render the average line and zero-fill
+	// the current year when only a few weeks have been uploaded.
 	const weekDomain = React.useMemo((): [number, number] => {
+		const avgYearStart = selectedYear - 5;
+		const avgYearEnd = selectedYear - 1;
 		let min = 53;
 		let max = 1;
 		for (const row of data) {
-			if (row.year === selectedYear) {
-				if (row.week_number < min) min = row.week_number;
-				if (row.week_number > max) max = row.week_number;
-			}
+			const inCurrent = row.year === selectedYear;
+			const inHistory = row.year >= avgYearStart && row.year <= avgYearEnd;
+			if (!(inCurrent || inHistory)) continue;
+			if (row.week_number < min) min = row.week_number;
+			if (row.week_number > max) max = row.week_number;
 		}
+		if (min > max) return [1, 1];
 		return [min, max];
 	}, [data, selectedYear]);
 
