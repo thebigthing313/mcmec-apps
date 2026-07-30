@@ -3,8 +3,11 @@ import { cors } from "hono/cors";
 import { auth } from "./auth";
 import { deleteRow, insertRow, updateRow } from "./data";
 import { inviteEmployee } from "./invite";
+import { importMosquitoActivity } from "./mosquito";
 import { submitRequest } from "./requests";
 import { shapeProxy } from "./shapes";
+import { setSprayScheduleMunicipalities } from "./spray-municipalities";
+import { setUserRoles } from "./users";
 
 export const app = new Hono();
 
@@ -19,7 +22,7 @@ app.use(
 	cors({
 		origin: trustedOrigins,
 		allowHeaders: ["Content-Type", "Authorization"],
-		allowMethods: ["GET", "POST", "OPTIONS"],
+		allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 		exposeHeaders: [
 			"electric-offset",
 			"electric-handle",
@@ -47,7 +50,13 @@ app.post("/api/data/:table", insertRow);
 app.patch("/api/data/:table/:id", updateRow);
 app.delete("/api/data/:table/:id", deleteRow);
 
+// Non-CRUD writes (composite-key / bulk / role) that the generic /api/data path can't express
+app.put("/api/users/:id/roles", setUserRoles); // manage_users
+app.post("/api/mosquito-activity/import", importMosquitoActivity); // manage_website
+app.put(
+	"/api/spray-schedules/:id/municipalities",
+	setSprayScheduleMunicipalities,
+); // manage_website
+
 // Employee invite (manage_employees) + set-password email
 app.post("/api/invite", inviteEmployee);
-
-// TODO(Phase 2): deploy the api service + custom domain.

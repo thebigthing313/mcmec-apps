@@ -7,16 +7,15 @@
 // Each write runs in a transaction that first sets the `app.*` GUCs so the audit trigger
 // (log_mutation) records who/where. Permissions mirror the old RLS write policies.
 
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import type { Context } from "hono";
 import { ZodError } from "zod";
+import { setActor, type Tx } from "./actor";
 import { db } from "./db";
 import * as schema from "./db/schema";
 import { getSessionInfo, type SessionInfo } from "./session";
-
-type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 type CrudEntry = {
 	permission: string;
@@ -130,25 +129,6 @@ async function guard(
 		return c.json({ error: "forbidden" }, 403);
 	}
 	return { entry, session };
-}
-
-// Sets the per-transaction audit-actor GUCs the log_mutation trigger reads.
-function setActor(session: SessionInfo, c: Context) {
-	const ip =
-		c.req.header("cf-connecting-ip") ?? c.req.header("x-forwarded-for") ?? "";
-	const requestId = c.req.header("x-request-id") ?? "";
-	return async (tx: Tx) => {
-		await tx.execute(
-			sql`select set_config('app.actor_user_id', ${session.userId}, true)`,
-		);
-		await tx.execute(
-			sql`select set_config('app.actor_email', ${session.userEmail}, true)`,
-		);
-		await tx.execute(
-			sql`select set_config('app.request_id', ${requestId}, true)`,
-		);
-		await tx.execute(sql`select set_config('app.ip_address', ${ip}, true)`);
-	};
 }
 
 export async function insertRow(c: Context): Promise<Response> {

@@ -1,3 +1,4 @@
+import type { Context } from "hono";
 import { auth } from "./auth";
 
 export type SessionInfo = {
@@ -24,4 +25,19 @@ export async function getSessionInfo(
 		employeeId: s.employeeId ?? null,
 		permissions: s.permissions ?? [],
 	};
+}
+
+// Gate a handler on a permission. Returns the session, or a 401/403 Response to short-circuit:
+//   const s = await requirePermission(c, "manage_users");
+//   if (s instanceof Response) return s;
+export async function requirePermission(
+	c: Context,
+	permission: string,
+): Promise<SessionInfo | Response> {
+	const session = await getSessionInfo(c.req.raw.headers);
+	if (!session) return c.json({ error: "unauthenticated" }, 401);
+	if (!session.permissions.includes(permission)) {
+		return c.json({ error: "forbidden" }, 403);
+	}
+	return session;
 }

@@ -37,6 +37,15 @@ const roles = {
 	manage_users: ac.newRole({ users: ["manage"] }),
 };
 
+// The assignable app roles (one per admin front-end). Source of truth for role-assignment
+// validation; `users.role` stores a comma-separated subset of these (see customSession).
+export const APP_ROLES = [
+	"manage_website",
+	"manage_employees",
+	"manage_users",
+] as const;
+export type AppRole = (typeof APP_ROLES)[number];
+
 export const auth = betterAuth({
 	baseURL: process.env.BETTER_AUTH_URL, // https://api.middlesexmosquito.org
 	secret: process.env.BETTER_AUTH_SECRET,

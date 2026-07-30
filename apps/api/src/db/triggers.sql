@@ -51,11 +51,16 @@ begin
 	return coalesce(new, old);
 end $$;
 
--- Coverage is opt-in. Start with personnel records; extend per table later.
+-- Coverage is opt-in. Start with personnel + access records; extend per table later.
 create trigger audit_employees after insert or update or delete on employees
 	for each row execute function log_mutation();
+-- users: role/ban/email changes. Writes made through the API (PUT /api/users/:id/roles) carry
+-- the acting admin via the app.* GUCs; Better-Auth-initiated writes (signup, verification) have
+-- no GUC set and are logged with a null actor (system event). No secrets live on this table
+-- (credentials are on `accounts`), so to_jsonb(new) is safe to store.
+create trigger audit_users after insert or update or delete on users
+	for each row execute function log_mutation();
 -- (notices audit is optional/TBD — attach the same trigger here if you decide to.)
--- users role/ban changes are audited app-layer (Better Auth databaseHooks), not here.
 
 -- ═══ 3. Least-privilege app role + append-only hardening ══════════════════════
 -- Apply in Phase 1 with a real password (or a Railway-referenced secret). The API's
