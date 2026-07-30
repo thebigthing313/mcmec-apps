@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
 import { auth } from "./auth";
 import { deleteRow, insertRow, updateRow } from "./data";
@@ -42,8 +43,9 @@ app.on(["GET", "POST"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 // Electric shape auth-proxy (read path for the admin + public apps)
 app.get("/api/shapes/:table", shapeProxy);
 
-// Public intake (anonymous, Turnstile-gated)
-app.post("/api/requests", submitRequest);
+// Public intake (anonymous, Turnstile-gated). 64 KB cap — the body is parsed before the
+// honeypot/Turnstile checks, so bound it up front on this unauthenticated route.
+app.post("/api/requests", bodyLimit({ maxSize: 64 * 1024 }), submitRequest);
 
 // Write path (permission-gated, audit-logged via app.* GUCs)
 app.post("/api/data/:table", insertRow);

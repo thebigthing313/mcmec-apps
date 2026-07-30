@@ -12,19 +12,19 @@ end $$;
 
 -- Attach to every carried table that has updated_at (NOT the Better-Auth tables — Better Auth
 -- manages those timestamps — NOT audit_log / notice_postings / the join table).
-create trigger set_updated_at before update on employees              for each row execute function set_updated_at();
-create trigger set_updated_at before update on zip_codes              for each row execute function set_updated_at();
-create trigger set_updated_at before update on municipalities         for each row execute function set_updated_at();
-create trigger set_updated_at before update on notice_types           for each row execute function set_updated_at();
-create trigger set_updated_at before update on document_types         for each row execute function set_updated_at();
-create trigger set_updated_at before update on insecticides           for each row execute function set_updated_at();
-create trigger set_updated_at before update on notices                for each row execute function set_updated_at();
-create trigger set_updated_at before update on meetings               for each row execute function set_updated_at();
-create trigger set_updated_at before update on documents              for each row execute function set_updated_at();
-create trigger set_updated_at before update on spray_schedules        for each row execute function set_updated_at();
-create trigger set_updated_at before update on public_requests        for each row execute function set_updated_at();
-create trigger set_updated_at before update on job_postings           for each row execute function set_updated_at();
-create trigger set_updated_at before update on mosquito_activity_data for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on employees              for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on zip_codes              for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on municipalities         for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on notice_types           for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on document_types         for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on insecticides           for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on notices                for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on meetings               for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on documents              for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on spray_schedules        for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on public_requests        for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on job_postings           for each row execute function set_updated_at();
+create or replace trigger set_updated_at before update on mosquito_activity_data for each row execute function set_updated_at();
 
 -- ═══ 2. Audit log (append-only) ══════════════════════════════════════════════
 -- SECURITY DEFINER so it can insert into audit_log even though the app role has no write there.
@@ -52,13 +52,13 @@ begin
 end $$;
 
 -- Coverage is opt-in. Start with personnel + access records; extend per table later.
-create trigger audit_employees after insert or update or delete on employees
+create or replace trigger audit_employees after insert or update or delete on employees
 	for each row execute function log_mutation();
 -- users: role/ban/email changes. Writes made through the API (PUT /api/users/:id/roles) carry
 -- the acting admin via the app.* GUCs; Better-Auth-initiated writes (signup, verification) have
 -- no GUC set and are logged with a null actor (system event). No secrets live on this table
 -- (credentials are on `accounts`), so to_jsonb(new) is safe to store.
-create trigger audit_users after insert or update or delete on users
+create or replace trigger audit_users after insert or update or delete on users
 	for each row execute function log_mutation();
 -- (notices audit is optional/TBD — attach the same trigger here if you decide to.)
 

@@ -10,6 +10,7 @@ import { z } from "zod";
 import { setActor } from "./actor";
 import { db } from "./db";
 import { mosquitoActivityData } from "./db/schema";
+import { pgErrorResponse } from "./db-errors";
 import { requirePermission } from "./session";
 
 const MAX_ROWS = 20_000; // guardrail against an accidental huge upload
@@ -21,8 +22,8 @@ const importRow = z.object({
 	speciesGroup: z.string().min(1),
 	year: z.coerce.number().int().min(1900).max(3000),
 	weekNumber: z.coerce.number().int().min(1).max(53),
-	mosquitoCount: z.coerce.number().int().min(0).default(0),
-	rainfallInches: z.coerce.number().min(0).max(999.99).default(0),
+	mosquitoCount: z.coerce.number().int().min(0).max(2_147_483_647).default(0), // int4 max
+	rainfallInches: z.coerce.number().min(0).max(999.99).default(0), // numeric(5,2)
 });
 
 const importSchema = z.object({
@@ -51,15 +52,23 @@ export async function importMosquitoActivity(c: Context): Promise<Response> {
 	}));
 
 	const actor = setActor(session, c);
-	await db.transaction(async (tx) => {
-		await actor(tx);
-		await tx
-			.delete(mosquitoActivityData)
-			.where(inArray(mosquitoActivityData.year, years));
-		for (let i = 0; i < values.length; i += CHUNK) {
-			await tx.insert(mosquitoActivityData).values(values.slice(i, i + CHUNK));
-		}
-	});
+	try {
+		await db.transaction(async (tx) => {
+			await actor(tx);
+			await tx
+				.delete(mosquitoActivityData)
+				.where(inArray(mosquitoActivityData.year, years));
+			for (let i = 0; i < values.length; i += CHUNK) {
+				await tx
+					.insert(mosquitoActivityData)
+					.values(values.slice(i, i + CHUNK));
+			}
+		});
+	} catch (e) {
+		const res = pgErrorResponse(c, e, 422);
+		if (res) return res;
+		throw e;
+	}
 
 	return c.json({
 		success: true,

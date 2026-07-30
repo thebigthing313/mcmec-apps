@@ -178,14 +178,21 @@ export const auditLog = pgTable(
 );
 
 // ══ People ═══════════════════════════════════════════════════════════════════
-export const employees = pgTable("employees", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	email: text("email").notNull().unique(),
-	userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }), // NULL = no login
-	displayName: text("display_name").notNull(),
-	displayTitle: text("display_title"),
-	...timestamps,
-});
+export const employees = pgTable(
+	"employees",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		email: text("email").notNull().unique(),
+		userId: uuid("user_id").references(() => users.id, {
+			onDelete: "set null",
+		}), // NULL = no login
+		displayName: text("display_name").notNull(),
+		displayTitle: text("display_title"),
+		...timestamps,
+	},
+	// customSession resolves employee-by-user_id on every session; keep it index-backed.
+	(t) => [index("employees_user_id_idx").on(t.userId)],
+);
 
 // ══ Lookups ══════════════════════════════════════════════════════════════════
 export const zipCodes = pgTable("zip_codes", {

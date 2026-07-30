@@ -8,24 +8,29 @@ import type { Context } from "hono";
 import { z } from "zod";
 import { db } from "./db";
 import { publicRequests } from "./db/schema";
+import { pgErrorResponse } from "./db-errors";
+
+// Length caps so an anonymous submitter can't stuff arbitrarily large strings into the jsonb.
+const shortText = z.string().min(1).max(300);
+const longText = z.string().min(1).max(5000);
 
 // shared contact fields for the service-request types
 const contact = {
-	name: z.string().min(1),
-	email: z.email().optional(),
-	phone: z.string().min(1),
-	addressLine1: z.string().min(1),
-	addressLine2: z.string().optional(),
+	name: shortText,
+	email: z.email().max(320).optional(),
+	phone: z.string().min(1).max(50),
+	addressLine1: shortText,
+	addressLine2: z.string().max(300).optional(),
 	zipCodeId: z.uuid(),
 };
 
 const generalInquiry = z.object({
 	requestType: z.literal("general_inquiry"),
-	name: z.string().min(1),
-	email: z.email(),
+	name: shortText,
+	email: z.email().max(320),
 	details: z.object({
-		subject: z.string().min(1),
-		message: z.string().min(1),
+		subject: shortText,
+		message: longText,
 	}),
 });
 
@@ -40,7 +45,7 @@ const adultMosquito = z.object({
 		isDaytime: z.boolean(),
 		isNighttime: z.boolean(),
 		isAccessible: z.boolean(),
-		additionalDetails: z.string().optional(),
+		additionalDetails: z.string().max(5000).optional(),
 	}),
 });
 
@@ -51,8 +56,8 @@ const waterManagement = z.object({
 		isOnMyProperty: z.boolean(),
 		isOnNeighborProperty: z.boolean(),
 		isOnPublicProperty: z.boolean(),
-		otherLocationDescription: z.string().optional(),
-		additionalDetails: z.string().optional(),
+		otherLocationDescription: z.string().max(1000).optional(),
+		additionalDetails: z.string().max(5000).optional(),
 	}),
 });
 
@@ -60,9 +65,9 @@ const mosquitoFish = z.object({
 	requestType: z.literal("mosquito_fish"),
 	...contact,
 	details: z.object({
-		locationOfWaterBody: z.string().min(1),
-		typeOfWaterBody: z.string().min(1),
-		additionalDetails: z.string().optional(),
+		locationOfWaterBody: z.string().min(1).max(500),
+		typeOfWaterBody: z.string().min(1).max(500),
+		additionalDetails: z.string().max(5000).optional(),
 	}),
 });
 
@@ -127,19 +132,26 @@ export async function submitRequest(c: Context): Promise<Response> {
 		details: Record<string, unknown>;
 	};
 
-	const [row] = await db
-		.insert(publicRequests)
-		.values({
-			requestType: r.requestType,
-			name: r.name,
-			email: r.email ?? null,
-			phone: r.phone ?? null,
-			addressLine1: r.addressLine1 ?? null,
-			addressLine2: r.addressLine2 ?? null,
-			zipCodeId: r.zipCodeId ?? null,
-			details: r.details,
-		})
-		.returning({ id: publicRequests.id });
+	try {
+		const [row] = await db
+			.insert(publicRequests)
+			.values({
+				requestType: r.requestType,
+				name: r.name,
+				email: r.email ?? null,
+				phone: r.phone ?? null,
+				addressLine1: r.addressLine1 ?? null,
+				addressLine2: r.addressLine2 ?? null,
+				zipCodeId: r.zipCodeId ?? null,
+				details: r.details,
+			})
+			.returning({ id: publicRequests.id });
 
-	return c.json({ success: true, id: row?.id });
+		return c.json({ success: true, id: row?.id });
+	} catch (e) {
+		// e.g. a well-formed but nonexistent zip_code_id => FK violation, not a 500
+		const res = pgErrorResponse(c, e, 422);
+		if (res) return res;
+		throw e;
+	}
 }

@@ -15,7 +15,22 @@ import { ZodError } from "zod";
 import { setActor, type Tx } from "./actor";
 import { db } from "./db";
 import * as schema from "./db/schema";
+import { pgErrorResponse } from "./db-errors";
 import { getSessionInfo, type SessionInfo } from "./session";
+
+// Server-controlled columns clients may never set on a generic write: id + audit timestamps
+// (DB defaults own id/created_at; the set_updated_at trigger owns updated_at). Stripped from the
+// body pre-parse rather than via schema .omit() (which can't type against a generic table shape).
+const SERVER_COLS = ["id", "createdAt", "updatedAt"] as const;
+
+function stripServerCols(body: unknown): unknown {
+	if (!body || typeof body !== "object" || Array.isArray(body)) return body;
+	const clone: Record<string, unknown> = {
+		...(body as Record<string, unknown>),
+	};
+	for (const k of SERVER_COLS) delete clone[k];
+	return clone;
+}
 
 type CrudEntry = {
 	permission: string;
@@ -37,13 +52,13 @@ function makeCrud<T extends PgTable>(
 		permission,
 		insertable,
 		insert: async (body, tx) => {
-			const data = insertSchema.parse(body);
+			const data = insertSchema.parse(stripServerCols(body));
 			// biome-ignore lint/suspicious/noExplicitAny: drizzle can't type a generic-table write
 			const rows = await (tx.insert(table) as any).values(data).returning();
 			return rows[0];
 		},
 		update: async (id, body, tx) => {
-			const data = updateSchema.parse(body);
+			const data = updateSchema.parse(stripServerCols(body));
 			// biome-ignore lint/suspicious/noExplicitAny: drizzle can't type a generic-table write
 			const rows = await (tx.update(table) as any)
 				.set(data)
@@ -149,7 +164,8 @@ export async function insertRow(c: Context): Promise<Response> {
 	} catch (e) {
 		if (e instanceof ZodError)
 			return c.json({ error: "invalid", issues: e.issues }, 422);
-		throw e;
+		// bad FK / duplicate on a write = client error, not 500
+		return pgErrorResponse(c, e, 422) ?? rethrow(e);
 	}
 }
 
@@ -171,7 +187,7 @@ export async function updateRow(c: Context): Promise<Response> {
 	} catch (e) {
 		if (e instanceof ZodError)
 			return c.json({ error: "invalid", issues: e.issues }, 422);
-		throw e;
+		return pgErrorResponse(c, e, 422) ?? rethrow(e);
 	}
 }
 
@@ -181,11 +197,21 @@ export async function deleteRow(c: Context): Promise<Response> {
 	const { entry, session } = g;
 	const id = c.req.param("id");
 	if (!id) return c.json({ error: "missing id" }, 400);
-	const actor = setActor(session, c);
-	const row = await db.transaction(async (tx) => {
-		await actor(tx);
-		return entry.remove(id, tx);
-	});
-	if (!row) return c.json({ error: "not found" }, 404);
-	return c.json({ ok: true });
+	try {
+		const actor = setActor(session, c);
+		const row = await db.transaction(async (tx) => {
+			await actor(tx);
+			return entry.remove(id, tx);
+		});
+		if (!row) return c.json({ error: "not found" }, 404);
+		return c.json({ ok: true });
+	} catch (e) {
+		// FK violation here = the row is still referenced elsewhere (409, not 500)
+		return pgErrorResponse(c, e, 409) ?? rethrow(e);
+	}
+}
+
+// Helper so `pgErrorResponse(...) ?? rethrow(e)` stays a single expression.
+function rethrow(e: unknown): never {
+	throw e;
 }

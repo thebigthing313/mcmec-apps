@@ -41,13 +41,17 @@ export async function inviteEmployee(c: Context): Promise<Response> {
 		return c.json({ error: "employee already has a login" }, 409);
 
 	// Create the login with a throwaway password; the invitee sets their own via the emailed link.
+	// Uses the admin plugin's createUser (server-side, no headers => no admin-session required)
+	// rather than signUpEmail, because public sign-up is disabled (see auth.ts). `role: []` keeps
+	// the account permission-less — roles are a separate manage_users action.
 	let userId: string;
 	try {
-		const res = await auth.api.signUpEmail({
+		const res = await auth.api.createUser({
 			body: {
 				email,
 				password: randomBytes(24).toString("hex"),
 				name: employee.displayName,
+				role: [],
 			},
 		});
 		userId = res.user.id;

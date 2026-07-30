@@ -3,7 +3,7 @@
 //
 // The junction has a composite PK and no surrogate id, so it can't go through the generic
 // /api/data CRUD. This replaces the full municipality set for one schedule (delete-all + insert)
-// in a transaction. An unknown municipality id surfaces as a 400 via the FK violation.
+// in a transaction. An unknown municipality id surfaces as a 422 via the FK violation.
 
 import { eq } from "drizzle-orm";
 import type { Context } from "hono";
@@ -11,6 +11,7 @@ import { z } from "zod";
 import { setActor } from "./actor";
 import { db } from "./db";
 import { sprayScheduleMunicipalities, spraySchedules } from "./db/schema";
+import { pgErrorResponse } from "./db-errors";
 import { requirePermission } from "./session";
 
 const bodySchema = z.object({
@@ -20,16 +21,6 @@ const bodySchema = z.object({
 		.max(1000)
 		.transform((ids) => [...new Set(ids)]),
 });
-
-// Postgres foreign_key_violation — a municipalityId that doesn't exist.
-function isFkViolation(e: unknown): boolean {
-	return (
-		typeof e === "object" &&
-		e !== null &&
-		"code" in e &&
-		(e as { code?: string }).code === "23503"
-	);
-}
 
 export async function setSprayScheduleMunicipalities(
 	c: Context,
@@ -70,9 +61,9 @@ export async function setSprayScheduleMunicipalities(
 			}
 		});
 	} catch (e) {
-		if (isFkViolation(e)) {
-			return c.json({ error: "unknown municipality id" }, 400);
-		}
+		// an unknown municipality id surfaces as a FK violation
+		const res = pgErrorResponse(c, e, 422);
+		if (res) return res;
 		throw e;
 	}
 

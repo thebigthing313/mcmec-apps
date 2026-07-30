@@ -78,6 +78,10 @@ export const auth = betterAuth({
 
 	emailAndPassword: {
 		enabled: true,
+		// No public self-registration: accounts are created ONLY via the invite flow
+		// (auth.api.createUser, server-side). Without this, POST /api/auth/sign-up/email is
+		// world-reachable and a self-registered session could read the staff-only shapes.
+		disableSignUp: true,
 		requireEmailVerification: false, // invite → set-password link verifies ownership
 		sendResetPassword: async ({ user, url }) => {
 			await sendEmail({
