@@ -1,0 +1,38 @@
+{
+	"author": "Adrian Kabigting",
+	"description": "MCMEC backend API: Hono + Better Auth + Drizzle + ElectricSQL proxy",
+	"dependencies": {
+		"@hono/node-server": "^2.0.12",
+		"better-auth": "^1.6.25",
+		"drizzle-orm": "^0.45.2",
+		"drizzle-zod": "^0.8.3",
+		"hono": "^4.12.32",
+		"pg": "^8.22.0",
+		"tsx": "^4.21.0",
+		"zod": "^4.3.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.11",
+		"@mcmec/typescript-config": "workspace:*",
+		"@types/node": "25.0.9",
+		"@types/pg": "^8.20.0",
+		"drizzle-kit": "^0.31.10",
+		"typescript": "^5.9.3"
+	},
+	"keywords": [],
+	"license": "ISC",
+	"name": "api",
+	"packageManager": "pnpm@10.19.0",
+	"scripts": {
+		"check-types": "tsc --noEmit",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:push": "drizzle-kit push",
+		"dev": "tsx watch src/index.ts",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"start": "tsx src/index.ts"
+	},
+	"type": "module",
+	"version": "0.0.0"
+}
