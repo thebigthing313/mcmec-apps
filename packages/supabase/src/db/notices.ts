@@ -3,7 +3,6 @@ import z from "zod";
 export const NoticesRowSchema = z.object({
 	content: z.any(),
 	created_at: z.coerce.date<Date>(),
-	created_by: z.string().nullable(),
 	id: z.uuid(),
 	is_archived: z.boolean(),
 	is_published: z.boolean(),
@@ -11,7 +10,6 @@ export const NoticesRowSchema = z.object({
 	notice_type_id: z.uuid(),
 	title: z.string(),
 	updated_at: z.coerce.date<Date>(),
-	updated_by: z.string().nullable(),
 });
 
 export const NoticesInsertSchema = z.object({

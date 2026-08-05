@@ -1,227 +1,156 @@
 /**
- * Generic CRUD utilities for TanStack DB collection handlers.
+ * Write helpers for TanStack DB Electric collection handlers.
  *
- * These functions are NOT general-purpose Supabase wrappers — they exist
- * exclusively to power TanStack DB eager and on-demand collections.
+ * Reads come from Electric (see the collection factories); writes go through the
+ * backend's generic data API — permission-gated + audit-logged:
+ *   POST   /api/data/:table       insert
+ *   PATCH  /api/data/:table/:id   update by id
+ *   DELETE /api/data/:table/:id   delete by id
  *
- * The `table` parameter is typed as `string` so this package is not coupled
- * to any project's generated `Database` types. Pass your own typed
- * `SupabaseClient<YourDatabase>` for full type-safety at the call site.
+ * Casing: Electric streams snake_case (the db/* Zod schemas are snake_case), but the
+ * API validates with drizzle-zod whose keys are the Drizzle TS property names
+ * (camelCase). So every write body is converted snake_case -> camelCase here — the
+ * single place the two conventions meet.
+ *
+ * txid: each endpoint returns the Postgres `txid` of its write transaction. The Electric
+ * collection handlers return it so optimistic state settles when that txid streams back
+ * (see the collection factories). If the backend omits `txid`, the helpers return
+ * `undefined` and the handler falls back to Electric's match timeout.
  */
-import type { SupabaseClient } from "@supabase/supabase-js";
-import z, { type ZodObject } from "zod";
+import type z from "zod";
+import type { ZodObject } from "zod";
 
 const MAX_INSERT_ROWS = 500;
 
 // ---------------------------------------------------------------------------
-// Shared helper: select fields from schema + parse response
+// snake_case -> camelCase (top-level keys only; jsonb values pass through intact)
 // ---------------------------------------------------------------------------
 
-export async function selectAndParse<TSchema extends ZodObject<z.ZodRawShape>>(
-	// biome-ignore lint/suspicious/noExplicitAny: Supabase query builder types don't flow through generics
-	query: any,
-	schema: TSchema,
-): Promise<{ data: z.infer<TSchema>[] | null; error: Error | null }> {
-	const fields = Object.keys(schema.shape).join(",");
-	const { data, error } = await query.select(fields);
+export function snakeToCamel(key: string): string {
+	return key.replace(/_([a-z0-9])/g, (_m, c: string) => c.toUpperCase());
+}
 
-	if (error) {
-		return { data: null, error: error as unknown as Error };
+export function toCamelCaseKeys(
+	obj: Record<string, unknown>,
+): Record<string, unknown> {
+	const out: Record<string, unknown> = {};
+	for (const key of Object.keys(obj)) {
+		out[snakeToCamel(key)] = obj[key];
 	}
-
-	const parsed = z.array(schema).safeParse(data);
-	if (!parsed.success) {
-		return { data: null, error: parsed.error };
-	}
-
-	return { data: parsed.data, error: null };
+	return out;
 }
 
 // ---------------------------------------------------------------------------
-// fetchRows — used by eager collections ("get all rows")
+// Shared fetch + response handling
 // ---------------------------------------------------------------------------
 
-type FetchResult<T> = {
-	data: T[] | null;
-	error: Error | null;
-};
+export interface WriteTarget {
+	/** API origin (VITE_API_URL) */
+	apiUrl: string;
+	/** table segment of /api/data/:table */
+	table: string;
+}
 
-export async function fetchRows<TSchema extends ZodObject<z.ZodRawShape>>(
+type WriteBody = { txid?: unknown; error?: unknown } | null;
+
+// Parses the response: throws a descriptive Error on non-2xx, else returns the txid
+// (as a number) when present.
+async function handleWrite(
+	res: Response,
+	action: string,
 	table: string,
-	schema: TSchema,
-	// biome-ignore lint/suspicious/noExplicitAny: SupabaseClient generic not constrained here
-	supabase: SupabaseClient<any>,
-	signal?: AbortSignal,
-): Promise<FetchResult<z.infer<TSchema>>> {
-	// biome-ignore lint/suspicious/noExplicitAny: Supabase query builder types don't flow through generics
-	let query: any = supabase.from(table);
-
-	if (signal) {
-		query = query.abortSignal(signal);
+): Promise<number | undefined> {
+	const body = (await res.json().catch(() => null)) as WriteBody;
+	if (!res.ok) {
+		const detail =
+			body && typeof body === "object" && "error" in body
+				? body.error
+				: res.statusText;
+		throw new Error(
+			`Failed to ${action} ${table} (${res.status}): ${String(detail)}`,
+		);
 	}
-
-	return selectAndParse(query, schema);
+	const txid = body?.txid;
+	if (txid == null) return undefined;
+	const n = Number(txid);
+	return Number.isFinite(n) ? n : undefined;
 }
 
+const jsonHeaders = { "content-type": "application/json" } as const;
+
 // ---------------------------------------------------------------------------
-// insertRows
+// insert — POST one row at a time (the generic endpoint is single-row)
 // ---------------------------------------------------------------------------
 
-type InsertResult<T> = {
-	data: T[] | null;
-	count: number;
-	error: Error | null;
-};
-
-export async function insertRows<
-	TRowSchema extends ZodObject<z.ZodRawShape>,
+export async function apiInsertRows<
 	TInsertSchema extends ZodObject<z.ZodRawShape>,
 >(
-	table: string,
-	rowSchema: TRowSchema,
-	insertSchema: TInsertSchema,
-	// biome-ignore lint/suspicious/noExplicitAny: SupabaseClient generic not constrained here
-	supabase: SupabaseClient<any>,
-	rows: Array<z.infer<TInsertSchema>>,
-	signal?: AbortSignal,
-): Promise<InsertResult<z.infer<TRowSchema>>> {
+	target: WriteTarget,
+	insertSchema: TInsertSchema | undefined,
+	rows: unknown[],
+): Promise<number[]> {
 	if (rows.length === 0) {
-		return {
-			data: null,
-			count: 0,
-			error: new Error("No rows provided for insert"),
-		};
+		throw new Error(`No rows provided for insert into ${target.table}`);
 	}
-
 	if (rows.length > MAX_INSERT_ROWS) {
-		return {
-			data: null,
-			count: 0,
-			error: new Error(
-				`Cannot insert more than ${MAX_INSERT_ROWS} rows at once`,
-			),
-		};
+		throw new Error(`Cannot insert more than ${MAX_INSERT_ROWS} rows at once`);
 	}
 
-	const parsed = z.array(insertSchema).safeParse(rows);
-	if (!parsed.success) {
-		return { data: null, count: 0, error: parsed.error };
+	const txids: number[] = [];
+	for (const row of rows) {
+		const validated = insertSchema ? insertSchema.parse(row) : row;
+		const body = toCamelCaseKeys(validated as Record<string, unknown>);
+		const res = await fetch(`${target.apiUrl}/api/data/${target.table}`, {
+			method: "POST",
+			credentials: "include",
+			headers: jsonHeaders,
+			body: JSON.stringify(body),
+		});
+		const txid = await handleWrite(res, "insert", target.table);
+		if (txid !== undefined) txids.push(txid);
 	}
-
-	// biome-ignore lint/suspicious/noExplicitAny: Supabase query builder types don't flow through generics
-	let query: any = supabase.from(table).insert(parsed.data as any);
-
-	if (signal) {
-		query = query.abortSignal(signal);
-	}
-
-	const result = await selectAndParse(query, rowSchema);
-	return {
-		data: result.data,
-		count: result.data?.length ?? 0,
-		error: result.error,
-	};
+	return txids;
 }
 
 // ---------------------------------------------------------------------------
-// updateRow
+// update — PATCH by id
 // ---------------------------------------------------------------------------
 
-type UpdateResult<T> = {
-	data: T[] | null;
-	count: number;
-	error: Error | null;
-};
-
-// biome-ignore lint/suspicious/noExplicitAny: filter callback receives untyped query builder
-type FilterFn = (query: any) => any;
-
-export async function updateRow<
-	TRowSchema extends ZodObject<z.ZodRawShape>,
+export async function apiUpdateRow<
 	TUpdateSchema extends ZodObject<z.ZodRawShape>,
 >(
-	table: string,
-	rowSchema: TRowSchema,
-	updateSchema: TUpdateSchema,
-	// biome-ignore lint/suspicious/noExplicitAny: SupabaseClient generic not constrained here
-	supabase: SupabaseClient<any>,
-	row: z.infer<TUpdateSchema>,
-	filter: FilterFn,
-	signal?: AbortSignal,
-): Promise<UpdateResult<z.infer<TRowSchema>>> {
-	if (Object.keys(row).length === 0) {
-		return {
-			data: null,
-			count: 0,
-			error: new Error("No fields provided for update"),
-		};
-	}
-
-	const parsed = updateSchema.safeParse(row);
-	if (!parsed.success) {
-		return { data: null, count: 0, error: parsed.error };
-	}
-
-	// biome-ignore lint/suspicious/noExplicitAny: Supabase query builder types don't flow through generics
-	let query: any = supabase.from(table).update(parsed.data as any);
-	query = filter(query);
-
-	if (signal) {
-		query = query.abortSignal(signal);
-	}
-
-	const result = await selectAndParse(query, rowSchema);
-	return {
-		data: result.data,
-		count: result.data?.length ?? 0,
-		error: result.error,
-	};
+	target: WriteTarget,
+	updateSchema: TUpdateSchema | undefined,
+	id: string | number,
+	changes: unknown,
+): Promise<number | undefined> {
+	const validated = updateSchema ? updateSchema.parse(changes) : changes;
+	const body = toCamelCaseKeys(validated as Record<string, unknown>);
+	const res = await fetch(`${target.apiUrl}/api/data/${target.table}/${id}`, {
+		method: "PATCH",
+		credentials: "include",
+		headers: jsonHeaders,
+		body: JSON.stringify(body),
+	});
+	return handleWrite(res, "update", target.table);
 }
 
 // ---------------------------------------------------------------------------
-// deleteRows
+// delete — DELETE by id
 // ---------------------------------------------------------------------------
 
-type DeleteResult =
-	| { success: true; error: null; count: number }
-	| { success: false; error: Error; count: 0 };
-
-export async function deleteRows(
-	table: string,
-	// biome-ignore lint/suspicious/noExplicitAny: SupabaseClient generic not constrained here
-	supabase: SupabaseClient<any>,
-	filter: FilterFn,
-	signal?: AbortSignal,
-): Promise<DeleteResult> {
-	// biome-ignore lint/suspicious/noExplicitAny: Supabase query builder types don't flow through generics
-	let query: any = supabase.from(table).delete({ count: "exact" });
-	query = filter(query);
-
-	if (signal) {
-		query = query.abortSignal(signal);
+export async function apiDeleteRows(
+	target: WriteTarget,
+	ids: Array<string | number>,
+): Promise<number[]> {
+	const txids: number[] = [];
+	for (const id of ids) {
+		const res = await fetch(`${target.apiUrl}/api/data/${target.table}/${id}`, {
+			method: "DELETE",
+			credentials: "include",
+		});
+		const txid = await handleWrite(res, "delete", target.table);
+		if (txid !== undefined) txids.push(txid);
 	}
-
-	const { error, count } = await query;
-
-	if (error) {
-		return { success: false, error: error as unknown as Error, count: 0 };
-	}
-
-	return { success: true, error: null, count: count ?? 0 };
-}
-
-// ---------------------------------------------------------------------------
-// TableRegistryEntry — describes a table + its three Zod schemas
-// ---------------------------------------------------------------------------
-
-export interface TableRegistryEntry<
-	TBaseRow extends ZodObject<z.ZodRawShape> = ZodObject<z.ZodRawShape>,
-	TInsert extends ZodObject<z.ZodRawShape> = ZodObject<z.ZodRawShape>,
-	TUpdate extends ZodObject<z.ZodRawShape> = ZodObject<z.ZodRawShape>,
-> {
-	table: string;
-	baseRowSchema: TBaseRow;
-	insertSchema?: TInsert;
-	updateSchema?: TUpdate;
-	allowDelete?: boolean;
+	return txids;
 }

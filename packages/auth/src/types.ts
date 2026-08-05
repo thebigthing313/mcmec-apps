@@ -5,5 +5,15 @@ export interface Claims {
 	permissions: string[];
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: accepts any SupabaseClient regardless of Database generic
-export type SupabaseClient = { auth: any; from: any; [key: string]: any };
+/**
+ * Session payload returned by the API's Better Auth `customSession`
+ * (GET /api/auth/get-session). Mirrors `apps/api/src/session.ts` projected onto
+ * Better Auth's session object. Declared locally so `@mcmec/auth` stays decoupled
+ * from the `apps/api` build (`verifyClaims` casts `getSession()` to this shape).
+ */
+export interface SessionData {
+	user: { id: string; email: string };
+	session: unknown;
+	employeeId: string | null;
+	permissions: string[];
+}

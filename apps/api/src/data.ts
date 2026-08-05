@@ -12,7 +12,7 @@ import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import type { Context } from "hono";
 import { ZodError } from "zod";
-import { setActor, type Tx } from "./actor";
+import { getTxid, setActor, type Tx } from "./actor";
 import { db } from "./db";
 import * as schema from "./db/schema";
 import { pgErrorResponse } from "./db-errors";
@@ -156,11 +156,12 @@ export async function insertRow(c: Context): Promise<Response> {
 	const body = await c.req.json().catch(() => null);
 	try {
 		const actor = setActor(session, c);
-		const row = await db.transaction(async (tx) => {
+		const { row, txid } = await db.transaction(async (tx) => {
 			await actor(tx);
-			return entry.insert(body, tx);
+			const r = await entry.insert(body, tx);
+			return { row: r, txid: await getTxid(tx) };
 		});
-		return c.json(row, 201);
+		return c.json({ ...(row as Record<string, unknown>), txid }, 201);
 	} catch (e) {
 		if (e instanceof ZodError)
 			return c.json({ error: "invalid", issues: e.issues }, 422);
@@ -178,12 +179,13 @@ export async function updateRow(c: Context): Promise<Response> {
 	const body = await c.req.json().catch(() => null);
 	try {
 		const actor = setActor(session, c);
-		const row = await db.transaction(async (tx) => {
+		const { row, txid } = await db.transaction(async (tx) => {
 			await actor(tx);
-			return entry.update(id, body, tx);
+			const r = await entry.update(id, body, tx);
+			return { row: r, txid: await getTxid(tx) };
 		});
 		if (!row) return c.json({ error: "not found" }, 404);
-		return c.json(row);
+		return c.json({ ...(row as Record<string, unknown>), txid });
 	} catch (e) {
 		if (e instanceof ZodError)
 			return c.json({ error: "invalid", issues: e.issues }, 422);
@@ -199,12 +201,13 @@ export async function deleteRow(c: Context): Promise<Response> {
 	if (!id) return c.json({ error: "missing id" }, 400);
 	try {
 		const actor = setActor(session, c);
-		const row = await db.transaction(async (tx) => {
+		const { row, txid } = await db.transaction(async (tx) => {
 			await actor(tx);
-			return entry.remove(id, tx);
+			const r = await entry.remove(id, tx);
+			return { row: r, txid: await getTxid(tx) };
 		});
 		if (!row) return c.json({ error: "not found" }, 404);
-		return c.json({ ok: true });
+		return c.json({ ok: true, txid });
 	} catch (e) {
 		// FK violation here = the row is still referenced elsewhere (409, not 500)
 		return pgErrorResponse(c, e, 409) ?? rethrow(e);

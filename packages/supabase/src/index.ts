@@ -1,8 +1,5 @@
 // @mcmec/supabase — data layer
 
-export type { SupabaseClient } from "./client";
-// Client
-export { createClient } from "./client";
 // Collections
 export {
 	type CreateNoticesCollectionsOptions,

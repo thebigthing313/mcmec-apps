@@ -8,7 +8,7 @@
 import { eq } from "drizzle-orm";
 import type { Context } from "hono";
 import { z } from "zod";
-import { setActor } from "./actor";
+import { getTxid, setActor } from "./actor";
 import { db } from "./db";
 import { sprayScheduleMunicipalities, spraySchedules } from "./db/schema";
 import { pgErrorResponse } from "./db-errors";
@@ -45,6 +45,7 @@ export async function setSprayScheduleMunicipalities(
 	if (!schedule) return c.json({ error: "spray schedule not found" }, 404);
 
 	const actor = setActor(session, c);
+	let txid = "";
 	try {
 		await db.transaction(async (tx) => {
 			await actor(tx);
@@ -59,6 +60,7 @@ export async function setSprayScheduleMunicipalities(
 					})),
 				);
 			}
+			txid = await getTxid(tx);
 		});
 	} catch (e) {
 		// an unknown municipality id surfaces as a FK violation
@@ -67,5 +69,5 @@ export async function setSprayScheduleMunicipalities(
 		throw e;
 	}
 
-	return c.json({ success: true, sprayScheduleId: id, municipalityIds });
+	return c.json({ success: true, sprayScheduleId: id, municipalityIds, txid });
 }

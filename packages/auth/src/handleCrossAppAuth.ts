@@ -1,26 +1,15 @@
-import type { SupabaseClient } from "./types";
-
 /**
- * Process cross-app auth tokens from URL hash fragment (dev only).
- * In production, PKCE flow with shared cookie domain handles this automatically.
- * In dev, tokens are passed via hash fragment since cookies don't share across ports.
+ * Cross-app auth handoff.
  *
- * Call this at the start of a route guard's beforeLoad.
+ * With Better Auth this is a no-op. The session lives in a cookie shared across apps:
+ *   - prod: set on `.middlesexmosquito.org` (crossSubDomainCookies) — every subdomain
+ *     app + the API share one session cookie, so SSO needs no client-side handoff.
+ *   - dev:  a host-only `localhost` cookie — cookies ignore port, so every localhost
+ *     app shares it too (provided all apps use `localhost`, not `127.0.0.1`).
+ *
+ * Kept as an exported no-op so the `@mcmec/auth/handleCrossAppAuth` subpath and the
+ * route-guard call sites stay stable; the Supabase hash-token fallback is gone.
  */
-export async function processAuthRedirect(
-	client: SupabaseClient,
-): Promise<void> {
-	const hash = window.location.hash;
-	if (hash.includes("access_token")) {
-		const params = new URLSearchParams(hash.substring(1));
-		const accessToken = params.get("access_token");
-		const refreshToken = params.get("refresh_token");
-		if (accessToken && refreshToken) {
-			await client.auth.setSession({
-				access_token: accessToken,
-				refresh_token: refreshToken,
-			});
-		}
-		window.history.replaceState(null, "", window.location.pathname);
-	}
+export async function processAuthRedirect(): Promise<void> {
+	// intentionally empty — cookie-based SSO handles prod + dev
 }

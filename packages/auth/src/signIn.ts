@@ -4,8 +4,8 @@ import {
 	ValidEmailSchema,
 } from "@mcmec/lib/constants/validators";
 import z from "zod";
+import type { AuthClient } from "./client";
 import { UnauthenticatedError } from "./errors";
-import type { SupabaseClient } from "./types";
 
 const SignInInputSchema = z.object({
 	email: ValidEmailSchema,
@@ -15,23 +15,19 @@ const SignInInputSchema = z.object({
 export const signIn = async (input: {
 	email: string;
 	password: string;
-	client: SupabaseClient;
+	client: AuthClient;
 }): Promise<void> => {
 	const validatedInput = SignInInputSchema.parse({
 		email: input.email,
 		password: input.password,
 	});
 
-	const { data, error } = await input.client.auth.signInWithPassword({
+	const { data, error } = await input.client.signIn.email({
 		email: validatedInput.email,
 		password: validatedInput.password,
 	});
 
-	if (error) {
-		throw new UnauthenticatedError(ErrorMessages.AUTH.UNAUTHORIZED);
-	}
-
-	if (!data.user || !data.session) {
+	if (error || !data) {
 		throw new UnauthenticatedError(ErrorMessages.AUTH.UNAUTHORIZED);
 	}
 };

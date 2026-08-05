@@ -8,7 +8,7 @@
 import { eq } from "drizzle-orm";
 import type { Context } from "hono";
 import { z } from "zod";
-import { setActor } from "./actor";
+import { getTxid, setActor } from "./actor";
 import { APP_ROLES } from "./auth";
 import { db } from "./db";
 import { users } from "./db/schema";
@@ -38,15 +38,16 @@ export async function setUserRoles(c: Context): Promise<Response> {
 	const roleValue = roles.length ? roles.join(",") : null;
 
 	const actor = setActor(session, c);
-	const [updated] = await db.transaction(async (tx) => {
+	const { updated, txid } = await db.transaction(async (tx) => {
 		await actor(tx);
-		return tx
+		const [row] = await tx
 			.update(users)
 			.set({ role: roleValue })
 			.where(eq(users.id, id))
 			.returning({ id: users.id, email: users.email, role: users.role });
+		return { updated: row, txid: await getTxid(tx) };
 	});
 
 	if (!updated) return c.json({ error: "not found" }, 404);
-	return c.json({ id: updated.id, email: updated.email, roles });
+	return c.json({ id: updated.id, email: updated.email, roles, txid });
 }

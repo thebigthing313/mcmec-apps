@@ -2,19 +2,6 @@ import {
 	createEagerCollection,
 	createOnDemandCollection,
 } from "@mcmec/supabase-tanstack-db-integration";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { QueryClient } from "@tanstack/query-core";
-import type { Database } from "../database.types.ts";
-import {
-	AdultMosquitoRequestsBaseSchema,
-	AdultMosquitoRequestsInsertSchema,
-	AdultMosquitoRequestsUpdateSchema,
-} from "../db/adult-mosquito-requests";
-import {
-	ContactFormSubmissionsInsertSchema,
-	ContactFormSubmissionsRowSchema,
-	ContactFormSubmissionsUpdateSchema,
-} from "../db/contact-form-submissions";
 import {
 	DocumentTypesInsertSchema,
 	DocumentTypesRowSchema,
@@ -37,11 +24,6 @@ import {
 	MeetingsUpdateSchema,
 } from "../db/meetings";
 import {
-	MosquitofishRequestsInsertSchema,
-	MosquitofishRequestsRowSchema,
-	MosquitofishRequestsUpdateSchema,
-} from "../db/mosquitofish-requests";
-import {
 	MunicipalitiesInsertSchema,
 	MunicipalitiesRowSchema,
 	MunicipalitiesUpdateSchema,
@@ -57,173 +39,129 @@ import {
 	NoticesUpdateSchema,
 } from "../db/notices";
 import {
+	PublicRequestsRowSchema,
+	PublicRequestsUpdateSchema,
+} from "../db/public-requests";
+import {
 	SpraySchedulesInsertSchema,
 	SpraySchedulesRowSchema,
 	SpraySchedulesUpdateSchema,
 } from "../db/spray-schedules";
-import {
-	WaterManagementRequestsBaseSchema,
-	WaterManagementRequestsInsertSchema,
-	WaterManagementRequestsUpdateSchema,
-} from "../db/water-management-requests";
 import { ZipCodesRowSchema } from "../db/zip-codes";
 
 export interface CreateNoticesCollectionsOptions {
-	supabase: SupabaseClient<Database>;
-	queryClient: QueryClient;
+	/** API origin (VITE_API_URL) */
+	apiUrl: string;
 }
 
 export function createNoticesCollections({
-	supabase,
-	queryClient,
+	apiUrl,
 }: CreateNoticesCollectionsOptions) {
 	const employees = createEagerCollection({
-		queryClient,
+		apiUrl,
 		schema: EmployeesRowSchema,
-		supabase,
 		table: "employees",
 	});
 
 	const noticeTypes = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: NoticeTypesInsertSchema,
-		queryClient,
 		schema: NoticeTypesRowSchema,
-		supabase,
 		table: "notice_types",
 		updateSchema: NoticeTypesUpdateSchema,
 	});
 
 	const notices = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: NoticesInsertSchema,
-		queryClient,
 		schema: NoticesRowSchema,
-		supabase,
 		table: "notices",
 		updateSchema: NoticesUpdateSchema,
 	});
 
 	const meetings = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: MeetingsInsertSchema,
-		queryClient,
 		schema: MeetingsRowSchema,
-		supabase,
 		table: "meetings",
 		updateSchema: MeetingsUpdateSchema,
 	});
 
 	const documentTypes = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: DocumentTypesInsertSchema,
-		queryClient,
 		schema: DocumentTypesRowSchema,
-		supabase,
 		table: "document_types",
 		updateSchema: DocumentTypesUpdateSchema,
 	});
 
 	const documents = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: DocumentsInsertSchema,
-		queryClient,
 		schema: DocumentsRowSchema,
-		supabase,
 		table: "documents",
 		updateSchema: DocumentsUpdateSchema,
 	});
 
 	const insecticides = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: InsecticidesInsertSchema,
-		queryClient,
 		schema: InsecticidesRowSchema,
-		supabase,
 		table: "insecticides",
 		updateSchema: InsecticidesUpdateSchema,
 	});
 
 	const zipCodes = createEagerCollection({
-		queryClient,
+		apiUrl,
 		schema: ZipCodesRowSchema,
-		supabase,
 		table: "zip_codes",
 	});
 
-	const adultMosquitoRequests = createOnDemandCollection({
+	// Merged intake — replaces the four legacy request collections. Insert is via the public
+	// endpoint (POST /api/requests), so this staff collection is read + status-triage + delete.
+	// The notices UI filters by `request_type`.
+	const publicRequests = createOnDemandCollection({
 		allowDelete: true,
-		insertSchema: AdultMosquitoRequestsInsertSchema,
-		queryClient,
-		schema: AdultMosquitoRequestsBaseSchema,
-		supabase,
-		table: "adult_mosquito_complaints",
-		updateSchema: AdultMosquitoRequestsUpdateSchema,
-	});
-
-	const mosquitofishRequests = createOnDemandCollection({
-		allowDelete: true,
-		insertSchema: MosquitofishRequestsInsertSchema,
-		queryClient,
-		schema: MosquitofishRequestsRowSchema,
-		supabase,
-		table: "mosquito_fish_requests",
-		updateSchema: MosquitofishRequestsUpdateSchema,
-	});
-
-	const waterManagementRequests = createOnDemandCollection({
-		allowDelete: true,
-		insertSchema: WaterManagementRequestsInsertSchema,
-		queryClient,
-		schema: WaterManagementRequestsBaseSchema,
-		supabase,
-		table: "water_management_requests",
-		updateSchema: WaterManagementRequestsUpdateSchema,
-	});
-
-	const contactFormSubmissions = createOnDemandCollection({
-		allowDelete: true,
-		insertSchema: ContactFormSubmissionsInsertSchema,
-		queryClient,
-		schema: ContactFormSubmissionsRowSchema,
-		supabase,
-		table: "contact_form_submissions",
-		updateSchema: ContactFormSubmissionsUpdateSchema,
+		apiUrl,
+		schema: PublicRequestsRowSchema,
+		table: "public_requests",
+		updateSchema: PublicRequestsUpdateSchema,
 	});
 
 	const municipalities = createEagerCollection({
+		apiUrl,
 		insertSchema: MunicipalitiesInsertSchema,
-		queryClient,
 		schema: MunicipalitiesRowSchema,
-		supabase,
 		table: "municipalities",
 		updateSchema: MunicipalitiesUpdateSchema,
 	});
 
 	const spraySchedules = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: SpraySchedulesInsertSchema,
-		queryClient,
 		schema: SpraySchedulesRowSchema,
-		supabase,
 		table: "spray_schedules",
 		updateSchema: SpraySchedulesUpdateSchema,
 	});
 
 	return {
-		adultMosquitoRequests,
-		contactFormSubmissions,
 		documentTypes,
 		documents,
 		employees,
 		insecticides,
 		meetings,
-		mosquitofishRequests,
 		municipalities,
 		noticeTypes,
 		notices,
+		publicRequests,
 		spraySchedules,
-		waterManagementRequests,
 		zipCodes,
 	};
 }

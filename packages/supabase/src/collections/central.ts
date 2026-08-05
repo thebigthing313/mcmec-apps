@@ -1,22 +1,17 @@
 import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { QueryClient } from "@tanstack/query-core";
-import type { Database } from "../database.types.ts";
 import { EmployeesRowSchema } from "../db/employees";
 
 export interface CreateCentralCollectionsOptions {
-	supabase: SupabaseClient<Database>;
-	queryClient: QueryClient;
+	/** API origin (VITE_API_URL) */
+	apiUrl: string;
 }
 
 export function createCentralCollections({
-	supabase,
-	queryClient,
+	apiUrl,
 }: CreateCentralCollectionsOptions) {
 	const employees = createEagerCollection({
-		queryClient,
+		apiUrl,
 		schema: EmployeesRowSchema,
-		supabase,
 		table: "employees",
 	});
 
