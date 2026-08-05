@@ -28,7 +28,7 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"dev": "tsx watch src/index.ts",
+		"dev": "tsx watch --env-file-if-exists=.env src/index.ts",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"start": "tsx src/index.ts"
