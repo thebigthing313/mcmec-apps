@@ -65,11 +65,21 @@ export const auth = betterAuth({
 	// DB-default read-back through the adapter.
 	advanced: {
 		database: { generateId: () => randomUUID() },
-		crossSubDomainCookies: { enabled: true },
-		// share the session cookie across every *.middlesexmosquito.org app
-		cookies: {
-			sessionToken: { attributes: { domain: process.env.COOKIE_DOMAIN } },
-		},
+		// Cross-subdomain SSO cookie — gated on COOKIE_DOMAIN. In prod it's set to
+		// `.middlesexmosquito.org`, so one session cookie is shared across every subdomain app.
+		// In local dev COOKIE_DOMAIN is unset (there's no shared parent domain for localhost), so
+		// we fall back to a host-only cookie on `localhost` — every localhost port already shares
+		// it, giving the same free cross-app SSO in dev without a cross-site cookie.
+		...(process.env.COOKIE_DOMAIN
+			? {
+					crossSubDomainCookies: { enabled: true },
+					cookies: {
+						sessionToken: {
+							attributes: { domain: process.env.COOKIE_DOMAIN },
+						},
+					},
+				}
+			: {}),
 	},
 
 	trustedOrigins: (process.env.TRUSTED_ORIGINS ?? "")
