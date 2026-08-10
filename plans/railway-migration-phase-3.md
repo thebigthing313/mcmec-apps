@@ -199,7 +199,7 @@ every integration issue.
    factories to Electric reads + API writes; add txid to the backend writes (§1b.3).
 3. `@mcmec/supabase`: drop `client.ts`; convert `collections/notices.ts` to the new input shape + merged
    `publicRequests`; keep `db/*`.
-4. **Phase 4 (app wiring, separate):** `apps/notices` — swap `supabase`/`queryClient` wiring for
+4. **Phase 4 (app wiring, separate):** `apps/website-management` (renamed from `apps/notices`) — swap `supabase`/`queryClient` wiring for
    `VITE_API_URL` + the auth client; update the route guard permission name (`public_notices` →
    `manage_website`); update the intake UI to one `publicRequests` collection. Verify login→SSO, a gated
    write, live sync across two tabs.
