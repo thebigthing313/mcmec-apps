@@ -9,7 +9,26 @@ MCMEC (Middlesex County Mosquito Extermination Commission) monorepo with three w
 ### Apps
 - **central** (`apps/central`) — Admin management interface (Vite SPA, port 3001)
 - **website-management** (`apps/website-management`) — Public-website content management: notices, meetings, insecticides, documents, spray schedules, service requests (Vite SPA, port 3006)
-- **public** (`apps/public`) — Public-facing website with SSR (TanStack Start + Nitro, port 3000)
+- **public** (`apps/public`) — Public-facing website with SSR (TanStack Start + Nitro, port 3007)
+
+### Dev ports
+
+| Port | Process |
+| ---- | ------- |
+| 3001 | central |
+| 3003 | hr |
+| 3004 | admin |
+| 3005 | api (Hono) |
+| 3006 | website-management |
+| 3007 | public |
+| 3443 | Caddy HTTPS/HTTP2 proxy in front of the api (admin endpoint on 2020) |
+
+**Do not use these ports** — another project runs concurrently on this machine and binds
+them: **3000, 3002, 5173, 5174, 5175, 5176, 80, 2019**. Every Vite config here sets
+`strictPort: true`, so a collision fails loudly instead of silently landing on a neighbouring
+port (Windows will happily let two processes both "listen" on the same port, which makes the
+origin ambiguous rather than erroring). Our Caddy sets `admin localhost:2020` and
+`auto_https disable_redirects` for the same reason — the defaults would take 2019 and 80.
 
 ### Packages
 - **ui** (`packages/ui`) — Shared component library (Radix UI + Tailwind CSS v4 + shadcn pattern)
