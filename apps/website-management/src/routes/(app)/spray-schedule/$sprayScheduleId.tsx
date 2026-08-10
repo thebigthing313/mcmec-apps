@@ -24,6 +24,7 @@ import {
 	spraySchedules,
 } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
+import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
 	component: RouteComponent,
@@ -39,8 +40,18 @@ export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const { schedule } = Route.useLoaderData();
+	const { schedule: loadedSchedule } = Route.useLoaderData();
 	const { sprayScheduleId } = Route.useParams();
+
+	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	const { data: liveSchedules } = useLiveQuery(
+		(q) =>
+			q
+				.from({ schedule: spraySchedules })
+				.where(({ schedule }) => eq(schedule.id, sprayScheduleId)),
+		[sprayScheduleId],
+	);
+	const schedule = liveSchedules[0] ?? loadedSchedule;
 
 	const { data: insecticideData } = useLiveQuery((q) =>
 		q.from({ insecticide: insecticides }).select(({ insecticide }) => ({
@@ -65,6 +76,12 @@ function RouteComponent() {
 	);
 	const currentMunicipalityIds = currentLinks.map(
 		(link) => link.municipality_id,
+	);
+
+	// The municipality set is part of the seed too, and it lives in a separate collection with
+	// no updated_at of its own — so fold the linked ids into the version stamp.
+	const { seedKey, latchProps } = useFormSeed(
+		rowVersion(schedule, [...currentMunicipalityIds].sort().join(",")),
 	);
 
 	const handleSubmit = async (
@@ -102,7 +119,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" {...latchProps}>
 			<SprayScheduleForm
 				defaultValues={{
 					...schedule,
@@ -110,6 +127,7 @@ function RouteComponent() {
 				}}
 				formLabel="Edit Spray Mission"
 				insecticideOptions={insecticideData}
+				key={seedKey}
 				municipalityOptions={municipalityData}
 				onSubmit={handleSubmit}
 				submitLabel="Update"

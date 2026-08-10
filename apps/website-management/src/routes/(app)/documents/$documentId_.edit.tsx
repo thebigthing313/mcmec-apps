@@ -12,11 +12,12 @@ import {
 	AlertDialogTrigger,
 } from "@mcmec/ui/components/alert-dialog";
 import { Button } from "@mcmec/ui/components/button";
-import { useLiveQuery } from "@tanstack/react-db";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { DocumentForm } from "@/src/components/document-form";
 import { documents, documentTypes } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
+import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/documents/$documentId_/edit")({
 	component: RouteComponent,
@@ -32,8 +33,19 @@ export const Route = createFileRoute("/(app)/documents/$documentId_/edit")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const { document } = Route.useLoaderData();
+	const { document: loadedDocument } = Route.useLoaderData();
 	const { documentId } = Route.useParams();
+
+	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	const { data: liveDocuments } = useLiveQuery(
+		(q) =>
+			q
+				.from({ document: documents })
+				.where(({ document }) => eq(document.id, documentId)),
+		[documentId],
+	);
+	const document = liveDocuments[0] ?? loadedDocument;
+	const { seedKey, latchProps } = useFormSeed(rowVersion(document));
 
 	const { data: categories } = useLiveQuery((q) =>
 		q
@@ -61,7 +73,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" {...latchProps}>
 			<DocumentForm
 				categories={items}
 				defaultValues={{
@@ -74,6 +86,7 @@ function RouteComponent() {
 					url: document.url,
 				}}
 				formLabel="Edit Document"
+				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>

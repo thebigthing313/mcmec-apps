@@ -1,5 +1,6 @@
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
 	createFileRoute,
 	Link,
@@ -28,8 +29,20 @@ export const Route = createFileRoute("/(app)/documents/$documentId")({
 });
 
 function RouteComponent() {
-	const { document } = Route.useLoaderData();
+	const { document: loadedDocument } = Route.useLoaderData();
+	const { documentId } = Route.useParams();
 	const navigate = useNavigate();
+
+	// Read live rather than from the loader's one-shot read, which can land on the shape
+	// snapshot before the change log applies — see lib/use-form-seed.ts.
+	const { data: liveDocuments } = useLiveQuery(
+		(q) =>
+			q
+				.from({ document: documents })
+				.where(({ document }) => eq(document.id, documentId)),
+		[documentId],
+	);
+	const document = liveDocuments[0] ?? loadedDocument;
 	const { id, document_type_id, fiscal_year, url, is_published } = document;
 	const type = documentTypes.get(document_type_id)?.name;
 

@@ -12,11 +12,12 @@ import {
 	AlertDialogTrigger,
 } from "@mcmec/ui/components/alert-dialog";
 import { Button } from "@mcmec/ui/components/button";
-import { useLiveQuery } from "@tanstack/react-db";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { NoticeForm } from "@/src/components/notice-form";
 import { notices, noticeTypes } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
+import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 	component: RouteComponent,
@@ -32,8 +33,19 @@ export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const { notice } = Route.useLoaderData();
+	const { notice: loadedNotice } = Route.useLoaderData();
 	const { noticeId } = Route.useParams();
+
+	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	const { data: liveNotices } = useLiveQuery(
+		(q) =>
+			q
+				.from({ notice: notices })
+				.where(({ notice }) => eq(notice.id, noticeId)),
+		[noticeId],
+	);
+	const notice = liveNotices[0] ?? loadedNotice;
+	const { seedKey, latchProps } = useFormSeed(rowVersion(notice));
 
 	const { data: categories } = useLiveQuery((q) =>
 		q
@@ -61,7 +73,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" {...latchProps}>
 			<NoticeForm
 				categories={items}
 				defaultValues={{
@@ -76,6 +88,7 @@ function RouteComponent() {
 					updated_at: new Date(),
 				}}
 				formLabel="Edit Notice"
+				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>

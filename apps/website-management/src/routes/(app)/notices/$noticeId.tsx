@@ -2,6 +2,7 @@ import { formatDate } from "@mcmec/lib/functions/date-fns";
 import { PublicNoticeBadge } from "@mcmec/ui/blocks/public-notice-badge";
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Button } from "@mcmec/ui/components/button";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
 	createFileRoute,
 	Link,
@@ -26,8 +27,20 @@ export const Route = createFileRoute("/(app)/notices/$noticeId")({
 });
 
 function RouteComponent() {
-	const { notice } = Route.useLoaderData();
+	const { notice: loadedNotice } = Route.useLoaderData();
+	const { noticeId } = Route.useParams();
 	const navigate = useNavigate();
+
+	// Read live rather than from the loader's one-shot read, which can land on the shape
+	// snapshot before the change log applies — see lib/use-form-seed.ts.
+	const { data: liveNotices } = useLiveQuery(
+		(q) =>
+			q
+				.from({ notice: notices })
+				.where(({ notice }) => eq(notice.id, noticeId)),
+		[noticeId],
+	);
+	const notice = liveNotices[0] ?? loadedNotice;
 	const {
 		id,
 		title,

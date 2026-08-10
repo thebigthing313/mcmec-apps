@@ -12,10 +12,12 @@ import {
 	AlertDialogTrigger,
 } from "@mcmec/ui/components/alert-dialog";
 import { Button } from "@mcmec/ui/components/button";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { MeetingsForm } from "@/src/components/meetings-form";
 import { meetings } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
+import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/meetings/$meetingId")({
 	component: RouteComponent,
@@ -31,8 +33,19 @@ export const Route = createFileRoute("/(app)/meetings/$meetingId")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const { meeting } = Route.useLoaderData();
+	const { meeting: loadedMeeting } = Route.useLoaderData();
 	const { meetingId } = Route.useParams();
+
+	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	const { data: liveMeetings } = useLiveQuery(
+		(q) =>
+			q
+				.from({ meeting: meetings })
+				.where(({ meeting }) => eq(meeting.id, meetingId)),
+		[meetingId],
+	);
+	const meeting = liveMeetings[0] ?? loadedMeeting;
+	const { seedKey, latchProps } = useFormSeed(rowVersion(meeting));
 
 	const handleSubmit = async (value: MeetingsRowType) => {
 		const tx = meetings.update(meetingId, (draft) => {
@@ -51,10 +64,11 @@ function RouteComponent() {
 	const defaultValues: MeetingsRowType = { ...meeting };
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" {...latchProps}>
 			<MeetingsForm
 				defaultValues={defaultValues}
 				formLabel="Edit Meeting"
+				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>

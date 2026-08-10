@@ -12,10 +12,12 @@ import {
 	AlertDialogTrigger,
 } from "@mcmec/ui/components/alert-dialog";
 import { Button } from "@mcmec/ui/components/button";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
 import { insecticides } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
+import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/insecticides/$insecticideId")({
 	component: RouteComponent,
@@ -31,8 +33,19 @@ export const Route = createFileRoute("/(app)/insecticides/$insecticideId")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const { insecticide } = Route.useLoaderData();
+	const { insecticide: loadedInsecticide } = Route.useLoaderData();
 	const { insecticideId } = Route.useParams();
+
+	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	const { data: liveInsecticides } = useLiveQuery(
+		(q) =>
+			q
+				.from({ insecticide: insecticides })
+				.where(({ insecticide }) => eq(insecticide.id, insecticideId)),
+		[insecticideId],
+	);
+	const insecticide = liveInsecticides[0] ?? loadedInsecticide;
+	const { seedKey, latchProps } = useFormSeed(rowVersion(insecticide));
 
 	const handleSubmit = async (value: InsecticidesRowType) => {
 		const tx = insecticides.update(insecticideId, (draft) => {
@@ -51,10 +64,11 @@ function RouteComponent() {
 	const defaultValues: InsecticidesRowType = { ...insecticide };
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" {...latchProps}>
 			<InsecticidesForm
 				defaultValues={defaultValues}
 				formLabel="Edit Insecticide"
+				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>
