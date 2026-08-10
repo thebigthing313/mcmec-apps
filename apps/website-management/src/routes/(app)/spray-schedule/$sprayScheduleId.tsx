@@ -12,14 +12,17 @@ import {
 	AlertDialogTrigger,
 } from "@mcmec/ui/components/alert-dialog";
 import { Button } from "@mcmec/ui/components/button";
-import { useLiveQuery } from "@tanstack/react-db";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { SprayScheduleForm } from "@/src/components/spray-schedule-form";
-import { SPRAY_MUNICIPALITIES_KEY } from "@/src/hooks/use-spray-schedules";
 import { apiFetch } from "@/src/lib/api";
-import { insecticides, municipalities, spraySchedules } from "@/src/lib/db";
+import {
+	insecticides,
+	municipalities,
+	sprayScheduleMunicipalities,
+	spraySchedules,
+} from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
@@ -36,7 +39,6 @@ export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const queryClient = useQueryClient();
 	const { schedule } = Route.useLoaderData();
 	const { sprayScheduleId } = Route.useParams();
 
@@ -54,17 +56,16 @@ function RouteComponent() {
 		})),
 	);
 
-	const { data: currentMunicipalityIds } = useQuery({
-		queryFn: async () => {
-			const { rows } = await apiFetch<{
-				rows: { sprayScheduleId: string; municipalityId: string }[];
-			}>("/api/spray-schedules/municipalities");
-			return rows
-				.filter((r) => r.sprayScheduleId === sprayScheduleId)
-				.map((r) => r.municipalityId);
-		},
-		queryKey: [...SPRAY_MUNICIPALITIES_KEY, sprayScheduleId],
-	});
+	const { data: currentLinks } = useLiveQuery(
+		(q) =>
+			q
+				.from({ link: sprayScheduleMunicipalities })
+				.where(({ link }) => eq(link.spray_schedule_id, sprayScheduleId)),
+		[sprayScheduleId],
+	);
+	const currentMunicipalityIds = currentLinks.map(
+		(link) => link.municipality_id,
+	);
 
 	const handleSubmit = async (
 		value: SpraySchedulesRowType,
@@ -75,7 +76,8 @@ function RouteComponent() {
 		});
 		toastOnError(tx, "Failed to update spray schedule.");
 
-		// Full-replace the municipality set (composite PK — no generic CRUD path for it).
+		// Full-replace the municipality set in one transaction; the junction collection picks
+		// the change up through Electric.
 		try {
 			await apiFetch(`/api/spray-schedules/${sprayScheduleId}/municipalities`, {
 				body: JSON.stringify({ municipalityIds }),
@@ -90,7 +92,6 @@ function RouteComponent() {
 			return;
 		}
 
-		queryClient.invalidateQueries({ queryKey: SPRAY_MUNICIPALITIES_KEY });
 		navigate({ to: "/spray-schedule" });
 	};
 

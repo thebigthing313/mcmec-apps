@@ -7,10 +7,7 @@ import { inviteEmployee } from "./invite";
 import { importMosquitoActivity } from "./mosquito";
 import { submitRequest } from "./requests";
 import { shapeProxy } from "./shapes";
-import {
-	listSprayScheduleMunicipalities,
-	setSprayScheduleMunicipalities,
-} from "./spray-municipalities";
+import { setSprayScheduleMunicipalities } from "./spray-municipalities";
 import { setUserRoles } from "./users";
 
 export const app = new Hono();
@@ -58,7 +55,6 @@ app.delete("/api/data/:table/:id", deleteRow);
 // Non-CRUD writes (composite-key / bulk / role) that the generic /api/data path can't express
 app.put("/api/users/:id/roles", setUserRoles); // manage_users
 app.post("/api/mosquito-activity/import", importMosquitoActivity); // manage_website
-app.get("/api/spray-schedules/municipalities", listSprayScheduleMunicipalities); // manage_website — the junction has no id, so it can't be an Electric collection
 app.put(
 	"/api/spray-schedules/:id/municipalities",
 	setSprayScheduleMunicipalities,

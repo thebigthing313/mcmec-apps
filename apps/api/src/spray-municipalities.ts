@@ -1,11 +1,11 @@
-// Spray-schedule ↔ municipality junction — GET /api/spray-schedules/municipalities and
-// PUT /api/spray-schedules/:id/municipalities (both gated by manage_website).
+// Spray-schedule ↔ municipality junction — PUT /api/spray-schedules/:id/municipalities
+// (gated by manage_website).
 //
-// The junction has a composite PK and no surrogate id, so it can't go through the generic
-// /api/data CRUD — and for the same reason it can't be a TanStack DB collection (those key on
-// `id`), hence the plain GET below instead of an Electric shape. The PUT replaces the full
-// municipality set for one schedule (delete-all + insert) in a transaction. An unknown
-// municipality id surfaces as a 422 via the FK violation.
+// The table has a surrogate `id` so it can sync as a collection, but its real key is the
+// unique (spray_schedule_id, municipality_id) pair — replacing a schedule's whole set is one
+// operation, not a series of row writes, so it doesn't fit the generic /api/data CRUD. This
+// does the delete-all + insert in a transaction; clients read the result back through the
+// Electric shape. An unknown municipality id surfaces as a 422 via the FK violation.
 
 import { eq } from "drizzle-orm";
 import type { Context } from "hono";
@@ -23,23 +23,6 @@ const bodySchema = z.object({
 		.max(1000)
 		.transform((ids) => [...new Set(ids)]),
 });
-
-/** Every junction row, for the management UI to group client-side. */
-export async function listSprayScheduleMunicipalities(
-	c: Context,
-): Promise<Response> {
-	const session = await requirePermission(c, "manage_website");
-	if (session instanceof Response) return session;
-
-	const rows = await db
-		.select({
-			sprayScheduleId: sprayScheduleMunicipalities.sprayScheduleId,
-			municipalityId: sprayScheduleMunicipalities.municipalityId,
-		})
-		.from(sprayScheduleMunicipalities);
-
-	return c.json({ rows });
-}
 
 export async function setSprayScheduleMunicipalities(
 	c: Context,

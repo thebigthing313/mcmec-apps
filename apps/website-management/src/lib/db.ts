@@ -36,6 +36,7 @@ export const {
 	noticeTypes,
 	notices,
 	publicRequests,
+	sprayScheduleMunicipalities,
 	spraySchedules,
 	zipCodes,
 } = db;

@@ -1,10 +1,8 @@
 import type { SpraySchedulesRowType } from "@mcmec/supabase/db/spray-schedules";
 import { useLiveQuery } from "@tanstack/react-db";
-import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { SprayScheduleForm } from "@/src/components/spray-schedule-form";
-import { SPRAY_MUNICIPALITIES_KEY } from "@/src/hooks/use-spray-schedules";
 import { apiFetch } from "@/src/lib/api";
 import { insecticides, municipalities, spraySchedules } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
@@ -18,7 +16,6 @@ export const Route = createFileRoute("/(app)/spray-schedule/create")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const queryClient = useQueryClient();
 
 	const { data: insecticideData } = useLiveQuery((q) =>
 		q.from({ insecticide: insecticides }).select(({ insecticide }) => ({
@@ -57,7 +54,6 @@ function RouteComponent() {
 				);
 				return;
 			}
-			queryClient.invalidateQueries({ queryKey: SPRAY_MUNICIPALITIES_KEY });
 		}
 
 		navigate({ to: "/spray-schedule" });

@@ -21,10 +21,10 @@ import {
 	numeric,
 	pgEnum,
 	pgTable,
-	primaryKey,
 	text,
 	time,
 	timestamp,
+	unique,
 	uuid,
 } from "drizzle-orm/pg-core";
 
@@ -305,9 +305,12 @@ export const spraySchedules = pgTable("spray_schedules", {
 	...timestamps,
 });
 
+// Surrogate id (rather than the natural composite key) so the junction can sync as a
+// TanStack DB collection — those key rows by `id`. The pair stays unique.
 export const sprayScheduleMunicipalities = pgTable(
 	"spray_schedule_municipalities",
 	{
+		id: uuid("id").primaryKey().defaultRandom(),
 		sprayScheduleId: uuid("spray_schedule_id")
 			.notNull()
 			.references(() => spraySchedules.id, { onDelete: "cascade" }),
@@ -315,7 +318,12 @@ export const sprayScheduleMunicipalities = pgTable(
 			.notNull()
 			.references(() => municipalities.id, { onDelete: "restrict" }),
 	},
-	(t) => [primaryKey({ columns: [t.sprayScheduleId, t.municipalityId] })],
+	(t) => [
+		unique("spray_schedule_municipalities_pair_key").on(
+			t.sprayScheduleId,
+			t.municipalityId,
+		),
+	],
 );
 
 // ══ Intake (merged: contact + 3 service requests) ════════════════════════════

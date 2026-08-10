@@ -43,6 +43,7 @@ import {
 	PublicRequestsRowSchema,
 	PublicRequestsUpdateSchema,
 } from "../db/public-requests";
+import { SprayScheduleMunicipalitiesRowSchema } from "../db/spray-schedule-municipalities";
 import {
 	SpraySchedulesInsertSchema,
 	SpraySchedulesRowSchema,
@@ -160,6 +161,14 @@ export function createNoticesCollections({
 		updateSchema: SpraySchedulesUpdateSchema,
 	});
 
+	// Read-only here — a schedule's municipality set is replaced through the API's junction
+	// endpoint, and the change syncs back through this collection.
+	const sprayScheduleMunicipalities = createEagerCollection({
+		apiUrl,
+		schema: SprayScheduleMunicipalitiesRowSchema,
+		table: "spray_schedule_municipalities",
+	});
+
 	return {
 		documentTypes,
 		documents,
@@ -171,6 +180,7 @@ export function createNoticesCollections({
 		noticeTypes,
 		notices,
 		publicRequests,
+		sprayScheduleMunicipalities,
 		spraySchedules,
 		zipCodes,
 	};
