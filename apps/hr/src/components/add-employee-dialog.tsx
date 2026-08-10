@@ -9,7 +9,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@mcmec/ui/components/dialog";
-import { FieldGroup, FieldLegend, FieldSet } from "@mcmec/ui/components/field";
+import { FieldGroup, FieldSet } from "@mcmec/ui/components/field";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -35,8 +35,6 @@ export function AddEmployeeDialog() {
 				user_id: null,
 				created_at: new Date(),
 				updated_at: new Date(),
-				created_by: null,
-				updated_by: null,
 			});
 			setOpen(false);
 			form.reset();

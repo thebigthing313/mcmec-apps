@@ -302,15 +302,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
-      '@supabase/supabase-js':
-        specifier: ^2.100.1
-        version: 2.100.1
       '@tanstack/db':
         specifier: ^0.5.33
         version: 0.5.33(typescript@5.9.3)
-      '@tanstack/query-db-collection':
-        specifier: ^1.0.30
-        version: 1.0.31(@tanstack/query-core@5.95.2)(typescript@5.9.3)
       '@tanstack/react-db':
         specifier: ^0.1.61
         version: 0.1.61(react@19.2.3)(typescript@5.9.3)

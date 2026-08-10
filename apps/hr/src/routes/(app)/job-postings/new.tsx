@@ -22,8 +22,6 @@ function RouteComponent() {
 			is_closed: value.is_closed,
 			created_at: new Date(),
 			updated_at: new Date(),
-			created_by: null,
-			updated_by: null,
 		});
 		navigate({ to: "/job-postings/$postingId", params: { postingId: id } });
 	};

@@ -1,3 +1,4 @@
+import { InviteButton } from "@mcmec/ui/blocks/invite-button";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -29,8 +30,8 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 import { AddEmployeeDialog } from "@/src/components/add-employee-dialog";
-import { InviteButton } from "@/src/components/invite-button";
 import { useDb } from "@/src/lib/db";
+import { API_URL } from "@/src/lib/queryClient";
 
 export const Route = createFileRoute("/(app)/employees/")({
 	component: EmployeesPage,
@@ -118,7 +119,7 @@ const columns: ColumnDef<Employee>[] = [
 	{
 		cell: ({ row }) => {
 			if (row.original.user_id) return null;
-			return <InviteButton email={row.original.email} />;
+			return <InviteButton apiUrl={API_URL} email={row.original.email} />;
 		},
 		header: "Actions",
 		id: "actions",

@@ -1,9 +1,10 @@
+import { InviteButton } from "@mcmec/ui/blocks/invite-button";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Edit } from "lucide-react";
-import { InviteButton } from "@/src/components/invite-button";
 import { employees } from "@/src/lib/db";
+import { API_URL } from "@/src/lib/queryClient";
 
 export const Route = createFileRoute("/(app)/employees/$employeeId")({
 	component: RouteComponent,
@@ -31,7 +32,9 @@ function RouteComponent() {
 					</Link>
 				</Button>
 				<div className="flex items-center gap-2">
-					{!employee.user_id && <InviteButton email={employee.email} />}
+					{!employee.user_id && (
+						<InviteButton apiUrl={API_URL} email={employee.email} />
+					)}
 					<Button asChild size="sm" variant="outline">
 						<Link params={{ employeeId }} to="/employees/$employeeId/edit">
 							<Edit />

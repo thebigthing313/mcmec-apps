@@ -2,7 +2,7 @@ import {
 	createHrCollections,
 	type HrCollections,
 } from "@mcmec/supabase/collections/hr";
-import { queryClient, supabase } from "./queryClient";
+import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------
 // Db singleton
@@ -12,7 +12,7 @@ let instance: HrCollections | null = null;
 
 export function getDb(): HrCollections {
 	if (!instance) {
-		instance = createHrCollections({ supabase, queryClient });
+		instance = createHrCollections({ apiUrl: API_URL });
 	}
 	return instance;
 }

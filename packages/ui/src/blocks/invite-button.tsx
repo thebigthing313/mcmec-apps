@@ -1,12 +1,22 @@
-import { Badge } from "@mcmec/ui/components/badge";
-import { Button } from "@mcmec/ui/components/button";
 import { Mail } from "lucide-react";
 import { useState } from "react";
-import { API_URL } from "@/src/lib/queryClient";
+import { Badge } from "../components/badge";
+import { Button } from "../components/button";
 
-// Creates the Better Auth login for an existing employee record and emails a set-password
-// link (POST /api/invite, manage_employees-gated). Replaces the old Supabase edge function.
-export function InviteButton({ email }: { email: string }) {
+interface InviteButtonProps {
+	/** Email of an existing employee record with no login yet. */
+	email: string;
+	/** API origin (VITE_API_URL). */
+	apiUrl: string;
+}
+
+/**
+ * Creates the Better Auth login for an existing employee record and emails a set-password
+ * link (POST /api/invite, gated by `manage_employees`).
+ *
+ * Shared by the HR and admin apps, both of which list employees.
+ */
+export function InviteButton({ apiUrl, email }: InviteButtonProps) {
 	const [loading, setLoading] = useState(false);
 	// null = not sent yet. Once sent we still distinguish "email delivered" from
 	// "login created but Resend failed" — the API reports that as emailSent:false.
@@ -17,7 +27,7 @@ export function InviteButton({ email }: { email: string }) {
 		setLoading(true);
 		setError(null);
 		try {
-			const res = await fetch(`${API_URL}/api/invite`, {
+			const res = await fetch(`${apiUrl}/api/invite`, {
 				body: JSON.stringify({ email }),
 				credentials: "include",
 				headers: { "Content-Type": "application/json" },

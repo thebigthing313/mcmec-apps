@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_auth/forgot-password")({
 });
 
 function ForgotPasswordPage() {
-	const { supabase } = Route.useRouteContext();
+	const { authClient } = Route.useRouteContext();
 	const [submitted, setSubmitted] = useState(false);
 
 	const form = useAppForm({
@@ -23,7 +23,10 @@ function ForgotPasswordPage() {
 			email: "",
 		},
 		onSubmit: async ({ value }) => {
-			await supabase.auth.resetPasswordForEmail(value.email, {
+			// Better Auth emails a tokenized link that lands back on /reset-password?token=…
+			// Always report success — whether the address exists isn't ours to disclose.
+			await authClient.requestPasswordReset({
+				email: value.email,
 				redirectTo: `${window.location.origin}/reset-password`,
 			});
 			setSubmitted(true);
