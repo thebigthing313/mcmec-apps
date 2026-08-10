@@ -16,9 +16,7 @@ interface DocumentFormProps {
 		url: string;
 		is_published: boolean;
 		created_at: Date;
-		created_by: string | null;
 		updated_at: Date;
-		updated_by: string | null;
 	};
 	onSubmit: (value: DocumentsRowType) => void | Promise<void>;
 	categories: Array<{ label: string; value: string }>;

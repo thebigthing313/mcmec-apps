@@ -23,6 +23,7 @@ import {
 	MeetingsRowSchema,
 	MeetingsUpdateSchema,
 } from "../db/meetings";
+import { MosquitoActivityDataRowSchema } from "../db/mosquito-activity-data";
 import {
 	MunicipalitiesInsertSchema,
 	MunicipalitiesRowSchema,
@@ -134,6 +135,14 @@ export function createNoticesCollections({
 		updateSchema: PublicRequestsUpdateSchema,
 	});
 
+	// Surveillance dataset — large and only used by the weekly-activity screen, so it syncs
+	// on demand. Rows arrive via the CSV import endpoint, never through this collection.
+	const mosquitoActivityData = createOnDemandCollection({
+		apiUrl,
+		schema: MosquitoActivityDataRowSchema,
+		table: "mosquito_activity_data",
+	});
+
 	const municipalities = createEagerCollection({
 		apiUrl,
 		insertSchema: MunicipalitiesInsertSchema,
@@ -157,6 +166,7 @@ export function createNoticesCollections({
 		employees,
 		insecticides,
 		meetings,
+		mosquitoActivityData,
 		municipalities,
 		noticeTypes,
 		notices,

@@ -98,15 +98,12 @@ function RouteComponent() {
 	};
 
 	const handleCreateSave = () => {
-		console.log("Creating category:", createForm);
 		const tx = noticeTypes.insert({
 			created_at: new Date(),
-			created_by: null,
 			description: createForm.description || null,
 			id: crypto.randomUUID(),
 			name: createForm.name,
 			updated_at: new Date(),
-			updated_by: null,
 		});
 		toastOnError(tx, "Failed to create category.");
 		setIsCreating(false);

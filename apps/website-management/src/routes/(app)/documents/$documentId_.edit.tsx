@@ -66,13 +66,11 @@ function RouteComponent() {
 				categories={items}
 				defaultValues={{
 					created_at: new Date(document.created_at),
-					created_by: document.created_by,
 					document_type_id: document.document_type_id,
 					fiscal_year: document.fiscal_year,
 					id: document.id,
 					is_published: document.is_published,
 					updated_at: new Date(),
-					updated_by: null,
 					url: document.url,
 				}}
 				formLabel="Edit Document"

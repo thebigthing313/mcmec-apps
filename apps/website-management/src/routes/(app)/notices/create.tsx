@@ -38,7 +38,6 @@ function RouteComponent() {
 			defaultValues={{
 				content: "",
 				created_at: new Date(),
-				created_by: null,
 				id: crypto.randomUUID(),
 				is_archived: false,
 				is_published: true,
@@ -46,7 +45,6 @@ function RouteComponent() {
 				notice_type_id: "",
 				title: "",
 				updated_at: new Date(),
-				updated_by: null,
 			}}
 			formLabel="Create New Notice"
 			onSubmit={handleSubmit}

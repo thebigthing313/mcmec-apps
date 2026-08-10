@@ -15,9 +15,11 @@ import { Button } from "@mcmec/ui/components/button";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { SprayScheduleForm } from "@/src/components/spray-schedule-form";
+import { SPRAY_MUNICIPALITIES_KEY } from "@/src/hooks/use-spray-schedules";
+import { apiFetch } from "@/src/lib/api";
 import { insecticides, municipalities, spraySchedules } from "@/src/lib/db";
-import { supabase } from "@/src/lib/queryClient";
 import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
@@ -54,14 +56,14 @@ function RouteComponent() {
 
 	const { data: currentMunicipalityIds } = useQuery({
 		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("spray_schedule_municipalities")
-				.select("municipality_id")
-				.eq("spray_schedule_id", sprayScheduleId);
-			if (error) return [];
-			return data.map((m) => m.municipality_id);
+			const { rows } = await apiFetch<{
+				rows: { sprayScheduleId: string; municipalityId: string }[];
+			}>("/api/spray-schedules/municipalities");
+			return rows
+				.filter((r) => r.sprayScheduleId === sprayScheduleId)
+				.map((r) => r.municipalityId);
 		},
-		queryKey: ["spray_schedule_municipalities", sprayScheduleId],
+		queryKey: [...SPRAY_MUNICIPALITIES_KEY, sprayScheduleId],
 	});
 
 	const handleSubmit = async (
@@ -73,25 +75,22 @@ function RouteComponent() {
 		});
 		toastOnError(tx, "Failed to update spray schedule.");
 
-		// Replace municipality links
-		await supabase
-			.from("spray_schedule_municipalities")
-			.delete()
-			.eq("spray_schedule_id", sprayScheduleId);
-
-		if (municipalityIds.length > 0) {
-			// biome-ignore lint/suspicious/noExplicitAny: table not yet in generated types
-			await (supabase as any).from("spray_schedule_municipalities").insert(
-				municipalityIds.map((muniId) => ({
-					municipality_id: muniId,
-					spray_schedule_id: sprayScheduleId,
-				})),
+		// Full-replace the municipality set (composite PK — no generic CRUD path for it).
+		try {
+			await apiFetch(`/api/spray-schedules/${sprayScheduleId}/municipalities`, {
+				body: JSON.stringify({ municipalityIds }),
+				method: "PUT",
+			});
+		} catch (error) {
+			toast.error(
+				error instanceof Error
+					? error.message
+					: "Failed to save municipalities.",
 			);
+			return;
 		}
 
-		queryClient.invalidateQueries({
-			queryKey: ["spray_schedule_municipalities"],
-		});
+		queryClient.invalidateQueries({ queryKey: SPRAY_MUNICIPALITIES_KEY });
 		navigate({ to: "/spray-schedule" });
 	};
 

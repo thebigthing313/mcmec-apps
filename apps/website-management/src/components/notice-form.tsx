@@ -19,9 +19,7 @@ interface NoticeFormProps {
 		is_published: boolean;
 		is_archived: boolean;
 		created_at: Date;
-		created_by: string | null;
 		updated_at: Date;
-		updated_by: string | null;
 	};
 	onSubmit: (value: NoticesRowType) => void | Promise<void>;
 	categories: Array<{ label: string; value: string }>;

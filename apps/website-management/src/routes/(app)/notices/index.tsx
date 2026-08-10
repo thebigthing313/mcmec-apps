@@ -15,7 +15,6 @@ function RouteComponent() {
 	const navigate = useNavigate();
 	const { data: notices } = useNotices();
 	const mappedData = notices?.map((notice) => ({
-		creator: notice.createdByName,
 		id: notice.id,
 		isArchived: notice.isArchived,
 		isPublished: notice.isPublished,

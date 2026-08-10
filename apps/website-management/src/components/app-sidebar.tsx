@@ -10,13 +10,12 @@ import { Link, type LinkProps } from "@tanstack/react-router";
 import {
 	BarChart3,
 	BookOpen,
-	Bug,
 	Calendar,
 	FileText,
 	FolderOpen,
 	Group,
 	Home,
-	Mail,
+	Inbox,
 	SprayCan,
 	Users,
 } from "lucide-react";
@@ -66,14 +65,9 @@ const items: SidebarItem[] = [
 		linkProps: { to: "/document-categories" },
 	},
 	{
-		icon: <Bug />,
-		label: "Service Requests",
-		linkProps: { to: "/service-requests" },
-	},
-	{
-		icon: <Mail />,
-		label: "Contact Submissions",
-		linkProps: { to: "/contact-submissions" },
+		icon: <Inbox />,
+		label: "Public Requests",
+		linkProps: { to: "/public-requests" },
 	},
 ];
 export function AppSidebar() {

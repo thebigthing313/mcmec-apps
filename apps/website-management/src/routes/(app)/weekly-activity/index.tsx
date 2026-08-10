@@ -12,13 +12,14 @@ import {
 	CardTitle,
 } from "@mcmec/ui/components/card";
 import { Input } from "@mcmec/ui/components/input";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, CheckCircle, Loader2, Upload } from "lucide-react";
 import Papa from "papaparse";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/src/lib/queryClient";
+import { apiFetch } from "@/src/lib/api";
+import { mosquitoActivityData } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/weekly-activity/")({
 	component: RouteComponent,
@@ -85,48 +86,24 @@ function parseCsvRows(raw: CsvRow[]): {
 }
 
 function RouteComponent() {
-	const [file, setFile] = useState<File | null>(null);
 	const [parsedRows, setParsedRows] = useState<ParsedRow[] | null>(null);
 	const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
 		[],
 	);
 	const [isUploading, setIsUploading] = useState(false);
-	const queryClient = useQueryClient();
 
-	// Fetch all rows with pagination to avoid PostgREST 1000-row limit
-	const { data: chartData = [] } = useQuery<MosquitoActivityRow[]>({
-		queryFn: async () => {
-			const allRows: MosquitoActivityRow[] = [];
-			const PAGE_SIZE = 1000;
-			let from = 0;
-
-			while (true) {
-				const { data, error } = await supabase
-					.from("mosquito_activity_data")
-					.select(
-						"species_name, species_group, year, week_number, mosquito_count, rainfall_inches",
-					)
-					.range(from, from + PAGE_SIZE - 1);
-				if (error) throw error;
-				for (const row of data) {
-					allRows.push({
-						mosquito_count: row.mosquito_count,
-						rainfall_inches: row.rainfall_inches,
-						species_group: row.species_group,
-						species_name: row.species_name,
-						week_number: row.week_number,
-						year: row.year,
-					});
-				}
-				if (data.length < PAGE_SIZE) break;
-				from += PAGE_SIZE;
-			}
-
-			return allRows;
-		},
-		queryKey: ["mosquito_activity_data"],
-		staleTime: 1000 * 60 * 5,
-	});
+	// The whole dataset streams in from the on-demand Electric collection, so a re-import
+	// shows up here without an explicit refetch.
+	const { data: chartData } = useLiveQuery((q) =>
+		q.from({ row: mosquitoActivityData }).select(({ row }) => ({
+			mosquito_count: row.mosquito_count,
+			rainfall_inches: row.rainfall_inches,
+			species_group: row.species_group,
+			species_name: row.species_name,
+			week_number: row.week_number,
+			year: row.year,
+		})),
+	) as { data: MosquitoActivityRow[] };
 
 	const stats = useMemo(() => {
 		if (!chartData.length) return null;
@@ -162,7 +139,6 @@ function RouteComponent() {
 	const handleFileChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const selectedFile = e.target.files?.[0] ?? null;
-			setFile(selectedFile);
 			setParsedRows(null);
 			setValidationErrors([]);
 
@@ -198,51 +174,25 @@ function RouteComponent() {
 
 		setIsUploading(true);
 		try {
-			// Delete all existing data
-			const { error: deleteError } = await supabase
-				.from("mosquito_activity_data")
-				.delete()
-				.neq("id", "00000000-0000-0000-0000-000000000000");
-
-			if (deleteError) {
-				toast.error(`Failed to clear existing data: ${deleteError.message}`);
-				return;
-			}
-
-			// Batch insert in chunks of 500
-			const BATCH_SIZE = 500;
-			for (let i = 0; i < parsedRows.length; i += BATCH_SIZE) {
-				const batch = parsedRows.slice(i, i + BATCH_SIZE).map((row) => ({
-					id: crypto.randomUUID(),
-					mosquito_count: row.mosquito_count,
-					rainfall_inches: row.rainfall_inches,
-					species_group: row.species_group,
-					species_name: row.species_name,
-					week_number: row.week_number,
-					year: row.year,
-				}));
-
-				const { error: insertError } = await supabase
-					.from("mosquito_activity_data")
-					.insert(batch);
-
-				if (insertError) {
-					toast.error(
-						`Failed to insert batch ${Math.floor(i / BATCH_SIZE) + 1}: ${insertError.message}`,
-					);
-					return;
-				}
-			}
+			// The endpoint replaces every row for the years present in the payload, in one
+			// transaction — so a re-imported season swaps cleanly and other years are untouched.
+			await apiFetch("/api/mosquito-activity/import", {
+				body: JSON.stringify({
+					rows: parsedRows.map((row) => ({
+						mosquitoCount: row.mosquito_count,
+						rainfallInches: row.rainfall_inches,
+						speciesGroup: row.species_group,
+						speciesName: row.species_name,
+						weekNumber: row.week_number,
+						year: row.year,
+					})),
+				}),
+				method: "POST",
+			});
 
 			toast.success(`Successfully uploaded ${parsedRows.length} rows.`);
 			setParsedRows(null);
-			setFile(null);
 			setValidationErrors([]);
-
-			// Refetch chart data
-			queryClient.invalidateQueries({
-				queryKey: ["mosquito_activity_data"],
-			});
 
 			// Reset file input
 			const fileInput = document.querySelector(
@@ -250,11 +200,15 @@ function RouteComponent() {
 			) as HTMLInputElement | null;
 			if (fileInput) fileInput.value = "";
 		} catch (err) {
-			toast.error("An unexpected error occurred during upload.");
+			toast.error(
+				err instanceof Error
+					? err.message
+					: "An unexpected error occurred during upload.",
+			);
 		} finally {
 			setIsUploading(false);
 		}
-	}, [parsedRows, queryClient]);
+	}, [parsedRows]);
 
 	return (
 		<div className="space-y-6">
@@ -266,8 +220,8 @@ function RouteComponent() {
 					<CardTitle>Upload CSV Data</CardTitle>
 					<CardDescription>
 						Upload a CSV file with columns: species_name, species_group, year,
-						week_number, mosquito_count, rainfall_inches. This will replace all
-						existing data.
+						week_number, mosquito_count, rainfall_inches. Every row for the
+						years in the file is replaced; other years are left alone.
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
@@ -326,7 +280,7 @@ function RouteComponent() {
 								) : (
 									<>
 										<Upload />
-										Confirm &amp; Replace All Data
+										Confirm &amp; Replace These Years
 									</>
 								)}
 							</Button>

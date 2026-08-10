@@ -27,14 +27,12 @@ function RouteComponent() {
 		active_ingredient: "",
 		active_ingredient_url: "",
 		created_at: new Date(),
-		created_by: null,
 		id: crypto.randomUUID(),
 		label_url: "",
 		msds_url: "",
 		trade_name: "",
 		type_name: "",
 		updated_at: new Date(),
-		updated_by: null,
 	};
 
 	return (

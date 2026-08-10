@@ -1,5 +1,5 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { documents, documentTypes, employees } from "../lib/db";
+import { documents, documentTypes } from "../lib/db";
 
 export function useDocuments() {
 	const { data, collection } = useLiveQuery((q) =>
@@ -12,7 +12,6 @@ export function useDocuments() {
 			)
 			.select(({ document, document_type }) => {
 				return {
-					createdById: document.created_by,
 					documentType: document_type?.name,
 					documentTypeId: document.document_type_id,
 					fiscalYear: document.fiscal_year,
@@ -23,12 +22,5 @@ export function useDocuments() {
 			}),
 	);
 
-	const enriched = data.map((document) => ({
-		...document,
-		createdByName: document.createdById
-			? (employees.get(document.createdById)?.display_name ?? null)
-			: null,
-	}));
-
-	return { collection, data: enriched };
+	return { collection, data };
 }

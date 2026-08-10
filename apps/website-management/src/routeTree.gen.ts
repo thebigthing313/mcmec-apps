@@ -14,21 +14,20 @@ import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as appDocumentCategoriesRouteImport } from './routes/(app)/document-categories'
 import { Route as appCategoriesRouteImport } from './routes/(app)/categories'
-import { Route as appServiceRequestsRouteRouteImport } from './routes/(app)/service-requests/route'
+import { Route as appPublicRequestsRouteRouteImport } from './routes/(app)/public-requests/route'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
 import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
 import { Route as appInsecticidesRouteRouteImport } from './routes/(app)/insecticides/route'
-import { Route as appContactSubmissionsRouteRouteImport } from './routes/(app)/contact-submissions/route'
 import { Route as appWeeklyActivityIndexRouteImport } from './routes/(app)/weekly-activity/index'
 import { Route as appSprayScheduleIndexRouteImport } from './routes/(app)/spray-schedule/index'
-import { Route as appServiceRequestsIndexRouteImport } from './routes/(app)/service-requests/index'
+import { Route as appPublicRequestsIndexRouteImport } from './routes/(app)/public-requests/index'
 import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
 import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/index'
 import { Route as appInsecticidesIndexRouteImport } from './routes/(app)/insecticides/index'
 import { Route as appDocumentsIndexRouteImport } from './routes/(app)/documents/index'
-import { Route as appContactSubmissionsIndexRouteImport } from './routes/(app)/contact-submissions/index'
 import { Route as appSprayScheduleCreateRouteImport } from './routes/(app)/spray-schedule/create'
 import { Route as appSprayScheduleSprayScheduleIdRouteImport } from './routes/(app)/spray-schedule/$sprayScheduleId'
+import { Route as appPublicRequestsRequestIdRouteImport } from './routes/(app)/public-requests/$requestId'
 import { Route as appNoticesCreateRouteImport } from './routes/(app)/notices/create'
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
 import { Route as appMeetingsCreateRouteImport } from './routes/(app)/meetings/create'
@@ -37,20 +36,8 @@ import { Route as appInsecticidesCreateRouteImport } from './routes/(app)/insect
 import { Route as appInsecticidesInsecticideIdRouteImport } from './routes/(app)/insecticides/$insecticideId'
 import { Route as appDocumentsCreateRouteImport } from './routes/(app)/documents/create'
 import { Route as appDocumentsDocumentIdRouteImport } from './routes/(app)/documents/$documentId'
-import { Route as appContactSubmissionsCreateRouteImport } from './routes/(app)/contact-submissions/create'
-import { Route as appContactSubmissionsSubmissionIdRouteImport } from './routes/(app)/contact-submissions/$submissionId'
-import { Route as appServiceRequestsWaterManagementCreateRouteImport } from './routes/(app)/service-requests/water-management/create'
-import { Route as appServiceRequestsWaterManagementRequestIdRouteImport } from './routes/(app)/service-requests/water-management/$requestId'
-import { Route as appServiceRequestsMosquitofishCreateRouteImport } from './routes/(app)/service-requests/mosquitofish/create'
-import { Route as appServiceRequestsMosquitofishRequestIdRouteImport } from './routes/(app)/service-requests/mosquitofish/$requestId'
-import { Route as appServiceRequestsAdultMosquitoCreateRouteImport } from './routes/(app)/service-requests/adult-mosquito/create'
-import { Route as appServiceRequestsAdultMosquitoRequestIdRouteImport } from './routes/(app)/service-requests/adult-mosquito/$requestId'
 import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
 import { Route as appDocumentsDocumentIdEditRouteImport } from './routes/(app)/documents/$documentId_.edit'
-import { Route as appContactSubmissionsSubmissionIdEditRouteImport } from './routes/(app)/contact-submissions/$submissionId_.edit'
-import { Route as appServiceRequestsWaterManagementRequestIdEditRouteImport } from './routes/(app)/service-requests/water-management/$requestId_.edit'
-import { Route as appServiceRequestsMosquitofishRequestIdEditRouteImport } from './routes/(app)/service-requests/mosquitofish/$requestId_.edit'
-import { Route as appServiceRequestsAdultMosquitoRequestIdEditRouteImport } from './routes/(app)/service-requests/adult-mosquito/$requestId_.edit'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -76,9 +63,9 @@ const appCategoriesRoute = appCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appServiceRequestsRouteRoute = appServiceRequestsRouteRouteImport.update({
-  id: '/service-requests',
-  path: '/service-requests',
+const appPublicRequestsRouteRoute = appPublicRequestsRouteRouteImport.update({
+  id: '/public-requests',
+  path: '/public-requests',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appNoticesRouteRoute = appNoticesRouteRouteImport.update({
@@ -96,12 +83,6 @@ const appInsecticidesRouteRoute = appInsecticidesRouteRouteImport.update({
   path: '/insecticides',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appContactSubmissionsRouteRoute =
-  appContactSubmissionsRouteRouteImport.update({
-    id: '/contact-submissions',
-    path: '/contact-submissions',
-    getParentRoute: () => appRouteRoute,
-  } as any)
 const appWeeklyActivityIndexRoute = appWeeklyActivityIndexRouteImport.update({
   id: '/weekly-activity/',
   path: '/weekly-activity/',
@@ -112,10 +93,10 @@ const appSprayScheduleIndexRoute = appSprayScheduleIndexRouteImport.update({
   path: '/spray-schedule/',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appServiceRequestsIndexRoute = appServiceRequestsIndexRouteImport.update({
+const appPublicRequestsIndexRoute = appPublicRequestsIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => appServiceRequestsRouteRoute,
+  getParentRoute: () => appPublicRequestsRouteRoute,
 } as any)
 const appNoticesIndexRoute = appNoticesIndexRouteImport.update({
   id: '/',
@@ -137,12 +118,6 @@ const appDocumentsIndexRoute = appDocumentsIndexRouteImport.update({
   path: '/documents/',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appContactSubmissionsIndexRoute =
-  appContactSubmissionsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => appContactSubmissionsRouteRoute,
-  } as any)
 const appSprayScheduleCreateRoute = appSprayScheduleCreateRouteImport.update({
   id: '/spray-schedule/create',
   path: '/spray-schedule/create',
@@ -153,6 +128,12 @@ const appSprayScheduleSprayScheduleIdRoute =
     id: '/spray-schedule/$sprayScheduleId',
     path: '/spray-schedule/$sprayScheduleId',
     getParentRoute: () => appRouteRoute,
+  } as any)
+const appPublicRequestsRequestIdRoute =
+  appPublicRequestsRequestIdRouteImport.update({
+    id: '/$requestId',
+    path: '/$requestId',
+    getParentRoute: () => appPublicRequestsRouteRoute,
   } as any)
 const appNoticesCreateRoute = appNoticesCreateRouteImport.update({
   id: '/create',
@@ -195,54 +176,6 @@ const appDocumentsDocumentIdRoute = appDocumentsDocumentIdRouteImport.update({
   path: '/documents/$documentId',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appContactSubmissionsCreateRoute =
-  appContactSubmissionsCreateRouteImport.update({
-    id: '/create',
-    path: '/create',
-    getParentRoute: () => appContactSubmissionsRouteRoute,
-  } as any)
-const appContactSubmissionsSubmissionIdRoute =
-  appContactSubmissionsSubmissionIdRouteImport.update({
-    id: '/$submissionId',
-    path: '/$submissionId',
-    getParentRoute: () => appContactSubmissionsRouteRoute,
-  } as any)
-const appServiceRequestsWaterManagementCreateRoute =
-  appServiceRequestsWaterManagementCreateRouteImport.update({
-    id: '/water-management/create',
-    path: '/water-management/create',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
-const appServiceRequestsWaterManagementRequestIdRoute =
-  appServiceRequestsWaterManagementRequestIdRouteImport.update({
-    id: '/water-management/$requestId',
-    path: '/water-management/$requestId',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
-const appServiceRequestsMosquitofishCreateRoute =
-  appServiceRequestsMosquitofishCreateRouteImport.update({
-    id: '/mosquitofish/create',
-    path: '/mosquitofish/create',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
-const appServiceRequestsMosquitofishRequestIdRoute =
-  appServiceRequestsMosquitofishRequestIdRouteImport.update({
-    id: '/mosquitofish/$requestId',
-    path: '/mosquitofish/$requestId',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
-const appServiceRequestsAdultMosquitoCreateRoute =
-  appServiceRequestsAdultMosquitoCreateRouteImport.update({
-    id: '/adult-mosquito/create',
-    path: '/adult-mosquito/create',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
-const appServiceRequestsAdultMosquitoRequestIdRoute =
-  appServiceRequestsAdultMosquitoRequestIdRouteImport.update({
-    id: '/adult-mosquito/$requestId',
-    path: '/adult-mosquito/$requestId',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
 const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
   id: '/$noticeId_/edit',
   path: '/$noticeId/edit',
@@ -254,43 +187,16 @@ const appDocumentsDocumentIdEditRoute =
     path: '/documents/$documentId/edit',
     getParentRoute: () => appRouteRoute,
   } as any)
-const appContactSubmissionsSubmissionIdEditRoute =
-  appContactSubmissionsSubmissionIdEditRouteImport.update({
-    id: '/$submissionId_/edit',
-    path: '/$submissionId/edit',
-    getParentRoute: () => appContactSubmissionsRouteRoute,
-  } as any)
-const appServiceRequestsWaterManagementRequestIdEditRoute =
-  appServiceRequestsWaterManagementRequestIdEditRouteImport.update({
-    id: '/water-management/$requestId_/edit',
-    path: '/water-management/$requestId/edit',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
-const appServiceRequestsMosquitofishRequestIdEditRoute =
-  appServiceRequestsMosquitofishRequestIdEditRouteImport.update({
-    id: '/mosquitofish/$requestId_/edit',
-    path: '/mosquitofish/$requestId/edit',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
-const appServiceRequestsAdultMosquitoRequestIdEditRoute =
-  appServiceRequestsAdultMosquitoRequestIdEditRouteImport.update({
-    id: '/adult-mosquito/$requestId_/edit',
-    path: '/adult-mosquito/$requestId/edit',
-    getParentRoute: () => appServiceRequestsRouteRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
-  '/contact-submissions': typeof appContactSubmissionsRouteRouteWithChildren
   '/insecticides': typeof appInsecticidesRouteRouteWithChildren
   '/meetings': typeof appMeetingsRouteRouteWithChildren
   '/notices': typeof appNoticesRouteRouteWithChildren
-  '/service-requests': typeof appServiceRequestsRouteRouteWithChildren
+  '/public-requests': typeof appPublicRequestsRouteRouteWithChildren
   '/categories': typeof appCategoriesRoute
   '/document-categories': typeof appDocumentCategoriesRoute
   '/': typeof appIndexRoute
-  '/contact-submissions/$submissionId': typeof appContactSubmissionsSubmissionIdRoute
-  '/contact-submissions/create': typeof appContactSubmissionsCreateRoute
   '/documents/$documentId': typeof appDocumentsDocumentIdRoute
   '/documents/create': typeof appDocumentsCreateRoute
   '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
@@ -299,36 +205,24 @@ export interface FileRoutesByFullPath {
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
+  '/public-requests/$requestId': typeof appPublicRequestsRequestIdRoute
   '/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
   '/spray-schedule/create': typeof appSprayScheduleCreateRoute
-  '/contact-submissions/': typeof appContactSubmissionsIndexRoute
   '/documents/': typeof appDocumentsIndexRoute
   '/insecticides/': typeof appInsecticidesIndexRoute
   '/meetings/': typeof appMeetingsIndexRoute
   '/notices/': typeof appNoticesIndexRoute
-  '/service-requests/': typeof appServiceRequestsIndexRoute
+  '/public-requests/': typeof appPublicRequestsIndexRoute
   '/spray-schedule/': typeof appSprayScheduleIndexRoute
   '/weekly-activity/': typeof appWeeklyActivityIndexRoute
-  '/contact-submissions/$submissionId/edit': typeof appContactSubmissionsSubmissionIdEditRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
-  '/service-requests/adult-mosquito/$requestId': typeof appServiceRequestsAdultMosquitoRequestIdRoute
-  '/service-requests/adult-mosquito/create': typeof appServiceRequestsAdultMosquitoCreateRoute
-  '/service-requests/mosquitofish/$requestId': typeof appServiceRequestsMosquitofishRequestIdRoute
-  '/service-requests/mosquitofish/create': typeof appServiceRequestsMosquitofishCreateRoute
-  '/service-requests/water-management/$requestId': typeof appServiceRequestsWaterManagementRequestIdRoute
-  '/service-requests/water-management/create': typeof appServiceRequestsWaterManagementCreateRoute
-  '/service-requests/adult-mosquito/$requestId/edit': typeof appServiceRequestsAdultMosquitoRequestIdEditRoute
-  '/service-requests/mosquitofish/$requestId/edit': typeof appServiceRequestsMosquitofishRequestIdEditRoute
-  '/service-requests/water-management/$requestId/edit': typeof appServiceRequestsWaterManagementRequestIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/categories': typeof appCategoriesRoute
   '/document-categories': typeof appDocumentCategoriesRoute
   '/': typeof appIndexRoute
-  '/contact-submissions/$submissionId': typeof appContactSubmissionsSubmissionIdRoute
-  '/contact-submissions/create': typeof appContactSubmissionsCreateRoute
   '/documents/$documentId': typeof appDocumentsDocumentIdRoute
   '/documents/create': typeof appDocumentsCreateRoute
   '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
@@ -337,43 +231,30 @@ export interface FileRoutesByTo {
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/notices/create': typeof appNoticesCreateRoute
+  '/public-requests/$requestId': typeof appPublicRequestsRequestIdRoute
   '/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
   '/spray-schedule/create': typeof appSprayScheduleCreateRoute
-  '/contact-submissions': typeof appContactSubmissionsIndexRoute
   '/documents': typeof appDocumentsIndexRoute
   '/insecticides': typeof appInsecticidesIndexRoute
   '/meetings': typeof appMeetingsIndexRoute
   '/notices': typeof appNoticesIndexRoute
-  '/service-requests': typeof appServiceRequestsIndexRoute
+  '/public-requests': typeof appPublicRequestsIndexRoute
   '/spray-schedule': typeof appSprayScheduleIndexRoute
   '/weekly-activity': typeof appWeeklyActivityIndexRoute
-  '/contact-submissions/$submissionId/edit': typeof appContactSubmissionsSubmissionIdEditRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
-  '/service-requests/adult-mosquito/$requestId': typeof appServiceRequestsAdultMosquitoRequestIdRoute
-  '/service-requests/adult-mosquito/create': typeof appServiceRequestsAdultMosquitoCreateRoute
-  '/service-requests/mosquitofish/$requestId': typeof appServiceRequestsMosquitofishRequestIdRoute
-  '/service-requests/mosquitofish/create': typeof appServiceRequestsMosquitofishCreateRoute
-  '/service-requests/water-management/$requestId': typeof appServiceRequestsWaterManagementRequestIdRoute
-  '/service-requests/water-management/create': typeof appServiceRequestsWaterManagementCreateRoute
-  '/service-requests/adult-mosquito/$requestId/edit': typeof appServiceRequestsAdultMosquitoRequestIdEditRoute
-  '/service-requests/mosquitofish/$requestId/edit': typeof appServiceRequestsMosquitofishRequestIdEditRoute
-  '/service-requests/water-management/$requestId/edit': typeof appServiceRequestsWaterManagementRequestIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/(app)/contact-submissions': typeof appContactSubmissionsRouteRouteWithChildren
   '/(app)/insecticides': typeof appInsecticidesRouteRouteWithChildren
   '/(app)/meetings': typeof appMeetingsRouteRouteWithChildren
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
-  '/(app)/service-requests': typeof appServiceRequestsRouteRouteWithChildren
+  '/(app)/public-requests': typeof appPublicRequestsRouteRouteWithChildren
   '/(app)/categories': typeof appCategoriesRoute
   '/(app)/document-categories': typeof appDocumentCategoriesRoute
   '/(app)/': typeof appIndexRoute
-  '/(app)/contact-submissions/$submissionId': typeof appContactSubmissionsSubmissionIdRoute
-  '/(app)/contact-submissions/create': typeof appContactSubmissionsCreateRoute
   '/(app)/documents/$documentId': typeof appDocumentsDocumentIdRoute
   '/(app)/documents/create': typeof appDocumentsCreateRoute
   '/(app)/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
@@ -382,43 +263,30 @@ export interface FileRoutesById {
   '/(app)/meetings/create': typeof appMeetingsCreateRoute
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/(app)/notices/create': typeof appNoticesCreateRoute
+  '/(app)/public-requests/$requestId': typeof appPublicRequestsRequestIdRoute
   '/(app)/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
   '/(app)/spray-schedule/create': typeof appSprayScheduleCreateRoute
-  '/(app)/contact-submissions/': typeof appContactSubmissionsIndexRoute
   '/(app)/documents/': typeof appDocumentsIndexRoute
   '/(app)/insecticides/': typeof appInsecticidesIndexRoute
   '/(app)/meetings/': typeof appMeetingsIndexRoute
   '/(app)/notices/': typeof appNoticesIndexRoute
-  '/(app)/service-requests/': typeof appServiceRequestsIndexRoute
+  '/(app)/public-requests/': typeof appPublicRequestsIndexRoute
   '/(app)/spray-schedule/': typeof appSprayScheduleIndexRoute
   '/(app)/weekly-activity/': typeof appWeeklyActivityIndexRoute
-  '/(app)/contact-submissions/$submissionId_/edit': typeof appContactSubmissionsSubmissionIdEditRoute
   '/(app)/documents/$documentId_/edit': typeof appDocumentsDocumentIdEditRoute
   '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
-  '/(app)/service-requests/adult-mosquito/$requestId': typeof appServiceRequestsAdultMosquitoRequestIdRoute
-  '/(app)/service-requests/adult-mosquito/create': typeof appServiceRequestsAdultMosquitoCreateRoute
-  '/(app)/service-requests/mosquitofish/$requestId': typeof appServiceRequestsMosquitofishRequestIdRoute
-  '/(app)/service-requests/mosquitofish/create': typeof appServiceRequestsMosquitofishCreateRoute
-  '/(app)/service-requests/water-management/$requestId': typeof appServiceRequestsWaterManagementRequestIdRoute
-  '/(app)/service-requests/water-management/create': typeof appServiceRequestsWaterManagementCreateRoute
-  '/(app)/service-requests/adult-mosquito/$requestId_/edit': typeof appServiceRequestsAdultMosquitoRequestIdEditRoute
-  '/(app)/service-requests/mosquitofish/$requestId_/edit': typeof appServiceRequestsMosquitofishRequestIdEditRoute
-  '/(app)/service-requests/water-management/$requestId_/edit': typeof appServiceRequestsWaterManagementRequestIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
-    | '/contact-submissions'
     | '/insecticides'
     | '/meetings'
     | '/notices'
-    | '/service-requests'
+    | '/public-requests'
     | '/categories'
     | '/document-categories'
     | '/'
-    | '/contact-submissions/$submissionId'
-    | '/contact-submissions/create'
     | '/documents/$documentId'
     | '/documents/create'
     | '/insecticides/$insecticideId'
@@ -427,36 +295,24 @@ export interface FileRouteTypes {
     | '/meetings/create'
     | '/notices/$noticeId'
     | '/notices/create'
+    | '/public-requests/$requestId'
     | '/spray-schedule/$sprayScheduleId'
     | '/spray-schedule/create'
-    | '/contact-submissions/'
     | '/documents/'
     | '/insecticides/'
     | '/meetings/'
     | '/notices/'
-    | '/service-requests/'
+    | '/public-requests/'
     | '/spray-schedule/'
     | '/weekly-activity/'
-    | '/contact-submissions/$submissionId/edit'
     | '/documents/$documentId/edit'
     | '/notices/$noticeId/edit'
-    | '/service-requests/adult-mosquito/$requestId'
-    | '/service-requests/adult-mosquito/create'
-    | '/service-requests/mosquitofish/$requestId'
-    | '/service-requests/mosquitofish/create'
-    | '/service-requests/water-management/$requestId'
-    | '/service-requests/water-management/create'
-    | '/service-requests/adult-mosquito/$requestId/edit'
-    | '/service-requests/mosquitofish/$requestId/edit'
-    | '/service-requests/water-management/$requestId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/categories'
     | '/document-categories'
     | '/'
-    | '/contact-submissions/$submissionId'
-    | '/contact-submissions/create'
     | '/documents/$documentId'
     | '/documents/create'
     | '/insecticides/$insecticideId'
@@ -465,42 +321,29 @@ export interface FileRouteTypes {
     | '/meetings/create'
     | '/notices/$noticeId'
     | '/notices/create'
+    | '/public-requests/$requestId'
     | '/spray-schedule/$sprayScheduleId'
     | '/spray-schedule/create'
-    | '/contact-submissions'
     | '/documents'
     | '/insecticides'
     | '/meetings'
     | '/notices'
-    | '/service-requests'
+    | '/public-requests'
     | '/spray-schedule'
     | '/weekly-activity'
-    | '/contact-submissions/$submissionId/edit'
     | '/documents/$documentId/edit'
     | '/notices/$noticeId/edit'
-    | '/service-requests/adult-mosquito/$requestId'
-    | '/service-requests/adult-mosquito/create'
-    | '/service-requests/mosquitofish/$requestId'
-    | '/service-requests/mosquitofish/create'
-    | '/service-requests/water-management/$requestId'
-    | '/service-requests/water-management/create'
-    | '/service-requests/adult-mosquito/$requestId/edit'
-    | '/service-requests/mosquitofish/$requestId/edit'
-    | '/service-requests/water-management/$requestId/edit'
   id:
     | '__root__'
     | '/(app)'
     | '/login'
-    | '/(app)/contact-submissions'
     | '/(app)/insecticides'
     | '/(app)/meetings'
     | '/(app)/notices'
-    | '/(app)/service-requests'
+    | '/(app)/public-requests'
     | '/(app)/categories'
     | '/(app)/document-categories'
     | '/(app)/'
-    | '/(app)/contact-submissions/$submissionId'
-    | '/(app)/contact-submissions/create'
     | '/(app)/documents/$documentId'
     | '/(app)/documents/create'
     | '/(app)/insecticides/$insecticideId'
@@ -509,28 +352,18 @@ export interface FileRouteTypes {
     | '/(app)/meetings/create'
     | '/(app)/notices/$noticeId'
     | '/(app)/notices/create'
+    | '/(app)/public-requests/$requestId'
     | '/(app)/spray-schedule/$sprayScheduleId'
     | '/(app)/spray-schedule/create'
-    | '/(app)/contact-submissions/'
     | '/(app)/documents/'
     | '/(app)/insecticides/'
     | '/(app)/meetings/'
     | '/(app)/notices/'
-    | '/(app)/service-requests/'
+    | '/(app)/public-requests/'
     | '/(app)/spray-schedule/'
     | '/(app)/weekly-activity/'
-    | '/(app)/contact-submissions/$submissionId_/edit'
     | '/(app)/documents/$documentId_/edit'
     | '/(app)/notices/$noticeId_/edit'
-    | '/(app)/service-requests/adult-mosquito/$requestId'
-    | '/(app)/service-requests/adult-mosquito/create'
-    | '/(app)/service-requests/mosquitofish/$requestId'
-    | '/(app)/service-requests/mosquitofish/create'
-    | '/(app)/service-requests/water-management/$requestId'
-    | '/(app)/service-requests/water-management/create'
-    | '/(app)/service-requests/adult-mosquito/$requestId_/edit'
-    | '/(app)/service-requests/mosquitofish/$requestId_/edit'
-    | '/(app)/service-requests/water-management/$requestId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -575,11 +408,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appCategoriesRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/service-requests': {
-      id: '/(app)/service-requests'
-      path: '/service-requests'
-      fullPath: '/service-requests'
-      preLoaderRoute: typeof appServiceRequestsRouteRouteImport
+    '/(app)/public-requests': {
+      id: '/(app)/public-requests'
+      path: '/public-requests'
+      fullPath: '/public-requests'
+      preLoaderRoute: typeof appPublicRequestsRouteRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/notices': {
@@ -603,13 +436,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appInsecticidesRouteRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/contact-submissions': {
-      id: '/(app)/contact-submissions'
-      path: '/contact-submissions'
-      fullPath: '/contact-submissions'
-      preLoaderRoute: typeof appContactSubmissionsRouteRouteImport
-      parentRoute: typeof appRouteRoute
-    }
     '/(app)/weekly-activity/': {
       id: '/(app)/weekly-activity/'
       path: '/weekly-activity'
@@ -624,12 +450,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appSprayScheduleIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/service-requests/': {
-      id: '/(app)/service-requests/'
+    '/(app)/public-requests/': {
+      id: '/(app)/public-requests/'
       path: '/'
-      fullPath: '/service-requests/'
-      preLoaderRoute: typeof appServiceRequestsIndexRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
+      fullPath: '/public-requests/'
+      preLoaderRoute: typeof appPublicRequestsIndexRouteImport
+      parentRoute: typeof appPublicRequestsRouteRoute
     }
     '/(app)/notices/': {
       id: '/(app)/notices/'
@@ -659,13 +485,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDocumentsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/contact-submissions/': {
-      id: '/(app)/contact-submissions/'
-      path: '/'
-      fullPath: '/contact-submissions/'
-      preLoaderRoute: typeof appContactSubmissionsIndexRouteImport
-      parentRoute: typeof appContactSubmissionsRouteRoute
-    }
     '/(app)/spray-schedule/create': {
       id: '/(app)/spray-schedule/create'
       path: '/spray-schedule/create'
@@ -679,6 +498,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/spray-schedule/$sprayScheduleId'
       preLoaderRoute: typeof appSprayScheduleSprayScheduleIdRouteImport
       parentRoute: typeof appRouteRoute
+    }
+    '/(app)/public-requests/$requestId': {
+      id: '/(app)/public-requests/$requestId'
+      path: '/$requestId'
+      fullPath: '/public-requests/$requestId'
+      preLoaderRoute: typeof appPublicRequestsRequestIdRouteImport
+      parentRoute: typeof appPublicRequestsRouteRoute
     }
     '/(app)/notices/create': {
       id: '/(app)/notices/create'
@@ -736,62 +562,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDocumentsDocumentIdRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/contact-submissions/create': {
-      id: '/(app)/contact-submissions/create'
-      path: '/create'
-      fullPath: '/contact-submissions/create'
-      preLoaderRoute: typeof appContactSubmissionsCreateRouteImport
-      parentRoute: typeof appContactSubmissionsRouteRoute
-    }
-    '/(app)/contact-submissions/$submissionId': {
-      id: '/(app)/contact-submissions/$submissionId'
-      path: '/$submissionId'
-      fullPath: '/contact-submissions/$submissionId'
-      preLoaderRoute: typeof appContactSubmissionsSubmissionIdRouteImport
-      parentRoute: typeof appContactSubmissionsRouteRoute
-    }
-    '/(app)/service-requests/water-management/create': {
-      id: '/(app)/service-requests/water-management/create'
-      path: '/water-management/create'
-      fullPath: '/service-requests/water-management/create'
-      preLoaderRoute: typeof appServiceRequestsWaterManagementCreateRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
-    '/(app)/service-requests/water-management/$requestId': {
-      id: '/(app)/service-requests/water-management/$requestId'
-      path: '/water-management/$requestId'
-      fullPath: '/service-requests/water-management/$requestId'
-      preLoaderRoute: typeof appServiceRequestsWaterManagementRequestIdRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
-    '/(app)/service-requests/mosquitofish/create': {
-      id: '/(app)/service-requests/mosquitofish/create'
-      path: '/mosquitofish/create'
-      fullPath: '/service-requests/mosquitofish/create'
-      preLoaderRoute: typeof appServiceRequestsMosquitofishCreateRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
-    '/(app)/service-requests/mosquitofish/$requestId': {
-      id: '/(app)/service-requests/mosquitofish/$requestId'
-      path: '/mosquitofish/$requestId'
-      fullPath: '/service-requests/mosquitofish/$requestId'
-      preLoaderRoute: typeof appServiceRequestsMosquitofishRequestIdRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
-    '/(app)/service-requests/adult-mosquito/create': {
-      id: '/(app)/service-requests/adult-mosquito/create'
-      path: '/adult-mosquito/create'
-      fullPath: '/service-requests/adult-mosquito/create'
-      preLoaderRoute: typeof appServiceRequestsAdultMosquitoCreateRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
-    '/(app)/service-requests/adult-mosquito/$requestId': {
-      id: '/(app)/service-requests/adult-mosquito/$requestId'
-      path: '/adult-mosquito/$requestId'
-      fullPath: '/service-requests/adult-mosquito/$requestId'
-      preLoaderRoute: typeof appServiceRequestsAdultMosquitoRequestIdRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
     '/(app)/notices/$noticeId_/edit': {
       id: '/(app)/notices/$noticeId_/edit'
       path: '/$noticeId/edit'
@@ -806,58 +576,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDocumentsDocumentIdEditRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/contact-submissions/$submissionId_/edit': {
-      id: '/(app)/contact-submissions/$submissionId_/edit'
-      path: '/$submissionId/edit'
-      fullPath: '/contact-submissions/$submissionId/edit'
-      preLoaderRoute: typeof appContactSubmissionsSubmissionIdEditRouteImport
-      parentRoute: typeof appContactSubmissionsRouteRoute
-    }
-    '/(app)/service-requests/water-management/$requestId_/edit': {
-      id: '/(app)/service-requests/water-management/$requestId_/edit'
-      path: '/water-management/$requestId/edit'
-      fullPath: '/service-requests/water-management/$requestId/edit'
-      preLoaderRoute: typeof appServiceRequestsWaterManagementRequestIdEditRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
-    '/(app)/service-requests/mosquitofish/$requestId_/edit': {
-      id: '/(app)/service-requests/mosquitofish/$requestId_/edit'
-      path: '/mosquitofish/$requestId/edit'
-      fullPath: '/service-requests/mosquitofish/$requestId/edit'
-      preLoaderRoute: typeof appServiceRequestsMosquitofishRequestIdEditRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
-    '/(app)/service-requests/adult-mosquito/$requestId_/edit': {
-      id: '/(app)/service-requests/adult-mosquito/$requestId_/edit'
-      path: '/adult-mosquito/$requestId/edit'
-      fullPath: '/service-requests/adult-mosquito/$requestId/edit'
-      preLoaderRoute: typeof appServiceRequestsAdultMosquitoRequestIdEditRouteImport
-      parentRoute: typeof appServiceRequestsRouteRoute
-    }
   }
 }
-
-interface appContactSubmissionsRouteRouteChildren {
-  appContactSubmissionsSubmissionIdRoute: typeof appContactSubmissionsSubmissionIdRoute
-  appContactSubmissionsCreateRoute: typeof appContactSubmissionsCreateRoute
-  appContactSubmissionsIndexRoute: typeof appContactSubmissionsIndexRoute
-  appContactSubmissionsSubmissionIdEditRoute: typeof appContactSubmissionsSubmissionIdEditRoute
-}
-
-const appContactSubmissionsRouteRouteChildren: appContactSubmissionsRouteRouteChildren =
-  {
-    appContactSubmissionsSubmissionIdRoute:
-      appContactSubmissionsSubmissionIdRoute,
-    appContactSubmissionsCreateRoute: appContactSubmissionsCreateRoute,
-    appContactSubmissionsIndexRoute: appContactSubmissionsIndexRoute,
-    appContactSubmissionsSubmissionIdEditRoute:
-      appContactSubmissionsSubmissionIdEditRoute,
-  }
-
-const appContactSubmissionsRouteRouteWithChildren =
-  appContactSubmissionsRouteRoute._addFileChildren(
-    appContactSubmissionsRouteRouteChildren,
-  )
 
 interface appInsecticidesRouteRouteChildren {
   appInsecticidesInsecticideIdRoute: typeof appInsecticidesInsecticideIdRoute
@@ -907,53 +627,27 @@ const appNoticesRouteRouteWithChildren = appNoticesRouteRoute._addFileChildren(
   appNoticesRouteRouteChildren,
 )
 
-interface appServiceRequestsRouteRouteChildren {
-  appServiceRequestsIndexRoute: typeof appServiceRequestsIndexRoute
-  appServiceRequestsAdultMosquitoRequestIdRoute: typeof appServiceRequestsAdultMosquitoRequestIdRoute
-  appServiceRequestsAdultMosquitoCreateRoute: typeof appServiceRequestsAdultMosquitoCreateRoute
-  appServiceRequestsMosquitofishRequestIdRoute: typeof appServiceRequestsMosquitofishRequestIdRoute
-  appServiceRequestsMosquitofishCreateRoute: typeof appServiceRequestsMosquitofishCreateRoute
-  appServiceRequestsWaterManagementRequestIdRoute: typeof appServiceRequestsWaterManagementRequestIdRoute
-  appServiceRequestsWaterManagementCreateRoute: typeof appServiceRequestsWaterManagementCreateRoute
-  appServiceRequestsAdultMosquitoRequestIdEditRoute: typeof appServiceRequestsAdultMosquitoRequestIdEditRoute
-  appServiceRequestsMosquitofishRequestIdEditRoute: typeof appServiceRequestsMosquitofishRequestIdEditRoute
-  appServiceRequestsWaterManagementRequestIdEditRoute: typeof appServiceRequestsWaterManagementRequestIdEditRoute
+interface appPublicRequestsRouteRouteChildren {
+  appPublicRequestsRequestIdRoute: typeof appPublicRequestsRequestIdRoute
+  appPublicRequestsIndexRoute: typeof appPublicRequestsIndexRoute
 }
 
-const appServiceRequestsRouteRouteChildren: appServiceRequestsRouteRouteChildren =
+const appPublicRequestsRouteRouteChildren: appPublicRequestsRouteRouteChildren =
   {
-    appServiceRequestsIndexRoute: appServiceRequestsIndexRoute,
-    appServiceRequestsAdultMosquitoRequestIdRoute:
-      appServiceRequestsAdultMosquitoRequestIdRoute,
-    appServiceRequestsAdultMosquitoCreateRoute:
-      appServiceRequestsAdultMosquitoCreateRoute,
-    appServiceRequestsMosquitofishRequestIdRoute:
-      appServiceRequestsMosquitofishRequestIdRoute,
-    appServiceRequestsMosquitofishCreateRoute:
-      appServiceRequestsMosquitofishCreateRoute,
-    appServiceRequestsWaterManagementRequestIdRoute:
-      appServiceRequestsWaterManagementRequestIdRoute,
-    appServiceRequestsWaterManagementCreateRoute:
-      appServiceRequestsWaterManagementCreateRoute,
-    appServiceRequestsAdultMosquitoRequestIdEditRoute:
-      appServiceRequestsAdultMosquitoRequestIdEditRoute,
-    appServiceRequestsMosquitofishRequestIdEditRoute:
-      appServiceRequestsMosquitofishRequestIdEditRoute,
-    appServiceRequestsWaterManagementRequestIdEditRoute:
-      appServiceRequestsWaterManagementRequestIdEditRoute,
+    appPublicRequestsRequestIdRoute: appPublicRequestsRequestIdRoute,
+    appPublicRequestsIndexRoute: appPublicRequestsIndexRoute,
   }
 
-const appServiceRequestsRouteRouteWithChildren =
-  appServiceRequestsRouteRoute._addFileChildren(
-    appServiceRequestsRouteRouteChildren,
+const appPublicRequestsRouteRouteWithChildren =
+  appPublicRequestsRouteRoute._addFileChildren(
+    appPublicRequestsRouteRouteChildren,
   )
 
 interface appRouteRouteChildren {
-  appContactSubmissionsRouteRoute: typeof appContactSubmissionsRouteRouteWithChildren
   appInsecticidesRouteRoute: typeof appInsecticidesRouteRouteWithChildren
   appMeetingsRouteRoute: typeof appMeetingsRouteRouteWithChildren
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
-  appServiceRequestsRouteRoute: typeof appServiceRequestsRouteRouteWithChildren
+  appPublicRequestsRouteRoute: typeof appPublicRequestsRouteRouteWithChildren
   appCategoriesRoute: typeof appCategoriesRoute
   appDocumentCategoriesRoute: typeof appDocumentCategoriesRoute
   appIndexRoute: typeof appIndexRoute
@@ -968,11 +662,10 @@ interface appRouteRouteChildren {
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
-  appContactSubmissionsRouteRoute: appContactSubmissionsRouteRouteWithChildren,
   appInsecticidesRouteRoute: appInsecticidesRouteRouteWithChildren,
   appMeetingsRouteRoute: appMeetingsRouteRouteWithChildren,
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
-  appServiceRequestsRouteRoute: appServiceRequestsRouteRouteWithChildren,
+  appPublicRequestsRouteRoute: appPublicRequestsRouteRouteWithChildren,
   appCategoriesRoute: appCategoriesRoute,
   appDocumentCategoriesRoute: appDocumentCategoriesRoute,
   appIndexRoute: appIndexRoute,

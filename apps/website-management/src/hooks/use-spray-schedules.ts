@@ -1,12 +1,11 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";
-import {
-	employees,
-	insecticides,
-	municipalities,
-	spraySchedules,
-} from "../lib/db";
-import { supabase } from "../lib/queryClient";
+import { apiFetch } from "../lib/api";
+import { insecticides, municipalities, spraySchedules } from "../lib/db";
+
+type JunctionRow = { sprayScheduleId: string; municipalityId: string };
+
+export const SPRAY_MUNICIPALITIES_KEY = ["spray_schedule_municipalities"];
 
 export function useSpraySchedules() {
 	const { data, collection } = useLiveQuery((q) =>
@@ -17,7 +16,6 @@ export function useSpraySchedules() {
 			)
 			.select(({ schedule, insecticide }) => ({
 				areaDescription: schedule.area_description,
-				createdById: schedule.created_by,
 				endTime: schedule.end_time,
 				id: schedule.id,
 				insecticideName: insecticide?.trade_name ?? "",
@@ -29,22 +27,18 @@ export function useSpraySchedules() {
 			})),
 	);
 
+	// The junction has a composite PK and no id, so it can't be a collection — it comes from
+	// a plain endpoint instead and is invalidated after each municipality write.
 	const { data: joinData } = useQuery({
-		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("spray_schedule_municipalities")
-				.select("spray_schedule_id, municipality_id");
-			if (error) return [];
-			return data;
-		},
-		queryKey: ["spray_schedule_municipalities"],
-		refetchInterval: 5000,
+		queryFn: () =>
+			apiFetch<{ rows: JunctionRow[] }>("/api/spray-schedules/municipalities"),
+		queryKey: SPRAY_MUNICIPALITIES_KEY,
 	});
 
 	const enriched = data.map((schedule) => {
-		const muniIds = (joinData ?? [])
-			.filter((j) => j.spray_schedule_id === schedule.id)
-			.map((j) => j.municipality_id);
+		const muniIds = (joinData?.rows ?? [])
+			.filter((j) => j.sprayScheduleId === schedule.id)
+			.map((j) => j.municipalityId);
 
 		const muniNames = muniIds
 			.map((id) => municipalities.get(id)?.name)
@@ -52,13 +46,8 @@ export function useSpraySchedules() {
 			.sort()
 			.join(", ");
 
-		const createdByName = schedule.createdById
-			? (employees.get(schedule.createdById)?.display_name ?? null)
-			: null;
-
 		return {
 			...schedule,
-			createdByName,
 			municipalityIds: muniIds,
 			municipalityNames: muniNames,
 		};

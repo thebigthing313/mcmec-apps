@@ -15,7 +15,6 @@ function RouteComponent() {
 	const navigate = useNavigate();
 	const { data: documents } = useDocuments();
 	const mappedData = documents?.map((doc) => ({
-		creator: doc.createdByName,
 		documentType: doc.documentType,
 		fiscalYear: doc.fiscalYear,
 		id: doc.id,

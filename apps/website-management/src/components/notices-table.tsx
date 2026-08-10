@@ -39,7 +39,6 @@ type Notice = {
 	noticeTypeId: string;
 	noticeType: string;
 	noticeDate: Date;
-	creator: string | null | undefined;
 	isPublished: boolean;
 	isArchived: boolean;
 };
@@ -143,31 +142,6 @@ export function NoticesTable({ data }: NoticesTableProps) {
 						variant="ghost"
 					>
 						Notice Date
-						{sortState === "asc" ? (
-							<ArrowUp className="ml-2 h-4 w-4" />
-						) : sortState === "desc" ? (
-							<ArrowDown className="ml-2 h-4 w-4" />
-						) : (
-							<ArrowUpDown className="ml-2 h-4 w-4" />
-						)}
-					</Button>
-				);
-			},
-		},
-		{
-			accessorKey: "creator",
-			cell: ({ row }) => {
-				return row.getValue("creator") || "—";
-			},
-			header: ({ column }) => {
-				const sortState = column.getIsSorted();
-				return (
-					<Button
-						className="-ml-4"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-						variant="ghost"
-					>
-						Creator
 						{sortState === "asc" ? (
 							<ArrowUp className="ml-2 h-4 w-4" />
 						) : sortState === "desc" ? (

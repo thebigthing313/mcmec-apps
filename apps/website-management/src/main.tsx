@@ -14,7 +14,7 @@ import { NotFound } from "@mcmec/ui/blocks/not-found";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { getDb } from "./lib/db";
-import { queryClient } from "./lib/queryClient";
+import { authClient, queryClient } from "./lib/queryClient";
 import { routeTree } from "./routeTree.gen";
 
 // Set favicon
@@ -27,6 +27,7 @@ if (faviconLink) {
 
 const router = createRouter({
 	context: {
+		authClient,
 		queryClient,
 		db: getDb(),
 	},

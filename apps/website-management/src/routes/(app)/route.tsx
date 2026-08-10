@@ -1,9 +1,8 @@
 import { UnauthenticatedError } from "@mcmec/auth/errors";
-import { processAuthRedirect } from "@mcmec/auth/handleCrossAppAuth";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
-import { AVAILABLE_APPS, getCentralLoginUrl } from "@mcmec/lib/constants/apps";
+import { AVAILABLE_APPS } from "@mcmec/lib/constants/apps";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -17,21 +16,22 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { AppSidebar } from "@/src/components/app-sidebar";
-import { supabase } from "@/src/lib/queryClient";
 
 export const Route = createFileRoute("/(app)")({
-	beforeLoad: async () => {
-		await processAuthRedirect(supabase);
+	beforeLoad: async ({ context, location }) => {
 		try {
 			const claims = await verifyClaims({
-				client: supabase,
-				permission: "public_notices",
+				client: context.authClient,
+				permission: "manage_website",
 			});
 			return { claims };
 		} catch (error) {
+			// Not signed in -> this app's own login (cookie SSO, no cross-app redirect).
+			// NotOnboarded / Forbidden fall through to the error boundary.
 			if (error instanceof UnauthenticatedError) {
 				throw redirect({
-					href: getCentralLoginUrl(window.location.origin),
+					to: "/login",
+					search: { redirect: location.href },
 				});
 			}
 			throw error;
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/(app)")({
 });
 
 function LayoutComponent() {
-	const { claims, db } = Route.useRouteContext();
+	const { authClient, claims, db } = Route.useRouteContext();
 	const { userId } = claims as Claims;
 	const navigate = useNavigate();
 	const matches = useMatches();
@@ -56,7 +56,7 @@ function LayoutComponent() {
 		label: match.loaderData?.crumb as string,
 	}));
 	const handleLogout = async () => {
-		await signOut({ client: supabase });
+		await signOut({ client: authClient });
 		navigate({ to: "/login" });
 	};
 

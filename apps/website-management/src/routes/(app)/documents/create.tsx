@@ -37,13 +37,11 @@ function RouteComponent() {
 			categories={items}
 			defaultValues={{
 				created_at: new Date(),
-				created_by: null,
 				document_type_id: "",
 				fiscal_year: new Date().getFullYear(),
 				id: crypto.randomUUID(),
 				is_published: false,
 				updated_at: new Date(),
-				updated_by: null,
 				url: "",
 			}}
 			formLabel="Create New Document"

@@ -2,7 +2,7 @@ import {
 	createNoticesCollections,
 	type NoticesCollections,
 } from "@mcmec/supabase/collections/notices";
-import { queryClient, supabase } from "./queryClient";
+import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------
 // Db singleton
@@ -12,7 +12,7 @@ let instance: NoticesCollections | null = null;
 
 export function getDb(): NoticesCollections {
 	if (!instance) {
-		instance = createNoticesCollections({ supabase, queryClient });
+		instance = createNoticesCollections({ apiUrl: API_URL });
 	}
 	return instance;
 }
@@ -26,18 +26,16 @@ export type Db = NoticesCollections;
 // Re-export individual collections for direct import
 const db = getDb();
 export const {
-	adultMosquitoRequests,
-	contactFormSubmissions,
 	documentTypes,
 	documents,
 	employees,
 	insecticides,
 	meetings,
-	mosquitofishRequests,
+	mosquitoActivityData,
 	municipalities,
 	noticeTypes,
 	notices,
+	publicRequests,
 	spraySchedules,
-	waterManagementRequests,
 	zipCodes,
 } = db;

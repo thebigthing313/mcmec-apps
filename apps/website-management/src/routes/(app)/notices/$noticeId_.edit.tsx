@@ -67,7 +67,6 @@ function RouteComponent() {
 				defaultValues={{
 					content: notice.content,
 					created_at: new Date(notice.created_at),
-					created_by: notice.created_by,
 					id: notice.id,
 					is_archived: notice.is_archived,
 					is_published: notice.is_published,
@@ -75,7 +74,6 @@ function RouteComponent() {
 					notice_type_id: notice.notice_type_id,
 					title: notice.title,
 					updated_at: new Date(),
-					updated_by: null,
 				}}
 				formLabel="Edit Notice"
 				onSubmit={handleSubmit}

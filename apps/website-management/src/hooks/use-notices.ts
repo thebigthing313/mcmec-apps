@@ -1,5 +1,5 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { employees, notices, noticeTypes } from "../lib/db";
+import { notices, noticeTypes } from "../lib/db";
 
 export function useNotices() {
 	const { data, collection } = useLiveQuery((q) =>
@@ -11,7 +11,6 @@ export function useNotices() {
 			.select(({ notice, notice_type }) => {
 				return {
 					content: notice.content,
-					createdById: notice.created_by,
 					id: notice.id,
 					isArchived: notice.is_archived,
 					isPublished: notice.is_published,
@@ -23,12 +22,5 @@ export function useNotices() {
 			}),
 	);
 
-	const enriched = data.map((notice) => ({
-		...notice,
-		createdByName: notice.createdById
-			? (employees.get(notice.createdById)?.display_name ?? null)
-			: null,
-	}));
-
-	return { collection, data: enriched };
+	return { collection, data };
 }

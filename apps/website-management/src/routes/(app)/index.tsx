@@ -16,15 +16,14 @@ import { eq, gt, lte, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
 	BookOpen,
-	Bug,
 	Calendar,
 	CheckCircle,
 	Clock,
-	Mail,
-	MailOpen,
+	Inbox,
 	SprayCan,
 	Users,
 } from "lucide-react";
+import { requestTypeLabel } from "@/src/lib/public-requests";
 
 export const Route = createFileRoute("/(app)/")({
 	component: RouteComponent,
@@ -65,42 +64,13 @@ function RouteComponent() {
 			.limit(5),
 	);
 
-	// Service requests data
-	const { data: pendingAdultMosquito } = useLiveQuery((q) =>
-		q
-			.from({ r: db.adultMosquitoRequests })
-			.where(({ r }) => eq(r.is_processed, false))
-			.orderBy(({ r }) => r.created_at, "desc"),
+	// Public intake — one merged collection, split by status/type here.
+	const { data: allRequests } = useLiveQuery((q) =>
+		q.from({ r: db.publicRequests }).orderBy(({ r }) => r.created_at, "desc"),
 	);
 
-	const { data: pendingMosquitofish } = useLiveQuery((q) =>
-		q
-			.from({ r: db.mosquitofishRequests })
-			.where(({ r }) => eq(r.is_processed, false))
-			.orderBy(({ r }) => r.created_at, "desc"),
-	);
-
-	const { data: pendingWaterMgmt } = useLiveQuery((q) =>
-		q
-			.from({ r: db.waterManagementRequests })
-			.where(({ r }) => eq(r.is_processed, false))
-			.orderBy(({ r }) => r.created_at, "desc"),
-	);
-
-	// Contact submissions data
-	const { data: openSubmissions } = useLiveQuery((q) =>
-		q
-			.from({ s: db.contactFormSubmissions })
-			.where(({ s }) => eq(s.is_closed, false))
-			.orderBy(({ s }) => s.created_at, "desc")
-			.limit(5),
-	);
-
-	const { data: closedSubmissions } = useLiveQuery((q) =>
-		q
-			.from({ s: db.contactFormSubmissions })
-			.where(({ s }) => eq(s.is_closed, true)),
-	);
+	const openRequests = allRequests.filter((r) => r.status !== "resolved");
+	const resolvedRequestCount = allRequests.length - openRequests.length;
 
 	// Meetings data
 	const { data: upcomingMeetings } = useLiveQuery((q) =>
@@ -148,10 +118,7 @@ function RouteComponent() {
 			.limit(5),
 	);
 
-	const totalPendingRequests =
-		pendingAdultMosquito.length +
-		pendingMosquitofish.length +
-		pendingWaterMgmt.length;
+	const newRequestCount = allRequests.filter((r) => r.status === "new").length;
 
 	return (
 		<div className="space-y-6">
@@ -163,7 +130,7 @@ function RouteComponent() {
 			</div>
 
 			{/* Stats Row */}
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between pb-2">
 						<CardTitle className="font-medium text-sm">
@@ -182,31 +149,13 @@ function RouteComponent() {
 
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between pb-2">
-						<CardTitle className="font-medium text-sm">
-							Pending Requests
-						</CardTitle>
-						<Bug className="h-4 w-4 text-muted-foreground" />
+						<CardTitle className="font-medium text-sm">Open Requests</CardTitle>
+						<Inbox className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl">{totalPendingRequests}</div>
+						<div className="font-bold text-2xl">{openRequests.length}</div>
 						<p className="text-muted-foreground text-xs">
-							{pendingAdultMosquito.length} mosquito,{" "}
-							{pendingMosquitofish.length} fish, {pendingWaterMgmt.length} water
-						</p>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className="flex flex-row items-center justify-between pb-2">
-						<CardTitle className="font-medium text-sm">
-							Open Submissions
-						</CardTitle>
-						<Mail className="h-4 w-4 text-muted-foreground" />
-					</CardHeader>
-					<CardContent>
-						<div className="font-bold text-2xl">{openSubmissions.length}</div>
-						<p className="text-muted-foreground text-xs">
-							{closedSubmissions.length} closed
+							{newRequestCount} new, {resolvedRequestCount} resolved
 						</p>
 					</CardContent>
 				</Card>
@@ -243,81 +192,41 @@ function RouteComponent() {
 
 			{/* Main Content Grid */}
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-				{/* Pending Service Requests */}
+				{/* Open Public Requests */}
 				<Card>
 					<CardHeader>
 						<div className="flex items-center justify-between">
 							<div>
-								<CardTitle>Pending Service Requests</CardTitle>
-								<CardDescription>Requests awaiting processing</CardDescription>
+								<CardTitle>Open Public Requests</CardTitle>
+								<CardDescription>
+									Service requests and inquiries awaiting triage
+								</CardDescription>
 							</div>
 							<Button asChild size="sm" variant="outline">
-								<Link to="/service-requests">View All</Link>
+								<Link to="/public-requests">View All</Link>
 							</Button>
 						</div>
 					</CardHeader>
 					<CardContent>
-						{totalPendingRequests > 0 ? (
+						{openRequests.length > 0 ? (
 							<ul className="space-y-3">
-								{pendingAdultMosquito.slice(0, 3).map((r) => (
+								{openRequests.slice(0, 6).map((r) => (
 									<li key={r.id}>
 										<Link
 											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
 											params={{ requestId: r.id }}
-											to="/service-requests/adult-mosquito/$requestId"
+											to="/public-requests/$requestId"
 										>
 											<div className="flex-1">
-												<p className="font-medium">{r.full_name}</p>
+												<p className="font-medium">{r.name}</p>
 												<p className="text-muted-foreground text-sm">
-													{r.address_line_1}
+													{r.address_line_1 ?? r.email ?? "—"}
 												</p>
 											</div>
 											<div className="flex items-center gap-2">
-												<Badge variant="outline">Mosquito</Badge>
-												<span className="text-muted-foreground text-xs">
-													{formatDateShort(r.created_at)}
-												</span>
-											</div>
-										</Link>
-									</li>
-								))}
-								{pendingMosquitofish.slice(0, 3).map((r) => (
-									<li key={r.id}>
-										<Link
-											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
-											params={{ requestId: r.id }}
-											to="/service-requests/mosquitofish/$requestId"
-										>
-											<div className="flex-1">
-												<p className="font-medium">{r.full_name}</p>
-												<p className="text-muted-foreground text-sm">
-													{r.address_line_1}
-												</p>
-											</div>
-											<div className="flex items-center gap-2">
-												<Badge variant="outline">Fish</Badge>
-												<span className="text-muted-foreground text-xs">
-													{formatDateShort(r.created_at)}
-												</span>
-											</div>
-										</Link>
-									</li>
-								))}
-								{pendingWaterMgmt.slice(0, 3).map((r) => (
-									<li key={r.id}>
-										<Link
-											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
-											params={{ requestId: r.id }}
-											to="/service-requests/water-management/$requestId"
-										>
-											<div className="flex-1">
-												<p className="font-medium">{r.full_name}</p>
-												<p className="text-muted-foreground text-sm">
-													{r.address_line_1}
-												</p>
-											</div>
-											<div className="flex items-center gap-2">
-												<Badge variant="outline">Water</Badge>
+												<Badge variant="outline">
+													{requestTypeLabel(r.request_type)}
+												</Badge>
 												<span className="text-muted-foreground text-xs">
 													{formatDateShort(r.created_at)}
 												</span>
@@ -330,54 +239,7 @@ function RouteComponent() {
 							<div className="flex flex-col items-center justify-center py-8 text-center">
 								<CheckCircle className="mb-2 h-8 w-8 text-muted-foreground" />
 								<p className="text-muted-foreground text-sm">
-									All requests have been processed
-								</p>
-							</div>
-						)}
-					</CardContent>
-				</Card>
-
-				{/* Open Contact Submissions */}
-				<Card>
-					<CardHeader>
-						<div className="flex items-center justify-between">
-							<div>
-								<CardTitle>Open Contact Submissions</CardTitle>
-								<CardDescription>Messages awaiting response</CardDescription>
-							</div>
-							<Button asChild size="sm" variant="outline">
-								<Link to="/contact-submissions">View All</Link>
-							</Button>
-						</div>
-					</CardHeader>
-					<CardContent>
-						{openSubmissions.length > 0 ? (
-							<ul className="space-y-3">
-								{openSubmissions.map((s) => (
-									<li key={s.id}>
-										<Link
-											className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-muted"
-											params={{ submissionId: s.id }}
-											to="/contact-submissions/$submissionId"
-										>
-											<div className="flex-1">
-												<p className="font-medium">{s.subject}</p>
-												<p className="text-muted-foreground text-sm">
-													{s.name} &mdash; {s.email}
-												</p>
-											</div>
-											<span className="text-muted-foreground text-xs">
-												{formatDateShort(s.created_at)}
-											</span>
-										</Link>
-									</li>
-								))}
-							</ul>
-						) : (
-							<div className="flex flex-col items-center justify-center py-8 text-center">
-								<MailOpen className="mb-2 h-8 w-8 text-muted-foreground" />
-								<p className="text-muted-foreground text-sm">
-									No open submissions
+									Every request has been resolved
 								</p>
 							</div>
 						)}

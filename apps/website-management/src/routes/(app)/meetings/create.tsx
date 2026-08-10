@@ -30,7 +30,6 @@ function RouteComponent() {
 
 	const defaultValues: MeetingsRowType = {
 		created_at: new Date(),
-		created_by: null,
 		id: crypto.randomUUID(),
 		is_cancelled: false,
 		location: COMPANY_INFO.address,
@@ -40,7 +39,6 @@ function RouteComponent() {
 		notes: null,
 		notice_url: null,
 		updated_at: new Date(),
-		updated_by: null,
 	};
 
 	return (
