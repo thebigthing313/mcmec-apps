@@ -156,6 +156,9 @@ importers:
       better-auth:
         specifier: ^1.6.25
         version: 1.6.25(@tanstack/react-start@1.157.18(crossws@0.4.4(srvx@0.10.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3)))(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0))(pg@8.22.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.12)(vitest@2.1.9(@types/node@25.0.9)(lightningcss@1.30.2))
+      drizzle-kit:
+        specifier: ^0.31.10
+        version: 0.31.10
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0)
@@ -187,9 +190,6 @@ importers:
       '@types/pg':
         specifier: ^8.20.0
         version: 8.20.0
-      drizzle-kit:
-        specifier: ^0.31.10
-        version: 0.31.10
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -8623,8 +8623,8 @@ snapshots:
       '@tanstack/history': 1.154.14
       '@tanstack/store': 0.8.0
       cookie-es: 2.0.0
-      seroval: 1.4.2
-      seroval-plugins: 1.4.2(seroval@1.4.2)
+      seroval: 1.5.1
+      seroval-plugins: 1.5.1(seroval@1.5.1)
       tiny-invariant: 1.3.3
       tiny-warning: 1.0.3
 
@@ -8765,7 +8765,7 @@ snapshots:
       '@tanstack/router-core': 1.157.18
       '@tanstack/start-fn-stubs': 1.154.7
       '@tanstack/start-storage-context': 1.157.18
-      seroval: 1.4.2
+      seroval: 1.5.1
       tiny-invariant: 1.3.3
       tiny-warning: 1.0.3
 
@@ -8841,7 +8841,7 @@ snapshots:
       '@tanstack/start-client-core': 1.157.18
       '@tanstack/start-storage-context': 1.157.18
       h3-v2: h3@2.0.1-rc.11(crossws@0.4.4(srvx@0.10.1))
-      seroval: 1.4.2
+      seroval: 1.5.1
       tiny-invariant: 1.3.3
     transitivePeerDependencies:
       - crossws
