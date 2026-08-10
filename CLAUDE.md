@@ -13,15 +13,32 @@ MCMEC (Middlesex County Mosquito Extermination Commission) monorepo with three w
 
 ### Dev ports
 
-| Port | Process |
-| ---- | ------- |
-| 3001 | central |
-| 3003 | hr |
-| 3004 | admin |
-| 3005 | api (Hono) |
-| 3006 | website-management |
-| 3007 | public |
-| 3443 | Caddy HTTPS/HTTP2 proxy in front of the api (admin endpoint on 2020) |
+Local dev runs behind Caddy. **Browse the https ports** — the Vite/API ports are upstreams
+and shouldn't be opened directly.
+
+| Browse (https) | Upstream (http) | App |
+| -------------- | --------------- | --- |
+| 3443 | 3005 | api (Hono) |
+| 3444 | 3001 | central |
+| 3445 | 3003 | hr |
+| 3446 | 3004 | admin |
+| 3447 | 3006 | website-management |
+| 3448 | 3007 | public |
+
+Caddy's admin endpoint is on 2020. Start it with `caddy trust` (once) then `caddy run` from
+the repo root.
+
+Everything is https for two reasons, and doing half of it is worse than neither:
+
+- **HTTP/2.** Each ElectricSQL shape holds a long-poll against the API origin, and HTTP/1.1
+  caps one origin at ~6 concurrent connections — a page with several live shapes starves.
+- **Cookies.** An `http://` page calling an `https://` API is *cross-site* under Chrome's
+  schemeful same-site rules, so the `SameSite=Lax` session cookie is withheld and the app
+  bounces to `/login` forever. Page and API must share a scheme.
+
+Each app's `server.hmr.clientPort` points at its https port so the HMR socket isn't blocked
+as mixed content. `apps/public`'s server-side `API_URL` stays on plain http — that's Node
+calling localhost, not the browser.
 
 **Do not use these ports** — another project runs concurrently on this machine and binds
 them: **3000, 3002, 5173, 5174, 5175, 5176, 80, 2019**. Every Vite config here sets

@@ -15,5 +15,7 @@ export default defineConfig({
 	server: {
 		port: 3001,
 		strictPort: true,
+		// Browse via https://localhost:3444 (Caddy) — see the repo-root Caddyfile.
+		hmr: { clientPort: 3444, protocol: "wss" },
 	},
 });

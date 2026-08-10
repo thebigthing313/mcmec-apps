@@ -15,5 +15,9 @@ export default defineConfig({
 	server: {
 		port: 3006,
 		strictPort: true,
+		// Browse via https://localhost:3447 (Caddy). The HMR socket has to point at that
+		// origin, not this port, or the client tries ws:// from an https page and is blocked
+		// as mixed content. See the repo-root Caddyfile.
+		hmr: { clientPort: 3447, protocol: "wss" },
 	},
 });
