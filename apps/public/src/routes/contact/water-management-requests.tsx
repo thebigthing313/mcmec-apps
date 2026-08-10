@@ -1,7 +1,8 @@
 import {
-	WaterManagementRequestsRowSchema,
-	type WaterManagementRequestsRowType,
-} from "@mcmec/supabase/db/water-management-requests";
+	toContactPayload,
+	WaterManagementFormSchema,
+	type WaterManagementFormType,
+} from "@mcmec/supabase/db/public-requests";
 import {
 	Field,
 	FieldContent,
@@ -30,7 +31,7 @@ import {
 } from "@/src/components/turnstile-widget";
 import { zipCodesQueryOptions } from "@/src/lib/queries";
 import { canonical, seo } from "@/src/lib/seo";
-import { submitWaterManagementRequestServerFn } from "@/src/lib/submit-water-management-request";
+import { submitPublicRequestServerFn } from "@/src/lib/submit-public-request";
 
 export const Route = createFileRoute("/contact/water-management-requests")({
 	component: RouteComponent,
@@ -56,30 +57,24 @@ function RouteComponent() {
 	const navigate = useNavigate();
 
 	const { data: zipCodes } = useSuspenseQuery(zipCodesQueryOptions());
-	const submitForm = useServerFn(submitWaterManagementRequestServerFn);
+	const submitForm = useServerFn(submitPublicRequestServerFn);
 
 	const zipCodeOptions: ComboboxOption[] = zipCodes.map((zipCode) => ({
 		label: zipCode.code,
 		value: zipCode.id,
 	}));
 
-	const defaultValues: WaterManagementRequestsRowType = {
+	const defaultValues: WaterManagementFormType = {
 		additional_details: null,
 		address_line_1: "",
 		address_line_2: null,
-		created_at: new Date(),
-		created_by: null,
 		email: null,
 		full_name: "",
-		id: crypto.randomUUID() as string,
 		is_on_my_property: false,
 		is_on_neighbor_property: false,
 		is_on_public_property: false,
-		is_processed: false,
 		other_location_description: null,
 		phone: "",
-		updated_at: new Date(),
-		updated_by: null,
 		zip_code_id: "",
 	};
 
@@ -98,7 +93,22 @@ function RouteComponent() {
 			}
 
 			const result = await submitForm({
-				data: { data: { ...value }, turnstileToken },
+				data: {
+					honeypot,
+					request: {
+						...toContactPayload(value),
+						details: {
+							additionalDetails: value.additional_details || undefined,
+							isOnMyProperty: value.is_on_my_property,
+							isOnNeighborProperty: value.is_on_neighbor_property,
+							isOnPublicProperty: value.is_on_public_property,
+							otherLocationDescription:
+								value.other_location_description || undefined,
+						},
+						requestType: "water_management",
+					},
+					turnstileToken,
+				},
 			});
 
 			// Reset token and turnstile widget after submission attempt
@@ -120,7 +130,7 @@ function RouteComponent() {
 			modeAfterSubmission: "change",
 		}),
 
-		validators: { onDynamic: WaterManagementRequestsRowSchema },
+		validators: { onDynamic: WaterManagementFormSchema },
 	});
 
 	return (

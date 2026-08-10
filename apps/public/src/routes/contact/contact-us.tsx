@@ -2,18 +2,28 @@ import {
 	NonEmptyStringSchema,
 	ValidEmailSchema,
 } from "@mcmec/lib/constants/validators";
-import { ContactFormSubmissionsInsertSchema } from "@mcmec/supabase/db/contact-form-submissions";
+import { GeneralInquirySubmissionSchema } from "@mcmec/supabase/db/public-requests";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 import {
 	TurnstileWidget,
 	type TurnstileWidgetRef,
 } from "@/src/components/turnstile-widget";
 import { canonical, seo } from "@/src/lib/seo";
-import { submitContactFormServerFn } from "@/src/lib/submit-contact-form";
+import { submitPublicRequestServerFn } from "@/src/lib/submit-public-request";
+
+// The form is flat; the API takes { name, email, details: { subject, message } }. Same
+// constraints, one level up — see GeneralInquirySubmissionSchema.
+const ContactFormSchema = z.object({
+	email: GeneralInquirySubmissionSchema.shape.email,
+	message: GeneralInquirySubmissionSchema.shape.details.shape.message,
+	name: GeneralInquirySubmissionSchema.shape.name,
+	subject: GeneralInquirySubmissionSchema.shape.details.shape.subject,
+});
 
 export const Route = createFileRoute("/contact/contact-us")({
 	component: RouteComponent,
@@ -39,12 +49,10 @@ function RouteComponent() {
 		setTurnstileToken(token);
 	}, []);
 
-	const submitForm = useServerFn(submitContactFormServerFn);
+	const submitForm = useServerFn(submitPublicRequestServerFn);
 	const form = useAppForm({
 		defaultValues: {
 			email: "",
-			id: crypto.randomUUID() as string,
-			is_closed: false,
 			message: "",
 			name: "",
 			subject: "",
@@ -63,7 +71,16 @@ function RouteComponent() {
 			}
 
 			const result = await submitForm({
-				data: { data: { ...value }, turnstileToken },
+				data: {
+					honeypot,
+					request: {
+						details: { message: value.message, subject: value.subject },
+						email: value.email,
+						name: value.name,
+						requestType: "general_inquiry",
+					},
+					turnstileToken,
+				},
 			});
 
 			// Reset token and turnstile widget after submission attempt
@@ -81,7 +98,9 @@ function RouteComponent() {
 			}
 		},
 		validators: {
-			onSubmit: ContactFormSubmissionsInsertSchema,
+			// Flattened from the API's general_inquiry contract, so bad input surfaces
+			// before the round trip.
+			onSubmit: ContactFormSchema,
 		},
 	});
 

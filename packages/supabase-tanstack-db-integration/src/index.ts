@@ -11,6 +11,7 @@
  *   createElectricCollection — shared builder (syncMode + startSync are explicit).
  *   apiInsertRows / apiUpdateRow / apiDeleteRows — the write helpers the factories use.
  *   toCamelCaseKeys / snakeToCamel — snake_case (Electric) -> camelCase (API) mapping.
+ *   fetchShapeSnapshot — one-shot shape read for SSR (no live stream left open).
  */
 
 export {
@@ -30,3 +31,7 @@ export {
 	toCamelCaseKeys,
 	type WriteTarget,
 } from "./crud";
+export {
+	type FetchShapeSnapshotOptions,
+	fetchShapeSnapshot,
+} from "./snapshot";
