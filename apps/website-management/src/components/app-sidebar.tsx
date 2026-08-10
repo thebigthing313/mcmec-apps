@@ -76,7 +76,7 @@ const items: SidebarItem[] = [
 		linkProps: { to: "/contact-submissions" },
 	},
 ];
-export function CentralSidebar() {
+export function AppSidebar() {
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Menu</SidebarGroupLabel>

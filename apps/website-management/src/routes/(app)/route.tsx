@@ -16,7 +16,7 @@ import {
 	useMatches,
 	useNavigate,
 } from "@tanstack/react-router";
-import { CentralSidebar } from "@/src/components/notices-sidebar";
+import { AppSidebar } from "@/src/components/app-sidebar";
 import { supabase } from "@/src/lib/queryClient";
 
 export const Route = createFileRoute("/(app)")({
@@ -71,7 +71,7 @@ function LayoutComponent() {
 		<TooltipProvider>
 			<Layout
 				value={{
-					activeApp: "Public Notices",
+					activeApp: "Website Management",
 					apps: AVAILABLE_APPS,
 					onLogout: handleLogout,
 					user: {
@@ -86,7 +86,7 @@ function LayoutComponent() {
 						<Layout.AppSwitcher />
 					</Layout.Sidebar.Header>
 					<Layout.Sidebar.Content>
-						<CentralSidebar />
+						<AppSidebar />
 					</Layout.Sidebar.Content>
 					<Layout.Sidebar.Footer>
 						<Layout.NavUser />

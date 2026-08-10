@@ -302,13 +302,13 @@ export interface FileRoutesByFullPath {
   '/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
   '/spray-schedule/create': typeof appSprayScheduleCreateRoute
   '/contact-submissions/': typeof appContactSubmissionsIndexRoute
-  '/documents': typeof appDocumentsIndexRoute
+  '/documents/': typeof appDocumentsIndexRoute
   '/insecticides/': typeof appInsecticidesIndexRoute
   '/meetings/': typeof appMeetingsIndexRoute
   '/notices/': typeof appNoticesIndexRoute
   '/service-requests/': typeof appServiceRequestsIndexRoute
-  '/spray-schedule': typeof appSprayScheduleIndexRoute
-  '/weekly-activity': typeof appWeeklyActivityIndexRoute
+  '/spray-schedule/': typeof appSprayScheduleIndexRoute
+  '/weekly-activity/': typeof appWeeklyActivityIndexRoute
   '/contact-submissions/$submissionId/edit': typeof appContactSubmissionsSubmissionIdEditRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
@@ -430,13 +430,13 @@ export interface FileRouteTypes {
     | '/spray-schedule/$sprayScheduleId'
     | '/spray-schedule/create'
     | '/contact-submissions/'
-    | '/documents'
+    | '/documents/'
     | '/insecticides/'
     | '/meetings/'
     | '/notices/'
     | '/service-requests/'
-    | '/spray-schedule'
-    | '/weekly-activity'
+    | '/spray-schedule/'
+    | '/weekly-activity/'
     | '/contact-submissions/$submissionId/edit'
     | '/documents/$documentId/edit'
     | '/notices/$noticeId/edit'
@@ -613,14 +613,14 @@ declare module '@tanstack/react-router' {
     '/(app)/weekly-activity/': {
       id: '/(app)/weekly-activity/'
       path: '/weekly-activity'
-      fullPath: '/weekly-activity'
+      fullPath: '/weekly-activity/'
       preLoaderRoute: typeof appWeeklyActivityIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/spray-schedule/': {
       id: '/(app)/spray-schedule/'
       path: '/spray-schedule'
-      fullPath: '/spray-schedule'
+      fullPath: '/spray-schedule/'
       preLoaderRoute: typeof appSprayScheduleIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
@@ -655,7 +655,7 @@ declare module '@tanstack/react-router' {
     '/(app)/documents/': {
       id: '/(app)/documents/'
       path: '/documents'
-      fullPath: '/documents'
+      fullPath: '/documents/'
       preLoaderRoute: typeof appDocumentsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }

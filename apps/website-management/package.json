@@ -39,7 +39,7 @@
 	"keywords": [],
 	"license": "ISC",
 	"main": "index.js",
-	"name": "notices",
+	"name": "website-management",
 	"packageManager": "pnpm@10.19.0",
 	"scripts": {
 		"build": "vite build",

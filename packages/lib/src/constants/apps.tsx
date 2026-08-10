@@ -42,10 +42,10 @@ export const AVAILABLE_APPS: App[] = [
 		requiredPermission: null,
 	},
 	{
-		description: "Manage and publish public notices for the agency.",
-		href: appUrl("notices", 3002),
+		description: "Manage the content published on the public website.",
+		href: appUrl("website", 3006),
 		logo: <Newspaper />,
-		name: "Public Notices",
+		name: "Website Management",
 		requiredPermission: "manage_website",
 	},
 	{
