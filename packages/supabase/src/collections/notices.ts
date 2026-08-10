@@ -128,6 +128,9 @@ export function createNoticesCollections({
 	// Merged intake — replaces the four legacy request collections. Insert is via the public
 	// endpoint (POST /api/requests), so this staff collection is read + status-triage + delete.
 	// The notices UI filters by `request_type`.
+	//
+	// On-demand: this table only grows, and pulling all of it on every page load doesn't
+	// scale. Requires the shape proxy to forward `subset__*` params (see shapes.ts).
 	const publicRequests = createOnDemandCollection({
 		allowDelete: true,
 		apiUrl,
@@ -136,8 +139,9 @@ export function createNoticesCollections({
 		updateSchema: PublicRequestsUpdateSchema,
 	});
 
-	// Surveillance dataset — large and only used by the weekly-activity screen, so it syncs
-	// on demand. Rows arrive via the CSV import endpoint, never through this collection.
+	// Surveillance dataset — thousands of rows and growing a season at a time, read only by
+	// the weekly-activity screen. Rows arrive via the CSV import endpoint, never this
+	// collection. On-demand for the same reason as publicRequests.
 	const mosquitoActivityData = createOnDemandCollection({
 		apiUrl,
 		schema: MosquitoActivityDataRowSchema,
