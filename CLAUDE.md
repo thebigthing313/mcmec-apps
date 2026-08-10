@@ -158,6 +158,20 @@ Required (set via `.env` files per app):
 - `VITE_APP_NAME`, `VITE_DOMAIN_NAME` — central app
 - `SUPABASE_SERVICE_ROLE_KEY`, `CLOUDFLARE_TURNSTILE_SECRETKEY` — server-side only
 
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub issues in `thebigthing313/mcmec-apps`, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles, each label string equal to its name (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one root `CONTEXT.md` plus `docs/adr/`, created lazily. See `docs/agents/domain.md`.
+
 <!-- intent-skills:start -->
 ## TanStack DB Skill Mappings
 
