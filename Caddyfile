@@ -1,0 +1,35 @@
+# Local HTTPS / HTTP-2 terminator in front of the dev API (apps/api on :3005).
+#
+# Why: every ElectricSQL shape long-poll hits the API origin. Over HTTP/1.1 the browser caps
+# a single origin at 6 concurrent connections, so once a page holds 6+ live shapes (or shapes
+# + HMR + asset loads) they starve each other and dev feels frozen. Terminating TLS here gives
+# the browser HTTP/2 multiplexing to the API — effectively unlimited concurrent shape streams.
+# Ref: https://electric.ax/docs/sync/guides/troubleshooting  (slow shapes / slow HMR / slow dev)
+#
+# Scope: only the API needs this — the frontend Vite dev servers keep their own origins on
+# plain http://localhost:300x (their assets/HMR don't exhaust the budget the way live shapes do).
+#
+# Usage (run Caddy on the host — NOT in Docker; containers break HTTP/2):
+#   caddy trust            # one-time: trust Caddy's local CA (needs admin / UAC)
+#   caddy run              # auto-loads this Caddyfile from the repo root
+# Then point the apps at the proxy instead of the raw API:
+#   VITE_API_URL=https://localhost:3443     (apps/*/.env)
+#
+# We rewrite the upstream Host back to the API's own origin so Better Auth sees a request host
+# that matches BETTER_AUTH_URL (http://localhost:3005) — keeps auth working with OR without the
+# proxy, and leaves the cookie host-only on `localhost` (shared across every localhost port).
+
+# Move our admin endpoint off the default :2019 so this instance can coexist with any other
+# Caddy already running on the machine (e.g. another project's dev proxy). We only serve the
+# single https://localhost:3443 site, so also skip the automatic HTTP->HTTPS redirect listener
+# (it would try to bind :80, which is already taken on Windows by http.sys / the other Caddy).
+{
+	admin localhost:2020
+	auto_https disable_redirects
+}
+
+https://localhost:3443 {
+	reverse_proxy localhost:3005 {
+		header_up Host localhost:3005
+	}
+}
