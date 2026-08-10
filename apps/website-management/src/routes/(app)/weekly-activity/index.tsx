@@ -23,7 +23,8 @@ import { mosquitoActivityData } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/weekly-activity/")({
 	component: RouteComponent,
-	loader: () => {
+	loader: async () => {
+		await mosquitoActivityData.preload();
 		return { crumb: "Weekly Activity" };
 	},
 });

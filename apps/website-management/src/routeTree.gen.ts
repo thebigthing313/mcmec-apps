@@ -14,10 +14,12 @@ import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
 import { Route as appDocumentCategoriesRouteImport } from './routes/(app)/document-categories'
 import { Route as appCategoriesRouteImport } from './routes/(app)/categories'
+import { Route as appSprayScheduleRouteRouteImport } from './routes/(app)/spray-schedule/route'
 import { Route as appPublicRequestsRouteRouteImport } from './routes/(app)/public-requests/route'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
 import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
 import { Route as appInsecticidesRouteRouteImport } from './routes/(app)/insecticides/route'
+import { Route as appDocumentsRouteRouteImport } from './routes/(app)/documents/route'
 import { Route as appWeeklyActivityIndexRouteImport } from './routes/(app)/weekly-activity/index'
 import { Route as appSprayScheduleIndexRouteImport } from './routes/(app)/spray-schedule/index'
 import { Route as appPublicRequestsIndexRouteImport } from './routes/(app)/public-requests/index'
@@ -63,6 +65,11 @@ const appCategoriesRoute = appCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appSprayScheduleRouteRoute = appSprayScheduleRouteRouteImport.update({
+  id: '/spray-schedule',
+  path: '/spray-schedule',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appPublicRequestsRouteRoute = appPublicRequestsRouteRouteImport.update({
   id: '/public-requests',
   path: '/public-requests',
@@ -83,15 +90,20 @@ const appInsecticidesRouteRoute = appInsecticidesRouteRouteImport.update({
   path: '/insecticides',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appDocumentsRouteRoute = appDocumentsRouteRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appWeeklyActivityIndexRoute = appWeeklyActivityIndexRouteImport.update({
   id: '/weekly-activity/',
   path: '/weekly-activity/',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appSprayScheduleIndexRoute = appSprayScheduleIndexRouteImport.update({
-  id: '/spray-schedule/',
-  path: '/spray-schedule/',
-  getParentRoute: () => appRouteRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => appSprayScheduleRouteRoute,
 } as any)
 const appPublicRequestsIndexRoute = appPublicRequestsIndexRouteImport.update({
   id: '/',
@@ -114,20 +126,20 @@ const appInsecticidesIndexRoute = appInsecticidesIndexRouteImport.update({
   getParentRoute: () => appInsecticidesRouteRoute,
 } as any)
 const appDocumentsIndexRoute = appDocumentsIndexRouteImport.update({
-  id: '/documents/',
-  path: '/documents/',
-  getParentRoute: () => appRouteRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => appDocumentsRouteRoute,
 } as any)
 const appSprayScheduleCreateRoute = appSprayScheduleCreateRouteImport.update({
-  id: '/spray-schedule/create',
-  path: '/spray-schedule/create',
-  getParentRoute: () => appRouteRoute,
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => appSprayScheduleRouteRoute,
 } as any)
 const appSprayScheduleSprayScheduleIdRoute =
   appSprayScheduleSprayScheduleIdRouteImport.update({
-    id: '/spray-schedule/$sprayScheduleId',
-    path: '/spray-schedule/$sprayScheduleId',
-    getParentRoute: () => appRouteRoute,
+    id: '/$sprayScheduleId',
+    path: '/$sprayScheduleId',
+    getParentRoute: () => appSprayScheduleRouteRoute,
   } as any)
 const appPublicRequestsRequestIdRoute =
   appPublicRequestsRequestIdRouteImport.update({
@@ -167,14 +179,14 @@ const appInsecticidesInsecticideIdRoute =
     getParentRoute: () => appInsecticidesRouteRoute,
   } as any)
 const appDocumentsCreateRoute = appDocumentsCreateRouteImport.update({
-  id: '/documents/create',
-  path: '/documents/create',
-  getParentRoute: () => appRouteRoute,
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => appDocumentsRouteRoute,
 } as any)
 const appDocumentsDocumentIdRoute = appDocumentsDocumentIdRouteImport.update({
-  id: '/documents/$documentId',
-  path: '/documents/$documentId',
-  getParentRoute: () => appRouteRoute,
+  id: '/$documentId',
+  path: '/$documentId',
+  getParentRoute: () => appDocumentsRouteRoute,
 } as any)
 const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
   id: '/$noticeId_/edit',
@@ -183,17 +195,19 @@ const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
 } as any)
 const appDocumentsDocumentIdEditRoute =
   appDocumentsDocumentIdEditRouteImport.update({
-    id: '/documents/$documentId_/edit',
-    path: '/documents/$documentId/edit',
-    getParentRoute: () => appRouteRoute,
+    id: '/$documentId_/edit',
+    path: '/$documentId/edit',
+    getParentRoute: () => appDocumentsRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/documents': typeof appDocumentsRouteRouteWithChildren
   '/insecticides': typeof appInsecticidesRouteRouteWithChildren
   '/meetings': typeof appMeetingsRouteRouteWithChildren
   '/notices': typeof appNoticesRouteRouteWithChildren
   '/public-requests': typeof appPublicRequestsRouteRouteWithChildren
+  '/spray-schedule': typeof appSprayScheduleRouteRouteWithChildren
   '/categories': typeof appCategoriesRoute
   '/document-categories': typeof appDocumentCategoriesRoute
   '/': typeof appIndexRoute
@@ -248,10 +262,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/(app)/documents': typeof appDocumentsRouteRouteWithChildren
   '/(app)/insecticides': typeof appInsecticidesRouteRouteWithChildren
   '/(app)/meetings': typeof appMeetingsRouteRouteWithChildren
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/(app)/public-requests': typeof appPublicRequestsRouteRouteWithChildren
+  '/(app)/spray-schedule': typeof appSprayScheduleRouteRouteWithChildren
   '/(app)/categories': typeof appCategoriesRoute
   '/(app)/document-categories': typeof appDocumentCategoriesRoute
   '/(app)/': typeof appIndexRoute
@@ -280,10 +296,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
+    | '/documents'
     | '/insecticides'
     | '/meetings'
     | '/notices'
     | '/public-requests'
+    | '/spray-schedule'
     | '/categories'
     | '/document-categories'
     | '/'
@@ -337,10 +355,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/(app)'
     | '/login'
+    | '/(app)/documents'
     | '/(app)/insecticides'
     | '/(app)/meetings'
     | '/(app)/notices'
     | '/(app)/public-requests'
+    | '/(app)/spray-schedule'
     | '/(app)/categories'
     | '/(app)/document-categories'
     | '/(app)/'
@@ -408,6 +428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appCategoriesRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/spray-schedule': {
+      id: '/(app)/spray-schedule'
+      path: '/spray-schedule'
+      fullPath: '/spray-schedule'
+      preLoaderRoute: typeof appSprayScheduleRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/public-requests': {
       id: '/(app)/public-requests'
       path: '/public-requests'
@@ -436,6 +463,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appInsecticidesRouteRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/documents': {
+      id: '/(app)/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof appDocumentsRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/weekly-activity/': {
       id: '/(app)/weekly-activity/'
       path: '/weekly-activity'
@@ -445,10 +479,10 @@ declare module '@tanstack/react-router' {
     }
     '/(app)/spray-schedule/': {
       id: '/(app)/spray-schedule/'
-      path: '/spray-schedule'
+      path: '/'
       fullPath: '/spray-schedule/'
       preLoaderRoute: typeof appSprayScheduleIndexRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appSprayScheduleRouteRoute
     }
     '/(app)/public-requests/': {
       id: '/(app)/public-requests/'
@@ -480,24 +514,24 @@ declare module '@tanstack/react-router' {
     }
     '/(app)/documents/': {
       id: '/(app)/documents/'
-      path: '/documents'
+      path: '/'
       fullPath: '/documents/'
       preLoaderRoute: typeof appDocumentsIndexRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appDocumentsRouteRoute
     }
     '/(app)/spray-schedule/create': {
       id: '/(app)/spray-schedule/create'
-      path: '/spray-schedule/create'
+      path: '/create'
       fullPath: '/spray-schedule/create'
       preLoaderRoute: typeof appSprayScheduleCreateRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appSprayScheduleRouteRoute
     }
     '/(app)/spray-schedule/$sprayScheduleId': {
       id: '/(app)/spray-schedule/$sprayScheduleId'
-      path: '/spray-schedule/$sprayScheduleId'
+      path: '/$sprayScheduleId'
       fullPath: '/spray-schedule/$sprayScheduleId'
       preLoaderRoute: typeof appSprayScheduleSprayScheduleIdRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appSprayScheduleRouteRoute
     }
     '/(app)/public-requests/$requestId': {
       id: '/(app)/public-requests/$requestId'
@@ -550,17 +584,17 @@ declare module '@tanstack/react-router' {
     }
     '/(app)/documents/create': {
       id: '/(app)/documents/create'
-      path: '/documents/create'
+      path: '/create'
       fullPath: '/documents/create'
       preLoaderRoute: typeof appDocumentsCreateRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appDocumentsRouteRoute
     }
     '/(app)/documents/$documentId': {
       id: '/(app)/documents/$documentId'
-      path: '/documents/$documentId'
+      path: '/$documentId'
       fullPath: '/documents/$documentId'
       preLoaderRoute: typeof appDocumentsDocumentIdRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appDocumentsRouteRoute
     }
     '/(app)/notices/$noticeId_/edit': {
       id: '/(app)/notices/$noticeId_/edit'
@@ -571,13 +605,30 @@ declare module '@tanstack/react-router' {
     }
     '/(app)/documents/$documentId_/edit': {
       id: '/(app)/documents/$documentId_/edit'
-      path: '/documents/$documentId/edit'
+      path: '/$documentId/edit'
       fullPath: '/documents/$documentId/edit'
       preLoaderRoute: typeof appDocumentsDocumentIdEditRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appDocumentsRouteRoute
     }
   }
 }
+
+interface appDocumentsRouteRouteChildren {
+  appDocumentsDocumentIdRoute: typeof appDocumentsDocumentIdRoute
+  appDocumentsCreateRoute: typeof appDocumentsCreateRoute
+  appDocumentsIndexRoute: typeof appDocumentsIndexRoute
+  appDocumentsDocumentIdEditRoute: typeof appDocumentsDocumentIdEditRoute
+}
+
+const appDocumentsRouteRouteChildren: appDocumentsRouteRouteChildren = {
+  appDocumentsDocumentIdRoute: appDocumentsDocumentIdRoute,
+  appDocumentsCreateRoute: appDocumentsCreateRoute,
+  appDocumentsIndexRoute: appDocumentsIndexRoute,
+  appDocumentsDocumentIdEditRoute: appDocumentsDocumentIdEditRoute,
+}
+
+const appDocumentsRouteRouteWithChildren =
+  appDocumentsRouteRoute._addFileChildren(appDocumentsRouteRouteChildren)
 
 interface appInsecticidesRouteRouteChildren {
   appInsecticidesInsecticideIdRoute: typeof appInsecticidesInsecticideIdRoute
@@ -643,40 +694,47 @@ const appPublicRequestsRouteRouteWithChildren =
     appPublicRequestsRouteRouteChildren,
   )
 
+interface appSprayScheduleRouteRouteChildren {
+  appSprayScheduleSprayScheduleIdRoute: typeof appSprayScheduleSprayScheduleIdRoute
+  appSprayScheduleCreateRoute: typeof appSprayScheduleCreateRoute
+  appSprayScheduleIndexRoute: typeof appSprayScheduleIndexRoute
+}
+
+const appSprayScheduleRouteRouteChildren: appSprayScheduleRouteRouteChildren = {
+  appSprayScheduleSprayScheduleIdRoute: appSprayScheduleSprayScheduleIdRoute,
+  appSprayScheduleCreateRoute: appSprayScheduleCreateRoute,
+  appSprayScheduleIndexRoute: appSprayScheduleIndexRoute,
+}
+
+const appSprayScheduleRouteRouteWithChildren =
+  appSprayScheduleRouteRoute._addFileChildren(
+    appSprayScheduleRouteRouteChildren,
+  )
+
 interface appRouteRouteChildren {
+  appDocumentsRouteRoute: typeof appDocumentsRouteRouteWithChildren
   appInsecticidesRouteRoute: typeof appInsecticidesRouteRouteWithChildren
   appMeetingsRouteRoute: typeof appMeetingsRouteRouteWithChildren
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appPublicRequestsRouteRoute: typeof appPublicRequestsRouteRouteWithChildren
+  appSprayScheduleRouteRoute: typeof appSprayScheduleRouteRouteWithChildren
   appCategoriesRoute: typeof appCategoriesRoute
   appDocumentCategoriesRoute: typeof appDocumentCategoriesRoute
   appIndexRoute: typeof appIndexRoute
-  appDocumentsDocumentIdRoute: typeof appDocumentsDocumentIdRoute
-  appDocumentsCreateRoute: typeof appDocumentsCreateRoute
-  appSprayScheduleSprayScheduleIdRoute: typeof appSprayScheduleSprayScheduleIdRoute
-  appSprayScheduleCreateRoute: typeof appSprayScheduleCreateRoute
-  appDocumentsIndexRoute: typeof appDocumentsIndexRoute
-  appSprayScheduleIndexRoute: typeof appSprayScheduleIndexRoute
   appWeeklyActivityIndexRoute: typeof appWeeklyActivityIndexRoute
-  appDocumentsDocumentIdEditRoute: typeof appDocumentsDocumentIdEditRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
+  appDocumentsRouteRoute: appDocumentsRouteRouteWithChildren,
   appInsecticidesRouteRoute: appInsecticidesRouteRouteWithChildren,
   appMeetingsRouteRoute: appMeetingsRouteRouteWithChildren,
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appPublicRequestsRouteRoute: appPublicRequestsRouteRouteWithChildren,
+  appSprayScheduleRouteRoute: appSprayScheduleRouteRouteWithChildren,
   appCategoriesRoute: appCategoriesRoute,
   appDocumentCategoriesRoute: appDocumentCategoriesRoute,
   appIndexRoute: appIndexRoute,
-  appDocumentsDocumentIdRoute: appDocumentsDocumentIdRoute,
-  appDocumentsCreateRoute: appDocumentsCreateRoute,
-  appSprayScheduleSprayScheduleIdRoute: appSprayScheduleSprayScheduleIdRoute,
-  appSprayScheduleCreateRoute: appSprayScheduleCreateRoute,
-  appDocumentsIndexRoute: appDocumentsIndexRoute,
-  appSprayScheduleIndexRoute: appSprayScheduleIndexRoute,
   appWeeklyActivityIndexRoute: appWeeklyActivityIndexRoute,
-  appDocumentsDocumentIdEditRoute: appDocumentsDocumentIdEditRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(

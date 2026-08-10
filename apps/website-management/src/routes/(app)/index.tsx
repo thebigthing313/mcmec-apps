@@ -27,7 +27,17 @@ import { requestTypeLabel } from "@/src/lib/public-requests";
 
 export const Route = createFileRoute("/(app)/")({
 	component: RouteComponent,
-	loader: () => {
+	// Every collection this page live-queries has to be preloaded — a live query against a
+	// collection that never started syncing suspends forever, and there's no Suspense
+	// fallback above it, so the whole app would render blank.
+	loader: async ({ context }) => {
+		await Promise.all([
+			context.db.notices.preload(),
+			context.db.publicRequests.preload(),
+			context.db.meetings.preload(),
+			context.db.spraySchedules.preload(),
+			context.db.insecticides.preload(),
+		]);
 		return { crumb: "Dashboard" };
 	},
 });
