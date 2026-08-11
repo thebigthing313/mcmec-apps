@@ -5,8 +5,9 @@
  * proxy (`/api/shapes/:table`). The proxy sets `table`/`where`/`columns` server-side
  * (authorization); the client only carries sync-cursor params + the session cookie.
  *
- * Writes: `onInsert/onUpdate/onDelete` go through the data API (see ../crud) and return
- * the write's Postgres `txid` so optimistic state settles when Electric streams it back.
+ * Writes: `onInsert/onUpdate/onDelete` go through the data API (see ../crud), then hold the
+ * optimistic state until that write's Postgres `txid` streams back through Electric — see
+ * `settleTxids` for why we do that wait ourselves rather than handing it to the collection.
  */
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import {
@@ -36,6 +37,54 @@ export const electricParser = {
 
 const credentialedFetch = (input: RequestInfo | URL, init?: RequestInit) =>
 	fetch(input, { ...init, credentials: "include" });
+
+// How long to hold optimistic state while waiting for a write to sync back.
+const TXID_SETTLE_TIMEOUT_MS = 30_000;
+
+type TxidSettler = {
+	utils: { awaitTxId: (txId: number, timeout?: number) => Promise<boolean> };
+};
+
+/**
+ * Hold optimistic state until Electric streams the write back — WITHOUT letting a slow sync
+ * undo it.
+ *
+ * Returning `{ txid }` from a handler hands the wait to the collection, whose
+ * `processMatchingStrategy` calls `awaitTxId` with a 5s default. That call *rejects* on
+ * timeout, and the rejection propagates out of the mutation handler, so the transaction is
+ * marked failed and the UI rolls back — an edit disappearing from the screen that Postgres
+ * has already durably committed.
+ *
+ * The API returning 2xx is our durability signal: `handleWrite` in ../crud throws on any
+ * non-2xx, so a genuine failure still rejects and still rolls back. Everything after that
+ * response is sync latency, which is not the user's problem and must not look like data loss.
+ *
+ * So we do the wait here and swallow a timeout, then return a result with NO `txid` key —
+ * `processMatchingStrategy` keys off that property's presence, so the collection won't wait a
+ * second time. Normal case: the overlay persists until the real row lands, no flicker. Slow
+ * case: after the timeout the overlay drops and the row shows its last synced value until
+ * Electric catches up — a brief flicker instead of a lost edit.
+ */
+async function settleTxids(
+	collection: TxidSettler,
+	txids: number[],
+	table: string,
+): Promise<void> {
+	if (!txids.length) return;
+	try {
+		await Promise.all(
+			txids.map((txid) =>
+				collection.utils.awaitTxId(txid, TXID_SETTLE_TIMEOUT_MS),
+			),
+		);
+	} catch (error) {
+		console.warn(
+			`[${table}] write committed but has not synced back within ${TXID_SETTLE_TIMEOUT_MS}ms — ` +
+				`keeping it and letting the collection converge`,
+			error,
+		);
+	}
+}
 
 export interface ElectricCollectionOptions<
 	TSchema extends ZodObject<z.ZodRawShape>,
@@ -102,20 +151,23 @@ export function createElectricCollection<
 			fetchClient: credentialedFetch,
 		},
 
+		// Each handler awaits its own txids via settleTxids and returns nothing, so the
+		// collection does not re-await them with its rollback-on-timeout default.
 		onInsert: insertSchema
-			? async ({ transaction }) => {
+			? async ({ transaction, collection }) => {
 					const rows = transaction.mutations.map((m) => m.modified);
 					const txids = await apiInsertRows(
 						target,
 						insertSchema,
 						rows as unknown[],
 					);
-					return txids.length ? { txid: txids } : undefined;
+					await settleTxids(collection as TxidSettler, txids, table);
+					return undefined;
 				}
 			: undefined,
 
 		onUpdate: updateSchema
-			? async ({ transaction }) => {
+			? async ({ transaction, collection }) => {
 					const txids: number[] = [];
 					for (const m of transaction.mutations) {
 						const txid = await apiUpdateRow(
@@ -126,15 +178,17 @@ export function createElectricCollection<
 						);
 						if (txid !== undefined) txids.push(txid);
 					}
-					return txids.length ? { txid: txids } : undefined;
+					await settleTxids(collection as TxidSettler, txids, table);
+					return undefined;
 				}
 			: undefined,
 
 		onDelete: allowDelete
-			? async ({ transaction }) => {
+			? async ({ transaction, collection }) => {
 					const ids = transaction.mutations.map((m) => m.key);
 					const txids = await apiDeleteRows(target, ids);
-					return txids.length ? { txid: txids } : undefined;
+					await settleTxids(collection as TxidSettler, txids, table);
+					return undefined;
 				}
 			: undefined,
 	});
