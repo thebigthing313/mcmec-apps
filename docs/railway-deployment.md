@@ -80,6 +80,14 @@ a bundle pointing at the wrong API.
 The `api` service additionally needs every frontend origin in `TRUSTED_ORIGINS`, or the
 browser calls fail CORS.
 
+> [!IMPORTANT]
+> `TRUSTED_ORIGINS` must contain the origins **as actually configured on the services**, not as
+> planned. These are compared as exact strings, so a near miss fails closed and silently: the
+> app loads, then every API call is blocked by CORS. Read the real hostnames back from Railway
+> (`RAILWAY_PUBLIC_DOMAIN`, or the service's custom domains) rather than trusting a doc. This
+> already bit once — `website-management` was provisioned as
+> `website-management-staging.…` while the origin list carried `website-staging.…`.
+
 ## Domains and the session cookie
 
 Cross-app SSO is a single Better Auth cookie shared across subdomains, so **the apps must sit
@@ -87,10 +95,28 @@ under a shared parent domain**. Railway's generated `*.up.railway.app` hosts can
 they are distinct sites under the public suffix list, so no cookie can span them, and each app
 would need its own login.
 
-| Environment | Hosts | `COOKIE_DOMAIN` | `COOKIE_PREFIX` |
-| --- | --- | --- | --- |
-| production | `central.`, `admin.`, `hr.`, `website.`, `api.` + apex | `.middlesexmosquito.org` | `mcmec` |
-| staging | `central-staging.`, `admin-staging.`, `hr-staging.`, `website-staging.`, `api-staging.` | `.middlesexmosquito.org` | `mcmec-staging` |
+| Service | production host | staging host |
+| --- | --- | --- |
+| `central` | `central.middlesexmosquito.org` | `central-staging.middlesexmosquito.org` |
+| `admin` | `admin.middlesexmosquito.org` | `admin-staging.middlesexmosquito.org` |
+| `hr` | `hr.middlesexmosquito.org` | `hr-staging.middlesexmosquito.org` |
+| `website-management` | `website.middlesexmosquito.org` | `website-management-staging.middlesexmosquito.org` |
+| `api` | `api.middlesexmosquito.org` | `api-staging.middlesexmosquito.org` |
+| `public` | `middlesexmosquito.org` (apex) | `staging.middlesexmosquito.org` |
+
+| Environment | `COOKIE_DOMAIN` | `COOKIE_PREFIX` |
+| --- | --- | --- |
+| production | `.middlesexmosquito.org` | `mcmec` |
+| staging | `.middlesexmosquito.org` | `mcmec-staging` |
+
+`public` is the exception to most of this: it is anonymous, and it forwards form submissions
+**server-side** rather than calling the API from the browser, so it never makes a cross-origin
+request. It does not need to be in `TRUSTED_ORIGINS`, and it does not need the session cookie.
+Its host still lives under the same parent for consistency and TLS convenience.
+
+`BETTER_AUTH_URL` must match the host actually serving the API. Change it in the same step as
+adding the custom domain, never before — pointing it at a domain that does not resolve yet
+breaks auth on the host that is currently working.
 
 `COOKIE_PREFIX` is what keeps the two environments apart. Staging hosts are siblings of
 production under the same parent, and the cookie is scoped to that parent — so without
@@ -101,13 +127,26 @@ than as an error, which makes it expensive to diagnose.
 
 ## Manual steps (dashboard only)
 
-Connecting a service to GitHub requires the Railway GitHub App, which is a browser OAuth flow —
-not reachable from the CLI, the MCP server, or a personal token. For each new service:
+The Railway CLI can create services and set variables, but it **cannot** set the root directory,
+the config-as-code path, the deploy branch, or the Serverless toggle — `railway service` only
+lists, deletes, links and redeploys. Connecting a service to GitHub additionally requires the
+Railway GitHub App, a browser OAuth flow unreachable from the CLI, the MCP server, or a personal
+token.
 
-1. Create the service and connect the repo `thebigthing313/mcmec-apps`.
-2. Set the deploy branch: `main` for production, `develop` for staging.
-3. Root Directory `/`; config-as-code path `apps/<app>/railway.json`.
-4. Add the build variables above.
+> [!WARNING]
+> **Set the config path before, or immediately when, connecting the repo.** Connecting triggers
+> a deploy, and a service rooted at `/` with no config path reads the repo-root `railway.json` —
+> which belongs to `api` and starts with `pnpm --filter api db:migrate`. A frontend service left
+> in that state will run migrations against the environment's database and try to boot a second
+> copy of the API.
+
+For each service:
+
+1. Connect the repo `thebigthing313/mcmec-apps`.
+2. Root Directory `/`; config-as-code path `apps/<app>/railway.json`.
+3. Set the deploy branch: `main` for production, `develop` for staging.
+4. Confirm the build variables (the CLI can set these ahead of time).
 5. Enable Serverless on the four staff apps; leave `public` always-on.
 6. Add the custom domain and the matching DNS CNAME.
-7. Add the new origin to the `api` service's `TRUSTED_ORIGINS`.
+7. Add the new origin to the `api` service's `TRUSTED_ORIGINS` (not needed for `public`).
+8. Once the API's own domain resolves, update `BETTER_AUTH_URL` to match and redeploy.
