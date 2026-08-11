@@ -80,6 +80,14 @@ a bundle pointing at the wrong API.
 The `api` service additionally needs every frontend origin in `TRUSTED_ORIGINS`, or the
 browser calls fail CORS.
 
+> [!IMPORTANT]
+> `TRUSTED_ORIGINS` must contain the origins **as actually configured on the services**, not as
+> planned. These are compared as exact strings, so a near miss fails closed and silently: the
+> app loads, then every API call is blocked by CORS. Read the real hostnames back from Railway
+> (`RAILWAY_PUBLIC_DOMAIN`, or the service's custom domains) rather than trusting a doc. This
+> already bit once — `website-management` was provisioned as
+> `website-management-staging.…` while the origin list carried `website-staging.…`.
+
 ## Domains and the session cookie
 
 Cross-app SSO is a single Better Auth cookie shared across subdomains, so **the apps must sit
@@ -92,9 +100,9 @@ would need its own login.
 | `central` | `central.middlesexmosquito.org` | `central-staging.middlesexmosquito.org` |
 | `admin` | `admin.middlesexmosquito.org` | `admin-staging.middlesexmosquito.org` |
 | `hr` | `hr.middlesexmosquito.org` | `hr-staging.middlesexmosquito.org` |
-| `website-management` | `website.middlesexmosquito.org` | `website-staging.middlesexmosquito.org` |
+| `website-management` | `website.middlesexmosquito.org` | `website-management-staging.middlesexmosquito.org` |
 | `api` | `api.middlesexmosquito.org` | `api-staging.middlesexmosquito.org` |
-| `public` | `middlesexmosquito.org` (apex) | `public-staging.middlesexmosquito.org` |
+| `public` | `middlesexmosquito.org` (apex) | `staging.middlesexmosquito.org` |
 
 | Environment | `COOKIE_DOMAIN` | `COOKIE_PREFIX` |
 | --- | --- | --- |
