@@ -73,6 +73,17 @@ export const auth = betterAuth({
 	// DB-default read-back through the adapter.
 	advanced: {
 		database: { generateId: () => randomUUID() },
+		// Namespace the cookie per environment. Staging sits on sibling subdomains of the same
+		// parent as production (`hr-staging.middlesexmosquito.org` beside
+		// `hr.middlesexmosquito.org`), and the SSO cookie is scoped to that shared parent — so
+		// without a distinct prefix both environments write the SAME cookie name at the SAME
+		// scope. Signing into staging would clobber a production session and vice versa, and each
+		// API would then receive the other environment's token and reject it, which surfaces as
+		// sporadic unexplained logouts rather than as an error. Unset falls back to Better Auth's
+		// "better-auth" default, which is correct for local dev (nothing else shares localhost).
+		...(process.env.COOKIE_PREFIX
+			? { cookiePrefix: process.env.COOKIE_PREFIX }
+			: {}),
 		// Cross-subdomain SSO cookie — gated on COOKIE_DOMAIN. In prod it's set to
 		// `.middlesexmosquito.org`, so one session cookie is shared across every subdomain app.
 		// In local dev COOKIE_DOMAIN is unset (there's no shared parent domain for localhost), so
