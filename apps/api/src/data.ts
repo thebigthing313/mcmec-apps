@@ -7,12 +7,12 @@
 // Each write runs in a transaction that first sets the `app.*` GUCs so the audit trigger
 // (log_mutation) records who/where. Permissions mirror the old RLS write policies.
 
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import type { Context } from "hono";
 import { ZodError } from "zod";
-import { setActor, type Tx } from "./actor";
+import { getTxid, setActor, type Tx } from "./actor";
 import { db } from "./db";
 import * as schema from "./db/schema";
 import { pgErrorResponse } from "./db-errors";
@@ -32,6 +32,34 @@ function stripServerCols(body: unknown): unknown {
 	return clone;
 }
 
+// Columns drizzle hands back as a JS `Date` — every `timestamp` column, plus any `date` column
+// declared in `date` mode. drizzle-zod turns those into `z.date()`, which a JSON body can never
+// satisfy: the client can only send an ISO string. So coerce it back before parsing.
+//
+// Without this, EVERY write to a table carrying a timestamp column 422s with
+// "expected date, received string" — found in the browser creating a meeting (`meetingAt` is
+// notNull, so meetings were entirely unwritable). `job_postings.published_at` had the same hole.
+// Columns in `string` mode (notices.notice_date, spray_schedules.mission_date) report dataType
+// "string" and are correctly left alone.
+function dateColumns(table: PgTable): string[] {
+	return Object.entries(getTableColumns(table))
+		.filter(([, col]) => col.dataType === "date")
+		.map(([key]) => key);
+}
+
+function coerceDates(body: unknown, keys: string[]): unknown {
+	if (!body || typeof body !== "object" || Array.isArray(body)) return body;
+	const clone: Record<string, unknown> = {
+		...(body as Record<string, unknown>),
+	};
+	for (const key of keys) {
+		const value = clone[key];
+		// Empty string is left as-is so it fails as a string rather than as an Invalid Date.
+		if (typeof value === "string" && value !== "") clone[key] = new Date(value);
+	}
+	return clone;
+}
+
 type CrudEntry = {
 	permission: string;
 	insertable: boolean;
@@ -48,17 +76,22 @@ function makeCrud<T extends PgTable>(
 ): CrudEntry {
 	const insertSchema = createInsertSchema(table);
 	const updateSchema = createUpdateSchema(table);
+	const dates = dateColumns(table);
 	return {
 		permission,
 		insertable,
 		insert: async (body, tx) => {
-			const data = insertSchema.parse(stripServerCols(body));
+			const data = insertSchema.parse(
+				coerceDates(stripServerCols(body), dates),
+			);
 			// biome-ignore lint/suspicious/noExplicitAny: drizzle can't type a generic-table write
 			const rows = await (tx.insert(table) as any).values(data).returning();
 			return rows[0];
 		},
 		update: async (id, body, tx) => {
-			const data = updateSchema.parse(stripServerCols(body));
+			const data = updateSchema.parse(
+				coerceDates(stripServerCols(body), dates),
+			);
 			// biome-ignore lint/suspicious/noExplicitAny: drizzle can't type a generic-table write
 			const rows = await (tx.update(table) as any)
 				.set(data)
@@ -156,11 +189,12 @@ export async function insertRow(c: Context): Promise<Response> {
 	const body = await c.req.json().catch(() => null);
 	try {
 		const actor = setActor(session, c);
-		const row = await db.transaction(async (tx) => {
+		const { row, txid } = await db.transaction(async (tx) => {
 			await actor(tx);
-			return entry.insert(body, tx);
+			const r = await entry.insert(body, tx);
+			return { row: r, txid: await getTxid(tx) };
 		});
-		return c.json(row, 201);
+		return c.json({ ...(row as Record<string, unknown>), txid }, 201);
 	} catch (e) {
 		if (e instanceof ZodError)
 			return c.json({ error: "invalid", issues: e.issues }, 422);
@@ -178,12 +212,13 @@ export async function updateRow(c: Context): Promise<Response> {
 	const body = await c.req.json().catch(() => null);
 	try {
 		const actor = setActor(session, c);
-		const row = await db.transaction(async (tx) => {
+		const { row, txid } = await db.transaction(async (tx) => {
 			await actor(tx);
-			return entry.update(id, body, tx);
+			const r = await entry.update(id, body, tx);
+			return { row: r, txid: await getTxid(tx) };
 		});
 		if (!row) return c.json({ error: "not found" }, 404);
-		return c.json(row);
+		return c.json({ ...(row as Record<string, unknown>), txid });
 	} catch (e) {
 		if (e instanceof ZodError)
 			return c.json({ error: "invalid", issues: e.issues }, 422);
@@ -199,12 +234,13 @@ export async function deleteRow(c: Context): Promise<Response> {
 	if (!id) return c.json({ error: "missing id" }, 400);
 	try {
 		const actor = setActor(session, c);
-		const row = await db.transaction(async (tx) => {
+		const { row, txid } = await db.transaction(async (tx) => {
 			await actor(tx);
-			return entry.remove(id, tx);
+			const r = await entry.remove(id, tx);
+			return { row: r, txid: await getTxid(tx) };
 		});
 		if (!row) return c.json({ error: "not found" }, 404);
-		return c.json({ ok: true });
+		return c.json({ ok: true, txid });
 	} catch (e) {
 		// FK violation here = the row is still referenced elsewhere (409, not 500)
 		return pgErrorResponse(c, e, 409) ?? rethrow(e);

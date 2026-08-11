@@ -21,7 +21,7 @@ export default defineConfig({
 			name: "public",
 			use: {
 				...devices["Desktop Chrome"],
-				baseURL: "http://localhost:3000",
+				baseURL: "http://localhost:3007",
 			},
 			testMatch: /public\/.+\.spec\.ts/,
 		},
@@ -45,7 +45,7 @@ export default defineConfig({
 		},
 		{
 			command: "pnpm --filter public dev",
-			port: 3000,
+			port: 3007,
 			reuseExistingServer: !process.env.CI,
 			timeout: 120000,
 		},

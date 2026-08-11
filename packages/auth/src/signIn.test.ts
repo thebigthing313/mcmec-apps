@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UnauthenticatedError } from "./errors";
 
-const mockSignInWithPassword = vi.fn();
+const mockEmailSignIn = vi.fn();
 const mockClient = {
-	auth: {
-		signInWithPassword: mockSignInWithPassword,
+	signIn: {
+		email: mockEmailSignIn,
 	},
 };
 
@@ -18,65 +18,42 @@ describe("signIn", () => {
 	const validInput = {
 		email: "user@example.com",
 		password: "securepassword123",
+		// biome-ignore lint/suspicious/noExplicitAny: structural mock of the Better Auth client
 		client: mockClient as any,
 	};
 
 	it("should successfully sign in with valid credentials", async () => {
-		mockSignInWithPassword.mockResolvedValue({
+		mockEmailSignIn.mockResolvedValue({
 			data: {
 				user: {
 					id: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 				},
-				session: {
-					access_token: "mock-access-token",
-					refresh_token: "mock-refresh-token",
-				},
+				token: "mock-session-token",
 			},
 			error: null,
 		});
 
 		await expect(signIn(validInput)).resolves.toBeUndefined();
 
-		expect(mockSignInWithPassword).toHaveBeenCalledWith({
+		expect(mockEmailSignIn).toHaveBeenCalledWith({
 			email: "user@example.com",
 			password: "securepassword123",
 		});
 	});
 
 	it("should throw UnauthenticatedError when authentication fails", async () => {
-		mockSignInWithPassword.mockResolvedValue({
-			data: { user: null, session: null },
-			error: { message: "Invalid credentials" },
+		mockEmailSignIn.mockResolvedValue({
+			data: null,
+			error: { message: "Invalid credentials", status: 401 },
 		});
 
 		await expect(signIn(validInput)).rejects.toThrow(UnauthenticatedError);
 	});
 
-	it("should throw UnauthenticatedError when user is missing from response", async () => {
-		mockSignInWithPassword.mockResolvedValue({
-			data: {
-				user: null,
-				session: {
-					access_token: "mock-access-token",
-					refresh_token: "mock-refresh-token",
-				},
-			},
-			error: null,
-		});
-
-		await expect(signIn(validInput)).rejects.toThrow(UnauthenticatedError);
-	});
-
-	it("should throw UnauthenticatedError when session is missing from response", async () => {
-		mockSignInWithPassword.mockResolvedValue({
-			data: {
-				user: {
-					id: "123e4567-e89b-12d3-a456-426614174000",
-					email: "user@example.com",
-				},
-				session: null,
-			},
+	it("should throw UnauthenticatedError when no data is returned", async () => {
+		mockEmailSignIn.mockResolvedValue({
+			data: null,
 			error: null,
 		});
 
@@ -102,16 +79,13 @@ describe("signIn", () => {
 	});
 
 	it("should accept a 6-character password", async () => {
-		mockSignInWithPassword.mockResolvedValue({
+		mockEmailSignIn.mockResolvedValue({
 			data: {
 				user: {
 					id: "123e4567-e89b-12d3-a456-426614174000",
 					email: "user@example.com",
 				},
-				session: {
-					access_token: "mock-access-token",
-					refresh_token: "mock-refresh-token",
-				},
+				token: "mock-session-token",
 			},
 			error: null,
 		});

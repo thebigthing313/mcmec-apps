@@ -1,11 +1,12 @@
 import { Home, Newspaper, Shield, Users } from "lucide-react";
+import type { AppRole } from "./roles";
 
 export type App = {
 	name: string;
 	logo: React.ReactNode;
 	description: string;
 	href: string;
-	requiredPermission: string | null;
+	requiredPermission: AppRole | null;
 };
 
 const DOMAIN =
@@ -41,11 +42,11 @@ export const AVAILABLE_APPS: App[] = [
 		requiredPermission: null,
 	},
 	{
-		description: "Manage and publish public notices for the agency.",
-		href: appUrl("notices", 3002),
+		description: "Manage the content published on the public website.",
+		href: appUrl("website", 3006),
 		logo: <Newspaper />,
-		name: "Public Notices",
-		requiredPermission: "public_notices",
+		name: "Website Management",
+		requiredPermission: "manage_website",
 	},
 	{
 		description: "Manage employees and user accounts.",
@@ -59,7 +60,7 @@ export const AVAILABLE_APPS: App[] = [
 		href: appUrl("admin", 3004),
 		logo: <Shield />,
 		name: "Admin",
-		requiredPermission: "admin_rights",
+		requiredPermission: "manage_users",
 	},
 ];
 

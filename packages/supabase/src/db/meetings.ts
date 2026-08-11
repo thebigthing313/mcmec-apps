@@ -2,7 +2,6 @@ import z from "zod";
 
 export const MeetingsRowSchema = z.object({
 	created_at: z.coerce.date<Date>(),
-	created_by: z.string().nullable(),
 	id: z.uuid(),
 	is_cancelled: z.boolean(),
 	location: z.string(),
@@ -12,7 +11,6 @@ export const MeetingsRowSchema = z.object({
 	notes: z.string().nullable(),
 	notice_url: z.url().nullable(),
 	updated_at: z.coerce.date<Date>(),
-	updated_by: z.string().nullable(),
 });
 
 export const MeetingsInsertSchema = z.object({

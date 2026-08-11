@@ -2,11 +2,9 @@ import z from "zod";
 
 export const MunicipalitiesRowSchema = z.object({
 	created_at: z.coerce.date<Date>(),
-	created_by: z.string().nullable(),
 	id: z.uuid(),
 	name: z.string(),
 	updated_at: z.coerce.date<Date>(),
-	updated_by: z.string().nullable(),
 });
 
 export const MunicipalitiesInsertSchema = z.object({

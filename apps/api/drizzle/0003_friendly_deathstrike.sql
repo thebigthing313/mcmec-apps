@@ -1,0 +1,3 @@
+ALTER TABLE "spray_schedule_municipalities" DROP CONSTRAINT "spray_schedule_municipalities_spray_schedule_id_municipality_id_pk";--> statement-breakpoint
+ALTER TABLE "spray_schedule_municipalities" ADD COLUMN "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL;--> statement-breakpoint
+ALTER TABLE "spray_schedule_municipalities" ADD CONSTRAINT "spray_schedule_municipalities_pair_key" UNIQUE("spray_schedule_id","municipality_id");

@@ -1,7 +1,4 @@
 import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { QueryClient } from "@tanstack/query-core";
-import type { Database } from "../database.types.ts";
 import {
 	EmployeesInsertSchema,
 	EmployeesRowSchema,
@@ -14,30 +11,25 @@ import {
 } from "../db/job-postings";
 
 export interface CreateHrCollectionsOptions {
-	supabase: SupabaseClient<Database>;
-	queryClient: QueryClient;
+	/** API origin (VITE_API_URL) */
+	apiUrl: string;
 }
 
-export function createHrCollections({
-	supabase,
-	queryClient,
-}: CreateHrCollectionsOptions) {
+export function createHrCollections({ apiUrl }: CreateHrCollectionsOptions) {
 	const employees = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: EmployeesInsertSchema,
-		queryClient,
 		schema: EmployeesRowSchema,
-		supabase,
 		table: "employees",
 		updateSchema: EmployeesUpdateSchema,
 	});
 
 	const jobPostings = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: JobPostingsInsertSchema,
-		queryClient,
 		schema: JobPostingsRowSchema,
-		supabase,
 		table: "job_postings",
 		updateSchema: JobPostingsUpdateSchema,
 	});

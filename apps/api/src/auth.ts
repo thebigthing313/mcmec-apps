@@ -11,6 +11,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, customSession } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
+import { defaultStatements } from "better-auth/plugins/admin/access";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 import {
@@ -25,7 +26,12 @@ import { passwordSetupHtml, sendEmail } from "./email";
 // ── Access control: three coarse roles, one per admin app ────────────────────
 // Authorization in the apps is by role membership (see customSession -> permissions[]).
 // The AC statements exist mainly so the admin plugin can gate its own endpoints.
+//
+// `defaultStatements` must be spread in: the plugin authorizes its own routes against its
+// `user`/`session` statements, so a role built only from our custom ones can't satisfy them.
+// (`adminRoles` does not cover this — it isn't consulted by the plugin's permission check.)
 const ac = createAccessControl({
+	...defaultStatements,
 	website: ["manage"],
 	employees: ["manage"],
 	users: ["manage"],
@@ -34,7 +40,9 @@ const ac = createAccessControl({
 const roles = {
 	manage_website: ac.newRole({ website: ["manage"] }),
 	manage_employees: ac.newRole({ employees: ["manage"] }),
-	manage_users: ac.newRole({ users: ["manage"] }),
+	// Only what the admin app actually calls: it lists users, and writes roles through our
+	// own audited endpoint rather than the plugin's set-role.
+	manage_users: ac.newRole({ users: ["manage"], user: ["list", "get"] }),
 };
 
 // The assignable app roles (one per admin front-end). Source of truth for role-assignment

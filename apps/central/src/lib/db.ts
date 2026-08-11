@@ -2,7 +2,7 @@ import {
 	type CentralCollections,
 	createCentralCollections,
 } from "@mcmec/supabase/collections/central";
-import { queryClient, supabase } from "./queryClient";
+import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------
 // Db singleton
@@ -12,7 +12,7 @@ let instance: CentralCollections | null = null;
 
 export function getDb(): CentralCollections {
 	if (!instance) {
-		instance = createCentralCollections({ supabase, queryClient });
+		instance = createCentralCollections({ apiUrl: API_URL });
 	}
 	return instance;
 }

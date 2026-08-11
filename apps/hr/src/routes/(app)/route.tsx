@@ -1,12 +1,8 @@
 import { UnauthenticatedError } from "@mcmec/auth/errors";
-import { processAuthRedirect } from "@mcmec/auth/handleCrossAppAuth";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
-import {
-	filterAppsByPermissions,
-	getCentralLoginUrl,
-} from "@mcmec/lib/constants/apps";
+import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -19,18 +15,20 @@ import {
 import { HrSidebar } from "@/src/components/hr-sidebar";
 
 export const Route = createFileRoute("/(app)")({
-	beforeLoad: async ({ context }) => {
-		await processAuthRedirect(context.supabase);
+	beforeLoad: async ({ context, location }) => {
 		try {
 			const claims = await verifyClaims({
-				client: context.supabase,
+				client: context.authClient,
 				permission: "manage_employees",
 			});
 			return { claims };
 		} catch (error) {
+			// Not signed in -> this app's own login (cookie SSO, no cross-app redirect).
+			// NotOnboarded / Forbidden fall through to the error boundary.
 			if (error instanceof UnauthenticatedError) {
 				throw redirect({
-					href: getCentralLoginUrl(window.location.origin),
+					to: "/login",
+					search: { redirect: location.href },
 				});
 			}
 			throw error;
@@ -44,13 +42,13 @@ export const Route = createFileRoute("/(app)")({
 });
 
 function LayoutComponent() {
-	const { supabase, claims, db } = Route.useRouteContext();
+	const { authClient, claims, db } = Route.useRouteContext();
 	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 
 	const navigate = useNavigate();
 	const handleLogout = async () => {
-		await signOut({ client: supabase });
+		await signOut({ client: authClient });
 		navigate({ to: "/login" });
 	};
 

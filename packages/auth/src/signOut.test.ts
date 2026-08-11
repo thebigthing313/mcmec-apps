@@ -3,9 +3,7 @@ import { UnauthenticatedError } from "./errors";
 
 const mockSignOut = vi.fn();
 const mockClient = {
-	auth: {
-		signOut: mockSignOut,
-	},
+	signOut: mockSignOut,
 };
 
 import { signOut } from "./signOut";
@@ -17,10 +15,12 @@ beforeEach(() => {
 describe("signOut", () => {
 	it("should successfully sign out", async () => {
 		mockSignOut.mockResolvedValue({
+			data: { success: true },
 			error: null,
 		});
 
 		await expect(
+			// biome-ignore lint/suspicious/noExplicitAny: structural mock of the Better Auth client
 			signOut({ client: mockClient as any }),
 		).resolves.toBeUndefined();
 		expect(mockSignOut).toHaveBeenCalledWith();
@@ -28,21 +28,25 @@ describe("signOut", () => {
 
 	it("should throw UnauthenticatedError when sign out fails", async () => {
 		mockSignOut.mockResolvedValue({
+			data: null,
 			error: { message: "Sign out failed" },
 		});
 
-		await expect(signOut({ client: mockClient as any })).rejects.toThrow(
-			UnauthenticatedError,
-		);
+		await expect(
+			// biome-ignore lint/suspicious/noExplicitAny: structural mock of the Better Auth client
+			signOut({ client: mockClient as any }),
+		).rejects.toThrow(UnauthenticatedError);
 	});
 
 	it("should throw UnauthenticatedError on network errors", async () => {
 		mockSignOut.mockResolvedValue({
+			data: null,
 			error: { message: "Network error", status: 500 },
 		});
 
-		await expect(signOut({ client: mockClient as any })).rejects.toThrow(
-			UnauthenticatedError,
-		);
+		await expect(
+			// biome-ignore lint/suspicious/noExplicitAny: structural mock of the Better Auth client
+			signOut({ client: mockClient as any }),
+		).rejects.toThrow(UnauthenticatedError);
 	});
 });

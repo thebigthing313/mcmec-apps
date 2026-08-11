@@ -1,4 +1,14 @@
-import { ErrorMessages } from "@mcmec/lib/constants/errors";
+/**
+ * Read path for the public site.
+ *
+ * Every query runs as a server function so the data is in the SSR response (this site is
+ * SEO-critical — nothing here waits on a client fetch). Server-side it reads the API's
+ * ElectricSQL shape proxy anonymously; the proxy applies the public policy, so unpublished
+ * notices, documents, and job postings never reach this process at all.
+ *
+ * The exported `*QueryOptions` are the app's read interface — routes don't know or care
+ * where the rows come from.
+ */
 import { DocumentTypesRowSchema } from "@mcmec/supabase/db/document-types";
 import { DocumentsRowSchema } from "@mcmec/supabase/db/documents";
 import { InsecticidesRowSchema } from "@mcmec/supabase/db/insecticides";
@@ -8,286 +18,201 @@ import { MosquitoActivityDataRowSchema } from "@mcmec/supabase/db/mosquito-activ
 import { MunicipalitiesRowSchema } from "@mcmec/supabase/db/municipalities";
 import { NoticeTypesRowSchema } from "@mcmec/supabase/db/notice-types";
 import { NoticesRowSchema } from "@mcmec/supabase/db/notices";
+import { SprayScheduleMunicipalitiesRowSchema } from "@mcmec/supabase/db/spray-schedule-municipalities";
 import { SpraySchedulesRowSchema } from "@mcmec/supabase/db/spray-schedules";
 import { ZipCodesRowSchema } from "@mcmec/supabase/db/zip-codes";
+import { fetchShapeSnapshot } from "@mcmec/supabase-tanstack-db-integration";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
-import { getSupabaseServerClient } from "./supabase-server";
+import type z from "zod";
+import type { ZodObject } from "zod";
 
-// Server functions for fetching data
-const getNoticesServerFn = createServerFn({ method: "GET" }).handler(
+function apiUrl(): string {
+	const url = process.env.API_URL;
+	if (!url) {
+		throw new Error("API_URL is not set.");
+	}
+	return url;
+}
+
+/** Reads a whole shape and validates each row against its schema. */
+async function readTable<TSchema extends ZodObject<z.ZodRawShape>>(
+	table: string,
+	schema: TSchema,
+): Promise<z.infer<TSchema>[]> {
+	const rows = await fetchShapeSnapshot({ apiUrl: apiUrl(), table });
+	return rows.map((row) => schema.parse(row));
+}
+
+// ---------------------------------------------------------------------------
+// Server functions
+// ---------------------------------------------------------------------------
+
+const getNoticesServerFn = createServerFn({ method: "GET" }).handler(() =>
+	readTable("notices", NoticesRowSchema),
+);
+
+const getNoticeTypesServerFn = createServerFn({ method: "GET" }).handler(() =>
+	readTable("notice_types", NoticeTypesRowSchema),
+);
+
+const getMeetingsServerFn = createServerFn({ method: "GET" }).handler(() =>
+	readTable("meetings", MeetingsRowSchema),
+);
+
+const getInsecticidesServerFn = createServerFn({ method: "GET" }).handler(() =>
+	readTable("insecticides", InsecticidesRowSchema),
+);
+
+const getZipCodesServerFn = createServerFn({ method: "GET" }).handler(() =>
+	readTable("zip_codes", ZipCodesRowSchema),
+);
+
+const getDocumentsServerFn = createServerFn({ method: "GET" }).handler(() =>
+	readTable("documents", DocumentsRowSchema),
+);
+
+const getDocumentTypesServerFn = createServerFn({ method: "GET" }).handler(() =>
+	readTable("document_types", DocumentTypesRowSchema),
+);
+
+const getJobPostingsServerFn = createServerFn({ method: "GET" }).handler(() =>
+	readTable("job_postings", JobPostingsRowSchema),
+);
+
+const getMosquitoActivityServerFn = createServerFn({ method: "GET" }).handler(
+	() => readTable("mosquito_activity_data", MosquitoActivityDataRowSchema),
+);
+
+const getMunicipalitiesServerFn = createServerFn({ method: "GET" }).handler(
 	async () => {
-		const supabase = getSupabaseServerClient();
-		async function fetchNotices() {
-			const { data, error } = await supabase.from("notices").select("*");
-			if (error) {
-				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("notices"));
-			}
-			return data.map((notice) => {
-				return NoticesRowSchema.parse(notice);
-			});
-		}
-		return fetchNotices();
+		const rows = await readTable("municipalities", MunicipalitiesRowSchema);
+		return rows.sort((a, b) => a.name.localeCompare(b.name));
 	},
 );
 
-const getNoticeTypesServerFn = createServerFn({ method: "GET" }).handler(
+/**
+ * Spray schedules for the current season, with their insecticide and municipalities.
+ *
+ * PostgREST could express this as one nested select; shapes are per-table, so the four
+ * shapes are read in parallel and joined here.
+ */
+const getSpraySchedulesServerFn = createServerFn({ method: "GET" }).handler(
 	async () => {
-		const supabase = getSupabaseServerClient();
-		async function fetchNoticeTypes() {
-			const { data, error } = await supabase.from("notice_types").select("*");
-			if (error) {
-				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("notice_types"));
-			}
-			return data.map((noticeType) => {
-				return NoticeTypesRowSchema.parse(noticeType);
+		const [schedules, insecticides, links, municipalities] = await Promise.all([
+			readTable("spray_schedules", SpraySchedulesRowSchema),
+			readTable("insecticides", InsecticidesRowSchema),
+			readTable(
+				"spray_schedule_municipalities",
+				SprayScheduleMunicipalitiesRowSchema,
+			),
+			readTable("municipalities", MunicipalitiesRowSchema),
+		]);
+
+		const insecticideById = new Map(insecticides.map((i) => [i.id, i]));
+		const municipalityById = new Map(municipalities.map((m) => [m.id, m]));
+		const currentYear = new Date().getFullYear();
+
+		return schedules
+			.filter((s) => s.mission_date.getFullYear() === currentYear)
+			.map((schedule) => {
+				const insecticide = insecticideById.get(schedule.insecticide_id);
+				return {
+					...schedule,
+					insecticideLabelUrl: insecticide?.label_url ?? null,
+					insecticideMsdsUrl: insecticide?.msds_url ?? null,
+					insecticideName: insecticide?.trade_name ?? "",
+					municipalities: links
+						.filter((link) => link.spray_schedule_id === schedule.id)
+						.map((link) => ({
+							id: link.municipality_id,
+							name: municipalityById.get(link.municipality_id)?.name ?? "",
+						})),
+				};
 			});
-		}
-		return fetchNoticeTypes();
 	},
 );
 
-const getMeetingsServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		async function fetchMeetings() {
-			const { data, error } = await supabase.from("meetings").select("*");
-			if (error) {
-				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("meetings"));
-			}
-			return data.map((meeting) => {
-				return MeetingsRowSchema.parse(meeting);
-			});
-		}
-		return fetchMeetings();
-	},
-);
+// ---------------------------------------------------------------------------
+// Query options
+// ---------------------------------------------------------------------------
 
-const getInsecticidesServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		async function fetchInsecticides() {
-			const { data, error } = await supabase.from("insecticides").select("*");
-			if (error) {
-				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("insecticides"));
-			}
-			return data.map((insecticide) => {
-				return InsecticidesRowSchema.parse(insecticide);
-			});
-		}
-		return fetchInsecticides();
-	},
-);
+const THIRTY_MINUTES = 1000 * 60 * 30;
+const ONE_HOUR = 1000 * 60 * 60;
 
-// Query options for TanStack Query
 export const noticesQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getNoticesServerFn(),
 		queryKey: ["notices"],
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: THIRTY_MINUTES,
 	});
 
 export const noticeTypesQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getNoticeTypesServerFn(),
 		queryKey: ["notice_types"],
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: THIRTY_MINUTES,
 	});
 
 export const meetingsQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getMeetingsServerFn(),
 		queryKey: ["meetings"],
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: THIRTY_MINUTES,
 	});
 
 export const insecticidesQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getInsecticidesServerFn(),
 		queryKey: ["insecticides"],
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: THIRTY_MINUTES,
 	});
-
-const getZipCodesServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		async function fetchZipCodes() {
-			const { data, error } = await supabase.from("zip_codes").select("*");
-			if (error) {
-				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("zip_codes"));
-			}
-			return data.map((zipCode) => {
-				return ZipCodesRowSchema.parse(zipCode);
-			});
-		}
-		return fetchZipCodes();
-	},
-);
 
 export const zipCodesQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getZipCodesServerFn(),
 		queryKey: ["zip_codes"],
-		staleTime: 1000 * 60 * 60, // 1 hour
+		staleTime: ONE_HOUR,
 	});
-
-const getDocumentsServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		async function fetchDocuments() {
-			const { data, error } = await supabase.from("documents").select("*");
-			if (error) {
-				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("documents"));
-			}
-			return data.map((document) => {
-				return DocumentsRowSchema.parse(document);
-			});
-		}
-		return fetchDocuments();
-	},
-);
-
-const getDocumentTypesServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		async function fetchDocumentTypes() {
-			const { data, error } = await supabase.from("document_types").select("*");
-			if (error) {
-				throw new Error(
-					ErrorMessages.DATABASE.UNABLE_TO_FETCH("document_types"),
-				);
-			}
-			return data.map((documentType) => {
-				return DocumentTypesRowSchema.parse(documentType);
-			});
-		}
-		return fetchDocumentTypes();
-	},
-);
 
 export const documentsQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getDocumentsServerFn(),
 		queryKey: ["documents"],
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: THIRTY_MINUTES,
 	});
 
 export const documentTypesQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getDocumentTypesServerFn(),
 		queryKey: ["document_types"],
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: THIRTY_MINUTES,
 	});
-
-const getJobPostingsServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		async function fetchJobPostings() {
-			const { data, error } = await supabase.from("job_postings").select("*");
-			if (error) {
-				throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("job_postings"));
-			}
-			return data.map((posting) => {
-				return JobPostingsRowSchema.parse(posting);
-			});
-		}
-		return fetchJobPostings();
-	},
-);
 
 export const jobPostingsQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getJobPostingsServerFn(),
 		queryKey: ["job_postings"],
-		staleTime: 1000 * 60 * 60, // 1 hour
+		staleTime: ONE_HOUR,
 	});
-
-const getSpraySchedulesServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		const currentYear = new Date().getFullYear();
-		const { data, error } = await supabase
-			.from("spray_schedules")
-			.select(
-				"*, insecticides(trade_name, label_url, msds_url), spray_schedule_municipalities(municipality_id, municipalities(name))",
-			)
-			.gte("mission_date", `${currentYear}-01-01`)
-			.lte("mission_date", `${currentYear}-12-31`);
-		if (error) {
-			throw new Error(
-				ErrorMessages.DATABASE.UNABLE_TO_FETCH("spray_schedules"),
-			);
-		}
-		return data.map((row) => ({
-			...SpraySchedulesRowSchema.parse(row),
-			insecticideLabelUrl: row.insecticides?.label_url ?? null,
-			insecticideMsdsUrl: row.insecticides?.msds_url ?? null,
-			insecticideName: row.insecticides?.trade_name ?? "",
-			municipalities: row.spray_schedule_municipalities.map((m) => ({
-				id: m.municipality_id,
-				name: m.municipalities?.name ?? "",
-			})),
-		}));
-	},
-);
 
 export const spraySchedulesQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getSpraySchedulesServerFn(),
 		queryKey: ["spray_schedules"],
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: THIRTY_MINUTES,
 	});
-
-const getMosquitoActivityServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		const allRows: unknown[] = [];
-		const PAGE_SIZE = 1000;
-		let from = 0;
-
-		while (true) {
-			const { data, error } = await supabase
-				.from("mosquito_activity_data")
-				.select("*")
-				.range(from, from + PAGE_SIZE - 1);
-			if (error) {
-				throw new Error(
-					ErrorMessages.DATABASE.UNABLE_TO_FETCH("mosquito_activity_data"),
-				);
-			}
-			allRows.push(...data);
-			if (data.length < PAGE_SIZE) break;
-			from += PAGE_SIZE;
-		}
-
-		return allRows.map((row) => MosquitoActivityDataRowSchema.parse(row));
-	},
-);
 
 export const mosquitoActivityQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getMosquitoActivityServerFn(),
 		queryKey: ["mosquito_activity_data"],
-		staleTime: 1000 * 60 * 30, // 30 minutes
+		staleTime: THIRTY_MINUTES,
 	});
-
-const getMunicipalitiesServerFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const supabase = getSupabaseServerClient();
-		const { data, error } = await supabase
-			.from("municipalities")
-			.select("*")
-			.order("name");
-		if (error) {
-			throw new Error(ErrorMessages.DATABASE.UNABLE_TO_FETCH("municipalities"));
-		}
-		return data.map((m) => MunicipalitiesRowSchema.parse(m));
-	},
-);
 
 export const municipalitiesQueryOptions = () =>
 	queryOptions({
 		queryFn: () => getMunicipalitiesServerFn(),
 		queryKey: ["municipalities"],
-		staleTime: 1000 * 60 * 60, // 1 hour
+		staleTime: ONE_HOUR,
 	});

@@ -12,7 +12,6 @@ export type SprayScheduleStatus = z.infer<typeof SprayScheduleStatusEnum>;
 export const SpraySchedulesRowSchema = z.object({
 	area_description: z.string(),
 	created_at: z.coerce.date<Date>(),
-	created_by: z.string().nullable(),
 	end_time: z.string(),
 	id: z.uuid(),
 	insecticide_id: z.uuid(),
@@ -22,7 +21,6 @@ export const SpraySchedulesRowSchema = z.object({
 	start_time: z.string(),
 	status: SprayScheduleStatusEnum,
 	updated_at: z.coerce.date<Date>(),
-	updated_by: z.string().nullable(),
 });
 
 export const SpraySchedulesInsertSchema = z.object({

@@ -13,10 +13,14 @@ import z from "zod";
 
 export const Route = createFileRoute("/_auth/set-password")({
 	component: SetPasswordPage,
+	// Where an invite lands (the api's AUTH_RESET_URL): same tokenized reset flow as
+	// /reset-password, worded for someone setting a password for the first time.
+	validateSearch: z.object({ token: z.string().optional() }),
 });
 
 function SetPasswordPage() {
-	const { supabase } = Route.useRouteContext();
+	const { authClient } = Route.useRouteContext();
+	const { token } = Route.useSearch();
 	const navigate = useNavigate();
 	const [status, setStatus] = useState<"error" | "idle" | "success">("idle");
 	const [errorMessage, setErrorMessage] = useState("");
@@ -33,18 +37,29 @@ function SetPasswordPage() {
 				return;
 			}
 
-			const { error } = await supabase.auth.updateUser({
-				password: value.password,
+			if (!token) {
+				setStatus("error");
+				setErrorMessage(
+					"This invite link is missing its token. Ask an administrator to re-send it.",
+				);
+				return;
+			}
+
+			const { error } = await authClient.resetPassword({
+				newPassword: value.password,
+				token,
 			});
 
 			if (error) {
 				setStatus("error");
-				setErrorMessage(error.message);
+				setErrorMessage(
+					error.message ?? "That invite link is invalid or has expired.",
+				);
 				return;
 			}
 
 			setStatus("success");
-			setTimeout(() => navigate({ to: "/" }), 2000);
+			setTimeout(() => navigate({ to: "/login" }), 2000);
 		},
 	});
 
@@ -55,13 +70,13 @@ function SetPasswordPage() {
 					<div className="flex flex-col gap-4 text-center">
 						<h2 className="font-bold text-xl">Welcome!</h2>
 						<p className="text-muted-foreground">
-							Your password has been set. Redirecting to the dashboard...
+							Your password has been set. Redirecting to sign in...
 						</p>
 						<Link
 							className="text-muted-foreground text-sm underline hover:text-foreground"
-							to="/"
+							to="/login"
 						>
-							Go to Dashboard
+							Go to Sign In
 						</Link>
 					</div>
 				</CardContent>

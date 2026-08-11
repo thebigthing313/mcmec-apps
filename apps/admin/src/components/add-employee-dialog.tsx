@@ -35,8 +35,6 @@ export function AddEmployeeDialog() {
 				user_id: null,
 				created_at: new Date(),
 				updated_at: new Date(),
-				created_by: null,
-				updated_by: null,
 			});
 			setOpen(false);
 			form.reset();
