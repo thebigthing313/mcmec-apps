@@ -19,6 +19,7 @@
 		"lucide-react": "^0.475.0",
 		"react": "^19.2.3",
 		"react-dom": "^19.2.3",
+		"sirv-cli": "^3.0.1",
 		"vite-tsconfig-paths": "^6.0.3",
 		"zod": "^4.3.5"
 	},
@@ -41,7 +42,8 @@
 		"check-types": "tsc --noEmit",
 		"dev": "vite",
 		"lint": "biome check .",
-		"lint:fix": "biome check --write ."
+		"lint:fix": "biome check --write .",
+		"start": "sirv dist --single --etag --host 0.0.0.0"
 	},
 	"type": "module",
 	"version": "0.4.3"
