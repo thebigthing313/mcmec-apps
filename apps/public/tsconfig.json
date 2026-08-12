@@ -7,7 +7,9 @@
 			"@mcmec/supabase/*": ["../../packages/supabase/src/*"],
 			"@mcmec/ui/*": ["../../packages/ui/src/*"]
 		},
-		"types": ["vite/client"]
+		// "node" is needed by `server/` — those modules read `process.env` and never ship to the
+		// browser.
+		"types": ["vite/client", "node"]
 	},
 	"exclude": ["node_modules"],
 	"extends": "@mcmec/typescript-config/tanstack-start.json",

@@ -65,6 +65,100 @@ sirv dist --single --etag --host 0.0.0.0
 Vite builds to `.output/` (Nitro), started with `node .output/server/index.mjs`, which honours
 `PORT`. Its runtime dependencies are real `dependencies`, so they survive the prod install.
 
+## Builder and Node version
+
+**Every service builds with Railpack, and takes its Node version from `.nvmrc`.** There is no
+`NIXPACKS_NODE_VERSION` variable on any service; if you find one, it is a leftover and does
+nothing.
+
+The single builder is not tidiness for its own sake. Nixpacks' pinned nixpkgs offers only
+18.20.5 / 20.18.1 / 22.11.0, and the repo's floor is `engines.node >= 22.12` — so under Nixpacks
+every available version misses. That matters because **pnpm silently skips optional dependencies
+whose `engines` do not match the running Node**: nothing fails at install time, and the missing
+package resurfaces much later as a `Cannot find native binding` error that points nowhere near
+Node. Nixpacks also **fails open** — `NIXPACKS_NODE_VERSION=23` does not error, it falls back to
+`nodejs_18` — so each attempted fix looked like it did nothing. That chain cost several deploys
+on `public` (#115).
+
+`api` was the last holdout, kept on Nixpacks with `NIXPACKS_NODE_VERSION=22` (→ 22.11.0) because
+it runs `tsx` with no Vite build and had never hit this. It moved to Railpack anyway (#116): a
+service running below the floor the repo declares is one dependency away from the same silent
+skip, and the diagnosis would look exactly as misleading the second time.
+
+> [!IMPORTANT]
+> `api`'s start command is `pnpm --filter api db:migrate && pnpm --filter api start`, so its
+> build is in front of the migrations. It fails closed — a broken build leaves the previous
+> deployment serving and applies nothing — but land builder changes on staging and watch a
+> deploy through before promoting to `main`.
+
+Two guards keep the mismatch from being silent again:
+
+- A root `preinstall` script (`scripts/check-node-version.mjs`) refuses to install on a Node
+  below `engines.node`, and refuses if `.nvmrc` itself drops below the floor. It runs before
+  `node_modules` exists, so it is Node builtins only.
+- CI resolves its Node from `.nvmrc` (`node-version-file`) rather than a loose `22`, so a green
+  CI run and a Railway build agree on the version.
+
+## Search indexing
+
+Exactly one origin belongs in search results: `public` in **production**. Everything else —
+the whole staging environment, and the four staff apps in production as well as staging — is
+`noindex`.
+
+The stakes are higher than ordinary SEO hygiene. This site is the Commission's official channel
+for legal notices under P.L. 2025, c.72, and staging serves the same pages from a database that
+gets truncated and reloaded during testing. An indexed staging copy could surface a throwaway
+notice as though it were the statutory posting. Staging hosts are ordinary publicly-resolvable
+subdomains — they have to be, so the SSO cookie can span them — so nothing about the topology
+hides them from a crawler.
+
+### `public`
+
+`server/plugins/robots.ts` sets `X-Robots-Tag: noindex, nofollow` from Nitro's `response` hook,
+which covers everything the server emits — SSR pages, static assets, errors — not just routes
+that render the shared document head. `server/routes/robots.txt.ts` serves `Disallow: /` in the
+same environments. The header is the load-bearing half: `robots.txt` asks crawlers not to
+*fetch*, but a URL linked from elsewhere can be indexed without ever being fetched.
+
+`robots.txt` is a route rather than a file in `public/` because a file is baked into the build
+and would ship production's crawl rules to staging.
+
+The switch reads `PUBLIC_ENV`, falling back to Railway's injected `RAILWAY_ENVIRONMENT_NAME`, and
+asks **"is this production?"** rather than "is this staging?". That direction is deliberate:
+asking whether the environment is staging fails open, so a service missing the variable — or an
+environment added later under a name nobody thought to check — would be indexed. Asking whether
+it is production fails closed, and the worst an unconfigured service can do is decline to be
+indexed, which shows up in Search Console instead of silently.
+
+### Staff apps
+
+`central`, `admin`, `hr` and `website-management` carry `<meta name="robots" content="noindex,
+nofollow">` in `index.html` and a `public/robots.txt` of `Disallow: /`, in **every** environment
+— they have no public audience anywhere. This is not gated on environment, so there is nothing
+to configure and nothing to forget.
+
+They get a meta tag rather than a header because `sirv-cli` cannot set response headers. The
+coverage is equivalent here: `--single` serves that one document for every path, so every URL a
+crawler can reach carries the tag. It would not be equivalent on `public`, which serves PDFs and
+XML.
+
+### HTTP Basic auth on staging `public`
+
+**Decided against**, for now. It is the only measure that prevents access rather than requesting
+good behaviour, but it would sit in front of every reviewer and every form test, and the major
+crawlers honour `X-Robots-Tag`. Nothing links to the staging host, so discovery would have to be
+deliberate. If a staging URL ever does appear in search results, Basic auth is the escalation —
+add it in `server/plugins/`, gated on the same `PUBLIC_ENV` check.
+
+### Verifying
+
+```bash
+curl -sI https://staging.middlesexmosquito.org/ | grep -i x-robots-tag
+curl -s  https://staging.middlesexmosquito.org/robots.txt
+curl -sI https://middlesexmosquito.org/ | grep -i x-robots-tag   # must print nothing
+curl -s  https://middlesexmosquito.org/robots.txt                # must still allow crawling
+```
+
 ## Environment variables
 
 `VITE_*` variables are **baked in at build time**, not read at runtime. They must be set as
@@ -76,6 +170,7 @@ a bundle pointing at the wrong API.
 | `VITE_API_URL` | central, admin, hr, website-management | API origin, build-time |
 | `API_URL` | public | server-side only, never exposed to the browser |
 | `VITE_CLOUDFLARE_TURNSTILE_SITEKEY` | public | build-time |
+| `PUBLIC_ENV` | public | `production` or `staging`, runtime — see [Search indexing](#search-indexing) |
 
 The `api` service additionally needs every frontend origin in `TRUSTED_ORIGINS`, or the
 browser calls fail CORS.
@@ -145,7 +240,9 @@ For each service:
 1. Connect the repo `thebigthing313/mcmec-apps`.
 2. Root Directory `/`; config-as-code path `apps/<app>/railway.json`.
 3. Set the deploy branch: `main` for production, `develop` for staging.
-4. Confirm the build variables (the CLI can set these ahead of time).
+4. Confirm the build variables (the CLI can set these ahead of time). On `public`, that includes
+   `PUBLIC_ENV`. Never create `NIXPACKS_NODE_VERSION` — Railpack ignores it and its presence
+   invites someone to "fix" a build by changing it.
 5. Enable Serverless on the four staff apps; leave `public` always-on.
 6. Add the custom domain and the matching DNS CNAME.
 7. Add the new origin to the `api` service's `TRUSTED_ORIGINS` (not needed for `public`).

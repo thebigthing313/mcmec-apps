@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /contact/request-success
-
-Sitemap: https://middlesexmosquito.org/sitemap.xml

@@ -12,7 +12,14 @@ export default defineConfig({
 			projects: ["./tsconfig.json"],
 		}),
 		tanstackStart(),
-		nitro(),
+		nitro({
+			// Registered explicitly rather than by directory convention: Nitro only scans a
+			// `server/` directory when `serverDir` is set, and TanStack Start does not set it.
+			handlers: [
+				{ handler: "./server/routes/robots.txt.ts", route: "/robots.txt" },
+			],
+			plugins: ["./server/plugins/robots.ts"],
+		}),
 		viteReact(),
 	],
 	server: {
