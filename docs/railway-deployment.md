@@ -258,6 +258,37 @@ would need its own login.
 request. It does not need to be in `TRUSTED_ORIGINS`, and it does not need the session cookie.
 Its host still lives under the same parent for consistency and TLS convenience.
 
+### `www` and the apex
+
+**The apex is canonical. `www` redirects to it.** Every URL the app declares about itself is
+built from `SITE_URL` in `apps/public/src/lib/seo.ts`, which is the bare apex — that is what
+goes into the `rel="canonical"` link and `og:url` on every page, what `public/sitemap.xml`
+lists, and what the `Sitemap:` line of robots.txt points at.
+
+> [!WARNING]
+> **Vercel currently redirects the other way**, and the cutover has to flip it. Today
+> `https://middlesexmosquito.org/` returns a 307 to `https://www.middlesexmosquito.org/`, while
+> the page served at `www` carries `<link rel="canonical" href="https://middlesexmosquito.org/">`.
+> Crawlers are being bounced away from the exact URL the page then nominates as canonical, and
+> every `<loc>` in the sitemap is a URL that redirects. It resolves today because Google leans on
+> the canonical tag, but it is a conflicting signal that costs nothing to remove.
+
+At cutover, add **both** hosts and make `www` the one that redirects:
+
+1. Add `middlesexmosquito.org` to the production `public` service and point the apex DNS record
+   at it.
+2. Add `www.middlesexmosquito.org` too, and serve a 308 from `www` to the same path on the apex.
+   Do this wherever the redirect is cheapest — at the DNS/CDN provider if it offers host
+   redirects, otherwise in `apps/public/server/plugins/`, which already exists for the
+   `X-Robots-Tag` header and has the request hook to do it.
+3. Leave `www` resolving. It has been the served host for years, so it is what external links
+   and existing search results point at; dropping it turns those into hard failures instead of
+   redirects.
+
+If the decision ever goes the other way and `www` becomes canonical, `SITE_URL` and
+`public/sitemap.xml` have to change with it. Do not leave the app declaring one host while the
+edge serves another.
+
 `BETTER_AUTH_URL` must match the host actually serving the API. Change it in the same step as
 adding the custom domain, never before — pointing it at a domain that does not resolve yet
 breaks auth on the host that is currently working.
