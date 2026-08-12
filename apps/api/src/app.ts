@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
+import { assetsRouter } from "./assets";
 import { auth } from "./auth";
 import { deleteRow, insertRow, updateRow } from "./data";
 import { inviteEmployee } from "./invite";
@@ -36,6 +37,11 @@ app.use(
 );
 
 app.get("/health", (c) => c.json({ ok: true }));
+
+// Shared brand images for all six frontends. Deliberately outside `/api/*`: these are plain
+// `<img>` and `<link rel="icon">` loads, which are not CORS-gated, so they need no preflight
+// and no origin allowlist.
+app.route("/assets", assetsRouter);
 
 // Better Auth handler (sign-in / sign-up / reset / admin, etc.)
 app.on(["GET", "POST"], "/api/auth/*", (c) => auth.handler(c.req.raw));
