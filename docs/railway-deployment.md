@@ -99,6 +99,55 @@ Two guards keep the mismatch from being silent again:
 - CI resolves its Node from `.nvmrc` (`node-version-file`) rather than a loose `22`, so a green
   CI run and a Railway build agree on the version.
 
+## Shared brand images
+
+The nine images every frontend uses — logos, favicon, hero, the 404 illustration — live in
+`apps/api/assets/` and are served by the `api` service at `/assets/<filename>`. Apps never
+reference them by path; they import the URLs from `@mcmec/lib/constants/assets`.
+
+They previously sat in a public Supabase Storage bucket. `api` inherits that job because it is
+the only always-on service present in both environments, and keeping **one** origin is the point:
+the six apps share a single copy and a single browser cache entry, and a logo change is one
+commit rather than six.
+
+`apps/api/src/assets.ts` reads the directory once at boot into memory (~2 MB) and serves from
+there. That is not just a speed trick — a request never carries a caller-supplied path to the
+filesystem, so path traversal is unreachable by construction instead of by validation. Responses
+carry a content hash as `ETag`, so a client that revalidates anyway gets a 304 rather than 2 MB.
+
+The route sits outside `/api/*` and therefore outside the CORS middleware, deliberately: these
+are `<img>` and `<link rel="icon">` loads, which are not CORS-gated and need no origin allowlist.
+
+> [!IMPORTANT]
+> `Cache-Control` is `public, max-age=31536000, immutable` — carried over unchanged from the
+> Supabase upload. The filenames are **unversioned**, so `immutable` means a browser that has
+> `logo512.png` will not ask again for a year. **Changing an image requires a new filename**, in
+> `apps/api/assets/` and in `packages/lib/src/constants/assets.ts` together. Overwriting one in
+> place looks like it worked — the deploy serves the new bytes, and every returning visitor keeps
+> seeing the old one.
+
+`ASSETS_BASE` in `packages/lib/src/constants/assets.ts` is hardcoded to the **production** API
+origin, in every environment including local dev. The bytes are identical everywhere, so this
+buys one shared cache and adds no build variable a service could be provisioned without. It also
+sidesteps a real constraint: `public` could not read such a variable anyway, because its API
+origin is deliberately server-side only (`API_URL`, not `VITE_API_URL`). The cost is that staging
+loads images from a production host — cosmetic-only if that host is down, and staging is already
+non-canonical.
+
+Because of that hardcoding, the staging API's own `/assets/*` is served but never referenced.
+
+`public`'s CSP must therefore allow the API origin in `img-src`. See the caveat under
+[Response headers on `public`](#response-headers-on-public).
+
+### Response headers on `public`
+
+> [!WARNING]
+> `apps/public/vercel.json` still holds the CSP and the long-cache rule for the app's own build
+> output (JS, CSS, fonts). **Railway does not read that file.** Until those headers are
+> reimplemented in `apps/public/server/plugins/`, the Railway-served `public` has no CSP and no
+> `immutable` caching on its bundles. The brand images are unaffected — their headers come from
+> `api`, which serves them the same way on either host.
+
 ## Search indexing
 
 Exactly one origin belongs in search results: `public` in **production**. Everything else —
