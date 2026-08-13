@@ -160,6 +160,10 @@ function readPlan() {
 	}
 
 	const plan = JSON.parse(readFileSync(STATUS_FILE, "utf8"));
+	// Deleted the moment it has been read, not merely in the outer `finally`. The commit below
+	// stages with `git add -A`, which runs long before that finally does — so a file left lying
+	// here goes into the release commit. It did, once.
+	rmSync(STATUS_FILE, { force: true });
 
 	if (!plan.releases?.length) {
 		fail("There are no pending changesets to consume.");
