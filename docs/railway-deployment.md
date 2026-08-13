@@ -248,8 +248,21 @@ browser calls fail CORS.
 > planned. These are compared as exact strings, so a near miss fails closed and silently: the
 > app loads, then every API call is blocked by CORS. Read the real hostnames back from Railway
 > (`RAILWAY_PUBLIC_DOMAIN`, or the service's custom domains) rather than trusting a doc. This
-> already bit once — `website-management` was provisioned as
-> `website-management-staging.…` while the origin list carried `website-staging.…`.
+> already bit once in each environment — `website-management` was provisioned as
+> `website-management-staging.…` while the origin list carried `website-staging.…`, and again in
+> production as `website-management.…` against an origin list carrying `website.…`.
+
+The same hostname has to satisfy three places at once, and only one of them complains when it is
+wrong:
+
+1. the **custom domain** on the Railway service,
+2. the API's **`TRUSTED_ORIGINS`** — fails closed and silently,
+3. **`appUrl()`** in `@mcmec/lib`'s app registry, which builds the app-switcher links.
+
+`appUrl` takes the subdomain *label* and appends `-staging` outside production, so the label must
+be the production host minus the root domain, and the staging host must be exactly that label
+plus `-staging`. `website-management` / `website-management-staging` satisfies this; `website`
+matched neither environment, so the switcher pointed at a host that has never existed.
 
 ## Domains and the session cookie
 
@@ -263,7 +276,7 @@ would need its own login.
 | `central` | `central.middlesexmosquito.org` | `central-staging.middlesexmosquito.org` |
 | `admin` | `admin.middlesexmosquito.org` | `admin-staging.middlesexmosquito.org` |
 | `hr` | `hr.middlesexmosquito.org` | `hr-staging.middlesexmosquito.org` |
-| `website-management` | `website.middlesexmosquito.org` | `website-management-staging.middlesexmosquito.org` |
+| `website-management` | `website-management.middlesexmosquito.org` | `website-management-staging.middlesexmosquito.org` |
 | `api` | `api.middlesexmosquito.org` | `api-staging.middlesexmosquito.org` |
 | `public` | `middlesexmosquito.org` (apex) | `staging.middlesexmosquito.org` |
 
@@ -346,3 +359,50 @@ For each service:
 6. Add the custom domain and the matching DNS CNAME.
 7. Add the new origin to the `api` service's `TRUSTED_ORIGINS` (not needed for `public`).
 8. Once the API's own domain resolves, update `BETTER_AUTH_URL` to match and redeploy.
+
+### Bringing services into a second environment
+
+Services are **per-environment**, not project-wide: creating one in `staging` does not create it
+in `production`. Railway's mechanism for the second environment is **Sync Environments** — open
+the target environment, Sync, pick the source, review the staged changes, approve.
+
+Beware two things the CLI makes look otherwise. `railway add --service <name>` refuses with *"a
+service named X already exists in this project"*, because the **name** is project-scoped even
+though the instance is not. And `railway variables --service X --environment Y` returns a
+resolved variable set — injected `RAILWAY_*` values and all — for an environment where the
+service does not exist, so a successful response is **not** evidence that it does. The dashboard
+is the authority.
+
+What sync carried, when production was built from staging:
+
+| | Carried |
+| --- | --- |
+| Repo connection, Root Directory | yes |
+| Config-as-code path | yes |
+| Deploy branch | yes |
+| **Service variables** | **yes — overwriting the target's** |
+| Serverless toggle | no |
+
+> [!WARNING]
+> **Re-assert every variable after a sync, then rebuild.** The synced services arrived carrying
+> staging's `VITE_API_URL`, `API_URL` and `PUBLIC_ENV=staging`. `VITE_*` is inlined at build
+> time, so fixing the variable afterwards changes nothing until a rebuild — and the failure is
+> invisible from outside: the service builds, deploys, goes green, and serves a working app that
+> talks to the **staging** API under the staging cookie prefix. The only way to see it is to read
+> the shipped bundle:
+>
+> ```bash
+> curl -s https://<host>/ | grep -oE '/assets/[a-zA-Z0-9_-]+\.js' | head -1   # entry chunk
+> curl -s https://<host>/assets/<chunk>.js | grep -c 'api-staging'            # must be 0
+> ```
+>
+> Setting a variable *without* `--skip-deploys` triggers the rebuild that re-bakes it.
+
+Sync also does not carry the Serverless toggle, and it will happily propagate a setting that is
+wrong at the source: staging had `public` on Serverless, which contradicts the always-on rule
+above. Check it per service rather than assuming the source environment is right.
+
+Finally, a health check on a Serverless service can take longer than a naive timeout allows — a
+cold boot plus TLS negotiation exceeded `curl --max-time 12` repeatedly and reported `000` on a
+service that was serving `200` perfectly well. Allow tens of seconds before concluding anything
+is down.
