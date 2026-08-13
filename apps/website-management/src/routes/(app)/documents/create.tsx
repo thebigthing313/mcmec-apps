@@ -1,4 +1,4 @@
-import type { DocumentsRowType } from "@mcmec/supabase/db/documents";
+import type { DocumentsRowType } from "@mcmec/schemas/db/documents";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { DocumentForm } from "@/src/components/document-form";

@@ -9,19 +9,20 @@
  * The exported `*QueryOptions` are the app's read interface — routes don't know or care
  * where the rows come from.
  */
-import { DocumentTypesRowSchema } from "@mcmec/supabase/db/document-types";
-import { DocumentsRowSchema } from "@mcmec/supabase/db/documents";
-import { InsecticidesRowSchema } from "@mcmec/supabase/db/insecticides";
-import { JobPostingsRowSchema } from "@mcmec/supabase/db/job-postings";
-import { MeetingsRowSchema } from "@mcmec/supabase/db/meetings";
-import { MosquitoActivityDataRowSchema } from "@mcmec/supabase/db/mosquito-activity-data";
-import { MunicipalitiesRowSchema } from "@mcmec/supabase/db/municipalities";
-import { NoticeTypesRowSchema } from "@mcmec/supabase/db/notice-types";
-import { NoticesRowSchema } from "@mcmec/supabase/db/notices";
-import { SprayScheduleMunicipalitiesRowSchema } from "@mcmec/supabase/db/spray-schedule-municipalities";
-import { SpraySchedulesRowSchema } from "@mcmec/supabase/db/spray-schedules";
-import { ZipCodesRowSchema } from "@mcmec/supabase/db/zip-codes";
-import { fetchShapeSnapshot } from "@mcmec/supabase-tanstack-db-integration";
+
+import { fetchShapeSnapshot } from "@mcmec/collections";
+import { DocumentTypesRowSchema } from "@mcmec/schemas/db/document-types";
+import { DocumentsRowSchema } from "@mcmec/schemas/db/documents";
+import { InsecticidesRowSchema } from "@mcmec/schemas/db/insecticides";
+import { JobPostingsRowSchema } from "@mcmec/schemas/db/job-postings";
+import { MeetingsRowSchema } from "@mcmec/schemas/db/meetings";
+import { MosquitoActivityDataRowSchema } from "@mcmec/schemas/db/mosquito-activity-data";
+import { MunicipalitiesRowSchema } from "@mcmec/schemas/db/municipalities";
+import { NoticeTypesRowSchema } from "@mcmec/schemas/db/notice-types";
+import { NoticesRowSchema } from "@mcmec/schemas/db/notices";
+import { SprayScheduleMunicipalitiesRowSchema } from "@mcmec/schemas/db/spray-schedule-municipalities";
+import { SpraySchedulesRowSchema } from "@mcmec/schemas/db/spray-schedules";
+import { ZipCodesRowSchema } from "@mcmec/schemas/db/zip-codes";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import type z from "zod";

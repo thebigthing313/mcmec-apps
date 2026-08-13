@@ -2,7 +2,7 @@ import {
 	toContactPayload,
 	WaterManagementFormSchema,
 	type WaterManagementFormType,
-} from "@mcmec/supabase/db/public-requests";
+} from "@mcmec/schemas/db/public-requests";
 import {
 	Field,
 	FieldContent,

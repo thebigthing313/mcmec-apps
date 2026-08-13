@@ -3,7 +3,7 @@ import {
 	NonEmptyStringSchema,
 	NonEmptyUUID,
 } from "@mcmec/lib/constants/validators";
-import type { SpraySchedulesRowType } from "@mcmec/supabase/db/spray-schedules";
+import type { SpraySchedulesRowType } from "@mcmec/schemas/db/spray-schedules";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import type { ComboboxOption } from "@mcmec/ui/inputs/combobox-input";
 import type { MultiComboboxOption } from "@mcmec/ui/inputs/multi-combobox-input";

@@ -94,7 +94,7 @@ Unit tests for the job postings data layer. Test the Zod validation schemas to e
 - [ ] Zod schema tests: valid job posting data passes, invalid data (missing title, bad content shape, etc.) is rejected
 - [ ] Edge case tests for `published_at`: null (draft), past date, future date, exact boundary
 - [ ] Status derivation helper tested: all combinations of `published_at` and `is_closed` produce correct status strings
-- [ ] Tests run via `pnpm --filter @mcmec/supabase test:run` (or whichever package the schemas live in)
+- [ ] Tests run via `pnpm --filter @mcmec/schemas test:run` (or whichever package the schemas live in)
 - [ ] Tests added to CI workflow
 
 ---

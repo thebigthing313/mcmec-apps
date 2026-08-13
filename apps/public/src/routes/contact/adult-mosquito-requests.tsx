@@ -2,7 +2,7 @@ import {
 	AdultMosquitoFormSchema,
 	type AdultMosquitoFormType,
 	toContactPayload,
-} from "@mcmec/supabase/db/public-requests";
+} from "@mcmec/schemas/db/public-requests";
 import {
 	Field,
 	FieldContent,

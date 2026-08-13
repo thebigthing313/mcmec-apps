@@ -116,7 +116,7 @@ Work:
    ```ts
    import { electricCollectionOptions } from "@tanstack/electric-db-collection";
    createCollection(electricCollectionOptions({
-     schema,                                   // the @mcmec/supabase/db/* Zod schema (snake_case)
+     schema,                                   // the @mcmec/schemas/db/* Zod schema (snake_case)
      shapeOptions: {
        url: `${apiUrl}/api/shapes/${table}`,
        fetchClient: (input, init) => fetch(input, { ...init, credentials: "include" }), // cookie auth
@@ -146,7 +146,7 @@ Work:
    and rely on shape refetch. Recommend wiring it — it's ~5 lines per endpoint. (See the collection-setup
    skill's "Electric txid queried outside mutation transaction" CRITICAL note.)
 
-### 1c. `@mcmec/supabase` — remove the browser client, keep the schemas
+### 1c. `@mcmec/schemas` — remove the browser client, keep the schemas
 
 Files:
 - `client.ts` — `createClient()` + `cookieStorage` (cross-subdomain PKCE). **Remove** — auth is Better Auth
@@ -197,7 +197,7 @@ every integration issue.
    types/subpaths. Green `@mcmec/auth` vitest.
 2. `supabase-tanstack-db-integration`: add `@tanstack/electric-db-collection`; convert the two collection
    factories to Electric reads + API writes; add txid to the backend writes (§1b.3).
-3. `@mcmec/supabase`: drop `client.ts`; convert `collections/notices.ts` to the new input shape + merged
+3. `@mcmec/schemas`: drop `client.ts`; convert `collections/notices.ts` to the new input shape + merged
    `publicRequests`; keep `db/*`.
 4. **Phase 4 (app wiring, separate):** `apps/website-management` (renamed from `apps/notices`) — swap `supabase`/`queryClient` wiring for
    `VITE_API_URL` + the auth client; update the route guard permission name (`public_notices` →
@@ -213,7 +213,7 @@ every integration issue.
 
 - **Casing on writes.** The generic `/api/data` endpoints validate with **drizzle-zod** `createInsertSchema`/
   `createUpdateSchema`, whose keys are the Drizzle **TS property names = camelCase** (e.g. `noticeTypeId`,
-  `isPublished`, `zipCodeId`). But the **Electric shape output and the `@mcmec/supabase/db/*` Zod schemas are
+  `isPublished`, `zipCodeId`). But the **Electric shape output and the `@mcmec/schemas/db/*` Zod schemas are
   snake_case**. So reads are snake_case and writes expect camelCase. **Decision:** either (a) map
   snake→camel in the collection write handlers, or (b) give the API generic writes a snake_case-tolerant
   schema. Pick one and apply consistently. (The `public_requests` intake endpoint already takes a specific

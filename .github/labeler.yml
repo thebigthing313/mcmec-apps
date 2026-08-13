@@ -16,7 +16,9 @@
 
 "migration":
   - changed-files:
-      - any-glob-to-any-file: "supabase/migrations/**"
+      - any-glob-to-any-file:
+          - "apps/api/drizzle/**"
+          - "apps/api/src/db/schema.ts"
 
 "ci":
   - changed-files:

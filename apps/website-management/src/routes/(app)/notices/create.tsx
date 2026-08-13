@@ -1,4 +1,4 @@
-import type { NoticesRowType } from "@mcmec/supabase/db/notices";
+import type { NoticesRowType } from "@mcmec/schemas/db/notices";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { NoticeForm } from "@/src/components/notice-form";

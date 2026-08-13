@@ -1,7 +1,7 @@
 import {
 	createHrCollections,
 	type HrCollections,
-} from "@mcmec/supabase/collections/hr";
+} from "@mcmec/schemas/collections/hr";
 import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------

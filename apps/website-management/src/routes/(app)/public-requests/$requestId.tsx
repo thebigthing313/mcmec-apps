@@ -2,7 +2,7 @@ import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import {
 	type RequestStatus,
 	RequestStatusEnum,
-} from "@mcmec/supabase/db/public-requests";
+} from "@mcmec/schemas/db/public-requests";
 import {
 	AlertDialog,
 	AlertDialogAction,

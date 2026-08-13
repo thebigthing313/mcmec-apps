@@ -1,5 +1,5 @@
 import { formatDateShort } from "@mcmec/lib/functions/date-fns";
-import type { RequestStatus } from "@mcmec/supabase/db/public-requests";
+import type { RequestStatus } from "@mcmec/schemas/db/public-requests";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {

@@ -1,4 +1,4 @@
-import type { RequestStatus } from "@mcmec/supabase/db/public-requests";
+import type { RequestStatus } from "@mcmec/schemas/db/public-requests";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {

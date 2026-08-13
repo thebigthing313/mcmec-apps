@@ -6,7 +6,7 @@ import {
 import {
 	MeetingsRowSchema,
 	type MeetingsRowType,
-} from "@mcmec/supabase/db/meetings";
+} from "@mcmec/schemas/db/meetings";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import z from "zod";
 

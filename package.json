@@ -33,8 +33,6 @@
 		"change": "changeset",
 		"check-pkgs": "manypkg check",
 		"fix-pkgs": "manypkg fix",
-		"gen-seed": "supabase db reset --no-seed && tsx supabase/scripts/generate-seed.ts",
-		"gen-types": "supabase gen types typescript --local > ./packages/supabase/src/database.types.ts",
 		"preinstall": "node scripts/check-node-version.mjs",
 		"prepare": "husky",
 		"release": "node scripts/release.mjs",
@@ -45,9 +43,7 @@
 	},
 	"pnpm": {
 		"overrides": {
-			"@supabase/supabase-js": "^2.100.1",
 			"@tanstack/db": "^0.5.33",
-			"@tanstack/query-db-collection": "^1.0.30",
 			"@tanstack/react-router": "^1.157.18"
 		}
 	},

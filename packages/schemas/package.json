@@ -1,0 +1,33 @@
+{
+	"author": "",
+	"dependencies": {
+		"@mcmec/collections": "workspace:*",
+		"@mcmec/lib": "workspace:*",
+		"@tanstack/query-core": "^5.90.20",
+		"@tanstack/react-db": "^0.1.61",
+		"@tanstack/react-query": "^5.90.16",
+		"zod": "^4.3.5"
+	},
+	"description": "",
+	"devDependencies": {
+		"@mcmec/typescript-config": "workspace:*",
+		"@types/node": "25.0.9",
+		"typescript": "^5.9.3",
+		"vitest": "^2.1.5"
+	},
+	"exports": {
+		"./db/*": "./src/db/*.ts",
+		"./collections/*": "./src/collections/*.ts"
+	},
+	"keywords": [],
+	"license": "ISC",
+	"main": "index.js",
+	"name": "@mcmec/schemas",
+	"packageManager": "pnpm@10.19.0",
+	"scripts": {
+		"test": "vitest",
+		"test:run": "vitest run"
+	},
+	"type": "module",
+	"version": "2.0.1"
+}

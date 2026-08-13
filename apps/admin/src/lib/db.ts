@@ -1,7 +1,7 @@
 import {
 	type AdminCollections,
 	createAdminCollections,
-} from "@mcmec/supabase/collections/admin";
+} from "@mcmec/schemas/collections/admin";
 import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@ import {
 	NonEmptyStringSchema,
 	ValidEmailSchema,
 } from "@mcmec/lib/constants/validators";
-import { GeneralInquirySubmissionSchema } from "@mcmec/supabase/db/public-requests";
+import { GeneralInquirySubmissionSchema } from "@mcmec/schemas/db/public-requests";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";

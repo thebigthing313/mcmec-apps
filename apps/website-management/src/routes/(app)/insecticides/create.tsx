@@ -1,7 +1,7 @@
 import {
 	InsecticidesRowSchema,
 	type InsecticidesRowType,
-} from "@mcmec/supabase/db/insecticides";
+} from "@mcmec/schemas/db/insecticides";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
 import { insecticides } from "@/src/lib/db";
