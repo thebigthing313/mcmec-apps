@@ -141,12 +141,31 @@ Because of that hardcoding, the staging API's own `/assets/*` is served but neve
 
 ### Response headers on `public`
 
-> [!WARNING]
-> `apps/public/vercel.json` still holds the CSP and the long-cache rule for the app's own build
-> output (JS, CSS, fonts). **Railway does not read that file.** Until those headers are
-> reimplemented in `apps/public/server/plugins/`, the Railway-served `public` has no CSP and no
-> `immutable` caching on its bundles. The brand images are unaffected — their headers come from
-> `api`, which serves them the same way on either host.
+The CSP lives in `server/plugins/csp.ts`, set from Nitro's `response` hook so it covers SSR
+pages, static assets and errors alike. It was previously configured in
+`apps/public/vercel.json`, which **Railway does not read** — a header defined only there
+disappears the moment the app is served from Railway.
+
+Both copies exist until the Vercel project is retired, because Vercel still serves production.
+Change them together. The one permitted difference is `vercel.live` / `*.vercel.com`, which
+Vercel's preview toolbar needs and Railway has no use for.
+
+> [!IMPORTANT]
+> The policy must allow `fonts.googleapis.com` in `style-src` and `fonts.gstatic.com` in
+> `font-src`. `@mcmec/ui`'s `globals.css` opens with an `@import` of Roboto from Google Fonts,
+> and that `@import` survives into the built stylesheet. The original policy allowed neither, so
+> the webfont was blocked in production and the site rendered in the fallback stack (#99). A CSP
+> rejecting a stylesheet the app itself ships is easy to miss, because nothing fails — the page
+> renders, in the wrong font. Self-hosting Roboto would drop both origins and a round trip.
+
+The long-cache rule did **not** move, because Nitro already sends
+`public, max-age=31536000, immutable` with an `ETag` on the content-hashed files it emits under
+`/assets/`, and withholds it from the unhashed files copied out of `public/` (`sitemap.xml`, the
+Search Console verification page). That is stricter than the `vercel.json` rule, which matched on
+file extension and would have frozen an unhashed image for a year if one were added to `public/`.
+
+The brand images are unaffected by any of this — their headers come from `api`, which serves them
+the same way on either host.
 
 ## Search indexing
 

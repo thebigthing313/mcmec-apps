@@ -18,7 +18,7 @@ export default defineConfig({
 			handlers: [
 				{ handler: "./server/routes/robots.txt.ts", route: "/robots.txt" },
 			],
-			plugins: ["./server/plugins/robots.ts"],
+			plugins: ["./server/plugins/csp.ts", "./server/plugins/robots.ts"],
 		}),
 		viteReact(),
 	],
