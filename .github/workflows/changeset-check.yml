@@ -1,5 +1,15 @@
 name: Changeset Check
 
+# The assertion is the opposite on each side, because the two kinds of PR are opposites.
+#
+# A feature PR into `develop` must ADD a changeset, so the change gets a changelog entry.
+# A release PR into `main` must have CONSUMED them all, so those entries actually get written.
+#
+# Running the feature check on both, as this workflow used to, made the release side worse than
+# useless: with changesets still pending it passed (proving only that they exist, never that
+# they were consumed), and once they were consumed `changeset status` exits 1 — "packages have
+# been changed but no changesets were found". Green when you forgot, red when you did it right.
+
 on:
   pull_request:
     branches: [main, develop]
@@ -17,10 +27,26 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Resolved from .nvmrc rather than a literal, so a green check and a Railway build
+          # agree on the version. Same reasoning as ci.yml.
+          node-version-file: .nvmrc
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Check changeset status
+      - name: Feature PR — require a changeset
+        if: github.base_ref == 'develop'
         run: pnpm changeset status --since=origin/main
+
+      - name: Release PR — require changesets to be consumed
+        if: github.base_ref == 'main'
+        run: |
+          # README.md is changesets' own scaffolding — always present, never consumed.
+          pending=$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' -printf '%f\n' 2>/dev/null | sort)
+          if [ -n "$pending" ]; then
+            echo "::error::Unconsumed changesets are being promoted to main. Run \`pnpm release\` on develop instead of opening this PR by hand."
+            echo "Pending:"
+            echo "$pending" | sed 's/^/  - /'
+            exit 1
+          fi
+          echo "✓ No unconsumed changesets — versions and CHANGELOGs are in this diff."

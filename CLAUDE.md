@@ -148,8 +148,24 @@ All changes go through branches and pull requests — never commit directly to `
 4. **Push and open a PR to `develop`** — the PR template pre-fills a checklist; auto-labeler tags the PR by affected area
 5. **CI runs automatically** — lint, type-check, build, and tests must all pass
 6. **Review, resolve conversations, and squash merge** into `develop`
-7. **When ready to release**, open a PR from `develop` → `main`, review the combined diff, and merge
+7. **When ready to release**, run `pnpm release` on `develop` — see below
 8. **Vercel deploys only affected apps** to production on merge to `main`
+
+### Releasing (`develop` → `main`)
+
+Run `pnpm release` on a clean, up-to-date `develop`. It consumes the pending changesets
+(bumping versions and writing CHANGELOGs), commits `chore: version packages`, pushes, and opens
+the promotion PR. `pnpm release --dry-run` prints the plan and changes nothing.
+
+Do not open the `develop` → `main` PR by hand. CI enforces this: a PR into `main` fails if any
+unconsumed changeset is still in `.changeset/`, because merging one would promote the code while
+silently discarding its changelog. (The check is the mirror image on the other side — a PR into
+`develop` fails if changed packages *lack* a changeset.)
+
+The version commit has to land on `develop` rather than being added to the PR by a bot: the
+`main` ruleset has no bypass actors, so nothing can push to it directly, and the PR's head branch
+*is* `develop`. Pushing straight to `develop` works because that ruleset grants the Admin role a
+bypass; without it, PR the version commit into `develop` first, then re-run.
 
 ### Preview deployments
 Vercel preview deploys are **off by default** on all branches (including `develop`). To trigger one, include `[deploy-preview]` in a commit message.
