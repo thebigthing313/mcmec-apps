@@ -1,5 +1,12 @@
 # @mcmec/supabase
 
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies [cae7305]
+  - @mcmec/lib@0.9.1
+
 ## 2.0.0
 
 ### Major Changes
