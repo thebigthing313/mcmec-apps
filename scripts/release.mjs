@@ -51,13 +51,33 @@ const TARGET_BRANCH = "main";
 // absolute path. Removed in a finally, so a crash mid-run cannot leave it behind.
 const STATUS_FILE = "changeset-status.tmp.json";
 
-/** Run a command, returning trimmed stdout. Throws with the child's stderr attached. */
-function run(cmd, cmdArgs, { capture = true } = {}) {
+/**
+ * Run a command, returning trimmed stdout. Throws with the child's stderr attached.
+ *
+ * `shell` is off by default, and that default is load-bearing. `execFileSync` with a shell
+ * *joins* arguments rather than escaping them, so on Windows anything containing a space or a
+ * newline is torn apart — the multi-line PR body arrives at `gh` as its first word, and a title
+ * with spaces loses everything after the first. `git` and `gh` are real executables and need no
+ * shell, so they get none.
+ */
+function run(cmd, cmdArgs, { capture = true, shell = false } = {}) {
 	return execFileSync(cmd, cmdArgs, {
 		encoding: "utf8",
 		stdio: capture ? ["ignore", "pipe", "pipe"] : "inherit",
-		shell: process.platform === "win32",
+		shell,
 	})?.trim();
+}
+
+/**
+ * pnpm is the one command here that does need a shell on Windows: it is a `.cmd` shim, which
+ * `spawnSync` cannot execute directly (ENOENT). Safe because every argument passed to it below
+ * is a single bare token.
+ */
+function pnpm(pnpmArgs, options = {}) {
+	return run("pnpm", pnpmArgs, {
+		...options,
+		shell: process.platform === "win32",
+	});
 }
 
 function git(...gitArgs) {
@@ -127,7 +147,7 @@ function preflight() {
  */
 function readPlan() {
 	try {
-		run("pnpm", ["changeset", "status", `--output=${STATUS_FILE}`]);
+		pnpm(["changeset", "status", `--output=${STATUS_FILE}`]);
 	} catch (error) {
 		const output = `${error.stdout ?? ""}${error.stderr ?? ""}`;
 		if (output.includes("no changesets were found")) {
@@ -221,12 +241,12 @@ async function main() {
 	}
 
 	console.log("\n· Consuming changesets…");
-	run("pnpm", ["changeset", "version"], { capture: false });
+	pnpm(["changeset", "version"], { capture: false });
 
 	// Version bumps can move internal dependency ranges, which the lockfile records. Without
 	// this the release PR fails CI on `--frozen-lockfile`.
 	console.log("· Updating the lockfile…");
-	run("pnpm", ["install", "--lockfile-only"], { capture: false });
+	pnpm(["install", "--lockfile-only"], { capture: false });
 
 	// Guard against committing a no-op: if the changeset files are still there, `version` did
 	// not do what we think it did, and the commit would be a lie.
