@@ -37,6 +37,7 @@
 		"gen-types": "supabase gen types typescript --local > ./packages/supabase/src/database.types.ts",
 		"preinstall": "node scripts/check-node-version.mjs",
 		"prepare": "husky",
+		"release": "node scripts/release.mjs",
 		"test:e2e": "playwright test",
 		"test:e2e:public": "playwright test --project=public",
 		"test:e2e:hr": "playwright test --project=hr",
