@@ -8,3 +8,8 @@ settings.local.json
 e2e/.auth/
 playwright-report/
 test-results/
+
+# Written by `pnpm release` while it reads the changeset plan, and deleted immediately.
+# Ignored as a backstop: the release commit stages with `git add -A`, so a stray copy would
+# otherwise be committed.
+changeset-status.tmp.json
