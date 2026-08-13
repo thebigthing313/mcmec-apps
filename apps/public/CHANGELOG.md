@@ -1,5 +1,119 @@
 # public
 
+## 2.0.0
+
+### Major Changes
+
+- 76ce7e8: Railway migration Phase 4 — rewire the `public` site to the new backend. This completes the frontend migration.
+
+  **public** — every read now comes from the API's ElectricSQL shape proxy instead of Supabase, and the four intake forms post to the merged public-requests endpoint.
+
+  The site stays server-rendered: reads still run inside TanStack Start server functions, so the data is in the SSR response rather than waiting on a client fetch, and the exported `*QueryOptions` are unchanged — no route touched them. Reading anonymously also means the shape proxy applies the public policy server-side, so unpublished notices, documents, and job postings never reach the process. Spray schedules were a nested PostgREST select; shapes are per-table, so the four shapes are read in parallel and joined in the handler.
+
+  The four submit functions collapse into one that forwards to `POST /api/requests`, which owns the honeypot, Turnstile verification, per-type validation and the insert. Forwarding server-side (rather than posting from the browser) keeps the site talking only to its own origin — no CORS, nothing added to the CSP — and the Turnstile secret now lives only in the API. The visitor's IP is passed through so Turnstile still scores the real client.
+
+  Removed: both Supabase clients, the local Turnstile validator, and `@supabase/ssr` / `@supabase/supabase-js`. `connect-src https://*.supabase.co` is dropped from the CSP; `img-src` keeps it until the brand assets are rehosted. Needs `API_URL` server-side, and no longer needs the Supabase or Turnstile-secret variables.
+
+  **@mcmec/supabase** — the public intake contract, shared by the site and mirroring what the API validates: a `requestType` discriminated union of submission payloads, plus the flat form schemas the site's fields bind to and a helper mapping the contact block into a payload.
+
+  **@mcmec/supabase-tanstack-db-integration** — new `fetchShapeSnapshot`: a one-shot shape read for callers that want current rows rather than a live collection. It waits for the shape to report up-to-date, then aborts the stream so no long-poll outlives an SSR request, and applies the same parser the collections use so server and client rows agree.
+
+### Minor Changes
+
+- 6243c99: Serve the Content-Security-Policy from Nitro instead of `vercel.json`, and let the webfont through
+
+  `apps/public/vercel.json` was the only place the CSP was configured, and Railway does not read
+  that file — the header would have vanished the moment production moved off Vercel. It now comes
+  from `server/plugins/csp.ts`, set on Nitro's `response` hook so it covers SSR pages, static
+  assets and error responses alike.
+
+  The policy also gained `fonts.googleapis.com` in `style-src` and `fonts.gstatic.com` in
+  `font-src`. `@mcmec/ui`'s `globals.css` opens with an `@import` of Roboto that survives into the
+  built stylesheet, and the old policy allowed neither origin — so the font has been blocked in
+  production and the site has been rendering in the fallback stack (#99). Applied to both copies
+  of the policy, so it takes effect on whichever host serves production first.
+
+  The `vercel.json` long-cache rule was deliberately not carried over: Nitro already sends
+  `public, max-age=31536000, immutable` with an `ETag` on its content-hashed `/assets/` output, and
+  correctly withholds it from unhashed files copied out of `public/`.
+
+### Patch Changes
+
+- d1cc9c7: Serve the shared brand images from Railway instead of Supabase Storage. This removes the last runtime dependency on Supabase in the frontends.
+
+  **api** — the nine images (logos, favicon, hero, the 404 illustration) are committed to `apps/api/assets/` and served at `/assets/<filename>` with `Cache-Control: public, max-age=31536000, immutable`, carried over byte-for-byte from what the Supabase upload set. `api` gets the job because it is the only always-on service present in both environments, which preserves the one thing the bucket was buying: a single canonical origin, so all six apps share one copy and one browser cache entry.
+
+  The directory is read once at boot into memory (~2 MB). That keeps a caller-supplied path from ever reaching the filesystem, so traversal is unreachable by construction rather than by validation, and it makes a content-hash `ETag` free — a client that revalidates despite `immutable` gets a 304 instead of 2 MB. The route sits outside `/api/*` and so outside the CORS middleware, deliberately: `<img>` and `<link rel="icon">` loads are not CORS-gated.
+
+  **@mcmec/lib** — `constants/assets` now points at the API origin. It stays hardcoded to production in every environment, including local dev: the bytes are identical everywhere, so this gives one shared cache and adds no build variable a service could be provisioned without — and `public` could not read such a variable anyway, since its API origin is deliberately server-side only.
+
+  Because the filenames are unversioned and served `immutable`, changing an image now requires a **new filename** in both `apps/api/assets/` and `constants/assets`. Overwriting in place will look correct on a fresh browser and stay stale for a year on every returning one.
+
+  **public** — `img-src` drops `https://*.supabase.co` for the API origin, completing the CSP cleanup Phase 4 left open.
+
+  Also removed `scripts/upload-assets-to-storage.ts`, which was the only writer to the bucket. Publishing an image is now a commit.
+
+- 8ed561d: Make the frontends deployable on Railway.
+
+  Vercel supplied two things these apps silently depended on: a static file server with an SPA
+  rewrite, and a build pipeline that knew which app it was building. A Railway service supplies
+  neither — it gives you a container and runs your start command. Nothing here could boot.
+
+  **Static serving.** The four SPAs gain `sirv-cli` as a runtime dependency and a start script,
+  `sirv dist --single --etag --host 0.0.0.0`. `--single` restores the SPA fallback, without which
+  every deep link 404s on refresh. `--host 0.0.0.0` is not optional: `sirv-cli` defaults `--host`
+  to `localhost`, so the container would bind loopback and Railway would return 502 with the
+  process apparently healthy. It is a regular dependency rather than a devDependency because the
+  production install prunes devDependencies.
+
+  **`public`'s start script was broken.** It pointed at `dist/server/server.js` via a `pnpx srvx`
+  invocation, but the build emits `.output/server/index.mjs` and `srvx` was never a dependency.
+  `pnpm --filter public start` failed on any machine; nothing had run it, so it went unnoticed and
+  would have failed on the first SSR deploy. It is now `node .output/server/index.mjs`.
+
+  **Per-service config.** Each app carries `apps/<app>/railway.json` with its own build command,
+  start command and watch patterns. This matters because the repo-root `railway.json` belongs to
+  `api` and starts with `db:migrate` — any service rooted at the repo root without an explicit
+  config path would read it and try to boot the API.
+
+  **Cookie namespacing.** `COOKIE_PREFIX` now namespaces the session cookie. Staging hosts are
+  siblings of production under the same parent domain, and the SSO cookie is scoped to that
+  shared parent, so without distinct prefixes both environments write the same cookie name at
+  the same scope: signing into staging would clobber a production session and vice versa, and
+  each API would then receive the other environment's token and reject it. Left alone that
+  presents as sporadic unexplained logouts rather than as an error. Unset falls back to Better
+  Auth's default, which is correct for local dev.
+
+  `docs/railway-deployment.md` records the topology, per-service settings, build-time variable
+  rules, the domain and cookie table, and the dashboard-only steps.
+
+- f609219: Keep every deployment except the production public site out of search results.
+
+  `public` sets `X-Robots-Tag: noindex, nofollow` from a Nitro response hook and serves a
+  `Disallow: /` robots.txt whenever it is not production, so staging cannot be indexed as a
+  duplicate of the Commission's official channel for legal notices. The switch asks whether the
+  environment _is_ production rather than whether it is staging, so a service missing its
+  configuration declines to be indexed instead of quietly appearing in search results.
+
+  The four staff apps carry a `noindex` meta tag and a `Disallow: /` robots.txt in every
+  environment — they have no public audience anywhere.
+
+- Updated dependencies [cf2e2aa]
+- Updated dependencies [d1cc9c7]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+  - @mcmec/lib@0.9.0
+  - @mcmec/supabase@2.0.0
+  - @mcmec/ui@1.6.0
+  - @mcmec/supabase-tanstack-db-integration@0.3.0
+
 ## 1.5.2
 
 ### Patch Changes
@@ -61,7 +175,6 @@
 ### Minor Changes
 
 - 0f84145: Fix auth loop in admin/HR apps, improve public nav bar, and resolve various issues.
-
   - fix(admin,hr): use shared cookie storage client to fix cross-subdomain auth loop (#80)
   - feat(admin): add employee management (list, view, edit, delete, invite) (#69)
   - fix(public): replace NavigationMenu with Popover for click-based nav and correct positioning (#78, #33)
@@ -85,7 +198,6 @@
 ### Minor Changes
 
 - 1a77b67: Add documents system, archive search, and retention warning for LFN 2026-01 compliance
-
   - Add document_types and documents tables with RLS policies and admin CRUD in the notices app
   - Add Document Categories management page mirroring the existing notice categories pattern
   - Add public /transparency page displaying published documents grouped by type and fiscal year

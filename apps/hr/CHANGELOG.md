@@ -1,5 +1,84 @@
 # hr
 
+## 1.0.0
+
+### Major Changes
+
+- 76ce7e8: Railway migration Phase 4 — rewire the `hr` and `central` apps to the new backend.
+
+  **hr** — Better Auth cookie client, its own `/login`, and the `(app)` guard verifying `manage_employees` against the auth client instead of a Supabase session. Employees and job postings read through ElectricSQL collections and write through the Hono API; the removed `created_by`/`updated_by` columns are gone from both insert paths. Requires `VITE_API_URL`.
+
+  **central** — same auth wiring, plus the four screens it owns as the employee portal:
+  - **Sign in** calls Better Auth and no longer hands sibling apps a session. The old dev-only trick of appending access and refresh tokens to the redirect URL in a hash fragment is deleted — one cookie is shared across every app now — and the redirect param is restricted to same-origin paths.
+  - **Forgot password** requests a Better Auth reset email.
+  - **Reset password** and **set password** both complete the tokenized reset, reading `?token=` from the URL. Setting a password no longer signs you in, so both finish at sign-in.
+
+  **@mcmec/ui** — new `blocks/invite-button`. HR and admin each had their own copy (HR's still called the deleted Supabase edge function); they now share one that takes `apiUrl`, posts to `/api/invite`, surfaces failures, and distinguishes a login created with a failed invite email.
+
+### Patch Changes
+
+- 8ed561d: Make the frontends deployable on Railway.
+
+  Vercel supplied two things these apps silently depended on: a static file server with an SPA
+  rewrite, and a build pipeline that knew which app it was building. A Railway service supplies
+  neither — it gives you a container and runs your start command. Nothing here could boot.
+
+  **Static serving.** The four SPAs gain `sirv-cli` as a runtime dependency and a start script,
+  `sirv dist --single --etag --host 0.0.0.0`. `--single` restores the SPA fallback, without which
+  every deep link 404s on refresh. `--host 0.0.0.0` is not optional: `sirv-cli` defaults `--host`
+  to `localhost`, so the container would bind loopback and Railway would return 502 with the
+  process apparently healthy. It is a regular dependency rather than a devDependency because the
+  production install prunes devDependencies.
+
+  **`public`'s start script was broken.** It pointed at `dist/server/server.js` via a `pnpx srvx`
+  invocation, but the build emits `.output/server/index.mjs` and `srvx` was never a dependency.
+  `pnpm --filter public start` failed on any machine; nothing had run it, so it went unnoticed and
+  would have failed on the first SSR deploy. It is now `node .output/server/index.mjs`.
+
+  **Per-service config.** Each app carries `apps/<app>/railway.json` with its own build command,
+  start command and watch patterns. This matters because the repo-root `railway.json` belongs to
+  `api` and starts with `db:migrate` — any service rooted at the repo root without an explicit
+  config path would read it and try to boot the API.
+
+  **Cookie namespacing.** `COOKIE_PREFIX` now namespaces the session cookie. Staging hosts are
+  siblings of production under the same parent domain, and the SSO cookie is scoped to that
+  shared parent, so without distinct prefixes both environments write the same cookie name at
+  the same scope: signing into staging would clobber a production session and vice versa, and
+  each API would then receive the other environment's token and reject it. Left alone that
+  presents as sporadic unexplained logouts rather than as an error. Unset falls back to Better
+  Auth's default, which is correct for local dev.
+
+  `docs/railway-deployment.md` records the topology, per-service settings, build-time variable
+  rules, the domain and cookie table, and the dashboard-only steps.
+
+- f609219: Keep every deployment except the production public site out of search results.
+
+  `public` sets `X-Robots-Tag: noindex, nofollow` from a Nitro response hook and serves a
+  `Disallow: /` robots.txt whenever it is not production, so staging cannot be indexed as a
+  duplicate of the Commission's official channel for legal notices. The switch asks whether the
+  environment _is_ production rather than whether it is staging, so a service missing its
+  configuration declines to be indexed instead of quietly appearing in search results.
+
+  The four staff apps carry a `noindex` meta tag and a `Disallow: /` robots.txt in every
+  environment — they have no public audience anywhere.
+
+- Updated dependencies [cf2e2aa]
+- Updated dependencies [d1cc9c7]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+  - @mcmec/lib@0.9.0
+  - @mcmec/supabase@2.0.0
+  - @mcmec/auth@0.4.0
+  - @mcmec/ui@1.6.0
+  - @mcmec/supabase-tanstack-db-integration@0.3.0
+
 ## 0.4.3
 
 ### Patch Changes
@@ -45,7 +124,6 @@
 ### Minor Changes
 
 - 0f84145: Fix auth loop in admin/HR apps, improve public nav bar, and resolve various issues.
-
   - fix(admin,hr): use shared cookie storage client to fix cross-subdomain auth loop (#80)
   - feat(admin): add employee management (list, view, edit, delete, invite) (#69)
   - fix(public): replace NavigationMenu with Popover for click-based nav and correct positioning (#78, #33)

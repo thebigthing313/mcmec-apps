@@ -1,5 +1,109 @@
 # notices
 
+## 1.0.0
+
+### Major Changes
+
+- 76ce7e8: Railway migration Phase 4 — rewire the `website-management` app to the new backend.
+
+  **website-management** — auth moves to the Better Auth cookie client, with the app self-hosting its own `/login` and the `(app)` guard verifying `manage_website` (renamed from `public_notices`). All content reads stream from ElectricSQL collections and writes go through the Hono API.
+
+  The four public-intake surfaces (adult mosquito, mosquitofish, water management, contact submissions) collapse into **one "Public Requests" section** backed by the merged `public_requests` table, with request-type and status filters, a triage view that renders each type's `details` generically, and delete. Staff-entered requests are gone: the backend accepts submissions only from the public site's Turnstile-gated intake endpoint, so the four staff create-forms were removed along with the per-type tables and edit forms.
+
+  Spray-schedule municipality links now go through the API's junction endpoints, and the weekly-activity CSV upload posts to the bulk import endpoint — which replaces only the years present in the file instead of wiping the whole dataset, so the confirmation copy changed to match. Audit columns (`created_by`/`updated_by`) are gone from every form and the "Creator" column was dropped from the notices and documents tables. Requires `VITE_API_URL`.
+
+  **@mcmec/supabase** — the notices collection factory gained an on-demand `mosquitoActivityData` collection so the weekly-activity charts read live instead of paging through PostgREST.
+
+  **api** — new `GET /api/spray-schedules/municipalities` (gated `manage_website`) returning the junction rows. The junction has a composite primary key and no `id`, so it can't be an Electric collection; this is its read path.
+
+- 76ce7e8: Rename the `notices` app to `website-management`.
+
+  The app long ago outgrew its name — it manages every kind of content published on the public website (notices, meetings, insecticides, spray schedules, documents, service requests, weekly activity), not just notices. The workspace package and directory are now `website-management`, the UI calls it "Website Management", and the dev server moved from port 3002 to 3006 (3002 collides with other local tooling).
+
+  The `notices` domain itself is unchanged — the `notices` table, its collections, and the public site's `/notices` routes keep their names.
+
+  **Deployment follow-up:** the production subdomain moves `notices.middlesexmosquito.org` → `website.middlesexmosquito.org` (declared in `@mcmec/lib`'s app registry and the API's `TRUSTED_ORIGINS`), and the Vercel project's root directory must be repointed at `apps/website-management`.
+
+### Patch Changes
+
+- 76ce7e8: Seed edit forms from the live row instead of a one-shot read.
+
+  Route loaders read a collection once — `await c.preload()` then `c.get(id)`. `preload()` resolves when the sync layer marks the collection ready, which Electric does on the `up-to-date` control message — and that message does not mean "current as of now". It arrives on the log catch-up request, which the shape proxy passes through with Electric's `cache-control: public, max-age=60, stale-while-revalidate=300`. A cold page load can therefore replay a cached catch-up ending in `up-to-date`, mark the collection ready, and hand the loader rows up to ~60 seconds old, or ~6 minutes under stale-while-revalidate. The live long-poll lands moments later and the collection converges, but the loader has already read.
+
+  That was not merely cosmetic. `onUpdate` sends the diff between the submitted form value and the live collection row, so any field left stale in the seed differs from current and is written back — silently reverting whatever else had changed, with no error and no warning. The previous PostgREST reads were always current, so this only appeared with the move to synced collections.
+
+  The five edit routes (notices, documents, meetings, insecticides, spray schedules) and the two detail views (notices, documents) now read their record from a live query. Because TanStack Form reads `defaultValues` only on mount, re-seeding means remounting, so the form carries a `key` derived from the row's `updated_at`. That key is latched on the first focus inside the form: until you touch it, it tracks the live row; afterwards it is yours, and a sync landing mid-edit will not pull text out from under you. Whoever saves last wins.
+
+  The spray schedule's municipality set lives in a separate collection with no `updated_at` of its own, so its linked ids are folded into the version stamp.
+
+- 8ed561d: Make the frontends deployable on Railway.
+
+  Vercel supplied two things these apps silently depended on: a static file server with an SPA
+  rewrite, and a build pipeline that knew which app it was building. A Railway service supplies
+  neither — it gives you a container and runs your start command. Nothing here could boot.
+
+  **Static serving.** The four SPAs gain `sirv-cli` as a runtime dependency and a start script,
+  `sirv dist --single --etag --host 0.0.0.0`. `--single` restores the SPA fallback, without which
+  every deep link 404s on refresh. `--host 0.0.0.0` is not optional: `sirv-cli` defaults `--host`
+  to `localhost`, so the container would bind loopback and Railway would return 502 with the
+  process apparently healthy. It is a regular dependency rather than a devDependency because the
+  production install prunes devDependencies.
+
+  **`public`'s start script was broken.** It pointed at `dist/server/server.js` via a `pnpx srvx`
+  invocation, but the build emits `.output/server/index.mjs` and `srvx` was never a dependency.
+  `pnpm --filter public start` failed on any machine; nothing had run it, so it went unnoticed and
+  would have failed on the first SSR deploy. It is now `node .output/server/index.mjs`.
+
+  **Per-service config.** Each app carries `apps/<app>/railway.json` with its own build command,
+  start command and watch patterns. This matters because the repo-root `railway.json` belongs to
+  `api` and starts with `db:migrate` — any service rooted at the repo root without an explicit
+  config path would read it and try to boot the API.
+
+  **Cookie namespacing.** `COOKIE_PREFIX` now namespaces the session cookie. Staging hosts are
+  siblings of production under the same parent domain, and the SSO cookie is scoped to that
+  shared parent, so without distinct prefixes both environments write the same cookie name at
+  the same scope: signing into staging would clobber a production session and vice versa, and
+  each API would then receive the other environment's token and reject it. Left alone that
+  presents as sporadic unexplained logouts rather than as an error. Unset falls back to Better
+  Auth's default, which is correct for local dev.
+
+  `docs/railway-deployment.md` records the topology, per-service settings, build-time variable
+  rules, the domain and cookie table, and the dashboard-only steps.
+
+- 76ce7e8: Give `spray_schedule_municipalities` a surrogate `id` so the junction can sync as a collection.
+
+  **api** — migration `0003` drops the composite primary key, adds `id uuid primary key default gen_random_uuid()`, and keeps the pair unique via `spray_schedule_municipalities_pair_key`. Existing rows keep their pairs and pick up generated ids. Writes still go through `PUT /api/spray-schedules/:id/municipalities` — replacing a schedule's whole set is one transaction, not a series of row writes — but the short-lived `GET /api/spray-schedules/municipalities` added alongside it is gone, since clients now read the junction from its Electric shape.
+
+  **@mcmec/supabase** — new `SprayScheduleMunicipalitiesRowSchema` and a read-only `sprayScheduleMunicipalities` collection in the notices factory.
+
+  **website-management** — the spray-schedule screens read municipality links from the collection instead of polling an endpoint, so a municipality write syncs back on its own with no query invalidation.
+
+- f609219: Keep every deployment except the production public site out of search results.
+
+  `public` sets `X-Robots-Tag: noindex, nofollow` from a Nitro response hook and serves a
+  `Disallow: /` robots.txt whenever it is not production, so staging cannot be indexed as a
+  duplicate of the Commission's official channel for legal notices. The switch asks whether the
+  environment _is_ production rather than whether it is staging, so a service missing its
+  configuration declines to be indexed instead of quietly appearing in search results.
+
+  The four staff apps carry a `noindex` meta tag and a `Disallow: /` robots.txt in every
+  environment — they have no public audience anywhere.
+
+- Updated dependencies [cf2e2aa]
+- Updated dependencies [d1cc9c7]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+  - @mcmec/lib@0.9.0
+  - @mcmec/supabase@2.0.0
+  - @mcmec/auth@0.4.0
+  - @mcmec/ui@1.6.0
+
 ## 0.10.2
 
 ### Patch Changes
@@ -47,7 +151,6 @@
 ### Minor Changes
 
 - 0f84145: Fix auth loop in admin/HR apps, improve public nav bar, and resolve various issues.
-
   - fix(admin,hr): use shared cookie storage client to fix cross-subdomain auth loop (#80)
   - feat(admin): add employee management (list, view, edit, delete, invite) (#69)
   - fix(public): replace NavigationMenu with Popover for click-based nav and correct positioning (#78, #33)
@@ -71,7 +174,6 @@
 ### Minor Changes
 
 - 1a77b67: Add documents system, archive search, and retention warning for LFN 2026-01 compliance
-
   - Add document_types and documents tables with RLS policies and admin CRUD in the notices app
   - Add Document Categories management page mirroring the existing notice categories pattern
   - Add public /transparency page displaying published documents grouped by type and fiscal year
@@ -80,7 +182,6 @@
 
 - 8dc9b46: Migrate notices app to supabase-tanstack-db-integration via collection factory in @mcmec/supabase. Remove individual collection files, add unified db.ts with getDb()/useDb() singleton pattern. Remove fetch functions and SupabaseClient imports from schema files (pure Zod). Deduplicate supabase-js and react-router versions via pnpm overrides. Align supabase-js to ^2.100.1 across all packages.
 - 5c3f9fd: Add service requests and contact submissions management to the notices app
-
   - Add on-demand collections for adult mosquito complaints, mosquitofish requests, water management requests, and contact form submissions
   - Add full CRUD routes for all 3 service request types and contact submissions with detail, edit, and create pages
   - Restyle dashboard with stat cards, pending requests, open submissions, recent notices, and meetings
