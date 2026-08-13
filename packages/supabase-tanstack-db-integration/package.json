@@ -1,6 +1,6 @@
 {
 	"name": "@mcmec/supabase-tanstack-db-integration",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"private": true,
 	"type": "module",
 	"main": "./src/index.ts",
@@ -15,10 +15,10 @@
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
-		"@supabase/supabase-js": "^2.99.1",
+		"@electric-sql/client": "^1.5.12",
+		"@standard-schema/spec": "^1.1.0",
 		"@tanstack/db": "^0.5.33",
-		"@tanstack/query-core": "^5.90.20",
-		"@tanstack/query-db-collection": "^1.0.30",
+		"@tanstack/electric-db-collection": "0.2.41",
 		"zod": "^4.3.5"
 	}
 }

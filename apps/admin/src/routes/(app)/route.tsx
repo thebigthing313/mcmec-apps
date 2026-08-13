@@ -1,12 +1,8 @@
 import { UnauthenticatedError } from "@mcmec/auth/errors";
-import { processAuthRedirect } from "@mcmec/auth/handleCrossAppAuth";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
-import {
-	filterAppsByPermissions,
-	getCentralLoginUrl,
-} from "@mcmec/lib/constants/apps";
+import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -19,19 +15,20 @@ import {
 import { AdminSidebar } from "@/src/components/admin-sidebar";
 
 export const Route = createFileRoute("/(app)")({
-	beforeLoad: async ({ context }) => {
-		await processAuthRedirect(context.supabase);
-
+	beforeLoad: async ({ context, location }) => {
 		try {
 			const claims = await verifyClaims({
-				client: context.supabase,
-				permission: "admin_rights",
+				client: context.authClient,
+				permission: "manage_users",
 			});
 			return { claims };
 		} catch (error) {
+			// Not signed in -> this app's own login (cookie SSO, no cross-app redirect).
+			// NotOnboarded / Forbidden fall through to the error boundary.
 			if (error instanceof UnauthenticatedError) {
 				throw redirect({
-					href: getCentralLoginUrl(window.location.origin),
+					to: "/login",
+					search: { redirect: location.href },
 				});
 			}
 			throw error;
@@ -39,22 +36,18 @@ export const Route = createFileRoute("/(app)")({
 	},
 	component: LayoutComponent,
 	loader: async ({ context }) => {
-		await Promise.all([
-			context.db.employees.preload(),
-			context.db.permissions.preload(),
-			context.db.userPermissions.preload(),
-		]);
+		await context.db.employees.preload();
 	},
 });
 
 function LayoutComponent() {
-	const { supabase, claims, db } = Route.useRouteContext();
+	const { authClient, claims, db } = Route.useRouteContext();
 	const { permissions: userPerms, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(userPerms);
 
 	const navigate = useNavigate();
 	const handleLogout = async () => {
-		await signOut({ client: supabase });
+		await signOut({ client: authClient });
 		navigate({ to: "/login" });
 	};
 

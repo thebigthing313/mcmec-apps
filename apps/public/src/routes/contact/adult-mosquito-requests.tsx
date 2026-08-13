@@ -1,7 +1,8 @@
 import {
-	AdultMosquitoRequestsRowSchema,
-	type AdultMosquitoRequestsRowType,
-} from "@mcmec/supabase/db/adult-mosquito-requests";
+	AdultMosquitoFormSchema,
+	type AdultMosquitoFormType,
+	toContactPayload,
+} from "@mcmec/supabase/db/public-requests";
 import {
 	Field,
 	FieldContent,
@@ -30,7 +31,7 @@ import {
 } from "@/src/components/turnstile-widget";
 import { zipCodesQueryOptions } from "@/src/lib/queries";
 import { canonical, seo } from "@/src/lib/seo";
-import { submitAdultMosquitoRequestServerFn } from "@/src/lib/submit-adult-mosquito-request";
+import { submitPublicRequestServerFn } from "@/src/lib/submit-public-request";
 
 export const Route = createFileRoute("/contact/adult-mosquito-requests")({
 	component: RouteComponent,
@@ -61,33 +62,27 @@ function RouteComponent() {
 	}, []);
 
 	const { data: zipCodes } = useSuspenseQuery(zipCodesQueryOptions());
-	const submitForm = useServerFn(submitAdultMosquitoRequestServerFn);
+	const submitForm = useServerFn(submitPublicRequestServerFn);
 
 	const zipCodeOptions: ComboboxOption[] = zipCodes.map((zipCode) => ({
 		label: zipCode.code,
 		value: zipCode.id,
 	}));
 
-	const defaultValues: AdultMosquitoRequestsRowType = {
+	const defaultValues: AdultMosquitoFormType = {
 		additional_details: null,
 		address_line_1: "",
 		address_line_2: null,
-		created_at: new Date(),
-		created_by: null,
 		email: null,
 		full_name: "",
-		id: crypto.randomUUID() as string,
 		is_accessible: true,
 		is_daytime: false,
 		is_dusk_dawn: false,
 		is_front_of_property: false,
 		is_general_vicinity: false,
 		is_nighttime: false,
-		is_processed: false,
 		is_rear_of_property: false,
 		phone: "",
-		updated_at: new Date(),
-		updated_by: null,
 		zip_code_id: "",
 	};
 
@@ -106,7 +101,24 @@ function RouteComponent() {
 			}
 
 			const result = await submitForm({
-				data: { data: { ...value }, turnstileToken },
+				data: {
+					honeypot,
+					request: {
+						...toContactPayload(value),
+						details: {
+							additionalDetails: value.additional_details || undefined,
+							isAccessible: value.is_accessible,
+							isDaytime: value.is_daytime,
+							isDuskDawn: value.is_dusk_dawn,
+							isFrontOfProperty: value.is_front_of_property,
+							isGeneralVicinity: value.is_general_vicinity,
+							isNighttime: value.is_nighttime,
+							isRearOfProperty: value.is_rear_of_property,
+						},
+						requestType: "adult_mosquito",
+					},
+					turnstileToken,
+				},
 			});
 
 			// Reset token and turnstile widget after submission attempt
@@ -126,7 +138,7 @@ function RouteComponent() {
 			mode: "submit",
 			modeAfterSubmission: "change",
 		}),
-		validators: { onDynamic: AdultMosquitoRequestsRowSchema },
+		validators: { onDynamic: AdultMosquitoFormSchema },
 	});
 
 	return (

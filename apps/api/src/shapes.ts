@@ -58,8 +58,36 @@ const POLICIES: Record<string, ShapePolicy> = {
 	notice_postings: withPermission("manage_website"),
 };
 
-// Client may pass only these (sync cursor state — can't widen access).
-const SAFE_PARAMS = ["offset", "handle", "live", "cursor", "replica"] as const;
+// Client may pass only these (sync cursor state + log mode — can't widen access).
+const SAFE_PARAMS = [
+	"offset",
+	"handle",
+	"live",
+	"cursor",
+	"replica",
+	"log",
+] as const;
+
+// On-demand collections additionally send `subset__where` / `subset__order_by` /
+// `subset__params` to pull slices instead of the whole table. Forwarding them is safe:
+// Electric intersects a subset with the shape's own `where` rather than replacing it, so a
+// client cannot reach rows the policy excludes. Verified against staging — a shape pinned to
+// `status = 'resolved'` returned 0 rows for `subset__where: status = 'new'` even though such
+// a row exists, and `subset__where: true = true` still returned only the resolved set.
+//
+// Without these the collection doesn't fail loudly, it just syncs nothing (a 178-row table
+// renders as "0 of 0"), so don't narrow this back without re-checking the on-demand screens.
+//
+// UPCOMING: Electric is moving shape fetching from GET to POST so subset predicates aren't
+// bound by URL length limits. When the client starts sending POST, this proxy needs to:
+//   - accept POST on the route (it's GET-only today, see app.ts),
+//   - sanitize the request BODY instead of the query string — strip any client-supplied
+//     `table`/`where`/`columns`/`secret` and inject the policy's server-side, since the
+//     allowlist below only guards the URL,
+//   - revisit the cache headers: the `Vary: Cookie` handling below assumes cacheable GETs.
+// The security property itself still holds either way — Electric intersects the subset with
+// the shape's `where` regardless of how the request is framed.
+const SAFE_PARAM_PREFIX = "subset__";
 
 export async function shapeProxy(c: Context): Promise<Response> {
 	const table = c.req.param("table");
@@ -91,6 +119,9 @@ export async function shapeProxy(c: Context): Promise<Response> {
 	for (const p of SAFE_PARAMS) {
 		const v = incoming.searchParams.get(p);
 		if (v !== null) origin.searchParams.set(p, v);
+	}
+	for (const [k, v] of incoming.searchParams) {
+		if (k.startsWith(SAFE_PARAM_PREFIX)) origin.searchParams.set(k, v);
 	}
 
 	const electricRes = await fetch(origin, { method: "GET" });

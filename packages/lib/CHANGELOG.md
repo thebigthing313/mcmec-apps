@@ -1,5 +1,50 @@
 # @mcmec/lib
 
+## 0.9.0
+
+### Minor Changes
+
+- d1cc9c7: Serve the shared brand images from Railway instead of Supabase Storage. This removes the last runtime dependency on Supabase in the frontends.
+
+  **api** — the nine images (logos, favicon, hero, the 404 illustration) are committed to `apps/api/assets/` and served at `/assets/<filename>` with `Cache-Control: public, max-age=31536000, immutable`, carried over byte-for-byte from what the Supabase upload set. `api` gets the job because it is the only always-on service present in both environments, which preserves the one thing the bucket was buying: a single canonical origin, so all six apps share one copy and one browser cache entry.
+
+  The directory is read once at boot into memory (~2 MB). That keeps a caller-supplied path from ever reaching the filesystem, so traversal is unreachable by construction rather than by validation, and it makes a content-hash `ETag` free — a client that revalidates despite `immutable` gets a 304 instead of 2 MB. The route sits outside `/api/*` and so outside the CORS middleware, deliberately: `<img>` and `<link rel="icon">` loads are not CORS-gated.
+
+  **@mcmec/lib** — `constants/assets` now points at the API origin. It stays hardcoded to production in every environment, including local dev: the bytes are identical everywhere, so this gives one shared cache and adds no build variable a service could be provisioned without — and `public` could not read such a variable anyway, since its API origin is deliberately server-side only.
+
+  Because the filenames are unversioned and served `immutable`, changing an image now requires a **new filename** in both `apps/api/assets/` and `constants/assets`. Overwriting in place will look correct on a fresh browser and stay stale for a year on every returning one.
+
+  **public** — `img-src` drops `https://*.supabase.co` for the API origin, completing the CSP cleanup Phase 4 left open.
+
+  Also removed `scripts/upload-assets-to-storage.ts`, which was the only writer to the bucket. Publishing an image is now a commit.
+
+- 76ce7e8: Railway migration Phase 4 — rewire the `admin` app to the new backend.
+
+  **admin** — auth moves to the Better Auth cookie client (`makeAuthClient(VITE_API_URL)`); the router context carries `authClient` instead of a Supabase client, and the app now self-hosts its own `/login` (one shared session cookie does SSO across apps, so there is no cross-app redirect hub). The `(app)` guard verifies `manage_users` (renamed from `admin_rights`) and redirects unauthenticated users to the local login with a same-origin-only `redirect` param. Employee data reads through the ElectricSQL `employees` collection and writes through `/api/data/employees`. Manage Permissions is rebuilt on Better Auth roles: users are read via the admin plugin and role sets are full-replaced through `PUT /api/users/:id/roles`, with a guard against revoking your own `manage_users`. Invites now `POST /api/invite` (extracted into a shared `InviteButton` that surfaces failures and a login-created-but-email-failed result) instead of calling a Supabase edge function. Requires `VITE_API_URL`.
+
+  **@mcmec/lib** — new `constants/roles` module exporting `APP_ROLES`, the `AppRole` union, display labels, and a `parseRoles` helper for Better Auth's comma-separated `users.role`; app definitions renamed their required permissions (`public_notices`→`manage_website`, `admin_rights`→`manage_users`) and now type them as `AppRole`.
+
+### Patch Changes
+
+- cf2e2aa: Make the app switcher environment-aware. It decided production by testing whether the hostname
+  merely _contained_ `middlesexmosquito.org`, which is true on the staging siblings too — so every
+  switcher link on `*-staging.middlesexmosquito.org` pointed at production, silently walking a
+  staging session into live data. The environment is now derived from the subdomain label left of
+  the root domain, so staging links to staging and production to production with no per-service
+  configuration to forget.
+
+  Local dev links now use the Caddy https ports (3444–3447) instead of the raw Vite upstreams. An
+  `http://` page calling the `https://` API is cross-site under schemeful same-site, so the session
+  cookie was withheld and switching apps in dev bounced straight to `/login`.
+
+- 76ce7e8: Rename the `notices` app to `website-management`.
+
+  The app long ago outgrew its name — it manages every kind of content published on the public website (notices, meetings, insecticides, spray schedules, documents, service requests, weekly activity), not just notices. The workspace package and directory are now `website-management`, the UI calls it "Website Management", and the dev server moved from port 3002 to 3006 (3002 collides with other local tooling).
+
+  The `notices` domain itself is unchanged — the `notices` table, its collections, and the public site's `/notices` routes keep their names.
+
+  **Deployment follow-up:** the production subdomain moves `notices.middlesexmosquito.org` → `website.middlesexmosquito.org` (declared in `@mcmec/lib`'s app registry and the API's `TRUSTED_ORIGINS`), and the Vercel project's root directory must be repointed at `apps/website-management`.
+
 ## 0.8.0
 
 ### Minor Changes

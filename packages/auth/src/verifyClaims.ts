@@ -1,34 +1,12 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import z from "zod";
+import type { AuthClient } from "./client";
 import {
 	ForbiddenError,
 	NotOnboardedError,
 	UnauthenticatedError,
 } from "./errors";
-import type { Claims, SupabaseClient } from "./types";
-
-interface JwtClaims {
-	iss: string;
-	aud: string | string[];
-	exp: number;
-	iat: number;
-	sub: string;
-	role: string;
-	aal: "aal1" | "aal2";
-	session_id: string;
-	email: string;
-	phone: string;
-	is_anonymous: boolean;
-	jti?: string;
-	nbf?: number;
-	app_metadata?: Record<string, unknown>;
-	user_metadata?: Record<string, unknown>;
-	amr?: Array<{
-		method: string;
-		timestamp: number;
-	}>;
-	ref?: string;
-}
+import type { Claims, SessionData } from "./types";
 
 const ClaimsSchema = z.object({
 	userId: z.uuid(ErrorMessages.VALIDATION.INVALID_UUID),
@@ -37,34 +15,39 @@ const ClaimsSchema = z.object({
 	permissions: z.array(z.string()),
 });
 
+/**
+ * Resolves the current Better Auth session into our `Claims` shape.
+ *
+ * Reads `GET /api/auth/get-session` via the client (cookie-authenticated), then maps
+ * the `customSession` fields. Mirrors the old Supabase-JWT `verifyClaims` semantics:
+ *   - no session / fetch error  -> UnauthenticatedError
+ *   - session but no employeeId  -> NotOnboardedError
+ *   - required permission absent -> ForbiddenError
+ */
 export const verifyClaims = async (input: {
-	client: SupabaseClient;
+	client: AuthClient;
 	permission?: string;
 }): Promise<Claims> => {
 	const { client, permission } = input;
-	const { data: claimsData, error } = await client.auth.getClaims();
+	const { data, error } = await client.getSession();
 
 	if (error) {
 		throw new UnauthenticatedError(ErrorMessages.AUTH.UNABLE_TO_FETCH_CLAIMS);
 	}
-	if (!claimsData) {
+	if (!data) {
 		throw new UnauthenticatedError(ErrorMessages.AUTH.INVALID_JWT);
 	}
 
-	const claims = claimsData.claims as JwtClaims;
-	const appMeta =
-		typeof claims.app_metadata === "object" && claims.app_metadata !== null
-			? (claims.app_metadata as Record<string, unknown>)
-			: ({} as Record<string, unknown>);
+	// The base client types getSession() without our customSession fields; cast to the
+	// server-projected shape (see SessionData) rather than couple to `apps/api`'s `auth`.
+	const session = data as unknown as SessionData;
 
 	const returnedClaims = {
-		userId: claims.sub,
-		userEmail: claims.email,
+		userId: session.user?.id,
+		userEmail: session.user?.email,
 		employeeId:
-			typeof appMeta.employee_id === "string" ? appMeta.employee_id : null,
-		permissions: Array.isArray(appMeta.permissions)
-			? (appMeta.permissions as Array<string>)
-			: [],
+			typeof session.employeeId === "string" ? session.employeeId : null,
+		permissions: Array.isArray(session.permissions) ? session.permissions : [],
 	};
 
 	const parsedClaims = ClaimsSchema.parse(returnedClaims);

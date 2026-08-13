@@ -1,57 +1,31 @@
 import { createEagerCollection } from "@mcmec/supabase-tanstack-db-integration";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { QueryClient } from "@tanstack/query-core";
-import type { Database } from "../database.types.ts";
 import {
 	EmployeesInsertSchema,
 	EmployeesRowSchema,
 	EmployeesUpdateSchema,
 } from "../db/employees";
-import { PermissionsRowSchema } from "../db/permissions";
-import {
-	UserPermissionsInsertSchema,
-	UserPermissionsRowSchema,
-} from "../db/user-permissions";
 
 export interface CreateAdminCollectionsOptions {
-	supabase: SupabaseClient<Database>;
-	queryClient: QueryClient;
+	/** API origin (VITE_API_URL) */
+	apiUrl: string;
 }
 
+// The old `permissions` / `user_permissions` collections are gone — authorization is now
+// Better Auth roles, assigned via PUT /api/users/:id/roles (not a synced collection).
 export function createAdminCollections({
-	supabase,
-	queryClient,
+	apiUrl,
 }: CreateAdminCollectionsOptions) {
 	const employees = createEagerCollection({
 		allowDelete: true,
+		apiUrl,
 		insertSchema: EmployeesInsertSchema,
-		queryClient,
 		schema: EmployeesRowSchema,
-		supabase,
 		table: "employees",
 		updateSchema: EmployeesUpdateSchema,
 	});
 
-	const permissions = createEagerCollection({
-		queryClient,
-		schema: PermissionsRowSchema,
-		supabase,
-		table: "permissions",
-	});
-
-	const userPermissions = createEagerCollection({
-		allowDelete: true,
-		insertSchema: UserPermissionsInsertSchema,
-		queryClient,
-		schema: UserPermissionsRowSchema,
-		supabase,
-		table: "user_permissions",
-	});
-
 	return {
 		employees,
-		permissions,
-		userPermissions,
 	};
 }
 

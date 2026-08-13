@@ -11,6 +11,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, customSession } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
+import { defaultStatements } from "better-auth/plugins/admin/access";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 import {
@@ -25,7 +26,12 @@ import { passwordSetupHtml, sendEmail } from "./email";
 // ── Access control: three coarse roles, one per admin app ────────────────────
 // Authorization in the apps is by role membership (see customSession -> permissions[]).
 // The AC statements exist mainly so the admin plugin can gate its own endpoints.
+//
+// `defaultStatements` must be spread in: the plugin authorizes its own routes against its
+// `user`/`session` statements, so a role built only from our custom ones can't satisfy them.
+// (`adminRoles` does not cover this — it isn't consulted by the plugin's permission check.)
 const ac = createAccessControl({
+	...defaultStatements,
 	website: ["manage"],
 	employees: ["manage"],
 	users: ["manage"],
@@ -34,7 +40,9 @@ const ac = createAccessControl({
 const roles = {
 	manage_website: ac.newRole({ website: ["manage"] }),
 	manage_employees: ac.newRole({ employees: ["manage"] }),
-	manage_users: ac.newRole({ users: ["manage"] }),
+	// Only what the admin app actually calls: it lists users, and writes roles through our
+	// own audited endpoint rather than the plugin's set-role.
+	manage_users: ac.newRole({ users: ["manage"], user: ["list", "get"] }),
 };
 
 // The assignable app roles (one per admin front-end). Source of truth for role-assignment
@@ -65,11 +73,32 @@ export const auth = betterAuth({
 	// DB-default read-back through the adapter.
 	advanced: {
 		database: { generateId: () => randomUUID() },
-		crossSubDomainCookies: { enabled: true },
-		// share the session cookie across every *.middlesexmosquito.org app
-		cookies: {
-			sessionToken: { attributes: { domain: process.env.COOKIE_DOMAIN } },
-		},
+		// Namespace the cookie per environment. Staging sits on sibling subdomains of the same
+		// parent as production (`hr-staging.middlesexmosquito.org` beside
+		// `hr.middlesexmosquito.org`), and the SSO cookie is scoped to that shared parent — so
+		// without a distinct prefix both environments write the SAME cookie name at the SAME
+		// scope. Signing into staging would clobber a production session and vice versa, and each
+		// API would then receive the other environment's token and reject it, which surfaces as
+		// sporadic unexplained logouts rather than as an error. Unset falls back to Better Auth's
+		// "better-auth" default, which is correct for local dev (nothing else shares localhost).
+		...(process.env.COOKIE_PREFIX
+			? { cookiePrefix: process.env.COOKIE_PREFIX }
+			: {}),
+		// Cross-subdomain SSO cookie — gated on COOKIE_DOMAIN. In prod it's set to
+		// `.middlesexmosquito.org`, so one session cookie is shared across every subdomain app.
+		// In local dev COOKIE_DOMAIN is unset (there's no shared parent domain for localhost), so
+		// we fall back to a host-only cookie on `localhost` — every localhost port already shares
+		// it, giving the same free cross-app SSO in dev without a cross-site cookie.
+		...(process.env.COOKIE_DOMAIN
+			? {
+					crossSubDomainCookies: { enabled: true },
+					cookies: {
+						sessionToken: {
+							attributes: { domain: process.env.COOKIE_DOMAIN },
+						},
+					},
+				}
+			: {}),
 	},
 
 	trustedOrigins: (process.env.TRUSTED_ORIGINS ?? "")

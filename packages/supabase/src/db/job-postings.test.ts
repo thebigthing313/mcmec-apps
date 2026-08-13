@@ -8,13 +8,11 @@ import {
 const validRow = {
 	content: { type: "doc", content: [] },
 	created_at: "2024-01-01T00:00:00Z",
-	created_by: "550e8400-e29b-41d4-a716-446655440000",
 	id: "550e8400-e29b-41d4-a716-446655440001",
 	is_closed: false,
 	published_at: "2024-06-01T00:00:00Z",
 	title: "Seasonal Field Worker",
 	updated_at: "2024-01-01T00:00:00Z",
-	updated_by: "550e8400-e29b-41d4-a716-446655440000",
 };
 
 describe("JobPostingsRowSchema", () => {
@@ -32,16 +30,6 @@ describe("JobPostingsRowSchema", () => {
 			published_at: null,
 		});
 		expect(result.published_at).toBeNull();
-	});
-
-	it("parses a row with null created_by and updated_by", () => {
-		const result = JobPostingsRowSchema.parse({
-			...validRow,
-			created_by: null,
-			updated_by: null,
-		});
-		expect(result.created_by).toBeNull();
-		expect(result.updated_by).toBeNull();
 	});
 
 	it("rejects a row missing required title", () => {

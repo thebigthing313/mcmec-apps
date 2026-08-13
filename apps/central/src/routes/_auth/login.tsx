@@ -1,3 +1,4 @@
+import { signIn } from "@mcmec/auth/signIn";
 import {
 	PasswordSchema,
 	ValidEmailSchema,
@@ -11,10 +12,17 @@ import {
 } from "@mcmec/ui/components/field";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import z from "zod";
 
 const searchSchema = z.object({
-	redirect: z.string().optional(),
+	// Same-origin paths only — an absolute URL here would bounce a freshly
+	// authenticated user off-site. Sibling apps have their own /login now.
+	redirect: z
+		.string()
+		.refine((v) => v.startsWith("/") && !v.startsWith("//"))
+		.optional()
+		.catch(undefined),
 });
 
 export const Route = createFileRoute("/_auth/login")({
@@ -23,9 +31,10 @@ export const Route = createFileRoute("/_auth/login")({
 });
 
 function LoginPage() {
-	const { supabase } = Route.useRouteContext();
+	const { authClient } = Route.useRouteContext();
 	const navigate = useNavigate();
 	const { redirect: redirectTo } = Route.useSearch();
+	const [error, setError] = useState<string | null>(null);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -33,29 +42,21 @@ function LoginPage() {
 			password: "",
 		},
 		onSubmit: async ({ value }) => {
-			// Use signInWithPassword directly to get the session tokens
-			const { data, error } = await supabase.auth.signInWithPassword({
-				email: value.email,
-				password: value.password,
-			});
-			if (error || !data.session) {
-				console.error("Sign-in failed:", error);
+			setError(null);
+			try {
+				await signIn({
+					client: authClient,
+					email: value.email,
+					password: value.password,
+				});
+			} catch {
+				setError("Invalid email or password.");
 				return;
 			}
-			if (
-				redirectTo?.startsWith("http") &&
-				!redirectTo.startsWith(window.location.origin)
-			) {
-				const isProduction = window.location.hostname.includes(
-					"middlesexmosquito.org",
-				);
-				if (isProduction) {
-					// Production: PKCE + shared cookie handles session — just redirect
-					window.location.href = redirectTo;
-				} else {
-					// Dev: pass session tokens in hash since cookies don't share across ports
-					window.location.href = `${redirectTo}#access_token=${data.session.access_token}&refresh_token=${data.session.refresh_token}&type=bearer`;
-				}
+			// The session cookie is shared across every MCMEC app, so there's nothing to hand
+			// off — the old token-in-the-hash dance for sibling apps is gone.
+			if (redirectTo) {
+				window.location.href = redirectTo;
 			} else {
 				navigate({ to: "/" });
 			}
@@ -91,6 +92,12 @@ function LoginPage() {
 							>
 								{(field) => <field.PasswordField label="Password" />}
 							</form.AppField>
+
+							{error && (
+								<p className="text-red-600 text-sm" role="alert">
+									{error}
+								</p>
+							)}
 
 							<form.AppForm>
 								<form.SubmitFormButton className="w-full" label="Sign In" />

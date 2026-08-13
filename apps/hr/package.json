@@ -5,22 +5,21 @@
 		"@mcmec/lib": "workspace:*",
 		"@mcmec/supabase": "workspace:*",
 		"@mcmec/supabase-tanstack-db-integration": "workspace:*",
-		"@supabase/supabase-js": "^2.99.1",
 		"@mcmec/ui": "workspace:*",
 		"@radix-ui/react-label": "^2.1.8",
 		"@radix-ui/react-separator": "^1.1.8",
 		"@radix-ui/react-slot": "^1.2.4",
 		"@tanstack/db": "^0.5.33",
-		"@tanstack/query-db-collection": "^1.0.30",
 		"@tanstack/react-db": "^0.1.61",
 		"@tanstack/react-query": "^5.95.2",
 		"@tanstack/react-query-devtools": "^5.95.2",
 		"@tanstack/react-router": "^1.144.0",
-		"@tanstack/react-table": "^8.21.3",
 		"@tanstack/react-router-devtools": "^1.145.7",
+		"@tanstack/react-table": "^8.21.3",
 		"lucide-react": "^0.475.0",
 		"react": "^19.2.3",
 		"react-dom": "^19.2.3",
+		"sirv-cli": "^3.0.1",
 		"vite-tsconfig-paths": "^6.0.3",
 		"zod": "^4.3.5"
 	},
@@ -43,8 +42,9 @@
 		"check-types": "tsc --noEmit",
 		"dev": "vite",
 		"lint": "biome check .",
-		"lint:fix": "biome check --write ."
+		"lint:fix": "biome check --write .",
+		"start": "sirv dist --single --etag --host 0.0.0.0"
 	},
 	"type": "module",
-	"version": "0.4.3"
+	"version": "1.0.0"
 }

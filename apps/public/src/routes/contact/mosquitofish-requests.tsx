@@ -1,7 +1,8 @@
 import {
-	MosquitofishRequestsRowSchema,
-	type MosquitofishRequestsRowType,
-} from "@mcmec/supabase/db/mosquitofish-requests";
+	MosquitoFishFormSchema,
+	type MosquitoFishFormType,
+	toContactPayload,
+} from "@mcmec/supabase/db/public-requests";
 import {
 	Field,
 	FieldContent,
@@ -30,7 +31,7 @@ import {
 } from "@/src/components/turnstile-widget";
 import { zipCodesQueryOptions } from "@/src/lib/queries";
 import { canonical, seo } from "@/src/lib/seo";
-import { submitMosquitofishRequestServerFn } from "@/src/lib/submit-mosquitofish-request";
+import { submitPublicRequestServerFn } from "@/src/lib/submit-public-request";
 
 export const Route = createFileRoute("/contact/mosquitofish-requests")({
 	component: RouteComponent,
@@ -56,28 +57,22 @@ function RouteComponent() {
 	const navigate = useNavigate();
 
 	const { data: zipCodes } = useSuspenseQuery(zipCodesQueryOptions());
-	const submitForm = useServerFn(submitMosquitofishRequestServerFn);
+	const submitForm = useServerFn(submitPublicRequestServerFn);
 
 	const zipCodeOptions: ComboboxOption[] = zipCodes.map((zipCode) => ({
 		label: zipCode.code,
 		value: zipCode.id,
 	}));
 
-	const defaultValues: MosquitofishRequestsRowType = {
+	const defaultValues: MosquitoFishFormType = {
 		additional_details: null,
 		address_line_1: "",
 		address_line_2: null,
-		created_at: new Date(),
-		created_by: null,
 		email: null,
 		full_name: "",
-		id: crypto.randomUUID() as string,
-		is_processed: false,
 		location_of_water_body: "",
 		phone: "",
 		type_of_water_body: "",
-		updated_at: new Date(),
-		updated_by: null,
 		zip_code_id: "",
 	};
 
@@ -96,7 +91,19 @@ function RouteComponent() {
 			}
 
 			const result = await submitForm({
-				data: { data: { ...value }, turnstileToken },
+				data: {
+					honeypot,
+					request: {
+						...toContactPayload(value),
+						details: {
+							additionalDetails: value.additional_details || undefined,
+							locationOfWaterBody: value.location_of_water_body,
+							typeOfWaterBody: value.type_of_water_body,
+						},
+						requestType: "mosquito_fish",
+					},
+					turnstileToken,
+				},
 			});
 
 			// Reset token and turnstile widget after submission attempt
@@ -116,7 +123,7 @@ function RouteComponent() {
 			mode: "submit",
 			modeAfterSubmission: "change",
 		}),
-		validators: { onDynamic: MosquitofishRequestsRowSchema },
+		validators: { onDynamic: MosquitoFishFormSchema },
 	});
 
 	return (

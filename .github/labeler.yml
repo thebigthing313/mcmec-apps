@@ -2,9 +2,9 @@
   - changed-files:
       - any-glob-to-any-file: "apps/central/**"
 
-"app:notices":
+"app:website-management":
   - changed-files:
-      - any-glob-to-any-file: "apps/notices/**"
+      - any-glob-to-any-file: "apps/website-management/**"
 
 "app:public":
   - changed-files:

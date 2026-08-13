@@ -16,7 +16,7 @@ import { CentralSidebar } from "@/src/components/central-sidebar";
 export const Route = createFileRoute("/(app)")({
 	beforeLoad: async ({ context, location }) => {
 		try {
-			const claims = await verifyClaims({ client: context.supabase });
+			const claims = await verifyClaims({ client: context.authClient });
 			return { claims };
 		} catch (error) {
 			if (error instanceof UnauthenticatedError) {
@@ -59,13 +59,13 @@ export const Route = createFileRoute("/(app)")({
 });
 
 function LayoutComponent() {
-	const { supabase, claims, db } = Route.useRouteContext();
+	const { authClient, claims, db } = Route.useRouteContext();
 	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 
 	const navigate = useNavigate();
 	const handleLogout = async () => {
-		await signOut({ client: supabase });
+		await signOut({ client: authClient });
 		navigate({ to: "/login" });
 	};
 

@@ -4,6 +4,7 @@
 	"dependencies": {
 		"@hono/node-server": "^2.0.12",
 		"better-auth": "^1.6.25",
+		"drizzle-kit": "^0.31.10",
 		"drizzle-orm": "^0.45.2",
 		"drizzle-zod": "^0.8.3",
 		"hono": "^4.12.32",
@@ -16,7 +17,6 @@
 		"@mcmec/typescript-config": "workspace:*",
 		"@types/node": "25.0.9",
 		"@types/pg": "^8.20.0",
-		"drizzle-kit": "^0.31.10",
 		"typescript": "^5.9.3"
 	},
 	"keywords": [],
@@ -28,11 +28,11 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"dev": "tsx watch src/index.ts",
+		"dev": "tsx watch --env-file-if-exists=.env src/index.ts",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"start": "tsx src/index.ts"
 	},
 	"type": "module",
-	"version": "0.0.0"
+	"version": "0.1.0"
 }

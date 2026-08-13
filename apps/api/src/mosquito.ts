@@ -7,7 +7,7 @@
 import { inArray } from "drizzle-orm";
 import type { Context } from "hono";
 import { z } from "zod";
-import { setActor } from "./actor";
+import { getTxid, setActor } from "./actor";
 import { db } from "./db";
 import { mosquitoActivityData } from "./db/schema";
 import { pgErrorResponse } from "./db-errors";
@@ -52,6 +52,7 @@ export async function importMosquitoActivity(c: Context): Promise<Response> {
 	}));
 
 	const actor = setActor(session, c);
+	let txid = "";
 	try {
 		await db.transaction(async (tx) => {
 			await actor(tx);
@@ -63,6 +64,7 @@ export async function importMosquitoActivity(c: Context): Promise<Response> {
 					.insert(mosquitoActivityData)
 					.values(values.slice(i, i + CHUNK));
 			}
+			txid = await getTxid(tx);
 		});
 	} catch (e) {
 		const res = pgErrorResponse(c, e, 422);
@@ -74,5 +76,6 @@ export async function importMosquitoActivity(c: Context): Promise<Response> {
 		success: true,
 		inserted: values.length,
 		replacedYears: years,
+		txid,
 	});
 }

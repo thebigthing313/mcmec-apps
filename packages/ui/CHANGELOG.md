@@ -1,5 +1,28 @@
 # @mcmec/ui
 
+## 1.6.0
+
+### Minor Changes
+
+- 76ce7e8: Railway migration Phase 4 — rewire the `hr` and `central` apps to the new backend.
+
+  **hr** — Better Auth cookie client, its own `/login`, and the `(app)` guard verifying `manage_employees` against the auth client instead of a Supabase session. Employees and job postings read through ElectricSQL collections and write through the Hono API; the removed `created_by`/`updated_by` columns are gone from both insert paths. Requires `VITE_API_URL`.
+
+  **central** — same auth wiring, plus the four screens it owns as the employee portal:
+  - **Sign in** calls Better Auth and no longer hands sibling apps a session. The old dev-only trick of appending access and refresh tokens to the redirect URL in a hash fragment is deleted — one cookie is shared across every app now — and the redirect param is restricted to same-origin paths.
+  - **Forgot password** requests a Better Auth reset email.
+  - **Reset password** and **set password** both complete the tokenized reset, reading `?token=` from the URL. Setting a password no longer signs you in, so both finish at sign-in.
+
+  **@mcmec/ui** — new `blocks/invite-button`. HR and admin each had their own copy (HR's still called the deleted Supabase edge function); they now share one that takes `apiUrl`, posts to `/api/invite`, surfaces failures, and distinguishes a login created with a failed invite email.
+
+### Patch Changes
+
+- Updated dependencies [cf2e2aa]
+- Updated dependencies [d1cc9c7]
+- Updated dependencies [76ce7e8]
+- Updated dependencies [76ce7e8]
+  - @mcmec/lib@0.9.0
+
 ## 1.5.2
 
 ### Patch Changes
@@ -36,7 +59,6 @@
 ### Patch Changes
 
 - 0f84145: Fix auth loop in admin/HR apps, improve public nav bar, and resolve various issues.
-
   - fix(admin,hr): use shared cookie storage client to fix cross-subdomain auth loop (#80)
   - feat(admin): add employee management (list, view, edit, delete, invite) (#69)
   - fix(public): replace NavigationMenu with Popover for click-based nav and correct positioning (#78, #33)

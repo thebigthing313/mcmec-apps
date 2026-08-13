@@ -13,10 +13,13 @@ import z from "zod";
 
 export const Route = createFileRoute("/_auth/reset-password")({
 	component: ResetPasswordPage,
+	// Better Auth redirects here with the reset token in the query string.
+	validateSearch: z.object({ token: z.string().optional() }),
 });
 
 function ResetPasswordPage() {
-	const { supabase } = Route.useRouteContext();
+	const { authClient } = Route.useRouteContext();
+	const { token } = Route.useSearch();
 	const navigate = useNavigate();
 	const [status, setStatus] = useState<"error" | "idle" | "success">("idle");
 	const [errorMessage, setErrorMessage] = useState("");
@@ -33,13 +36,24 @@ function ResetPasswordPage() {
 				return;
 			}
 
-			const { error } = await supabase.auth.updateUser({
-				password: value.password,
+			if (!token) {
+				setStatus("error");
+				setErrorMessage(
+					"This reset link is missing its token. Request a new one from the sign-in page.",
+				);
+				return;
+			}
+
+			const { error } = await authClient.resetPassword({
+				newPassword: value.password,
+				token,
 			});
 
 			if (error) {
 				setStatus("error");
-				setErrorMessage(error.message);
+				setErrorMessage(
+					error.message ?? "That reset link is invalid or has expired.",
+				);
 				return;
 			}
 

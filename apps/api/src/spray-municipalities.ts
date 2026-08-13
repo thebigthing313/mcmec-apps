@@ -1,14 +1,16 @@
 // Spray-schedule ↔ municipality junction — PUT /api/spray-schedules/:id/municipalities
 // (gated by manage_website).
 //
-// The junction has a composite PK and no surrogate id, so it can't go through the generic
-// /api/data CRUD. This replaces the full municipality set for one schedule (delete-all + insert)
-// in a transaction. An unknown municipality id surfaces as a 422 via the FK violation.
+// The table has a surrogate `id` so it can sync as a collection, but its real key is the
+// unique (spray_schedule_id, municipality_id) pair — replacing a schedule's whole set is one
+// operation, not a series of row writes, so it doesn't fit the generic /api/data CRUD. This
+// does the delete-all + insert in a transaction; clients read the result back through the
+// Electric shape. An unknown municipality id surfaces as a 422 via the FK violation.
 
 import { eq } from "drizzle-orm";
 import type { Context } from "hono";
 import { z } from "zod";
-import { setActor } from "./actor";
+import { getTxid, setActor } from "./actor";
 import { db } from "./db";
 import { sprayScheduleMunicipalities, spraySchedules } from "./db/schema";
 import { pgErrorResponse } from "./db-errors";
@@ -45,6 +47,7 @@ export async function setSprayScheduleMunicipalities(
 	if (!schedule) return c.json({ error: "spray schedule not found" }, 404);
 
 	const actor = setActor(session, c);
+	let txid = "";
 	try {
 		await db.transaction(async (tx) => {
 			await actor(tx);
@@ -59,6 +62,7 @@ export async function setSprayScheduleMunicipalities(
 					})),
 				);
 			}
+			txid = await getTxid(tx);
 		});
 	} catch (e) {
 		// an unknown municipality id surfaces as a FK violation
@@ -67,5 +71,5 @@ export async function setSprayScheduleMunicipalities(
 		throw e;
 	}
 
-	return c.json({ success: true, sprayScheduleId: id, municipalityIds });
+	return c.json({ success: true, sprayScheduleId: id, municipalityIds, txid });
 }
