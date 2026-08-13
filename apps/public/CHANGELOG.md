@@ -1,5 +1,14 @@
 # public
 
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies [cae7305]
+  - @mcmec/lib@0.9.1
+  - @mcmec/supabase@2.0.1
+  - @mcmec/ui@1.6.1
+
 ## 2.0.0
 
 ### Major Changes

@@ -1,5 +1,15 @@
 # hr
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [cae7305]
+  - @mcmec/lib@0.9.1
+  - @mcmec/auth@0.4.1
+  - @mcmec/supabase@2.0.1
+  - @mcmec/ui@1.6.1
+
 ## 1.0.0
 
 ### Major Changes

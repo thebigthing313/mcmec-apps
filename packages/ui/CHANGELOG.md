@@ -1,5 +1,12 @@
 # @mcmec/ui
 
+## 1.6.1
+
+### Patch Changes
+
+- Updated dependencies [cae7305]
+  - @mcmec/lib@0.9.1
+
 ## 1.6.0
 
 ### Minor Changes
