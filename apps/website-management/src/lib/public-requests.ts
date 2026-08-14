@@ -1,7 +1,7 @@
 import type {
 	RequestStatus,
 	RequestType,
-} from "@mcmec/supabase/db/public-requests";
+} from "@mcmec/schemas/db/public-requests";
 
 /**
  * Display vocabulary for the merged `public_requests` table. The four legacy intake tables

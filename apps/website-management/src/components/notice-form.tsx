@@ -6,7 +6,7 @@ import {
 import {
 	NoticesRowSchema,
 	type NoticesRowType,
-} from "@mcmec/supabase/db/notices";
+} from "@mcmec/schemas/db/notices";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 
 interface NoticeFormProps {

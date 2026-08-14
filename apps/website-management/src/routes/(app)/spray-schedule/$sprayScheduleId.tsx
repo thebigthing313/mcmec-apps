@@ -1,5 +1,5 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import type { SpraySchedulesRowType } from "@mcmec/supabase/db/spray-schedules";
+import type { SpraySchedulesRowType } from "@mcmec/schemas/db/spray-schedules";
 import {
 	AlertDialog,
 	AlertDialogAction,

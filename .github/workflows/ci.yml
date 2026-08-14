@@ -58,4 +58,4 @@ jobs:
       - name: Run tests
         run: |
           pnpm --filter @mcmec/auth test:run
-          pnpm --filter @mcmec/supabase test:run
+          pnpm --filter @mcmec/schemas test:run

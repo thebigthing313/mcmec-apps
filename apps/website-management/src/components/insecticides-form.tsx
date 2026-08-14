@@ -5,7 +5,7 @@ import {
 import {
 	InsecticidesRowSchema,
 	type InsecticidesRowType,
-} from "@mcmec/supabase/db/insecticides";
+} from "@mcmec/schemas/db/insecticides";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 
 interface InsecticidesFormProps {

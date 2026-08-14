@@ -1,5 +1,5 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import type { MeetingsRowType } from "@mcmec/supabase/db/meetings";
+import type { MeetingsRowType } from "@mcmec/schemas/db/meetings";
 import {
 	AlertDialog,
 	AlertDialogAction,

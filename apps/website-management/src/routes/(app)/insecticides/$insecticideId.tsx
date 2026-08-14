@@ -1,5 +1,5 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import type { InsecticidesRowType } from "@mcmec/supabase/db/insecticides";
+import type { InsecticidesRowType } from "@mcmec/schemas/db/insecticides";
 import {
 	AlertDialog,
 	AlertDialogAction,

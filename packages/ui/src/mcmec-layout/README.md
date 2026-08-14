@@ -269,7 +269,7 @@ The app switcher uses anchor tags (`<a href>`) for navigation between apps. In l
 import { LayoutProvider, LayoutSidebar, LayoutInset } from '@mcmec/ui/mcmec-layout';
 import { AVAILABLE_APPS } from '@mcmec/lib/constants/apps';
 import { Outlet, Link } from '@tanstack/react-router';
-import { signOut } from '@mcmec/supabase/auth';
+import { signOut } from '@mcmec/auth/signOut';
 
 function RootLayout() {
   const user = {

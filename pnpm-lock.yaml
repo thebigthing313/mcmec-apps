@@ -5,9 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@supabase/supabase-js': ^2.100.1
   '@tanstack/db': ^0.5.33
-  '@tanstack/query-db-collection': ^1.0.30
   '@tanstack/react-router': ^1.157.18
 
 importers:
@@ -56,15 +54,15 @@ importers:
       '@mcmec/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@mcmec/collections':
+        specifier: workspace:*
+        version: link:../../packages/collections
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/schemas':
         specifier: workspace:*
-        version: link:../../packages/supabase
-      '@mcmec/supabase-tanstack-db-integration':
-        specifier: workspace:*
-        version: link:../../packages/supabase-tanstack-db-integration
+        version: link:../../packages/schemas
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -77,15 +75,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
-      '@supabase/supabase-js':
-        specifier: ^2.100.1
-        version: 2.100.1
       '@tanstack/db':
         specifier: ^0.5.33
         version: 0.5.33(typescript@5.9.3)
-      '@tanstack/query-db-collection':
-        specifier: ^1.0.30
-        version: 1.0.31(@tanstack/query-core@5.95.2)(typescript@5.9.3)
       '@tanstack/react-db':
         specifier: ^0.1.61
         version: 0.1.61(react@19.2.3)(typescript@5.9.3)
@@ -205,9 +197,9 @@ importers:
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/schemas':
         specifier: workspace:*
-        version: link:../../packages/supabase
+        version: link:../../packages/schemas
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -287,15 +279,15 @@ importers:
       '@mcmec/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@mcmec/collections':
+        specifier: workspace:*
+        version: link:../../packages/collections
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/schemas':
         specifier: workspace:*
-        version: link:../../packages/supabase
-      '@mcmec/supabase-tanstack-db-integration':
-        specifier: workspace:*
-        version: link:../../packages/supabase-tanstack-db-integration
+        version: link:../../packages/schemas
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -378,15 +370,15 @@ importers:
 
   apps/public:
     dependencies:
+      '@mcmec/collections':
+        specifier: workspace:*
+        version: link:../../packages/collections
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/schemas':
         specifier: workspace:*
-        version: link:../../packages/supabase
-      '@mcmec/supabase-tanstack-db-integration':
-        specifier: workspace:*
-        version: link:../../packages/supabase-tanstack-db-integration
+        version: link:../../packages/schemas
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -484,9 +476,9 @@ importers:
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/schemas':
         specifier: workspace:*
-        version: link:../../packages/supabase
+        version: link:../../packages/schemas
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -537,7 +529,7 @@ importers:
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
         specifier: ^4.3.5
-        version: 4.4.3
+        version: 4.3.5
     devDependencies:
       '@biomejs/biome':
         specifier: 2.3.11
@@ -598,6 +590,31 @@ importers:
         specifier: ^2.1.5
         version: 2.1.9(@types/node@25.0.9)(lightningcss@1.30.2)
 
+  packages/collections:
+    dependencies:
+      '@electric-sql/client':
+        specifier: ^1.5.12
+        version: 1.5.25
+      '@standard-schema/spec':
+        specifier: ^1.1.0
+        version: 1.1.0
+      '@tanstack/db':
+        specifier: ^0.5.33
+        version: 0.5.33(typescript@5.9.3)
+      '@tanstack/electric-db-collection':
+        specifier: 0.2.41
+        version: 0.2.41(typescript@5.9.3)
+      zod:
+        specifier: ^4.3.5
+        version: 4.3.5
+    devDependencies:
+      '@mcmec/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/lib:
     dependencies:
       libphonenumber-js:
@@ -623,14 +640,14 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  packages/supabase:
+  packages/schemas:
     dependencies:
+      '@mcmec/collections':
+        specifier: workspace:*
+        version: link:../collections
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../lib
-      '@mcmec/supabase-tanstack-db-integration':
-        specifier: workspace:*
-        version: link:../supabase-tanstack-db-integration
       '@tanstack/query-core':
         specifier: ^5.90.20
         version: 5.95.2
@@ -639,7 +656,7 @@ importers:
         version: 0.1.61(react@19.2.3)(typescript@5.9.3)
       '@tanstack/react-query':
         specifier: ^5.90.16
-        version: 5.90.16(react@19.2.3)
+        version: 5.95.2(react@19.2.3)
       zod:
         specifier: ^4.3.5
         version: 4.3.5
@@ -656,31 +673,6 @@ importers:
       vitest:
         specifier: ^2.1.5
         version: 2.1.9(@types/node@25.0.9)(lightningcss@1.30.2)
-
-  packages/supabase-tanstack-db-integration:
-    dependencies:
-      '@electric-sql/client':
-        specifier: ^1.5.12
-        version: 1.5.25
-      '@standard-schema/spec':
-        specifier: ^1.1.0
-        version: 1.1.0
-      '@tanstack/db':
-        specifier: ^0.5.33
-        version: 0.5.33(typescript@5.9.3)
-      '@tanstack/electric-db-collection':
-        specifier: 0.2.41
-        version: 0.2.41(typescript@5.9.3)
-      zod:
-        specifier: ^4.3.5
-        version: 4.3.5
-    devDependencies:
-      '@mcmec/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
 
   packages/typescript-config: {}
 
@@ -2998,33 +2990,6 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@supabase/auth-js@2.100.1':
-    resolution: {integrity: sha512-c5FB4nrG7cs1mLSzFGuIVl2iR2YO5XkSJ96uF4zubYm8YDn71XOi2emE9sBm/avfGCj61jaRBLOvxEAVnpys0Q==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/functions-js@2.100.1':
-    resolution: {integrity: sha512-mo8QheoV4KR+wSubtyEWhZUxWnCM7YZ23TncccMAlbWAHb8YTDqRGRm9IalWCAswniKyud6buZCk9snRqI86KA==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/phoenix@0.4.0':
-    resolution: {integrity: sha512-RHSx8bHS02xwfHdAbX5Lpbo6PXbgyf7lTaXTlwtFDPwOIw64NnVRwFAXGojHhjtVYI+PEPNSWwkL90f4agN3bw==}
-
-  '@supabase/postgrest-js@2.100.1':
-    resolution: {integrity: sha512-OIh4mOSo2LdqF2kox76OAPDtcSs+PwKABJOjc6plUV4/LXhFEsI2uwdEEIs7K7fd141qehWEVl/Y+Ts0fNvYsw==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/realtime-js@2.100.1':
-    resolution: {integrity: sha512-FHuRWPX4qZQ4x+0Q+ZrKaBZnOiVGiwsgiAUJM98pYRib1yeaE/fOM1lZ1ozd+4gA8Udw23OyaD8SxKS5mT5NYw==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/storage-js@2.100.1':
-    resolution: {integrity: sha512-x9xpEIoWM4xKiAlwfWTgHPSN6N4Y0aS4FVU4F6ZPbq7Gayw08SrtC6/YH/gOr8CjXQr0HxXYXDop2xGTSjubYA==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/supabase-js@2.100.1':
-    resolution: {integrity: sha512-CAeFm5sfX8sbTzxoxRafhohreIzl9a7R6qHTck3MrgTqm5M5g/u0IHfEKYzI9w/17r8NINl8UZrw2i08wrO7Iw==}
-    engines: {node: '>=20.0.0'}
-
   '@tailwindcss/node@4.1.18':
     resolution: {integrity: sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ==}
 
@@ -3163,17 +3128,8 @@ packages:
     resolution: {integrity: sha512-3PouiFjR4B6x1c969/Pl4ZIJleof1M0n6fNX8NRiC9Sqv1g06CVDlEaXUR4212ycGFyfq4q+t8Gi37Xy+z34iQ==}
     engines: {node: '>=18'}
 
-  '@tanstack/query-core@5.90.16':
-    resolution: {integrity: sha512-MvtWckSVufs/ja463/K4PyJeqT+HMlJWtw6PrCpywznd2NSgO3m4KwO9RqbFqGg6iDE8vVMFWMeQI4Io3eEYww==}
-
   '@tanstack/query-core@5.95.2':
     resolution: {integrity: sha512-o4T8vZHZET4Bib3jZ/tCW9/7080urD4c+0/AUaYVpIqOsr7y0reBc1oX3ttNaSW5mYyvZHctiQ/UOP2PfdmFEQ==}
-
-  '@tanstack/query-db-collection@1.0.31':
-    resolution: {integrity: sha512-BJ2UYXWylixoq65dhy/Q9DGL1bAxGyHVjdvfU/kInpeIuiEV9Kh4pyMHm7cktOkgF1Dc8G/qEB+T+ngfL8pKGQ==}
-    peerDependencies:
-      '@tanstack/query-core': ^5.0.0
-      typescript: '>=4.7'
 
   '@tanstack/query-devtools@5.95.2':
     resolution: {integrity: sha512-QfaoqBn9uAZ+ICkA8brd1EHj+qBF6glCFgt94U8XP5BT6ppSsDBI8IJ00BU+cAGjQzp6wcKJL2EmRYvxy0TWIg==}
@@ -3196,11 +3152,6 @@ packages:
     resolution: {integrity: sha512-AFQFmbznVkbtfpx8VJ2DylW17wWagQel/qLstVLkYmNRo2CmJt3SNej5hvl6EnEeljJIdC3BTB+W7HZtpsH+3g==}
     peerDependencies:
       '@tanstack/react-query': ^5.95.2
-      react: ^18 || ^19
-
-  '@tanstack/react-query@5.90.16':
-    resolution: {integrity: sha512-bpMGOmV4OPmif7TNMteU/Ehf/hoC0Kf98PDc0F4BZkFrEapRMEqI/V6YS0lyzwSV6PQpY1y4xxArUIfBW5LVxQ==}
-    peerDependencies:
       react: ^18 || ^19
 
   '@tanstack/react-query@5.95.2':
@@ -3651,9 +3602,6 @@ packages:
 
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
-
-  '@types/ws@8.18.1':
-    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@vitejs/plugin-react@5.1.2':
     resolution: {integrity: sha512-EcA07pHJouywpzsoTUqNh5NwGayl2PPVEJKUSinGGSxFGYn+shYbqMGBg6FXDqgXum9Ou/ecb+411ssw8HImJQ==}
@@ -4737,10 +4685,6 @@ packages:
     resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
     engines: {node: '>=18'}
     hasBin: true
-
-  iceberg-js@0.8.1:
-    resolution: {integrity: sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA==}
-    engines: {node: '>=20.0.0'}
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -6477,18 +6421,6 @@ packages:
 
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
-
-  ws@8.18.3:
-    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
 
   xmlbuilder2@4.0.3:
     resolution: {integrity: sha512-bx8Q1STctnNaaDymWnkfQLKofs0mGNN7rLLapJlGuV3VlvegD7Ls4ggMjE3aUSWItCCzU0PEv45lI87iSigiCA==}
@@ -8320,46 +8252,6 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@supabase/auth-js@2.100.1':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/functions-js@2.100.1':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/phoenix@0.4.0': {}
-
-  '@supabase/postgrest-js@2.100.1':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/realtime-js@2.100.1':
-    dependencies:
-      '@supabase/phoenix': 0.4.0
-      '@types/ws': 8.18.1
-      tslib: 2.8.1
-      ws: 8.18.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@supabase/storage-js@2.100.1':
-    dependencies:
-      iceberg-js: 0.8.1
-      tslib: 2.8.1
-
-  '@supabase/supabase-js@2.100.1':
-    dependencies:
-      '@supabase/auth-js': 2.100.1
-      '@supabase/functions-js': 2.100.1
-      '@supabase/postgrest-js': 2.100.1
-      '@supabase/realtime-js': 2.100.1
-      '@supabase/storage-js': 2.100.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@tailwindcss/node@4.1.18':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -8486,16 +8378,7 @@ snapshots:
 
   '@tanstack/pacer-lite@0.2.1': {}
 
-  '@tanstack/query-core@5.90.16': {}
-
   '@tanstack/query-core@5.95.2': {}
-
-  '@tanstack/query-db-collection@1.0.31(@tanstack/query-core@5.95.2)(typescript@5.9.3)':
-    dependencies:
-      '@standard-schema/spec': 1.1.0
-      '@tanstack/db': 0.5.33(typescript@5.9.3)
-      '@tanstack/query-core': 5.95.2
-      typescript: 5.9.3
 
   '@tanstack/query-devtools@5.95.2': {}
 
@@ -8521,11 +8404,6 @@ snapshots:
     dependencies:
       '@tanstack/query-devtools': 5.95.2
       '@tanstack/react-query': 5.95.2(react@19.2.3)
-      react: 19.2.3
-
-  '@tanstack/react-query@5.90.16(react@19.2.3)':
-    dependencies:
-      '@tanstack/query-core': 5.90.16
       react: 19.2.3
 
   '@tanstack/react-query@5.95.2(react@19.2.3)':
@@ -9207,10 +9085,6 @@ snapshots:
   '@types/tinycolor2@1.4.6': {}
 
   '@types/use-sync-external-store@0.0.6': {}
-
-  '@types/ws@8.18.1':
-    dependencies:
-      '@types/node': 25.0.9
 
   '@vitejs/plugin-react@5.1.2(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
@@ -10323,8 +10197,6 @@ snapshots:
   human-signals@2.1.0: {}
 
   husky@9.1.7: {}
-
-  iceberg-js@0.8.1: {}
 
   iconv-lite@0.4.24:
     dependencies:
@@ -12003,8 +11875,6 @@ snapshots:
       strip-ansi: 7.2.0
 
   wrappy@1.0.2: {}
-
-  ws@8.18.3: {}
 
   xmlbuilder2@4.0.3:
     dependencies:

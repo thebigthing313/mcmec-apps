@@ -1,7 +1,7 @@
 import {
 	type CentralCollections,
 	createCentralCollections,
-} from "@mcmec/supabase/collections/central";
+} from "@mcmec/schemas/collections/central";
 import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@ import { COMPANY_INFO } from "@mcmec/lib/constants/company";
 import {
 	MeetingsRowSchema,
 	type MeetingsRowType,
-} from "@mcmec/supabase/db/meetings";
+} from "@mcmec/schemas/db/meetings";
 import { createFileRoute } from "@tanstack/react-router";
 import { MeetingsForm } from "@/src/components/meetings-form";
 import { meetings } from "@/src/lib/db";

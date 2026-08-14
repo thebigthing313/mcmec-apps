@@ -1,4 +1,4 @@
-import { MosquitoActivityDataInsertSchema } from "@mcmec/supabase/db/mosquito-activity-data";
+import { MosquitoActivityDataInsertSchema } from "@mcmec/schemas/db/mosquito-activity-data";
 import {
 	MosquitoActivityCharts,
 	type MosquitoActivityRow,

@@ -7,7 +7,7 @@
  * origin (no CORS, nothing added to the site's CSP) and keeps the Turnstile secret out of
  * this app entirely.
  */
-import { PublicRequestSubmissionSchema } from "@mcmec/supabase/db/public-requests";
+import { PublicRequestSubmissionSchema } from "@mcmec/schemas/db/public-requests";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";

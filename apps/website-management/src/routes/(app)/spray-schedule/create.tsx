@@ -1,4 +1,4 @@
-import type { SpraySchedulesRowType } from "@mcmec/supabase/db/spray-schedules";
+import type { SpraySchedulesRowType } from "@mcmec/schemas/db/spray-schedules";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";

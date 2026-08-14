@@ -2,7 +2,7 @@ import { NonEmptyUUID } from "@mcmec/lib/constants/validators";
 import {
 	DocumentsRowSchema,
 	type DocumentsRowType,
-} from "@mcmec/supabase/db/documents";
+} from "@mcmec/schemas/db/documents";
 import { FormField } from "@mcmec/ui/blocks/form-field";
 import { Input } from "@mcmec/ui/components/input";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
