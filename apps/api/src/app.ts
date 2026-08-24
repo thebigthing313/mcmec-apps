@@ -3,6 +3,7 @@ import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
 import { assetsRouter } from "./assets";
 import { auth } from "./auth";
+import { postCommands } from "./commands/dispatch";
 import { deleteRow, insertRow, updateRow } from "./data";
 import { inviteEmployee } from "./invite";
 import { importMosquitoActivity } from "./mosquito";
@@ -54,6 +55,7 @@ app.get("/api/shapes/:table", shapeProxy);
 app.post("/api/requests", bodyLimit({ maxSize: 64 * 1024 }), submitRequest);
 
 // Write path (permission-gated, audit-logged via app.* GUCs)
+app.post("/api/commands", postCommands);
 app.post("/api/data/:table", insertRow);
 app.patch("/api/data/:table/:id", updateRow);
 app.delete("/api/data/:table/:id", deleteRow);

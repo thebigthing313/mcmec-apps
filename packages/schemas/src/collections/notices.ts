@@ -34,11 +34,7 @@ import {
 	NoticeTypesRowSchema,
 	NoticeTypesUpdateSchema,
 } from "../db/notice-types";
-import {
-	NoticesInsertSchema,
-	NoticesRowSchema,
-	NoticesUpdateSchema,
-} from "../db/notices";
+import { NoticesRowSchema } from "../db/notices";
 import {
 	PublicRequestsRowSchema,
 	PublicRequestsUpdateSchema,
@@ -74,13 +70,15 @@ export function createNoticesCollections({
 		updateSchema: NoticeTypesUpdateSchema,
 	});
 
+	// PROTOTYPE — the one collection on the named-command path. Its writes carry an intent
+	// and go to POST /api/commands; the Insert/Update schema pair is gone, because a command
+	// payload is not "a row minus the server columns".
 	const notices = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
-		insertSchema: NoticesInsertSchema,
+		commands: true,
 		schema: NoticesRowSchema,
 		table: "notices",
-		updateSchema: NoticesUpdateSchema,
 	});
 
 	const meetings = createEagerCollection({

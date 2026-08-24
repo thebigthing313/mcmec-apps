@@ -22,6 +22,11 @@ import {
 } from "@tanstack/electric-db-collection";
 import type z from "zod";
 import type { ZodObject } from "zod";
+import {
+	type CommandEnvelope,
+	readCommandMetadata,
+	sendCommand,
+} from "../command-write";
 import { apiDeleteRows, apiInsertRows, apiUpdateRow } from "../crud";
 
 // Electric leaves these Postgres types as strings on the sync path (the collection
@@ -86,6 +91,25 @@ async function settleTxids(
 	}
 }
 
+/**
+ * Builds the request body: the row this command is about goes in the envelope as `id`, the
+ * fields that changed go flat beside it, and anything that is not a column rides in
+ * `arguments`. No payload schema ever declares an `id` (#137).
+ */
+function envelopeFor(
+	key: string | number,
+	fields: unknown,
+	metadata: unknown,
+): CommandEnvelope {
+	const { intents, arguments: args } = readCommandMetadata(metadata);
+	return {
+		...(fields as Record<string, unknown>),
+		...args,
+		id: String(key),
+		intents,
+	};
+}
+
 export interface ElectricCollectionOptions<
 	TSchema extends ZodObject<z.ZodRawShape>,
 	TInsertSchema extends ZodObject<z.ZodRawShape>,
@@ -103,6 +127,12 @@ export interface ElectricCollectionOptions<
 	updateSchema?: TUpdateSchema;
 	/** Allow delete mutations on this collection. Default: false */
 	allowDelete?: boolean;
+	/**
+	 * Route writes through the named-command dispatcher instead of the generic data API.
+	 * PROTOTYPE — set only on `notices`. When the cutover is done this is the only mode and
+	 * the flag, `crud.ts` and the Insert/Update schemas all disappear.
+	 */
+	commands?: boolean;
 }
 
 export function createElectricCollection<
@@ -120,6 +150,7 @@ export function createElectricCollection<
 		insertSchema,
 		updateSchema,
 		allowDelete = false,
+		commands = false,
 	}: ElectricCollectionOptions<TSchema, TInsertSchema, TUpdateSchema>,
 	syncMode: "eager" | "on-demand",
 	startSync: boolean,
@@ -153,44 +184,85 @@ export function createElectricCollection<
 
 		// Each handler awaits its own txids via settleTxids and returns nothing, so the
 		// collection does not re-await them with its rollback-on-timeout default.
-		onInsert: insertSchema
+		//
+		// In command mode all three handlers are the same three lines: read the intent the
+		// call site named, post one envelope, settle. The difference between insert, update
+		// and delete is which fields go in the body — the server learns the operation from
+		// the command name, not from an HTTP verb.
+		onInsert: commands
 			? async ({ transaction, collection }) => {
-					const rows = transaction.mutations.map((m) => m.modified);
-					const txids = await apiInsertRows(
-						target,
-						insertSchema,
-						rows as unknown[],
+					const txids = await Promise.all(
+						transaction.mutations.map((m) =>
+							sendCommand(apiUrl, envelopeFor(m.key, m.modified, m.metadata)),
+						),
 					);
 					await settleTxids(collection as TxidSettler, txids, table);
 					return undefined;
 				}
-			: undefined,
+			: insertSchema
+				? async ({ transaction, collection }) => {
+						const rows = transaction.mutations.map((m) => m.modified);
+						const txids = await apiInsertRows(
+							target,
+							insertSchema,
+							rows as unknown[],
+						);
+						await settleTxids(collection as TxidSettler, txids, table);
+						return undefined;
+					}
+				: undefined,
 
-		onUpdate: updateSchema
+		onUpdate: commands
 			? async ({ transaction, collection }) => {
 					const txids: number[] = [];
+					// Sequential: intents within one request run in client order, and two
+					// mutations against the same row must not race each other either.
 					for (const m of transaction.mutations) {
-						const txid = await apiUpdateRow(
-							target,
-							updateSchema,
-							m.key,
-							m.changes,
+						txids.push(
+							await sendCommand(
+								apiUrl,
+								envelopeFor(m.key, m.changes, m.metadata),
+							),
 						);
-						if (txid !== undefined) txids.push(txid);
 					}
 					await settleTxids(collection as TxidSettler, txids, table);
 					return undefined;
 				}
-			: undefined,
+			: updateSchema
+				? async ({ transaction, collection }) => {
+						const txids: number[] = [];
+						for (const m of transaction.mutations) {
+							const txid = await apiUpdateRow(
+								target,
+								updateSchema,
+								m.key,
+								m.changes,
+							);
+							if (txid !== undefined) txids.push(txid);
+						}
+						await settleTxids(collection as TxidSettler, txids, table);
+						return undefined;
+					}
+				: undefined,
 
-		onDelete: allowDelete
+		onDelete: commands
 			? async ({ transaction, collection }) => {
-					const ids = transaction.mutations.map((m) => m.key);
-					const txids = await apiDeleteRows(target, ids);
+					const txids = await Promise.all(
+						transaction.mutations.map((m) =>
+							sendCommand(apiUrl, envelopeFor(m.key, {}, m.metadata)),
+						),
+					);
 					await settleTxids(collection as TxidSettler, txids, table);
 					return undefined;
 				}
-			: undefined,
+			: allowDelete
+				? async ({ transaction, collection }) => {
+						const ids = transaction.mutations.map((m) => m.key);
+						const txids = await apiDeleteRows(target, ids);
+						await settleTxids(collection as TxidSettler, txids, table);
+						return undefined;
+					}
+				: undefined,
 	});
 
 	return createCollection(config as never) as Collection<
