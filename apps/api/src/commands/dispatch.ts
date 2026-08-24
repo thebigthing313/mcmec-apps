@@ -32,10 +32,15 @@ for (const command of Object.values(COMMANDS) as AnyCommand[]) {
 
 type Envelope = { intents: string[]; id?: string } & Record<string, unknown>;
 
+/**
+ * Two refusals, deliberately distinct: `malformed_envelope` means the request was not shaped
+ * like a command request at all, `unknown_command` means it named something the vocabulary
+ * does not have. Only the second tells the caller their command is gone.
+ */
 function readEnvelope(body: unknown): Envelope | CommandError {
 	if (!body || typeof body !== "object" || Array.isArray(body)) {
 		return new CommandError(400, {
-			error: "unknown_command",
+			error: "malformed_envelope",
 			reason: "body must be an object",
 		});
 	}
@@ -46,13 +51,13 @@ function readEnvelope(body: unknown): Envelope | CommandError {
 		!intents.every((i) => typeof i === "string")
 	) {
 		return new CommandError(400, {
-			error: "unknown_command",
+			error: "malformed_envelope",
 			reason: "intents must be a non-empty array of command names",
 		});
 	}
 	if (new Set(intents).size !== intents.length) {
 		return new CommandError(400, {
-			error: "unknown_command",
+			error: "malformed_envelope",
 			reason: "intents contains a duplicate",
 		});
 	}
@@ -88,7 +93,12 @@ export async function postCommands(c: Context): Promise<Response> {
 	}
 
 	const id = typeof envelope.id === "string" ? envelope.id : "";
-	if (!id) return c.json({ error: "missing id" }, 400);
+	if (!id) {
+		return c.json(
+			{ error: "malformed_envelope", reason: "id must be a non-empty string" },
+			400,
+		);
+	}
 
 	try {
 		const stampActor = setActor(session, c);

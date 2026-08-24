@@ -1,3 +1,4 @@
+import { COMMAND_PATH } from "@mcmec/sync/routes";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
@@ -55,7 +56,7 @@ app.get("/api/shapes/:table", shapeProxy);
 app.post("/api/requests", bodyLimit({ maxSize: 64 * 1024 }), submitRequest);
 
 // Write path (permission-gated, audit-logged via app.* GUCs)
-app.post("/api/commands", postCommands);
+app.post(COMMAND_PATH, postCommands);
 app.post("/api/data/:table", insertRow);
 app.patch("/api/data/:table/:id", updateRow);
 app.delete("/api/data/:table/:id", deleteRow);
