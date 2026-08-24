@@ -50,8 +50,8 @@ origin ambiguous rather than erroring). Our Caddy sets `admin localhost:2020` an
 ### Packages
 - **ui** (`packages/ui`) — Shared component library (Radix UI + Tailwind CSS v4 + shadcn pattern)
 - **lib** (`packages/lib`) — Business logic, constants, validation schemas (Zod)
-- **schemas** (`packages/schemas`) — Zod row/insert/update schemas (`db/*`) and the per-app TanStack DB collection factories (`collections/*`)
-- **collections** (`packages/collections`) — Electric collection factories, API write handlers, `fetchShapeSnapshot`
+- **schemas** (`packages/schemas`) — Zod row/insert/update schemas (`db/*`); a pure Zod leaf with no React or TanStack dependency
+- **sync** (`packages/sync`) — Electric collection factories, the per-app collection sets (`collections/*`), API write handlers, `fetchShapeSnapshot`, and the shared route paths (`@mcmec/sync/routes`)
 - **auth** (`packages/auth`) — Better Auth client, `signIn`/`signOut`, `verifyClaims`
 - **typescript-config** (`packages/typescript-config`) — Shared TS configs (base, react-library, tanstack-start)
 

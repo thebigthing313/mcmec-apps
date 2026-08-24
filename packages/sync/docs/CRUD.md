@@ -57,7 +57,7 @@ Validates each row with `insertSchema`, converts keys to camelCase, and POSTs th
 a time (the generic endpoint is single-row).
 
 ```ts
-import { apiInsertRows } from "@mcmec/collections";
+import { apiInsertRows } from "@mcmec/sync";
 
 const txids = await apiInsertRows(
   { apiUrl, table: "notices" },
@@ -142,7 +142,7 @@ Not a write helper, but the other direct-use export: a one-shot shape read for c
 that want current rows rather than a live collection — server-side rendering, most of all.
 
 ```ts
-import { fetchShapeSnapshot } from "@mcmec/collections";
+import { fetchShapeSnapshot } from "@mcmec/sync";
 
 const notices = await fetchShapeSnapshot({ table: "notices", apiUrl, signal });
 ```

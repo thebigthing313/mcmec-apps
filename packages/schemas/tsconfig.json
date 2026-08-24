@@ -1,5 +1,5 @@
 {
-	"extends": "@mcmec/typescript-config/tanstack-start.json",
+	"extends": "@mcmec/typescript-config/base.json",
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {

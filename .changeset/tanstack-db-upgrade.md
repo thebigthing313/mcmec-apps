@@ -1,5 +1,5 @@
 ---
-"@mcmec/collections": patch
+"@mcmec/sync": patch
 "@mcmec/schemas": patch
 "central": patch
 "website-management": patch

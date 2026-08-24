@@ -10,7 +10,8 @@
  * anonymous policy (published-only rows for notices, documents, and job postings).
  */
 import { type Row, Shape, ShapeStream } from "@electric-sql/client";
-import { electricParser } from "./collections";
+import { electricParser } from "./factories";
+import { shapePathFor } from "./routes";
 
 export interface FetchShapeSnapshotOptions {
 	/** Table name — the `/api/shapes/:table` segment. */
@@ -34,7 +35,7 @@ export async function fetchShapeSnapshot<T extends Row = Row>({
 
 	try {
 		const stream = new ShapeStream<T>({
-			url: `${apiUrl}/api/shapes/${table}`,
+			url: `${apiUrl}${shapePathFor(table)}`,
 			// Same coercions the collections use, so SSR and client rows agree.
 			parser: electricParser as never,
 			signal: controller.signal,

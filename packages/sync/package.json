@@ -1,11 +1,13 @@
 {
-	"name": "@mcmec/collections",
+	"name": "@mcmec/sync",
 	"version": "0.3.0",
 	"private": true,
 	"type": "module",
 	"main": "./src/index.ts",
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./routes": "./src/routes.ts",
+		"./collections/*": "./src/collections/*.ts"
 	},
 	"scripts": {
 		"check-types": "tsc --noEmit"
@@ -16,6 +18,7 @@
 	},
 	"dependencies": {
 		"@electric-sql/client": "^1.5.12",
+		"@mcmec/schemas": "workspace:*",
 		"@standard-schema/spec": "^1.1.0",
 		"@tanstack/db": "^0.8.3",
 		"@tanstack/electric-db-collection": "0.4.3",

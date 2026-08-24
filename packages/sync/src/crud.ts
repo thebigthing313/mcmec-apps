@@ -19,6 +19,7 @@
  */
 import type z from "zod";
 import type { ZodObject } from "zod";
+import { dataPathFor } from "./routes";
 
 const MAX_INSERT_ROWS = 500;
 
@@ -100,7 +101,7 @@ export async function apiInsertRows<
 	for (const row of rows) {
 		const validated = insertSchema ? insertSchema.parse(row) : row;
 		const body = toCamelCaseKeys(validated as Record<string, unknown>);
-		const res = await fetch(`${target.apiUrl}/api/data/${target.table}`, {
+		const res = await fetch(`${target.apiUrl}${dataPathFor(target.table)}`, {
 			method: "POST",
 			credentials: "include",
 			headers: jsonHeaders,
@@ -126,7 +127,7 @@ export async function apiUpdateRow<
 ): Promise<number | undefined> {
 	const validated = updateSchema ? updateSchema.parse(changes) : changes;
 	const body = toCamelCaseKeys(validated as Record<string, unknown>);
-	const res = await fetch(`${target.apiUrl}/api/data/${target.table}/${id}`, {
+	const res = await fetch(`${target.apiUrl}${dataPathFor(target.table, id)}`, {
 		method: "PATCH",
 		credentials: "include",
 		headers: jsonHeaders,
@@ -145,10 +146,13 @@ export async function apiDeleteRows(
 ): Promise<number[]> {
 	const txids: number[] = [];
 	for (const id of ids) {
-		const res = await fetch(`${target.apiUrl}/api/data/${target.table}/${id}`, {
-			method: "DELETE",
-			credentials: "include",
-		});
+		const res = await fetch(
+			`${target.apiUrl}${dataPathFor(target.table, id)}`,
+			{
+				method: "DELETE",
+				credentials: "include",
+			},
+		);
 		const txid = await handleWrite(res, "delete", target.table);
 		if (txid !== undefined) txids.push(txid);
 	}

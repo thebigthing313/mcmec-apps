@@ -44,7 +44,8 @@
 	"pnpm": {
 		"overrides": {
 			"@tanstack/db": "^0.8.3",
-			"@tanstack/react-router": "^1.157.18"
+			"@tanstack/react-router": "^1.157.18",
+			"zod@^4": "4.3.5"
 		}
 	},
 	"version": "0.1.0"

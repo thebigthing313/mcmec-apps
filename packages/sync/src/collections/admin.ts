@@ -1,9 +1,9 @@
-import { createEagerCollection } from "@mcmec/collections";
 import {
 	EmployeesInsertSchema,
 	EmployeesRowSchema,
 	EmployeesUpdateSchema,
-} from "../db/employees";
+} from "@mcmec/schemas/db/employees";
+import { createEagerCollection } from "../factories";
 
 export interface CreateAdminCollectionsOptions {
 	/** API origin (VITE_API_URL) */
