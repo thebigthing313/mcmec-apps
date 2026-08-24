@@ -41,3 +41,17 @@ export function setActor(session: SessionInfo, c: Context) {
 		await tx.execute(sql`select set_config('app.ip_address', ${ip}, true)`);
 	};
 }
+
+// Stamps the named domain command onto the audit rows the next write produces.
+//
+// Deliberately NOT folded into setActor's setter. The four actor GUCs are request-scoped — one
+// user, one IP, one request id — but a single request can carry several commands (a save that
+// both edits a notice and publishes it is two), and each audit row has to name the one that
+// wrote it. So this is called per command, immediately before that command's writes, inside the
+// same transaction; setting it once per request would mislabel every row after the first.
+//
+// Callers that set nothing (the pre-command write paths) log a null command rather than failing:
+// log_mutation() reads the GUC with missing_ok.
+export async function setCommand(tx: Tx, command: string) {
+	await tx.execute(sql`select set_config('app.command', ${command}, true)`);
+}

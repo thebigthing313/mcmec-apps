@@ -22,6 +22,7 @@ import {
 	verifications,
 } from "./db/schema";
 import { passwordSetupHtml, sendEmail } from "./email";
+import { recordUserAudit } from "./user-audit";
 
 // ── Access control: three coarse roles, one per admin app ────────────────────
 // Authorization in the apps is by role membership (see customSession -> permissions[]).
@@ -157,9 +158,39 @@ export const auth = betterAuth({
 				permissions, // e.g. ["manage_website","manage_employees"]
 			};
 		}),
-
-		// NOTE: audit for users/role/ban changes is written app-layer via databaseHooks
-		// (Better Auth writes users on its own connection, so the DB trigger can't see the actor):
-		//   databaseHooks: { user: { update: { after: (u, ctx) => writeAuditRow(...) } } }
 	],
+
+	// Audit for Better-Auth-initiated writes to `users` (signup, verification, role/ban changes
+	// made through the plugin's own endpoints). These run on Better Auth's connection, outside
+	// our transactions, so the `log_mutation` trigger sees no `app.*` GUCs and records them with
+	// a null actor and a null command.
+	//
+	// `recordUserAudit` is a NO-OP today — the seam is wired so the implementation has one home
+	// (see user-audit.ts). Behaviour is unchanged: the trigger still writes the row.
+	databaseHooks: {
+		user: {
+			create: {
+				after: async (user) => {
+					await recordUserAudit({
+						operation: "INSERT",
+						recordId: user.id,
+						actorUserId: null,
+						actorEmail: null,
+						command: null,
+					});
+				},
+			},
+			update: {
+				after: async (user) => {
+					await recordUserAudit({
+						operation: "UPDATE",
+						recordId: user.id,
+						actorUserId: null,
+						actorEmail: null,
+						command: null,
+					});
+				},
+			},
+		},
+	},
 });
