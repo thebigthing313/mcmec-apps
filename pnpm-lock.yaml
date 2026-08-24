@@ -146,6 +146,9 @@ importers:
       '@hono/node-server':
         specifier: ^2.0.12
         version: 2.0.12(hono@4.12.32)
+      '@mcmec/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       better-auth:
         specifier: ^1.6.25
         version: 1.6.25(@tanstack/react-start@1.157.18(crossws@0.4.4(srvx@0.10.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3)))(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0))(pg@8.22.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.12)(vitest@2.1.9(@types/node@25.0.9)(lightningcss@1.30.2))
@@ -587,6 +590,22 @@ importers:
       vitest:
         specifier: ^2.1.5
         version: 2.1.9(@types/node@25.0.9)(lightningcss@1.30.2)
+
+  packages/domain:
+    dependencies:
+      '@mcmec/schemas':
+        specifier: workspace:*
+        version: link:../schemas
+      zod:
+        specifier: 4.3.5
+        version: 4.3.5
+    devDependencies:
+      '@mcmec/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/lib:
     dependencies:
