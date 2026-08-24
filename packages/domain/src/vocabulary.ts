@@ -1,12 +1,13 @@
 /**
  * The registry: every command in the system, keyed by its name.
  *
- * PROTOTYPE SCOPE — `notices` only. The full vocabulary is 49 commands across four domains
- * (#134); this slice carries the seven that let one table run end-to-end.
+ * PARTIAL — `notices` and `job_postings`. The full vocabulary is 49 commands across four
+ * domains (#134); the cutover (#140) brings in the rest.
  */
+import { JOB_POSTING_COMMANDS } from "./website/job-postings";
 import { NOTICE_COMMANDS } from "./website/notices";
 
-const ALL = [...NOTICE_COMMANDS] as const;
+const ALL = [...NOTICE_COMMANDS, ...JOB_POSTING_COMMANDS] as const;
 
 export const COMMANDS = Object.fromEntries(ALL.map((c) => [c.name, c])) as {
 	[C in (typeof ALL)[number] as C["name"]]: C;

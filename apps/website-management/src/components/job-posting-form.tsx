@@ -1,10 +1,17 @@
 import { NonEmptyStringSchema } from "@mcmec/lib/constants/validators";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 
+/**
+ * The details of a job posting — exactly the fields `website.updateJobPostingDetails` accepts.
+ *
+ * Both lifecycle fields are gone from this form. `is_closed` was a switch; it is now a
+ * Close/Reopen action. `published_at` was a date picker whose emptiness MEANT draft ("leave
+ * empty for draft") — publishing was spelled as typing a date. It is now a Publish button, and
+ * the server stamps the timestamp, so the form no longer offers a way to backdate a posting or
+ * to publish one by accident while editing its title.
+ */
 export interface JobPostingFormValues {
 	content: Record<string, unknown>;
-	is_closed: boolean;
-	published_at: Date | null;
 	title: string;
 }
 
@@ -42,27 +49,7 @@ export function JobPostingForm({
 					{(field) => <field.ContentField label="Content" />}
 				</form.AppField>
 
-				<form.AppField name="published_at">
-					{(field) => (
-						<field.DateTimeField
-							label="Publish Date"
-							placeholder="Select publish date (leave empty for draft)"
-							showTimeInput
-						/>
-					)}
-				</form.AppField>
-
-				<form.AppField name="is_closed">
-					{(field) => (
-						<field.SwitchField
-							label="Closed"
-							labelWhenFalse="This posting is open and will be visible on the public site when published."
-							labelWhenTrue="This posting is closed and hidden from the public site."
-						/>
-					)}
-				</form.AppField>
-
-				<form.SubmitFormButton label={submitLabel} />
+				<form.SubmitFormButton className="w-full" label={submitLabel} />
 			</form.FormWrapper>
 		</form.AppForm>
 	);

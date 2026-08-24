@@ -157,10 +157,13 @@ const WRITABLE: Record<string, CrudEntry> = {
 		schema.employees.id,
 		"manage_employees",
 	),
+	// `manage_website`, matching the domain the commands live in (#134). This entry is dead
+	// weight — the authoring screens write through POST /api/commands — but leaving it gated on
+	// `manage_employees` would keep a door open that contradicts the move (#145).
 	job_postings: makeCrud(
 		schema.jobPostings,
 		schema.jobPostings.id,
-		"manage_employees",
+		"manage_website",
 	),
 };
 

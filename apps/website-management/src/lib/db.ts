@@ -31,6 +31,7 @@ export const {
 	documents,
 	employees,
 	insecticides,
+	jobPostings,
 	meetings,
 	mosquitoActivityData,
 	municipalities,

@@ -26,14 +26,14 @@ export default defineConfig({
 			testMatch: /public\/.+\.spec\.ts/,
 		},
 		{
-			name: "hr",
+			name: "website-management",
 			dependencies: ["setup"],
 			use: {
 				...devices["Desktop Chrome"],
-				baseURL: "http://localhost:3003",
+				baseURL: "http://localhost:3006",
 				storageState: STORAGE_STATE_PATH,
 			},
-			testMatch: /hr\/.+\.spec\.ts/,
+			testMatch: /website-management\/.+\.spec\.ts/,
 		},
 	],
 	webServer: [
@@ -50,8 +50,8 @@ export default defineConfig({
 			timeout: 120000,
 		},
 		{
-			command: "pnpm --filter hr dev",
-			port: 3003,
+			command: "pnpm --filter website-management dev",
+			port: 3006,
 			reuseExistingServer: !process.env.CI,
 			timeout: 120000,
 		},

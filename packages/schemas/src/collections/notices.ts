@@ -18,6 +18,7 @@ import {
 	InsecticidesRowSchema,
 	InsecticidesUpdateSchema,
 } from "../db/insecticides";
+import { JobPostingsRowSchema } from "../db/job-postings";
 import {
 	MeetingsInsertSchema,
 	MeetingsRowSchema,
@@ -73,6 +74,16 @@ export function createNoticesCollections({
 	// PROTOTYPE — the one collection on the named-command path. Its writes carry an intent
 	// and go to POST /api/commands; the Insert/Update schema pair is gone, because a command
 	// payload is not "a row minus the server columns".
+	// On the named-command path with `notices`. Job postings moved here from `apps/hr` with
+	// #145: they are website content, so they are read and written under `manage_website`.
+	const jobPostings = createEagerCollection({
+		allowDelete: true,
+		apiUrl,
+		commands: true,
+		schema: JobPostingsRowSchema,
+		table: "job_postings",
+	});
+
 	const notices = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
@@ -176,6 +187,7 @@ export function createNoticesCollections({
 		documents,
 		employees,
 		insecticides,
+		jobPostings,
 		meetings,
 		mosquitoActivityData,
 		municipalities,

@@ -4,11 +4,6 @@ import {
 	EmployeesRowSchema,
 	EmployeesUpdateSchema,
 } from "../db/employees";
-import {
-	JobPostingsInsertSchema,
-	JobPostingsRowSchema,
-	JobPostingsUpdateSchema,
-} from "../db/job-postings";
 
 export interface CreateHrCollectionsOptions {
 	/** API origin (VITE_API_URL) */
@@ -25,18 +20,8 @@ export function createHrCollections({ apiUrl }: CreateHrCollectionsOptions) {
 		updateSchema: EmployeesUpdateSchema,
 	});
 
-	const jobPostings = createEagerCollection({
-		allowDelete: true,
-		apiUrl,
-		insertSchema: JobPostingsInsertSchema,
-		schema: JobPostingsRowSchema,
-		table: "job_postings",
-		updateSchema: JobPostingsUpdateSchema,
-	});
-
 	return {
 		employees,
-		jobPostings,
 	};
 }
 

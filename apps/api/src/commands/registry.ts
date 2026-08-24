@@ -7,14 +7,22 @@
  * define/implement split (#135 Q6).
  */
 import type { CommandRegistry } from "./types";
+import * as jobPostings from "./website/job-postings";
 import * as notices from "./website/notices";
 
 export const REGISTRY: CommandRegistry = {
 	"website.archiveNotice": notices.archiveNotice,
+	"website.closeJobPosting": jobPostings.closeJobPosting,
+	"website.createJobPosting": jobPostings.createJobPosting,
 	"website.createNotice": notices.createNotice,
+	"website.deleteJobPosting": jobPostings.deleteJobPosting,
 	"website.deleteNotice": notices.deleteNotice,
+	"website.publishJobPosting": jobPostings.publishJobPosting,
 	"website.publishNotice": notices.publishNotice,
+	"website.reopenJobPosting": jobPostings.reopenJobPosting,
 	"website.unarchiveNotice": notices.unarchiveNotice,
+	"website.unpublishJobPosting": jobPostings.unpublishJobPosting,
 	"website.unpublishNotice": notices.unpublishNotice,
+	"website.updateJobPostingDetails": jobPostings.updateJobPostingDetails,
 	"website.updateNoticeDetails": notices.updateNoticeDetails,
 };
