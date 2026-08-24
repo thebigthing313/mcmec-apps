@@ -1,3 +1,4 @@
+import { findCommandRefusal } from "@mcmec/sync";
 import { toast } from "sonner";
 
 /**
@@ -13,22 +14,6 @@ export function toastOnError(
 	message = "Something went wrong. Changes have been rolled back.",
 ) {
 	tx.isPersisted.promise.catch((error: unknown) => {
-		toast.error(refusalMessage(error) ?? message);
+		toast.error(findCommandRefusal(error)?.message ?? message);
 	});
-}
-
-// The collection wraps a handler's rejection, so walk the cause chain for the refusal.
-function refusalMessage(error: unknown): string | undefined {
-	let current = error;
-	for (let depth = 0; current && depth < 5; depth++) {
-		if (
-			typeof current === "object" &&
-			"name" in current &&
-			(current as { name?: string }).name === "CommandRefusedError"
-		) {
-			return (current as { message?: string }).message;
-		}
-		current = (current as { cause?: unknown }).cause;
-	}
-	return undefined;
 }

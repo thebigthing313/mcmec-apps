@@ -13,8 +13,14 @@ import { defineDomain } from "../command";
 
 const website = defineDomain("website", "manage_website");
 
-// The Drizzle column is `date` in string mode, so it wants 'YYYY-MM-DD…' text, not a Date.
-const NoticeDate = z.coerce.date().transform((d) => d.toISOString());
+// The Drizzle column is `date` in string mode, so it wants 'YYYY-MM-DD' text, not a Date and
+// not a timestamp. Postgres would accept a full ISO string and truncate it, but the handler
+// reads the column back as `${noticeDate}T00:00:00Z` to check P.L. 2025 c.72 — and that
+// concatenation on a stored timestamp yields Invalid Date, whose NaN day count compares false
+// and waves the retention rule through. Truncate here so the column can only hold a date.
+const NoticeDate = z.coerce
+	.date()
+	.transform((d) => d.toISOString().slice(0, 10));
 
 const DetailFields = {
 	content: NoticesRowSchema.shape.content,
@@ -23,7 +29,8 @@ const DetailFields = {
 	title: z.string().min(5),
 } as const;
 
-const Nothing = z.object({});
+/** The lifecycle commands take no fields — the envelope id is the whole request. */
+const EmptyPayload = z.object({});
 
 export const createNotice = website(
 	"createNotice",
@@ -50,12 +57,12 @@ export const updateNoticeDetails = website(
 		}),
 );
 
-export const publishNotice = website("publishNotice", Nothing);
-export const unpublishNotice = website("unpublishNotice", Nothing);
+export const publishNotice = website("publishNotice", EmptyPayload);
+export const unpublishNotice = website("unpublishNotice", EmptyPayload);
 /** Precondition: P.L. 2025 c.72 — enforced in the handler, against stored state. */
-export const archiveNotice = website("archiveNotice", Nothing);
-export const unarchiveNotice = website("unarchiveNotice", Nothing);
-export const deleteNotice = website("deleteNotice", Nothing);
+export const archiveNotice = website("archiveNotice", EmptyPayload);
+export const unarchiveNotice = website("unarchiveNotice", EmptyPayload);
+export const deleteNotice = website("deleteNotice", EmptyPayload);
 
 export const NOTICE_COMMANDS = [
 	createNotice,

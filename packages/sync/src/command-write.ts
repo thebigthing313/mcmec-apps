@@ -39,6 +39,34 @@ export class CommandRefusedError extends Error {
 }
 
 /**
+ * Finds the refusal inside whatever a collection handler's rejection was wrapped in.
+ *
+ * The collection wraps the handler's error, so a caller that wants the server's sentence has
+ * to walk the cause chain. That walk belongs next to the class that is thrown, not copied into
+ * every app's toast helper. `name` is checked rather than `instanceof` so a refusal still reads
+ * as one across a bundle boundary.
+ */
+export function findCommandRefusal(
+	error: unknown,
+): CommandRefusedError | undefined {
+	let current = error;
+	for (let depth = 0; current && depth < MAX_CAUSE_DEPTH; depth++) {
+		if (
+			typeof current === "object" &&
+			"name" in current &&
+			(current as { name?: string }).name === "CommandRefusedError"
+		) {
+			return current as CommandRefusedError;
+		}
+		current = (current as { cause?: unknown }).cause;
+	}
+	return undefined;
+}
+
+/** Deep enough for the collection's own wrapping; short enough that a cycle cannot hang it. */
+const MAX_CAUSE_DEPTH = 5;
+
+/**
  * Reads the intents off a pending mutation.
  *
  * Metadata arrives typed bare `unknown`, so this narrows. It THROWS when metadata is missing

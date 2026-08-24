@@ -61,8 +61,8 @@ export const unpublishNotice: CommandHandler<
  * P.L. 2025 c.72 — a legal notice must remain on the current-notices page for seven days.
  *
  * This is the rule that could not be expressed against `PATCH /api/data/notices`: it is a
- * precondition on archiving and on nothing else. Today it is a non-blocking amber box in
- * `notice-form.tsx`, invisible to the server.
+ * precondition on archiving and on nothing else. It lived as a non-blocking amber box in
+ * `notice-form.tsx` until this command existed to carry it.
  */
 export const archiveNotice: CommandHandler<
 	typeof noticeCommands.archiveNotice
@@ -73,15 +73,33 @@ export const archiveNotice: CommandHandler<
 		.where(eq(notices.id, id));
 	if (!row) throw NOT_FOUND;
 
-	const posted = new Date(`${row.noticeDate}T00:00:00Z`);
-	const days = Math.floor((Date.now() - posted.getTime()) / 86_400_000);
-	if (days < RETENTION_DAYS) {
+	// Date-only prefix, then an explicit NaN guard. An unparseable notice date must refuse:
+	// NaN compares false against every threshold, so the naive form would wave the statutory
+	// rule through exactly when the stored data is least trustworthy.
+	const posted = new Date(`${row.noticeDate.slice(0, 10)}T00:00:00Z`);
+	if (Number.isNaN(posted.getTime())) {
 		throw new CommandError(409, {
 			error: "precondition_failed",
 			message:
-				`This notice was posted ${days} day${days === 1 ? "" : "s"} ago. Per P.L. 2025, c.72, ` +
-				`legal notices must remain on the current notices page for at least ${RETENTION_DAYS} days ` +
-				`before archiving.`,
+				"This notice has no readable posting date, so its seven-day retention " +
+				"period cannot be checked. Fix the notice date before archiving.",
+			reason: "unreadable_notice_date",
+		});
+	}
+
+	const days = Math.floor((Date.now() - posted.getTime()) / 86_400_000);
+	if (days < RETENTION_DAYS) {
+		// A future-dated notice gives a negative day count, and "posted -3 days ago" is not a
+		// sentence. Its retention period has not started, which is the thing worth saying.
+		const posting =
+			days < 0
+				? "This notice is dated in the future, so its retention period has not started."
+				: `This notice was posted ${days} day${days === 1 ? "" : "s"} ago.`;
+		throw new CommandError(409, {
+			error: "precondition_failed",
+			message:
+				`${posting} Per P.L. 2025, c.72, legal notices must remain on the current notices ` +
+				`page for at least ${RETENTION_DAYS} days before archiving.`,
 			reason: "retention_period",
 		});
 	}

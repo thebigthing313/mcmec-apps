@@ -121,7 +121,6 @@ function RouteComponent() {
 				categories={items}
 				defaultValues={{
 					content: notice.content,
-					is_published: notice.is_published,
 					notice_date: new Date(notice.notice_date),
 					notice_type_id: notice.notice_type_id,
 					title: notice.title,

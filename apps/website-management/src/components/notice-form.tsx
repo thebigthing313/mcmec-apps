@@ -6,28 +6,34 @@ import {
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 
 /**
- * The details of a notice — exactly the fields `website.updateNoticeDetails` accepts, plus the
- * initial publish state a create is allowed to choose.
+ * The details of a notice — exactly the fields `website.updateNoticeDetails` accepts.
  *
- * `is_archived` is gone from this form. Archiving is a named command with a legal precondition
- * on it, so it is an action on the notice, not a switch inside an edit form — which is also
- * what lets the server enforce P.L. 2025 c.72 instead of warning about it.
+ * `is_published` and `is_archived` are not here. A lifecycle column can only move through a
+ * named command, so publishing and archiving are actions on the notice rather than switches
+ * inside an edit form — which is also what lets the server enforce P.L. 2025 c.72 instead of
+ * warning about it.
  */
-export interface NoticeFormValues {
+export interface NoticeDetailValues {
 	notice_type_id: string;
 	title: string;
 	notice_date: Date;
 	content: string;
-	is_published: boolean;
 }
 
+/** What the form submits. Creating a notice is the one place the publish state is a choice. */
+export type NoticeFormValues = NoticeDetailValues & { is_published: boolean };
+
 interface NoticeFormProps {
-	defaultValues: NoticeFormValues;
+	defaultValues: NoticeDetailValues;
 	onSubmit: (value: NoticeFormValues) => void | Promise<void>;
 	categories: Array<{ label: string; value: string }>;
 	formLabel: string;
 	submitLabel: string;
-	/** Create offers the initial publish state; edit moves it to a Publish/Unpublish action. */
+	/**
+	 * Create offers the initial publish state; edit moves it to a Publish/Unpublish action, and
+	 * the field is then neither rendered nor read — `updateNoticeDetails` has no such field to
+	 * send it to.
+	 */
 	mode: "create" | "edit";
 }
 
@@ -40,7 +46,7 @@ export function NoticeForm({
 	mode,
 }: NoticeFormProps) {
 	const form = useAppForm({
-		defaultValues,
+		defaultValues: { ...defaultValues, is_published: true },
 		onSubmit: async ({ value }) => {
 			await onSubmit(value);
 		},
