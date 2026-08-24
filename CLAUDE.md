@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MCMEC (Middlesex County Mosquito Extermination Commission) monorepo with three web apps and five shared packages, managed with **pnpm workspaces** and **Turborepo**.
+MCMEC (Middlesex County Mosquito Extermination Commission) monorepo with three web apps and six shared packages, managed with **pnpm workspaces** and **Turborepo**.
 
 ### Apps
 - **central** (`apps/central`) — Admin management interface (Vite SPA, port 3001)
@@ -52,6 +52,7 @@ origin ambiguous rather than erroring). Our Caddy sets `admin localhost:2020` an
 - **lib** (`packages/lib`) — Business logic, constants, validation schemas (Zod)
 - **schemas** (`packages/schemas`) — Zod row/insert/update schemas (`db/*`); a pure Zod leaf with no React or TanStack dependency
 - **sync** (`packages/sync`) — Electric collection factories, the per-app collection sets (`collections/*`), API write handlers, `fetchShapeSnapshot`, and the shared route paths (`@mcmec/sync/routes`)
+- **domain** (`packages/domain`) — the command vocabulary: what a write is called, what payload it takes and which permission it needs. Defines only; `apps/api` implements the handlers
 - **auth** (`packages/auth`) — Better Auth client, `signIn`/`signOut`, `verifyClaims`
 - **typescript-config** (`packages/typescript-config`) — Shared TS configs (base, react-library, tanstack-start)
 

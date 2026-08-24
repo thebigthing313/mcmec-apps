@@ -20,6 +20,13 @@
  */
 
 export {
+	type CommandEnvelope,
+	type CommandMetadata,
+	CommandRefusedError,
+	readCommandMetadata,
+	sendCommand,
+} from "./command-write";
+export {
 	apiDeleteRows,
 	apiInsertRows,
 	apiUpdateRow,

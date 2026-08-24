@@ -3,6 +3,8 @@
 	"description": "MCMEC backend API: Hono + Better Auth + Drizzle + ElectricSQL proxy",
 	"dependencies": {
 		"@hono/node-server": "^2.0.12",
+		"@mcmec/domain": "workspace:*",
+		"@mcmec/sync": "workspace:*",
 		"better-auth": "^1.6.25",
 		"drizzle-kit": "^0.31.10",
 		"drizzle-orm": "^0.45.2",
