@@ -1,5 +1,4 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import type { NoticesRowType } from "@mcmec/schemas/db/notices";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -14,8 +13,11 @@ import {
 import { Button } from "@mcmec/ui/components/button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
-import { NoticeForm } from "@/src/components/notice-form";
-import { notices, noticeTypes } from "@/src/lib/db";
+import {
+	NoticeForm,
+	type NoticeFormValues,
+} from "@/src/components/notice-form";
+import { intents, notices, noticeTypes } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
 import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
@@ -58,16 +60,57 @@ function RouteComponent() {
 		value: category.id,
 	}));
 
-	const handleSubmit = async (value: NoticesRowType) => {
-		const tx = notices.update(noticeId, (draft) => {
-			Object.assign(draft, value);
-		});
+	const handleSubmit = async (value: NoticeFormValues) => {
+		const tx = notices.update(
+			noticeId,
+			intents("website.updateNoticeDetails"),
+			(draft) => {
+				draft.content = value.content;
+				draft.notice_date = value.notice_date;
+				draft.notice_type_id = value.notice_type_id;
+				draft.title = value.title;
+			},
+		);
 		toastOnError(tx, "Failed to update notice.");
 		navigate({ to: "/notices" });
 	};
 
+	// One lifecycle action: the draft says what the user sees change, the intent says what they
+	// meant. The audit row gets the name, not an inferred boolean flip.
+	const togglePublished = () => {
+		const publishing = !notice.is_published;
+		const tx = notices.update(
+			noticeId,
+			intents(publishing ? "website.publishNotice" : "website.unpublishNotice"),
+			(draft) => {
+				draft.is_published = publishing;
+			},
+		);
+		toastOnError(
+			tx,
+			publishing ? "Failed to publish notice." : "Failed to unpublish notice.",
+		);
+	};
+
+	// The server owns P.L. 2025 c.72 now, so this button does not need to know the rule. A
+	// refusal comes back as a 409 whose message is written for the person who clicked.
+	const toggleArchived = () => {
+		const archiving = !notice.is_archived;
+		const tx = notices.update(
+			noticeId,
+			intents(archiving ? "website.archiveNotice" : "website.unarchiveNotice"),
+			(draft) => {
+				draft.is_archived = archiving;
+			},
+		);
+		toastOnError(
+			tx,
+			archiving ? "Failed to archive notice." : "Failed to unarchive notice.",
+		);
+	};
+
 	const handleDelete = async () => {
-		const tx = notices.delete(noticeId);
+		const tx = notices.delete(noticeId, intents("website.deleteNotice"));
 		toastOnError(tx, "Failed to delete notice.");
 		navigate({ to: "/notices" });
 	};
@@ -78,22 +121,32 @@ function RouteComponent() {
 				categories={items}
 				defaultValues={{
 					content: notice.content,
-					created_at: new Date(notice.created_at),
-					id: notice.id,
-					is_archived: notice.is_archived,
 					is_published: notice.is_published,
 					notice_date: new Date(notice.notice_date),
 					notice_type_id: notice.notice_type_id,
 					title: notice.title,
-					updated_at: new Date(),
 				}}
 				formLabel="Edit Notice"
 				key={seedKey}
+				mode="edit"
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>
 
-			<div className="max-w-2xl">
+			<div className="max-w-2xl space-y-2">
+				<div className="flex gap-2">
+					<Button
+						className="flex-1"
+						onClick={togglePublished}
+						variant="outline"
+					>
+						{notice.is_published ? "Unpublish" : "Publish"}
+					</Button>
+					<Button className="flex-1" onClick={toggleArchived} variant="outline">
+						{notice.is_archived ? "Unarchive" : "Archive"}
+					</Button>
+				</div>
+
 				<AlertDialog>
 					<AlertDialogTrigger asChild>
 						<Button className="w-full" variant="destructive">

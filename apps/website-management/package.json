@@ -2,6 +2,7 @@
 	"author": "Adrian Kabigting",
 	"dependencies": {
 		"@mcmec/auth": "workspace:*",
+		"@mcmec/domain": "workspace:*",
 		"@mcmec/lib": "workspace:*",
 		"@mcmec/schemas": "workspace:*",
 		"@mcmec/sync": "workspace:*",

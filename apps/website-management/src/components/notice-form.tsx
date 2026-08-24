@@ -3,28 +3,32 @@ import {
 	NonEmptyStringSchema,
 	NonEmptyUUID,
 } from "@mcmec/lib/constants/validators";
-import {
-	NoticesRowSchema,
-	type NoticesRowType,
-} from "@mcmec/schemas/db/notices";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 
+/**
+ * The details of a notice — exactly the fields `website.updateNoticeDetails` accepts, plus the
+ * initial publish state a create is allowed to choose.
+ *
+ * `is_archived` is gone from this form. Archiving is a named command with a legal precondition
+ * on it, so it is an action on the notice, not a switch inside an edit form — which is also
+ * what lets the server enforce P.L. 2025 c.72 instead of warning about it.
+ */
+export interface NoticeFormValues {
+	notice_type_id: string;
+	title: string;
+	notice_date: Date;
+	content: string;
+	is_published: boolean;
+}
+
 interface NoticeFormProps {
-	defaultValues: {
-		id: string;
-		notice_type_id: string;
-		title: string;
-		notice_date: Date;
-		content: string;
-		is_published: boolean;
-		is_archived: boolean;
-		created_at: Date;
-		updated_at: Date;
-	};
-	onSubmit: (value: NoticesRowType) => void | Promise<void>;
+	defaultValues: NoticeFormValues;
+	onSubmit: (value: NoticeFormValues) => void | Promise<void>;
 	categories: Array<{ label: string; value: string }>;
 	formLabel: string;
 	submitLabel: string;
+	/** Create offers the initial publish state; edit moves it to a Publish/Unpublish action. */
+	mode: "create" | "edit";
 }
 
 export function NoticeForm({
@@ -33,12 +37,12 @@ export function NoticeForm({
 	categories,
 	formLabel,
 	submitLabel,
+	mode,
 }: NoticeFormProps) {
 	const form = useAppForm({
 		defaultValues,
 		onSubmit: async ({ value }) => {
-			const parsedValue = NoticesRowSchema.parse(value);
-			await onSubmit(parsedValue);
+			await onSubmit(value);
 		},
 	});
 
@@ -81,65 +85,21 @@ export function NoticeForm({
 				<form.AppField name="content">
 					{(field) => <field.ContentField label="Content" />}
 				</form.AppField>
-				<form.AppField name="is_published">
-					{(field) => (
-						<field.SwitchField
-							description="Mark notice as ready to publish or as a draft"
-							label="Publish Status"
-							labelWhenFalse="This notice is a draft and will never display in the legal notices pages."
-							labelWhenTrue="This notice is published and will display in the legal notices pages once the publish date is reached."
-							orientation="vertical"
-						/>
-					)}
-				</form.AppField>
-				<form.AppField name="is_archived">
-					{(field) => (
-						<field.SwitchField
-							description="Indicates whether the notice is archived or active. Archived notices are notices whose information is no longer current but are kept for historical reference."
-							label="Archive Status"
-							labelWhenFalse="This notice is active and will display in the current legal notices page."
-							labelWhenTrue="This notice is no longer active and will display in the archived notices page."
-							orientation="vertical"
-						/>
-					)}
-				</form.AppField>
-				<form.Subscribe
-					selector={(state) => ({
-						isArchived: state.values.is_archived,
-						noticeDate: state.values.notice_date,
-					})}
-				>
-					{({ isArchived, noticeDate }) => (
-						<RetentionWarning isArchived={isArchived} noticeDate={noticeDate} />
-					)}
-				</form.Subscribe>
+				{mode === "create" ? (
+					<form.AppField name="is_published">
+						{(field) => (
+							<field.SwitchField
+								description="Mark notice as ready to publish or as a draft"
+								label="Publish Status"
+								labelWhenFalse="This notice is a draft and will never display in the legal notices pages."
+								labelWhenTrue="This notice is published and will display in the legal notices pages once the publish date is reached."
+								orientation="vertical"
+							/>
+						)}
+					</form.AppField>
+				) : null}
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
 			</form.FormWrapper>
 		</form.AppForm>
-	);
-}
-
-function RetentionWarning({
-	isArchived,
-	noticeDate,
-}: {
-	isArchived: boolean;
-	noticeDate: Date;
-}) {
-	if (!isArchived || !noticeDate) return null;
-
-	const daysSincePosted = Math.floor(
-		(Date.now() - new Date(noticeDate).getTime()) / (1000 * 60 * 60 * 24),
-	);
-
-	if (daysSincePosted >= 7) return null;
-
-	return (
-		<div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-amber-800 text-sm">
-			This notice was posted {daysSincePosted} day
-			{daysSincePosted !== 1 ? "s" : ""} ago. Per P.L. 2025, c.72, legal notices
-			must remain on the current notices page for at least 7 days before
-			archiving.
-		</div>
 	);
 }
