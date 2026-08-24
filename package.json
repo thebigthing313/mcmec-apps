@@ -9,7 +9,7 @@
 		"@changesets/cli": "^2.29.8",
 		"@manypkg/cli": "^0.25.1",
 		"@playwright/test": "^1.59.0",
-		"@tanstack/db": "^0.5.33",
+		"@tanstack/db": "^0.8.3",
 		"@tanstack/intent": "^0.0.23",
 		"@types/node": "25.0.9",
 		"husky": "^9.1.7",
@@ -43,7 +43,7 @@
 	},
 	"pnpm": {
 		"overrides": {
-			"@tanstack/db": "^0.5.33",
+			"@tanstack/db": "^0.8.3",
 			"@tanstack/react-router": "^1.157.18"
 		}
 	},
