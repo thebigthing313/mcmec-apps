@@ -158,6 +158,12 @@ export const auditLog = pgTable(
 		tableName: text("table_name").notNull(),
 		recordId: uuid("record_id"),
 		operation: auditOperation("operation").notNull(),
+		// The named domain command behind the write (e.g. "website.publishNotice"), read from the
+		// app.command GUC by log_mutation(). Plain text, not a pgEnum: the vocabulary is already
+		// compile-checked in TypeScript, and an enum would cost a migration per command added —
+		// on the exact thing this refactor wants cheap. Nullable so every pre-command row stays
+		// valid and an unmigrated write path degrades to today's behaviour instead of failing.
+		command: text("command"),
 		actorUserId: uuid("actor_user_id").references(() => users.id, {
 			onDelete: "set null",
 		}),

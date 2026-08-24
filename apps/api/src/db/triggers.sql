@@ -29,6 +29,12 @@ create or replace trigger set_updated_at before update on mosquito_activity_data
 -- ═══ 2. Audit log (append-only) ══════════════════════════════════════════════
 -- SECURITY DEFINER so it can insert into audit_log even though the app role has no write there.
 -- Actor comes from per-transaction GUCs the API sets via `SET LOCAL app.* = ...`.
+--
+-- `app.command` is the odd one out: the other four are request-scoped, but a single request can
+-- carry several named commands, and each audit row must name the one that wrote it. So the
+-- dispatcher re-sets it per command inside the transaction (setCommand in actor.ts) while the
+-- actor GUCs are stamped once. Every current_setting here passes missing_ok => a write path that
+-- sets nothing logs nulls rather than erroring, which is what keeps the pre-command paths working.
 create or replace function log_mutation() returns trigger
 	language plpgsql security definer set search_path = '' as $$
 declare
@@ -36,12 +42,13 @@ declare
 	v_new jsonb := case when tg_op in ('INSERT','UPDATE') then to_jsonb(new) end;
 begin
 	insert into public.audit_log(
-		table_name, record_id, operation,
+		table_name, record_id, operation, command,
 		actor_user_id, actor_email, old_values, new_values, request_id, ip_address
 	) values (
 		tg_table_name,
 		coalesce((v_new->>'id')::uuid, (v_old->>'id')::uuid),
 		tg_op::public.audit_operation,
+		nullif(current_setting('app.command', true), ''),
 		nullif(current_setting('app.actor_user_id', true), '')::uuid,
 		nullif(current_setting('app.actor_email', true), ''),
 		v_old, v_new,

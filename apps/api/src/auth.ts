@@ -158,8 +158,13 @@ export const auth = betterAuth({
 			};
 		}),
 
-		// NOTE: audit for users/role/ban changes is written app-layer via databaseHooks
-		// (Better Auth writes users on its own connection, so the DB trigger can't see the actor):
+		// NOTE: not implemented. Audit for users/role/ban changes is *intended* to be written
+		// app-layer via databaseHooks (Better Auth writes users on its own connection, so the DB
+		// trigger can't see the actor):
 		//   databaseHooks: { user: { update: { after: (u, ctx) => writeAuditRow(...) } } }
+		// Today the audit_users trigger covers writes made through our own routes (they run in a
+		// transaction with the app.* GUCs set); Better-Auth-initiated writes land with a null
+		// actor. When this hook is built it inserts into audit_log directly and so reads no GUCs —
+		// it must set `command` explicitly, or user-domain commands audit as null.
 	],
 });
