@@ -1,7 +1,7 @@
 import {
 	type AdminCollections,
 	createAdminCollections,
-} from "@mcmec/schemas/collections/admin";
+} from "@mcmec/sync/collections/admin";
 import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------

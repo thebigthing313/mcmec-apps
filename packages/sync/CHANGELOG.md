@@ -1,4 +1,4 @@
-# @mcmec/collections
+# @mcmec/sync
 
 ## 0.3.0
 

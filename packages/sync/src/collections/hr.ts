@@ -1,14 +1,14 @@
-import { createEagerCollection } from "@mcmec/collections";
 import {
 	EmployeesInsertSchema,
 	EmployeesRowSchema,
 	EmployeesUpdateSchema,
-} from "../db/employees";
+} from "@mcmec/schemas/db/employees";
 import {
 	JobPostingsInsertSchema,
 	JobPostingsRowSchema,
 	JobPostingsUpdateSchema,
-} from "../db/job-postings";
+} from "@mcmec/schemas/db/job-postings";
+import { createEagerCollection } from "../factories";
 
 export interface CreateHrCollectionsOptions {
 	/** API origin (VITE_API_URL) */

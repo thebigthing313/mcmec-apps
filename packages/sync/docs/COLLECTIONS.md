@@ -47,7 +47,7 @@ schemas. Synced rows and mutated rows therefore agree on types.
 ## `createEagerCollection`
 
 ```ts
-import { createEagerCollection } from "@mcmec/collections";
+import { createEagerCollection } from "@mcmec/sync";
 
 const noticeTypesCollection = createEagerCollection({
   table: "notice_types",
@@ -100,7 +100,7 @@ const noticeType = useLiveQuery((q) =>
 ## `createOnDemandCollection`
 
 ```ts
-import { createOnDemandCollection } from "@mcmec/collections";
+import { createOnDemandCollection } from "@mcmec/sync";
 
 const noticesCollection = createOnDemandCollection({
   table: "notices",
@@ -186,7 +186,7 @@ collection map. Apps expose it through a `getDb()` / `useDb()` singleton in
 `src/lib/db.ts` and hand it to the router context.
 
 ```ts
-import { createNoticesCollections } from "@mcmec/schemas/collections/notices";
+import { createNoticesCollections } from "@mcmec/sync/collections/notices";
 
 const db = createNoticesCollections({ apiUrl: API_URL });
 ```

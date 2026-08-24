@@ -1,4 +1,4 @@
-# @mcmec/collections
+# @mcmec/sync
 
 TanStack DB collection factories backed by the Railway API:
 
@@ -22,11 +22,18 @@ cookie (`credentials: "include"`).
 | `fetchShapeSnapshot` | One-shot shape read for SSR — no live stream left open. |
 | `electricParser` | Coerces Electric's string `timestamptz`/`date`/`numeric` to `Date`/`number`. |
 
+Two further subpaths:
+
+| Subpath | Purpose |
+|---|---|
+| `@mcmec/sync/collections/*` | The per-app collection sets — `admin`, `central`, `hr`, `notices` (website-management). An app imports the one set it reads. |
+| `@mcmec/sync/routes` | Every URL the client and the API agree on. **Imports nothing**, deliberately: the Hono server takes the paths without the TanStack stack behind them. |
+
 ---
 
 ## Installation
 
-Workspace-internal — apps depend on it as `"@mcmec/collections": "workspace:*"`.
+Workspace-internal — apps depend on it as `"@mcmec/sync": "workspace:*"`.
 Its runtime peers (`@electric-sql/client`, `@tanstack/db`,
 `@tanstack/electric-db-collection`, `zod`) come with the package.
 
@@ -56,7 +63,7 @@ The row schema's output must include an `id` — it is the collection key.
 import {
   createEagerCollection,
   createOnDemandCollection,
-} from "@mcmec/collections";
+} from "@mcmec/sync";
 
 // Eager — streams the whole (server-narrowed) shape. `startSync: false`, so nothing
 // is fetched until a route loader calls `.preload()`.
@@ -127,7 +134,7 @@ handed to the collection.
 ## Server-side rendering
 
 ```ts
-import { fetchShapeSnapshot } from "@mcmec/collections";
+import { fetchShapeSnapshot } from "@mcmec/sync";
 
 const notices = await fetchShapeSnapshot({ table: "notices", apiUrl, signal });
 ```
@@ -146,6 +153,6 @@ The stream is aborted once the snapshot lands, so no long-poll outlives the requ
 
 ## Fixing bugs / contributing
 
-This package lives in the monorepo at `packages/collections`. Edit files directly —
+This package lives in the monorepo at `packages/sync`. Edit files directly —
 workspace symlinks mean changes are reflected immediately in consuming packages without
 rebuilding.

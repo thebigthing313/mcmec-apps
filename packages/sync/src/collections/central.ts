@@ -1,5 +1,5 @@
-import { createEagerCollection } from "@mcmec/collections";
-import { EmployeesRowSchema } from "../db/employees";
+import { EmployeesRowSchema } from "@mcmec/schemas/db/employees";
+import { createEagerCollection } from "../factories";
 
 export interface CreateCentralCollectionsOptions {
 	/** API origin (VITE_API_URL) */

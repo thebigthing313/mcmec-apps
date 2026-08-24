@@ -1,7 +1,7 @@
 import {
 	type CentralCollections,
 	createCentralCollections,
-} from "@mcmec/schemas/collections/central";
+} from "@mcmec/sync/collections/central";
 import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------

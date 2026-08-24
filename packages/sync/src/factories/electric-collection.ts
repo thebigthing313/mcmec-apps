@@ -23,6 +23,7 @@ import {
 import type z from "zod";
 import type { ZodObject } from "zod";
 import { apiDeleteRows, apiInsertRows, apiUpdateRow } from "../crud";
+import { shapePathFor } from "../routes";
 
 // Electric leaves these Postgres types as strings on the sync path (the collection
 // `schema` is NOT applied to synced rows — only this parser is). Coerce them to match
@@ -143,7 +144,7 @@ export function createElectricCollection<
 		startSync,
 		getKey: (item) => (item as { id: string }).id,
 		shapeOptions: {
-			url: `${apiUrl}/api/shapes/${table}`,
+			url: `${apiUrl}${shapePathFor(table)}`,
 			// Electric types `parser` against the row's declared `Extensions`; our schema
 			// rows don't brand `Date` as an extension, so a Date-returning parser can't be
 			// expressed in that generic. The functions are correct at runtime — cast past it.

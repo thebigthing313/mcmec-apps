@@ -1,11 +1,7 @@
 {
 	"author": "",
 	"dependencies": {
-		"@mcmec/collections": "workspace:*",
 		"@mcmec/lib": "workspace:*",
-		"@tanstack/query-core": "^5.90.20",
-		"@tanstack/react-db": "^0.3.3",
-		"@tanstack/react-query": "^5.90.16",
 		"zod": "^4.3.5"
 	},
 	"description": "",
@@ -16,8 +12,7 @@
 		"vitest": "^2.1.5"
 	},
 	"exports": {
-		"./db/*": "./src/db/*.ts",
-		"./collections/*": "./src/collections/*.ts"
+		"./db/*": "./src/db/*.ts"
 	},
 	"keywords": [],
 	"license": "ISC",

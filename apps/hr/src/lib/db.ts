@@ -1,7 +1,7 @@
 import {
 	createHrCollections,
 	type HrCollections,
-} from "@mcmec/schemas/collections/hr";
+} from "@mcmec/sync/collections/hr";
 import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------

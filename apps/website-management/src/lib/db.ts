@@ -1,7 +1,7 @@
 import {
 	createNoticesCollections,
 	type NoticesCollections,
-} from "@mcmec/schemas/collections/notices";
+} from "@mcmec/sync/collections/notices";
 import { API_URL } from "./queryClient";
 
 // ---------------------------------------------------------------------------

@@ -1,55 +1,52 @@
 import {
-	createEagerCollection,
-	createOnDemandCollection,
-} from "@mcmec/collections";
-import {
 	DocumentTypesInsertSchema,
 	DocumentTypesRowSchema,
 	DocumentTypesUpdateSchema,
-} from "../db/document-types";
+} from "@mcmec/schemas/db/document-types";
 import {
 	DocumentsInsertSchema,
 	DocumentsRowSchema,
 	DocumentsUpdateSchema,
-} from "../db/documents";
-import { EmployeesRowSchema } from "../db/employees";
+} from "@mcmec/schemas/db/documents";
+import { EmployeesRowSchema } from "@mcmec/schemas/db/employees";
 import {
 	InsecticidesInsertSchema,
 	InsecticidesRowSchema,
 	InsecticidesUpdateSchema,
-} from "../db/insecticides";
+} from "@mcmec/schemas/db/insecticides";
 import {
 	MeetingsInsertSchema,
 	MeetingsRowSchema,
 	MeetingsUpdateSchema,
-} from "../db/meetings";
-import { MosquitoActivityDataRowSchema } from "../db/mosquito-activity-data";
+} from "@mcmec/schemas/db/meetings";
+import { MosquitoActivityDataRowSchema } from "@mcmec/schemas/db/mosquito-activity-data";
 import {
 	MunicipalitiesInsertSchema,
 	MunicipalitiesRowSchema,
 	MunicipalitiesUpdateSchema,
-} from "../db/municipalities";
+} from "@mcmec/schemas/db/municipalities";
 import {
 	NoticeTypesInsertSchema,
 	NoticeTypesRowSchema,
 	NoticeTypesUpdateSchema,
-} from "../db/notice-types";
+} from "@mcmec/schemas/db/notice-types";
 import {
 	NoticesInsertSchema,
 	NoticesRowSchema,
 	NoticesUpdateSchema,
-} from "../db/notices";
+} from "@mcmec/schemas/db/notices";
 import {
 	PublicRequestsRowSchema,
 	PublicRequestsUpdateSchema,
-} from "../db/public-requests";
-import { SprayScheduleMunicipalitiesRowSchema } from "../db/spray-schedule-municipalities";
+} from "@mcmec/schemas/db/public-requests";
+import { SprayScheduleMunicipalitiesRowSchema } from "@mcmec/schemas/db/spray-schedule-municipalities";
 import {
 	SpraySchedulesInsertSchema,
 	SpraySchedulesRowSchema,
 	SpraySchedulesUpdateSchema,
-} from "../db/spray-schedules";
-import { ZipCodesRowSchema } from "../db/zip-codes";
+} from "@mcmec/schemas/db/spray-schedules";
+import { ZipCodesRowSchema } from "@mcmec/schemas/db/zip-codes";
+import { createEagerCollection, createOnDemandCollection } from "../factories";
 
 export interface CreateNoticesCollectionsOptions {
 	/** API origin (VITE_API_URL) */

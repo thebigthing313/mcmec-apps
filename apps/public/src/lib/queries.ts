@@ -10,7 +10,6 @@
  * where the rows come from.
  */
 
-import { fetchShapeSnapshot } from "@mcmec/collections";
 import { DocumentTypesRowSchema } from "@mcmec/schemas/db/document-types";
 import { DocumentsRowSchema } from "@mcmec/schemas/db/documents";
 import { InsecticidesRowSchema } from "@mcmec/schemas/db/insecticides";
@@ -23,6 +22,7 @@ import { NoticesRowSchema } from "@mcmec/schemas/db/notices";
 import { SprayScheduleMunicipalitiesRowSchema } from "@mcmec/schemas/db/spray-schedule-municipalities";
 import { SpraySchedulesRowSchema } from "@mcmec/schemas/db/spray-schedules";
 import { ZipCodesRowSchema } from "@mcmec/schemas/db/zip-codes";
+import { fetchShapeSnapshot } from "@mcmec/sync";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import type z from "zod";
