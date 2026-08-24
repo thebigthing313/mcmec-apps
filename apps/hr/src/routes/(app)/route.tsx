@@ -37,7 +37,6 @@ export const Route = createFileRoute("/(app)")({
 	component: LayoutComponent,
 	loader: ({ context }) => {
 		context.db.employees.stateWhenReady();
-		context.db.jobPostings.stateWhenReady();
 	},
 });
 

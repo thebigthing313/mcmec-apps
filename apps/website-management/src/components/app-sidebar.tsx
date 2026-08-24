@@ -10,6 +10,7 @@ import { Link, type LinkProps } from "@tanstack/react-router";
 import {
 	BarChart3,
 	BookOpen,
+	Briefcase,
 	Calendar,
 	FileText,
 	FolderOpen,
@@ -68,6 +69,11 @@ const items: SidebarItem[] = [
 		icon: <Inbox />,
 		label: "Public Requests",
 		linkProps: { to: "/public-requests" },
+	},
+	{
+		icon: <Briefcase />,
+		label: "Job Postings",
+		linkProps: { to: "/job-postings" },
 	},
 ];
 export function AppSidebar() {

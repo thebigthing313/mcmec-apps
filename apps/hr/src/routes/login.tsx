@@ -64,9 +64,7 @@ function LoginPage() {
 			<Card className="w-full max-w-sm">
 				<CardHeader>
 					<CardTitle className="text-xl">HR sign in</CardTitle>
-					<CardDescription>
-						Sign in to manage employees and job postings.
-					</CardDescription>
+					<CardDescription>Sign in to manage employees.</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form className="flex flex-col gap-4" onSubmit={handleSubmit}>

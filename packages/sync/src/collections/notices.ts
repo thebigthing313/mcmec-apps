@@ -14,6 +14,7 @@ import {
 	InsecticidesRowSchema,
 	InsecticidesUpdateSchema,
 } from "@mcmec/schemas/db/insecticides";
+import { JobPostingsRowSchema } from "@mcmec/schemas/db/job-postings";
 import {
 	MeetingsInsertSchema,
 	MeetingsRowSchema,
@@ -67,9 +68,20 @@ export function createNoticesCollections({
 		updateSchema: NoticeTypesUpdateSchema,
 	});
 
-	// The first collection on the named-command path (#152). Its writes carry an intent and go
-	// to POST /api/commands; the Insert/Update schema pair is gone, because a command payload is
+	// On the named-command path (#152). These collections' writes carry an intent and go to
+	// POST /api/commands; the Insert/Update schema pair is gone, because a command payload is
 	// not "a row minus the server columns".
+	//
+	// Job postings moved here from `apps/hr` with #145: they are website content, so they are
+	// read and written under `manage_website`.
+	const jobPostings = createEagerCollection({
+		allowDelete: true,
+		apiUrl,
+		commands: true,
+		schema: JobPostingsRowSchema,
+		table: "job_postings",
+	});
+
 	const notices = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
@@ -173,6 +185,7 @@ export function createNoticesCollections({
 		documents,
 		employees,
 		insecticides,
+		jobPostings,
 		meetings,
 		mosquitoActivityData,
 		municipalities,

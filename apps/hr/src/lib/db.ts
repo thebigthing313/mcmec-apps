@@ -25,4 +25,4 @@ export type Db = HrCollections;
 
 // Re-export individual collections for direct import
 const db = getDb();
-export const { employees, jobPostings } = db;
+export const { employees } = db;

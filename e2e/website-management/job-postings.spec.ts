@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Job Postings - HR App", () => {
+test.describe("Job Postings - Website Management App", () => {
 	test("job postings list page loads with seed data", async ({ page }) => {
 		await page.goto("/job-postings");
 		await expect(
@@ -48,16 +48,44 @@ test.describe("Job Postings - HR App", () => {
 		await expect(page.getByText("Draft")).toBeVisible();
 	});
 
-	test("can edit a job posting", async ({ page }) => {
+	test("can edit a job posting's details", async ({ page }) => {
 		await page.goto("/job-postings");
 		await page.getByText("Seasonal Field Worker").click();
 		await page.getByRole("link", { name: /edit/i }).click();
 
-		// Toggle is_closed
-		await page.getByRole("switch").click();
+		await page.getByLabel("Title").fill("Seasonal Field Worker (2026)");
 		await page.getByRole("button", { name: /update/i }).click();
 
-		// Should navigate back to detail and show closed status
-		await expect(page.getByText("Closed")).toBeVisible();
+		await expect(
+			page.getByRole("heading", { name: "Seasonal Field Worker (2026)" }),
+		).toBeVisible();
+	});
+
+	// Closing is a named command now, not a switch inside the edit form: the button posts
+	// `website.closeJobPosting` and the status badge follows the optimistic update.
+	test("can close and reopen a job posting", async ({ page }) => {
+		await page.goto("/job-postings");
+		await page.getByText("Lab Technician").click();
+		await page.getByRole("link", { name: /edit/i }).click();
+
+		await page.getByRole("button", { name: "Close", exact: true }).click();
+		await expect(page.getByRole("button", { name: "Reopen" })).toBeVisible();
+
+		await page.getByRole("button", { name: "Reopen" }).click();
+		await expect(
+			page.getByRole("button", { name: "Close", exact: true }),
+		).toBeVisible();
+	});
+
+	// `published_at` is server-stamped, so publishing is an action rather than a date entry.
+	test("can publish a draft job posting", async ({ page }) => {
+		await page.goto("/job-postings/new");
+		await page.getByLabel("Title").fill("E2E Publish Target");
+		await page.getByRole("button", { name: /create/i }).click();
+		await expect(page.getByText("Draft")).toBeVisible();
+
+		await page.getByRole("link", { name: /edit/i }).click();
+		await page.getByRole("button", { name: "Publish" }).click();
+		await expect(page.getByRole("button", { name: "Unpublish" })).toBeVisible();
 	});
 });

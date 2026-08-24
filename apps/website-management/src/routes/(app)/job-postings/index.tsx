@@ -32,10 +32,11 @@ import {
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, Plus } from "lucide-react";
 import { useState } from "react";
-import { useDb } from "@/src/lib/db";
+import { jobPostings } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/job-postings/")({
 	component: JobPostingsPage,
+	loader: () => ({ crumb: "Job Postings" }),
 });
 
 type JobPosting = {
@@ -122,7 +123,6 @@ const columns: ColumnDef<JobPosting>[] = [
 ];
 
 function JobPostingsPage() {
-	const { jobPostings } = useDb();
 	const [sorting, setSorting] = useState<SortingState>([
 		{ desc: true, id: "published_at" },
 	]);
