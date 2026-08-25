@@ -13,7 +13,7 @@ import { jobPostings } from "@/src/lib/db";
 export const Route = createFileRoute("/(app)/job-postings/$postingId")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
-		await jobPostings.stateWhenReady();
+		await jobPostings.preload();
 		const posting = jobPostings.get(params.postingId);
 		if (!posting) {
 			throw notFound();

@@ -36,7 +36,6 @@ import { jobPostings } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/job-postings/")({
 	component: JobPostingsPage,
-	loader: () => ({ crumb: "Job Postings" }),
 });
 
 type JobPosting = {

@@ -44,5 +44,6 @@ The `pending` status (a publish date in the future) is now unreachable for new w
 **`@mcmec/sync` is a major** because `HrCollections` no longer carries `jobPostings` — the
 collection moved to the website-management set and onto the command write path, losing its
 Insert/Update schema pair (a command payload is not "a row minus the server columns"). The
-schemas themselves stay in `@mcmec/schemas`' `db/job-postings.ts`, still used by the generic
-path until the cutover deletes it.
+schemas themselves stay in `@mcmec/schemas`' `db/job-postings.ts`, but with the `WRITABLE`
+entry gone nothing imports them any more — the cutover deletes them along with the rest of the
+generic path.

@@ -19,32 +19,40 @@ import {
 } from "@/src/components/job-posting-form";
 import { intents, jobPostings } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
+import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/job-postings/$postingId_/edit")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
-		await jobPostings.stateWhenReady();
-		if (!jobPostings.get(params.postingId)) {
+		await jobPostings.preload();
+		const posting = jobPostings.get(params.postingId);
+		if (!posting) {
 			throw new Error(ErrorMessages.DATABASE.RECORD_NOT_AVAILABLE);
 		}
-		return { crumb: "Edit" };
+		return { crumb: "Edit", posting };
 	},
 });
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
+	const { posting: loadedPosting } = Route.useLoaderData();
 	const { postingId } = Route.useParams();
 
 	// Live rather than loader data: the lifecycle buttons below read `posting` to decide which
 	// direction they act in, so they have to see their own optimistic update.
-	const { data: posting } = useLiveQuery((q) =>
-		q
-			.from({ posting: jobPostings })
-			.where(({ posting }) => eq(posting.id, postingId))
-			.findOne(),
+	const { data: livePostings } = useLiveQuery(
+		(q) =>
+			q
+				.from({ posting: jobPostings })
+				.where(({ posting }) => eq(posting.id, postingId)),
+		[postingId],
 	);
+	const posting = livePostings[0] ?? loadedPosting;
 
-	if (!posting) return null;
+	// Seed from the live row, and re-seed when it changes until the user takes the form —
+	// see use-form-seed.ts. `updateJobPostingDetails` sends the diff against the LIVE row,
+	// so a stale seed writes itself back and silently reverts whatever changed meanwhile.
+	const { seedKey, latchProps } = useFormSeed(rowVersion(posting));
 
 	const handleSubmit = async (value: JobPostingFormValues) => {
 		const tx = jobPostings.update(
@@ -110,10 +118,11 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" {...latchProps}>
 			<JobPostingForm
 				defaultValues={{ content: posting.content, title: posting.title }}
 				formLabel="Edit Job Posting"
+				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>

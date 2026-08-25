@@ -31,7 +31,8 @@ const DetailFields = {
 	title: z.string().min(1),
 } as const;
 
-const Nothing = z.object({});
+/** The lifecycle commands take no fields — the envelope id is the whole request. */
+const EmptyPayload = z.object({});
 
 /**
  * Always a draft. Unlike `createNotice` — which may choose its initial publish state because
@@ -61,11 +62,11 @@ export const updateJobPostingDetails = website(
 );
 
 /** Stamps `published_at = now()` server-side — the client no longer picks the date. */
-export const publishJobPosting = website("publishJobPosting", Nothing);
-export const unpublishJobPosting = website("unpublishJobPosting", Nothing);
-export const closeJobPosting = website("closeJobPosting", Nothing);
-export const reopenJobPosting = website("reopenJobPosting", Nothing);
-export const deleteJobPosting = website("deleteJobPosting", Nothing);
+export const publishJobPosting = website("publishJobPosting", EmptyPayload);
+export const unpublishJobPosting = website("unpublishJobPosting", EmptyPayload);
+export const closeJobPosting = website("closeJobPosting", EmptyPayload);
+export const reopenJobPosting = website("reopenJobPosting", EmptyPayload);
+export const deleteJobPosting = website("deleteJobPosting", EmptyPayload);
 
 export const JOB_POSTING_COMMANDS = [
 	createJobPosting,
