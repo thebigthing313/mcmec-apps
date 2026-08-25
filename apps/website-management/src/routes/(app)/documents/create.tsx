@@ -1,8 +1,10 @@
-import type { DocumentsRowType } from "@mcmec/schemas/db/documents";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
-import { DocumentForm } from "@/src/components/document-form";
-import { documents, documentTypes } from "@/src/lib/db";
+import {
+	DocumentForm,
+	type DocumentFormValues,
+} from "@/src/components/document-form";
+import { documents, documentTypes, intents } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/documents/create")({
@@ -26,8 +28,20 @@ function RouteComponent() {
 		value: category.id,
 	}));
 
-	const handleSubmit = async (value: DocumentsRowType) => {
-		const tx = documents.insert(value);
+	const handleSubmit = async (value: DocumentFormValues) => {
+		const now = new Date();
+		const tx = documents.insert(
+			{
+				...value,
+				created_at: now,
+				// The id we mint here is the id the row will have: the envelope carries it and
+				// the handler honours it. Under the old path it was thrown away server-side, so
+				// the optimistic row and the committed row had different keys on every insert.
+				id: crypto.randomUUID(),
+				updated_at: now,
+			},
+			intents("website.createDocument"),
+		);
 		toastOnError(tx, "Failed to create document.");
 		navigate({ to: "/documents" });
 	};
@@ -36,15 +50,12 @@ function RouteComponent() {
 		<DocumentForm
 			categories={items}
 			defaultValues={{
-				created_at: new Date(),
 				document_type_id: "",
 				fiscal_year: new Date().getFullYear(),
-				id: crypto.randomUUID(),
-				is_published: false,
-				updated_at: new Date(),
 				url: "",
 			}}
 			formLabel="Create New Document"
+			mode="create"
 			onSubmit={handleSubmit}
 			submitLabel="Create"
 		/>

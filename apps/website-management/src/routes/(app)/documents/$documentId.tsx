@@ -1,3 +1,5 @@
+import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -7,8 +9,9 @@ import {
 	notFound,
 	useNavigate,
 } from "@tanstack/react-router";
-import { ArchiveX, ArrowLeft, Edit, ExternalLink, Upload } from "lucide-react";
-import { documents, documentTypes } from "@/src/lib/db";
+import { ArrowLeft, Edit, ExternalLink, Undo2, Upload } from "lucide-react";
+import { documents, documentTypes, intents } from "@/src/lib/db";
+import { runLifecycle } from "@/src/lib/lifecycle";
 import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/documents/$documentId")({
@@ -46,25 +49,43 @@ function RouteComponent() {
 	const { id, document_type_id, fiscal_year, url, is_published } = document;
 	const type = documentTypes.get(document_type_id)?.name;
 
-	const handlePublish = async () => {
-		const tx = documents.update(id, (draft) => {
-			draft.is_published = true;
-		});
-		toastOnError(tx, "Failed to publish document.");
-		await tx.isPersisted.promise;
+	// No form under this, so no `isDirty` and no relabel: a detail-view lifecycle button always
+	// sends exactly one intent. The page stays put afterwards — the badge below is live, so the
+	// result of the click is visible where the click was. (It used to navigate away, which is
+	// how a publish confirmed itself before this page could show the answer.)
+	const publish = is_published
+		? {
+				icon: <Undo2 />,
+				label: "Unpublish",
+				onAct: () =>
+					runLifecycle(documents, id, {
+						apply: (draft) => {
+							draft.is_published = false;
+						},
+						command: "website.unpublishDocument",
+						failure: "Failed to unpublish document.",
+					}),
+			}
+		: {
+				icon: <Upload />,
+				label: "Publish",
+				onAct: () =>
+					runLifecycle(documents, id, {
+						apply: (draft) => {
+							draft.is_published = true;
+						},
+						command: "website.publishDocument",
+						failure: "Failed to publish document.",
+					}),
+			};
+
+	// Delete is the one action whose placement is not free — detail page only, danger zone,
+	// behind a confirm (ADR 0001). It leaves the page because the record it was showing is gone.
+	const handleDelete = () => {
+		const tx = documents.delete(id, intents("website.deleteDocument"));
+		toastOnError(tx, "Failed to delete document.");
 		navigate({ to: "/documents" });
 	};
-
-	const handleUnpublish = async () => {
-		const tx = documents.update(id, (draft) => {
-			draft.is_published = false;
-		});
-		toastOnError(tx, "Failed to unpublish document.");
-		await tx.isPersisted.promise;
-		navigate({ to: "/documents" });
-	};
-
-	const isDraft = !is_published;
 
 	return (
 		<div className="max-w-2xl space-y-6">
@@ -82,17 +103,12 @@ function RouteComponent() {
 							Edit
 						</Link>
 					</Button>
-					{isDraft ? (
-						<Button onClick={handlePublish} size="sm" variant="default">
-							<Upload />
-							Publish
-						</Button>
-					) : (
-						<Button onClick={handleUnpublish} size="sm" variant="destructive">
-							<ArchiveX />
-							Unpublish
-						</Button>
-					)}
+					<LifecycleButton
+						icon={publish.icon}
+						label={publish.label}
+						onAct={publish.onAct}
+						size="sm"
+					/>
 				</div>
 			</nav>
 
@@ -119,6 +135,12 @@ function RouteComponent() {
 					</a>
 				</div>
 			</article>
+
+			<DangerZoneCard
+				label="Delete Document"
+				onConfirm={handleDelete}
+				recordName={`${fiscal_year} ${type ?? "Document"}`}
+			/>
 		</div>
 	);
 }

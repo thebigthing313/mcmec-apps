@@ -1,3 +1,7 @@
+import {
+	type RowAction,
+	RowActionsMenu,
+} from "@mcmec/ui/blocks/row-actions-menu";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -37,9 +41,15 @@ type Document = {
 
 interface DocumentsTableProps {
 	data: Document[];
+	/**
+	 * Lifecycle shortcuts for a row (ADR 0001). The route builds them, because the table has no
+	 * business knowing the command vocabulary — and everything offered here is also on the
+	 * document's detail view, which is what makes the column optional rather than load-bearing.
+	 */
+	rowActions?: (document: Document) => RowAction[];
 }
 
-export function DocumentsTable({ data }: DocumentsTableProps) {
+export function DocumentsTable({ data, rowActions }: DocumentsTableProps) {
 	const navigate = useNavigate();
 	const [sorting, setSorting] = useState<SortingState>([
 		{
@@ -130,6 +140,14 @@ export function DocumentsTable({ data }: DocumentsTableProps) {
 			},
 		},
 	];
+
+	if (rowActions) {
+		columns.push({
+			cell: ({ row }) => <RowActionsMenu actions={rowActions(row.original)} />,
+			header: "",
+			id: "actions",
+		});
+	}
 
 	const table = useReactTable({
 		columns,
