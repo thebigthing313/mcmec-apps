@@ -1,16 +1,6 @@
+import type { CommandName } from "@mcmec/domain";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@mcmec/ui/components/alert-dialog";
-import { Button } from "@mcmec/ui/components/button";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -18,6 +8,7 @@ import {
 	type JobPostingFormValues,
 } from "@/src/components/job-posting-form";
 import { intents, jobPostings } from "@/src/lib/db";
+import { changedFields, type Draft, runLifecycle } from "@/src/lib/lifecycle";
 import { toastOnError } from "@/src/lib/toast-on-error";
 import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
@@ -32,6 +23,8 @@ export const Route = createFileRoute("/(app)/job-postings/$postingId_/edit")({
 		return { crumb: "Edit", posting };
 	},
 });
+
+type JobPostingDraft = Draft<typeof jobPostings>;
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
@@ -67,103 +60,102 @@ function RouteComponent() {
 		navigate({ params: { postingId }, to: "/job-postings/$postingId" });
 	};
 
-	// The draft says what the user sees change; the intent says what they meant. The optimistic
-	// timestamp is this client's clock and the committed one is the server's — they differ by
-	// milliseconds and sync settles it. What matters is that no client can choose the value.
-	const togglePublished = () => {
-		const publishing = posting.published_at === null;
-		const tx = jobPostings.update(
-			postingId,
-			intents(
-				publishing
-					? "website.publishJobPosting"
-					: "website.unpublishJobPosting",
-			),
-			(draft) => {
-				draft.published_at = publishing ? new Date() : null;
-			},
-		);
-		toastOnError(
-			tx,
-			publishing
-				? "Failed to publish job posting."
-				: "Failed to unpublish job posting.",
-		);
-	};
-
-	const toggleClosed = () => {
-		const closing = !posting.is_closed;
-		const tx = jobPostings.update(
-			postingId,
-			intents(closing ? "website.closeJobPosting" : "website.reopenJobPosting"),
-			(draft) => {
-				draft.is_closed = closing;
-			},
-		);
-		toastOnError(
-			tx,
-			closing
-				? "Failed to close job posting."
-				: "Failed to reopen job posting.",
-		);
-	};
-
-	const handleDelete = async () => {
-		const tx = jobPostings.delete(
-			postingId,
-			intents("website.deleteJobPosting"),
-		);
-		toastOnError(tx, "Failed to delete job posting.");
-		navigate({ to: "/job-postings" });
-	};
-
 	return (
 		<div className="space-y-4" {...latchProps}>
 			<JobPostingForm
+				actions={({ values }) => {
+					// Diffed against the LIVE row, so the label and the payload cannot disagree:
+					// if this is empty the button stays "Publish" and sends one intent, and
+					// `updateJobPostingDetails` is never handed a payload its own non-empty
+					// refinement would refuse.
+					const changes = changedFields(values, posting);
+					const isDirty = Object.keys(changes).length > 0;
+
+					// One request, both intents, one transaction — so a refused lifecycle command
+					// takes the field save back with it, which is what `savedTogether` says.
+					const act =
+						(
+							command: CommandName,
+							apply: (draft: JobPostingDraft) => void,
+							failure: string,
+						) =>
+						(withSave: boolean) =>
+							runLifecycle(jobPostings, postingId, {
+								apply,
+								command,
+								failure,
+								save: withSave
+									? { changes, command: "website.updateJobPostingDetails" }
+									: undefined,
+							});
+
+					// The optimistic timestamp is this client's clock and the committed one is the
+					// server's — they differ by milliseconds and sync settles it. What matters is
+					// that no client can choose the value.
+					const publish = posting.published_at
+						? {
+								label: "Unpublish",
+								onAct: act(
+									"website.unpublishJobPosting",
+									(draft) => {
+										draft.published_at = null;
+									},
+									"Failed to unpublish job posting.",
+								),
+							}
+						: {
+								label: "Publish",
+								onAct: act(
+									"website.publishJobPosting",
+									(draft) => {
+										draft.published_at = new Date();
+									},
+									"Failed to publish job posting.",
+								),
+							};
+
+					const close = posting.is_closed
+						? {
+								label: "Reopen",
+								onAct: act(
+									"website.reopenJobPosting",
+									(draft) => {
+										draft.is_closed = false;
+									},
+									"Failed to reopen job posting.",
+								),
+							}
+						: {
+								label: "Close",
+								onAct: act(
+									"website.closeJobPosting",
+									(draft) => {
+										draft.is_closed = true;
+									},
+									"Failed to close job posting.",
+								),
+							};
+
+					return (
+						<div className="flex gap-2">
+							{[publish, close].map(({ label, onAct }) => (
+								<LifecycleButton
+									className="flex-1"
+									isDirty={isDirty}
+									key={label}
+									label={label}
+									onAct={onAct}
+								/>
+							))}
+						</div>
+					);
+				}}
 				defaultValues={{ content: posting.content, title: posting.title }}
 				formLabel="Edit Job Posting"
 				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>
-
-			<div className="max-w-2xl space-y-2">
-				<div className="flex gap-2">
-					<Button
-						className="flex-1"
-						onClick={togglePublished}
-						variant="outline"
-					>
-						{posting.published_at ? "Unpublish" : "Publish"}
-					</Button>
-					<Button className="flex-1" onClick={toggleClosed} variant="outline">
-						{posting.is_closed ? "Reopen" : "Close"}
-					</Button>
-				</div>
-
-				<AlertDialog>
-					<AlertDialogTrigger asChild>
-						<Button className="w-full" variant="destructive">
-							Delete Job Posting
-						</Button>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This action cannot be undone. This will permanently delete the
-								job posting "{posting.title}".
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDelete}>
-								Delete
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</div>
 		</div>
 	);
 }

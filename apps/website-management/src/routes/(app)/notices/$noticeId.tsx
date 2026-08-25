@@ -1,4 +1,6 @@
 import { formatDate } from "@mcmec/lib/functions/date-fns";
+import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { PublicNoticeBadge } from "@mcmec/ui/blocks/public-notice-badge";
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Button } from "@mcmec/ui/components/button";
@@ -9,8 +11,16 @@ import {
 	notFound,
 	useNavigate,
 } from "@tanstack/react-router";
-import { ArchiveX, ArrowLeft, Edit, Upload } from "lucide-react";
+import {
+	Archive,
+	ArchiveRestore,
+	ArrowLeft,
+	Edit,
+	Undo2,
+	Upload,
+} from "lucide-react";
 import { intents, notices, noticeTypes } from "@/src/lib/db";
+import { runLifecycle } from "@/src/lib/lifecycle";
 import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/notices/$noticeId")({
@@ -52,29 +62,70 @@ function RouteComponent() {
 	} = notice;
 	const type = noticeTypes.get(notice_type_id)?.name;
 
-	const handlePublish = async () => {
-		const tx = notices.update(id, intents("website.publishNotice"), (draft) => {
-			draft.is_published = true;
-		});
-		toastOnError(tx, "Failed to publish notice.");
-		await tx.isPersisted.promise;
+	// No form under these, so no `isDirty` and no relabel: a detail-view lifecycle button
+	// always sends exactly one intent. The page stays put afterwards — the badge below is
+	// live, so the result of the click is visible where the click was.
+	const publish = is_published
+		? {
+				icon: <Undo2 />,
+				label: "Unpublish",
+				onAct: () =>
+					runLifecycle(notices, id, {
+						apply: (draft) => {
+							draft.is_published = false;
+						},
+						command: "website.unpublishNotice",
+						failure: "Failed to unpublish notice.",
+					}),
+			}
+		: {
+				icon: <Upload />,
+				label: "Publish",
+				onAct: () =>
+					runLifecycle(notices, id, {
+						apply: (draft) => {
+							draft.is_published = true;
+						},
+						command: "website.publishNotice",
+						failure: "Failed to publish notice.",
+					}),
+			};
+
+	// P.L. 2025 c.72 lives in the handler, so Archive is offered unconditionally and a refusal
+	// comes back as a 409 whose message is written for the person who clicked.
+	const archive = is_archived
+		? {
+				icon: <ArchiveRestore />,
+				label: "Unarchive",
+				onAct: () =>
+					runLifecycle(notices, id, {
+						apply: (draft) => {
+							draft.is_archived = false;
+						},
+						command: "website.unarchiveNotice",
+						failure: "Failed to unarchive notice.",
+					}),
+			}
+		: {
+				icon: <Archive />,
+				label: "Archive",
+				onAct: () =>
+					runLifecycle(notices, id, {
+						apply: (draft) => {
+							draft.is_archived = true;
+						},
+						command: "website.archiveNotice",
+						failure: "Failed to archive notice.",
+					}),
+			};
+
+	// Delete is the one action whose placement is not free — detail page only, danger zone,
+	// behind a confirm (ADR 0001). It leaves the page because the record it was showing is gone.
+	const handleDelete = () => {
+		const tx = notices.delete(id, intents("website.deleteNotice"));
+		toastOnError(tx, "Failed to delete notice.");
 		navigate({ to: "/notices" });
 	};
-
-	const handleUnpublish = async () => {
-		const tx = notices.update(
-			id,
-			intents("website.unpublishNotice"),
-			(draft) => {
-				draft.is_published = false;
-			},
-		);
-		toastOnError(tx, "Failed to unpublish notice.");
-		await tx.isPersisted.promise;
-		navigate({ to: "/notices" });
-	};
-
-	const isDraft = !is_published;
 
 	return (
 		<div className="max-w-2xl space-y-6">
@@ -92,17 +143,15 @@ function RouteComponent() {
 							Edit
 						</Link>
 					</Button>
-					{isDraft ? (
-						<Button onClick={handlePublish} size="sm" variant="default">
-							<Upload />
-							Publish
-						</Button>
-					) : (
-						<Button onClick={handleUnpublish} size="sm" variant="destructive">
-							<ArchiveX />
-							Unpublish
-						</Button>
-					)}
+					{[publish, archive].map(({ icon, label, onAct }) => (
+						<LifecycleButton
+							icon={icon}
+							key={label}
+							label={label}
+							onAct={onAct}
+							size="sm"
+						/>
+					))}
 				</div>
 			</nav>
 
@@ -119,6 +168,12 @@ function RouteComponent() {
 				<h4>Published on: {formatDate(notice_date)}</h4>
 				<TiptapRenderer content={content} />
 			</article>
+
+			<DangerZoneCard
+				label="Delete Notice"
+				onConfirm={handleDelete}
+				recordName={title}
+			/>
 		</div>
 	);
 }

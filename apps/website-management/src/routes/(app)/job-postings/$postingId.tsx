@@ -2,13 +2,29 @@ import {
 	getJobPostingStatus,
 	type JobPostingStatus,
 } from "@mcmec/lib/functions/job-posting-status";
+import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Edit } from "lucide-react";
-import { jobPostings } from "@/src/lib/db";
+import {
+	createFileRoute,
+	Link,
+	notFound,
+	useNavigate,
+} from "@tanstack/react-router";
+import {
+	ArrowLeft,
+	DoorClosed,
+	DoorOpen,
+	Edit,
+	Undo2,
+	Upload,
+} from "lucide-react";
+import { intents, jobPostings } from "@/src/lib/db";
+import { runLifecycle } from "@/src/lib/lifecycle";
+import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/job-postings/$postingId")({
 	component: RouteComponent,
@@ -37,6 +53,7 @@ const statusDisplay: Record<
 
 function RouteComponent() {
 	const { postingId } = Route.useParams();
+	const navigate = useNavigate();
 
 	// Live, so returning from a Publish or Close on the edit screen shows the new status rather
 	// than the one the loader captured.
@@ -51,6 +68,72 @@ function RouteComponent() {
 
 	const status = statusDisplay[getJobPostingStatus(posting)];
 
+	// This is the table that motivated ADR 0001: publishing and closing were reachable only
+	// from inside the edit form, where they were indistinguishable from editing. No form under
+	// these, so no `isDirty` and no relabel — one click, one intent.
+	const publish = posting.published_at
+		? {
+				icon: <Undo2 />,
+				label: "Unpublish",
+				onAct: () =>
+					runLifecycle(jobPostings, postingId, {
+						apply: (draft) => {
+							draft.published_at = null;
+						},
+						command: "website.unpublishJobPosting",
+						failure: "Failed to unpublish job posting.",
+					}),
+			}
+		: {
+				icon: <Upload />,
+				label: "Publish",
+				onAct: () =>
+					runLifecycle(jobPostings, postingId, {
+						apply: (draft) => {
+							draft.published_at = new Date();
+						},
+						command: "website.publishJobPosting",
+						failure: "Failed to publish job posting.",
+					}),
+			};
+
+	const close = posting.is_closed
+		? {
+				icon: <DoorOpen />,
+				label: "Reopen",
+				onAct: () =>
+					runLifecycle(jobPostings, postingId, {
+						apply: (draft) => {
+							draft.is_closed = false;
+						},
+						command: "website.reopenJobPosting",
+						failure: "Failed to reopen job posting.",
+					}),
+			}
+		: {
+				icon: <DoorClosed />,
+				label: "Close",
+				onAct: () =>
+					runLifecycle(jobPostings, postingId, {
+						apply: (draft) => {
+							draft.is_closed = true;
+						},
+						command: "website.closeJobPosting",
+						failure: "Failed to close job posting.",
+					}),
+			};
+
+	// Detail page only, danger zone, behind a confirm — ADR 0001's one exception to free
+	// placement. It leaves the page because the record it was showing is gone.
+	const handleDelete = () => {
+		const tx = jobPostings.delete(
+			postingId,
+			intents("website.deleteJobPosting"),
+		);
+		toastOnError(tx, "Failed to delete job posting.");
+		navigate({ to: "/job-postings" });
+	};
+
 	return (
 		<div className="max-w-2xl space-y-6">
 			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
@@ -60,12 +143,23 @@ function RouteComponent() {
 						Back to Job Postings
 					</Link>
 				</Button>
-				<Button asChild size="sm" variant="outline">
-					<Link params={{ postingId }} to="/job-postings/$postingId/edit">
-						<Edit />
-						Edit
-					</Link>
-				</Button>
+				<div className="flex items-center gap-2">
+					<Button asChild size="sm" variant="outline">
+						<Link params={{ postingId }} to="/job-postings/$postingId/edit">
+							<Edit />
+							Edit
+						</Link>
+					</Button>
+					{[publish, close].map(({ icon, label, onAct }) => (
+						<LifecycleButton
+							icon={icon}
+							key={label}
+							label={label}
+							onAct={onAct}
+							size="sm"
+						/>
+					))}
+				</div>
 			</nav>
 
 			<div className="space-y-4 rounded-lg border bg-card p-6">
@@ -97,6 +191,12 @@ function RouteComponent() {
 				<h3 className="mb-4 font-semibold text-lg">Content</h3>
 				<TiptapRenderer content={posting.content} />
 			</div>
+
+			<DangerZoneCard
+				label="Delete Job Posting"
+				onConfirm={handleDelete}
+				recordName={posting.title}
+			/>
 		</div>
 	);
 }

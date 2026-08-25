@@ -20,6 +20,15 @@ interface JobPostingFormProps {
 	formLabel: string;
 	onSubmit: (value: JobPostingFormValues) => void | Promise<void>;
 	submitLabel: string;
+	/**
+	 * Lifecycle actions rendered beneath the fields — ADR 0001's buttons, never fields.
+	 *
+	 * A render prop rather than a plain node because Save-and-X needs the form's *current*
+	 * values: the caller diffs them against the live row to decide whether the label says
+	 * "Publish" or "Save and Publish", and to fill the `updateJobPostingDetails` half of the
+	 * envelope. The form keeps owning its state; the caller borrows a read of it.
+	 */
+	actions?: (state: { values: JobPostingFormValues }) => React.ReactNode;
 }
 
 export function JobPostingForm({
@@ -27,6 +36,7 @@ export function JobPostingForm({
 	formLabel,
 	onSubmit,
 	submitLabel,
+	actions,
 }: JobPostingFormProps) {
 	const form = useAppForm({
 		defaultValues,
@@ -50,6 +60,11 @@ export function JobPostingForm({
 				</form.AppField>
 
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
+				{actions ? (
+					<form.Subscribe selector={(state) => state.values}>
+						{(values) => actions({ values })}
+					</form.Subscribe>
+				) : null}
 			</form.FormWrapper>
 		</form.AppForm>
 	);
