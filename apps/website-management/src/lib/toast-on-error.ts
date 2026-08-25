@@ -2,18 +2,36 @@ import { findCommandRefusal } from "@mcmec/sync";
 import { toast } from "sonner";
 
 /**
+ * The sentence a Save-and-X refusal owes the user.
+ *
+ * ADR 0001 makes a lifecycle button on a dirty form send one request with both intents, and
+ * `dispatch.ts` runs every intent in one transaction — so a refused `publishNotice` rolls the
+ * field save back with it. The typing survives in the form, which is exactly why the user would
+ * otherwise assume it was saved.
+ */
+const ROLLED_BACK_TOGETHER =
+	"Your changes were not saved either \u2014 they are still in the form.";
+
+/**
  * Attaches an error toast to a TanStack DB transaction's `isPersisted` promise.
  *
  * A named command can refuse for a reason worth reading — "this notice was posted 3 days ago,
  * P.L. 2025 c.72 requires seven" — so the server's own sentence wins over the caller's generic
  * fallback whenever there is one. Before commands there was nothing to show: a generic
  * `PATCH /api/data/notices` could only fail with "invalid", so the fallback WAS the message.
+ *
+ * Pass `savedTogether` for a Save-and-X: whatever the server says, the toast then also says the
+ * field save went back with it.
  */
 export function toastOnError(
 	tx: { isPersisted: { promise: Promise<unknown> } },
 	message = "Something went wrong. Changes have been rolled back.",
+	options?: { savedTogether?: boolean },
 ) {
 	tx.isPersisted.promise.catch((error: unknown) => {
-		toast.error(findCommandRefusal(error)?.message ?? message);
+		const reason = findCommandRefusal(error)?.message ?? message;
+		toast.error(
+			options?.savedTogether ? `${reason} ${ROLLED_BACK_TOGETHER}` : reason,
+		);
 	});
 }

@@ -11,6 +11,10 @@ export {
 	defineDomain,
 	type PayloadOf,
 } from "./command";
+export {
+	TiptapDocument,
+	type TiptapDocumentType,
+} from "./tiptap";
 export { COMMANDS, type CommandName, isCommandName } from "./vocabulary";
 export * as jobPostings from "./website/job-postings";
 export * as notices from "./website/notices";
