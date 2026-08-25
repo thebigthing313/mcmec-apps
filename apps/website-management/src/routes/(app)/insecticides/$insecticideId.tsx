@@ -15,7 +15,7 @@ import { Button } from "@mcmec/ui/components/button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
-import { insecticides } from "@/src/lib/db";
+import { insecticides, intents } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
 import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
@@ -48,15 +48,24 @@ function RouteComponent() {
 	const { seedKey, latchProps } = useFormSeed(rowVersion(insecticide));
 
 	const handleSubmit = async (value: InsecticidesRowType) => {
-		const tx = insecticides.update(insecticideId, (draft) => {
-			Object.assign(draft, value);
-		});
+		const tx = insecticides.update(
+			insecticideId,
+			intents("website.updateInsecticideDetails"),
+			(draft) => {
+				Object.assign(draft, value);
+			},
+		);
 		toastOnError(tx, "Failed to update insecticide.");
 		navigate({ to: "/insecticides" });
 	};
 
 	const handleDelete = async () => {
-		const tx = insecticides.delete(insecticideId);
+		const tx = insecticides.delete(
+			insecticideId,
+			intents("website.deleteInsecticide"),
+		);
+		// A spray mission still naming this product refuses with a 409 that says so — the
+		// dialog above asks without knowing, because only the server does.
 		toastOnError(tx, "Failed to delete insecticide.");
 		navigate({ to: "/insecticides" });
 	};

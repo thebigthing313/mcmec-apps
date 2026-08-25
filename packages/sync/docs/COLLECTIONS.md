@@ -46,8 +46,9 @@ columns": the payload schema lives in `@mcmec/domain`, and the server learns the
 from the command name rather than from an HTTP verb.
 
 Tables cut over one at a time; when the last one has (#140), this is the only mode and the
-flag, `crud.ts` and the Insert/Update pairs all disappear. **`notices` is already across**,
-so the CRUD examples below describe the tables still on the generic door.
+flag, `crud.ts` and the Insert/Update pairs all disappear. **`notices`, `job_postings`,
+`notice_types`, `document_types` and `insecticides` are already across**, so the CRUD examples
+below describe the tables still on the generic door.
 
 ### Parsing
 
@@ -63,14 +64,14 @@ schemas. Synced rows and mutated rows therefore agree on types.
 ```ts
 import { createEagerCollection } from "@mcmec/sync";
 
-const noticeTypesCollection = createEagerCollection({
-  table: "notice_types",
-  schema: NoticeTypesRowSchema,
+const meetingsCollection = createEagerCollection({
+  table: "meetings",
+  schema: MeetingsRowSchema,
   apiUrl,
 
   // Mutations (all optional):
-  insertSchema: NoticeTypesInsertSchema,
-  updateSchema: NoticeTypesUpdateSchema,
+  insertSchema: MeetingsInsertSchema,
+  updateSchema: MeetingsUpdateSchema,
   allowDelete: false, // default
 });
 ```

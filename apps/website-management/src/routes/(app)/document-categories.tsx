@@ -27,7 +27,7 @@ import { count, eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { documents, documentTypes } from "@/src/lib/db";
+import { documents, documentTypes, intents } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/document-categories")({
@@ -83,10 +83,14 @@ function RouteComponent() {
 	const handleEditSave = () => {
 		if (!editingCategory) return;
 
-		const tx = documentTypes.update(editingCategory.id, (draft) => {
-			draft.name = editForm.name;
-			draft.description = editForm.description || null;
-		});
+		const tx = documentTypes.update(
+			editingCategory.id,
+			intents("website.updateDocumentCategoryDetails"),
+			(draft) => {
+				draft.name = editForm.name;
+				draft.description = editForm.description || null;
+			},
+		);
 		toastOnError(tx, "Failed to update document category.");
 
 		setEditingCategory(null);
@@ -98,13 +102,16 @@ function RouteComponent() {
 	};
 
 	const handleCreateSave = () => {
-		const tx = documentTypes.insert({
-			created_at: new Date(),
-			description: createForm.description || null,
-			id: crypto.randomUUID(),
-			name: createForm.name,
-			updated_at: new Date(),
-		});
+		const tx = documentTypes.insert(
+			{
+				created_at: new Date(),
+				description: createForm.description || null,
+				id: crypto.randomUUID(),
+				name: createForm.name,
+				updated_at: new Date(),
+			},
+			intents("website.createDocumentCategory"),
+		);
 		toastOnError(tx, "Failed to create document category.");
 		setIsCreating(false);
 	};
@@ -112,7 +119,10 @@ function RouteComponent() {
 	const handleDelete = (categoryId: string) => {
 		setIsDeleting(true);
 		try {
-			const tx = documentTypes.delete(categoryId);
+			const tx = documentTypes.delete(
+				categoryId,
+				intents("website.deleteDocumentCategory"),
+			);
 			toastOnError(tx, "Failed to delete document category.");
 		} finally {
 			setIsDeleting(false);

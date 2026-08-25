@@ -1,19 +1,11 @@
-import {
-	DocumentTypesInsertSchema,
-	DocumentTypesRowSchema,
-	DocumentTypesUpdateSchema,
-} from "@mcmec/schemas/db/document-types";
+import { DocumentTypesRowSchema } from "@mcmec/schemas/db/document-types";
 import {
 	DocumentsInsertSchema,
 	DocumentsRowSchema,
 	DocumentsUpdateSchema,
 } from "@mcmec/schemas/db/documents";
 import { EmployeesRowSchema } from "@mcmec/schemas/db/employees";
-import {
-	InsecticidesInsertSchema,
-	InsecticidesRowSchema,
-	InsecticidesUpdateSchema,
-} from "@mcmec/schemas/db/insecticides";
+import { InsecticidesRowSchema } from "@mcmec/schemas/db/insecticides";
 import { JobPostingsRowSchema } from "@mcmec/schemas/db/job-postings";
 import {
 	MeetingsInsertSchema,
@@ -21,16 +13,8 @@ import {
 	MeetingsUpdateSchema,
 } from "@mcmec/schemas/db/meetings";
 import { MosquitoActivityDataRowSchema } from "@mcmec/schemas/db/mosquito-activity-data";
-import {
-	MunicipalitiesInsertSchema,
-	MunicipalitiesRowSchema,
-	MunicipalitiesUpdateSchema,
-} from "@mcmec/schemas/db/municipalities";
-import {
-	NoticeTypesInsertSchema,
-	NoticeTypesRowSchema,
-	NoticeTypesUpdateSchema,
-} from "@mcmec/schemas/db/notice-types";
+import { MunicipalitiesRowSchema } from "@mcmec/schemas/db/municipalities";
+import { NoticeTypesRowSchema } from "@mcmec/schemas/db/notice-types";
 import { NoticesRowSchema } from "@mcmec/schemas/db/notices";
 import {
 	PublicRequestsRowSchema,
@@ -62,15 +46,14 @@ export function createNoticesCollections({
 	const noticeTypes = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
-		insertSchema: NoticeTypesInsertSchema,
+		commands: true,
 		schema: NoticeTypesRowSchema,
 		table: "notice_types",
-		updateSchema: NoticeTypesUpdateSchema,
 	});
 
-	// On the named-command path (#152). These collections' writes carry an intent and go to
-	// POST /api/commands; the Insert/Update schema pair is gone, because a command payload is
-	// not "a row minus the server columns".
+	// On the named-command path (#152, extended by #159 to the three plain lookup tables).
+	// These collections' writes carry an intent and go to POST /api/commands; the Insert/Update
+	// schema pair is gone, because a command payload is not "a row minus the server columns".
 	//
 	// Job postings moved here from `apps/hr` with #145: they are website content, so they are
 	// read and written under `manage_website`.
@@ -102,10 +85,9 @@ export function createNoticesCollections({
 	const documentTypes = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
-		insertSchema: DocumentTypesInsertSchema,
+		commands: true,
 		schema: DocumentTypesRowSchema,
 		table: "document_types",
-		updateSchema: DocumentTypesUpdateSchema,
 	});
 
 	const documents = createEagerCollection({
@@ -120,10 +102,9 @@ export function createNoticesCollections({
 	const insecticides = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
-		insertSchema: InsecticidesInsertSchema,
+		commands: true,
 		schema: InsecticidesRowSchema,
 		table: "insecticides",
-		updateSchema: InsecticidesUpdateSchema,
 	});
 
 	const zipCodes = createEagerCollection({
@@ -155,12 +136,14 @@ export function createNoticesCollections({
 		table: "mosquito_activity_data",
 	});
 
+	// Read-only, and now read-only on the server too: #159 deleted its `WRITABLE` entry, since
+	// no app has ever written it and municipality management belongs to the reserved `reference`
+	// domain. The Insert/Update schemas went with the door — a collection that carries them
+	// advertises a write it cannot make.
 	const municipalities = createEagerCollection({
 		apiUrl,
-		insertSchema: MunicipalitiesInsertSchema,
 		schema: MunicipalitiesRowSchema,
 		table: "municipalities",
-		updateSchema: MunicipalitiesUpdateSchema,
 	});
 
 	const spraySchedules = createEagerCollection({

@@ -67,9 +67,9 @@ import {
 
 // Eager — streams the whole (server-narrowed) shape. `startSync: false`, so nothing
 // is fetched until a route loader calls `.preload()`.
-export const noticeTypesCollection = createEagerCollection({
-  table: "notice_types",
-  schema: NoticeTypesRowSchema,
+export const meetingsCollection = createEagerCollection({
+  table: "meetings",
+  schema: MeetingsRowSchema,
   apiUrl,
 });
 
@@ -86,8 +86,9 @@ export const noticesCollection = createOnDemandCollection({
 
 See [docs/COLLECTIONS.md](docs/COLLECTIONS.md) for the full option reference — including
 `commands: true`, which routes a collection's writes through the named-command dispatcher.
-`notices` is on that path already (#152), so the `insertSchema` / `updateSchema` pair above
-illustrates the tables still on the generic door.
+`notices`, `job_postings`, `notice_types`, `document_types` and `insecticides` are on that
+path already (#152, #159), so the `insertSchema` / `updateSchema` pair above illustrates the
+tables still on the generic door.
 
 ---
 

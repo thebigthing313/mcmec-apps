@@ -16,5 +16,8 @@ export {
 	type TiptapDocumentType,
 } from "./tiptap";
 export { COMMANDS, type CommandName, isCommandName } from "./vocabulary";
+export * as documentCategories from "./website/document-categories";
+export * as insecticides from "./website/insecticides";
 export * as jobPostings from "./website/job-postings";
+export * as noticeCategories from "./website/notice-categories";
 export * as notices from "./website/notices";

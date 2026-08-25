@@ -9,22 +9,36 @@
  * Each slice of the cutover adds its handlers here alongside its definitions.
  */
 import type { CommandRegistry } from "./types";
+import * as documentCategories from "./website/document-categories";
+import * as insecticides from "./website/insecticides";
 import * as jobPostings from "./website/job-postings";
+import * as noticeCategories from "./website/notice-categories";
 import * as notices from "./website/notices";
 
 export const REGISTRY: CommandRegistry = {
 	"website.archiveNotice": notices.archiveNotice,
 	"website.closeJobPosting": jobPostings.closeJobPosting,
+	"website.createDocumentCategory": documentCategories.createDocumentCategory,
+	"website.createInsecticide": insecticides.createInsecticide,
 	"website.createJobPosting": jobPostings.createJobPosting,
 	"website.createNotice": notices.createNotice,
+	"website.createNoticeCategory": noticeCategories.createNoticeCategory,
+	"website.deleteDocumentCategory": documentCategories.deleteDocumentCategory,
+	"website.deleteInsecticide": insecticides.deleteInsecticide,
 	"website.deleteJobPosting": jobPostings.deleteJobPosting,
 	"website.deleteNotice": notices.deleteNotice,
+	"website.deleteNoticeCategory": noticeCategories.deleteNoticeCategory,
 	"website.publishJobPosting": jobPostings.publishJobPosting,
 	"website.publishNotice": notices.publishNotice,
 	"website.reopenJobPosting": jobPostings.reopenJobPosting,
 	"website.unarchiveNotice": notices.unarchiveNotice,
 	"website.unpublishJobPosting": jobPostings.unpublishJobPosting,
 	"website.unpublishNotice": notices.unpublishNotice,
+	"website.updateDocumentCategoryDetails":
+		documentCategories.updateDocumentCategoryDetails,
+	"website.updateInsecticideDetails": insecticides.updateInsecticideDetails,
 	"website.updateJobPostingDetails": jobPostings.updateJobPostingDetails,
+	"website.updateNoticeCategoryDetails":
+		noticeCategories.updateNoticeCategoryDetails,
 	"website.updateNoticeDetails": notices.updateNoticeDetails,
 };

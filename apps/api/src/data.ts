@@ -109,30 +109,14 @@ function makeCrud<T extends PgTable>(
 	};
 }
 
+// Shrinking, one slice at a time. A table leaves this map as its named commands land (#150),
+// so a cut-over table keeps no generic door whose writes would log `audit_log.command = null`.
+// `municipalities` left without commands (#159): nothing writes it from any app, and municipality
+// management belongs to the `reference` domain, which ships no commands until that screen exists.
 const WRITABLE: Record<string, CrudEntry> = {
 	// manage_website — public-website content
-	notice_types: makeCrud(
-		schema.noticeTypes,
-		schema.noticeTypes.id,
-		"manage_website",
-	),
 	meetings: makeCrud(schema.meetings, schema.meetings.id, "manage_website"),
-	insecticides: makeCrud(
-		schema.insecticides,
-		schema.insecticides.id,
-		"manage_website",
-	),
-	document_types: makeCrud(
-		schema.documentTypes,
-		schema.documentTypes.id,
-		"manage_website",
-	),
 	documents: makeCrud(schema.documents, schema.documents.id, "manage_website"),
-	municipalities: makeCrud(
-		schema.municipalities,
-		schema.municipalities.id,
-		"manage_website",
-	),
 	spray_schedules: makeCrud(
 		schema.spraySchedules,
 		schema.spraySchedules.id,
