@@ -16,6 +16,7 @@ import z from "zod";
 import { defineDomain } from "../command";
 
 const website = defineDomain("website", "manage_website");
+const command = website.table("documents");
 
 const DetailFields = {
 	// A plain uuid, not a narrower check against the live `document_types` set: the FK already
@@ -31,7 +32,7 @@ const DetailFields = {
 /** The lifecycle commands take no fields — the envelope id is the whole request. */
 const EmptyPayload = z.object({});
 
-export const createDocument = website(
+export const createDocument = command(
 	"createDocument",
 	z.object({
 		...DetailFields,
@@ -46,7 +47,7 @@ export const createDocument = website(
  * Partial, because the collection handler sends `mutation.changes` — a url-only edit carries
  * one key. The non-empty refinement is what makes "an update that asks for nothing" a refusal.
  */
-export const updateDocumentDetails = website(
+export const updateDocumentDetails = command(
 	"updateDocumentDetails",
 	z
 		.object(DetailFields)
@@ -56,9 +57,9 @@ export const updateDocumentDetails = website(
 		}),
 );
 
-export const publishDocument = website("publishDocument", EmptyPayload);
-export const unpublishDocument = website("unpublishDocument", EmptyPayload);
-export const deleteDocument = website("deleteDocument", EmptyPayload);
+export const publishDocument = command("publishDocument", EmptyPayload);
+export const unpublishDocument = command("unpublishDocument", EmptyPayload);
+export const deleteDocument = command("deleteDocument", EmptyPayload);
 
 export const DOCUMENT_COMMANDS = [
 	createDocument,

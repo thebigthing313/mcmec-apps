@@ -6,6 +6,7 @@
  * 49 commands across four domains (#134), so this list grows to that and stops.
  */
 
+import type { TableName } from "@mcmec/schemas/tables";
 import type { AnyCommand } from "./command";
 import { DOCUMENT_CATEGORY_COMMANDS } from "./website/document-categories";
 import { DOCUMENT_COMMANDS } from "./website/documents";
@@ -38,3 +39,21 @@ export type CommandName = keyof typeof COMMANDS;
 export function isCommandName(value: string): value is CommandName {
 	return Object.hasOwn(COMMANDS, value);
 }
+
+/**
+ * The tables the vocabulary names — the single fact both halves of a cut-over now read.
+ *
+ * `packages/sync` takes the TYPE and refuses, at the call site, a collection whose `commands`
+ * flag disagrees with it; `apps/api` takes the SET and refuses, at boot, a `WRITABLE` entry
+ * for a table that has commands. Neither half is hand-written any more, so the pair that
+ * broke the documents slice (#160) — table out of `WRITABLE`, collection still generic — can
+ * no longer be spelled.
+ *
+ * The type is exported for a type-only import: `packages/sync` erases it at build, so the
+ * three apps that name no intent (`hr`, `admin`, `central`) pay nothing at runtime for it.
+ */
+export type CommandedTable = (typeof ALL)[number]["table"];
+
+export const COMMANDED_TABLES: ReadonlySet<TableName> = new Set(
+	ALL.map((c: AnyCommand) => c.table),
+);

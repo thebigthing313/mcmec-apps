@@ -9,6 +9,8 @@
  * optimistic state until that write's Postgres `txid` streams back through Electric — see
  * `settleTxids` for why we do that wait ourselves rather than handing it to the collection.
  */
+import type { CommandedTable } from "@mcmec/domain";
+import type { TableName } from "@mcmec/schemas/tables";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import {
 	type Collection,
@@ -111,32 +113,65 @@ function envelopeFor(
 	};
 }
 
-export interface ElectricCollectionOptions<
+/**
+ * How a table writes — derived from the vocabulary, not declared twice.
+ *
+ * A table cuts over in two places that nothing used to tie together: it leaves `WRITABLE` in
+ * `apps/api/src/data.ts`, and its collection gains `commands: true` here. `commands` was an
+ * optional boolean, so a table could leave one without leaving the other with every gate
+ * green — which is what the documents slice shipped (#160): the table left `WRITABLE`, the
+ * collection stayed generic, and every document write came back `404 not writable`.
+ *
+ * So the flag is no longer a free choice. `CommandedTable` is the union of tables the
+ * vocabulary names, and this conditional keys off the `table` literal: a commanded table
+ * MUST say `commands: true` and may carry no Insert/Update schema (a leftover one is a third
+ * way for the halves to disagree, and it used to be silently ignored); an uncommanded table
+ * may not say it at all. The compiler settles it at the call site.
+ *
+ * `import type` on purpose — the vocabulary is erased at build, so `hr`, `admin` and
+ * `central`, which name no intent, pay nothing at runtime to be correct by construction.
+ */
+type WriteMode<
+	TTable extends TableName,
+	TInsertSchema extends ZodObject<z.ZodRawShape>,
+	TUpdateSchema extends ZodObject<z.ZodRawShape>,
+> = TTable extends CommandedTable
+	? {
+			/**
+			 * Writes carry an intent and go to POST /api/commands. Required, because this
+			 * table has commands; when the last table cuts over (#140) the flag, `crud.ts`
+			 * and this whole union disappear together.
+			 */
+			commands: true;
+			insertSchema?: never;
+			updateSchema?: never;
+		}
+	: {
+			commands?: never;
+			/** Zod schema for INSERT payloads (omit generated fields) */
+			insertSchema?: TInsertSchema;
+			/** Zod schema for UPDATE payloads (all fields optional) */
+			updateSchema?: TUpdateSchema;
+		};
+
+export type ElectricCollectionOptions<
+	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape>,
 	TInsertSchema extends ZodObject<z.ZodRawShape>,
 	TUpdateSchema extends ZodObject<z.ZodRawShape>,
-> {
+> = {
 	/** Table name — the `/api/shapes/:table` + `/api/data/:table` segment */
-	table: string;
+	table: TTable;
 	/** Zod schema for the full row shape (snake_case; typed against Electric output) */
 	schema: TSchema;
 	/** API origin (VITE_API_URL) */
 	apiUrl: string;
-	/** Zod schema for INSERT payloads (omit generated fields) */
-	insertSchema?: TInsertSchema;
-	/** Zod schema for UPDATE payloads (all fields optional) */
-	updateSchema?: TUpdateSchema;
 	/** Allow delete mutations on this collection. Default: false */
 	allowDelete?: boolean;
-	/**
-	 * Route writes through the named-command dispatcher instead of the generic data API.
-	 * Set per table as it cuts over; when the last one has (#140) this is the only mode and
-	 * the flag, `crud.ts` and the Insert/Update schemas all disappear.
-	 */
-	commands?: boolean;
-}
+} & WriteMode<TTable, TInsertSchema, TUpdateSchema>;
 
 export function createElectricCollection<
+	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape> &
 		StandardSchemaV1 & {
 			_zod: { output: { id: string } };
@@ -144,15 +179,12 @@ export function createElectricCollection<
 	TInsertSchema extends ZodObject<z.ZodRawShape>,
 	TUpdateSchema extends ZodObject<z.ZodRawShape>,
 >(
-	{
-		table,
-		schema,
-		apiUrl,
-		insertSchema,
-		updateSchema,
-		allowDelete = false,
-		commands = false,
-	}: ElectricCollectionOptions<TSchema, TInsertSchema, TUpdateSchema>,
+	options: ElectricCollectionOptions<
+		TTable,
+		TSchema,
+		TInsertSchema,
+		TUpdateSchema
+	>,
 	syncMode: "eager" | "on-demand",
 	startSync: boolean,
 ): Collection<
@@ -162,6 +194,27 @@ export function createElectricCollection<
 	TSchema,
 	InferSchemaInput<TSchema>
 > {
+	// `WriteMode` is a conditional on a still-generic `TTable`, so nothing can be read off
+	// `options` until it resolves. One widening at the implementation seam is the price —
+	// the safety lives at the call site, which is where the two halves used to disagree.
+	const {
+		table,
+		schema,
+		apiUrl,
+		allowDelete = false,
+		commands = false,
+		insertSchema,
+		updateSchema,
+	} = options as {
+		table: TTable;
+		schema: TSchema;
+		apiUrl: string;
+		allowDelete?: boolean;
+		commands?: boolean;
+		insertSchema?: TInsertSchema;
+		updateSchema?: TUpdateSchema;
+	};
+
 	const target = { apiUrl, table };
 
 	// `electricCollectionOptions` validates the full config below. Handing it to

@@ -12,7 +12,8 @@
 		"vitest": "^2.1.5"
 	},
 	"exports": {
-		"./db/*": "./src/db/*.ts"
+		"./db/*": "./src/db/*.ts",
+		"./tables": "./src/tables.ts"
 	},
 	"keywords": [],
 	"license": "ISC",

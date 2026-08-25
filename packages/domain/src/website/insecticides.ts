@@ -18,6 +18,7 @@ import z from "zod";
 import { defineDomain } from "../command";
 
 const website = defineDomain("website", "manage_website");
+const command = website.table("insecticides");
 
 const DetailFields = {
 	active_ingredient: InsecticidesRowSchema.shape.active_ingredient,
@@ -31,7 +32,7 @@ const DetailFields = {
 /** The delete command takes no fields — the envelope id is the whole request. */
 const EmptyPayload = z.object({});
 
-export const createInsecticide = website(
+export const createInsecticide = command(
 	"createInsecticide",
 	z.object(DetailFields),
 	{ creates: true },
@@ -41,7 +42,7 @@ export const createInsecticide = website(
  * Partial, because the collection handler sends `mutation.changes`. The non-empty refinement is
  * what makes "an update that asks for nothing" a refusal.
  */
-export const updateInsecticideDetails = website(
+export const updateInsecticideDetails = command(
 	"updateInsecticideDetails",
 	z
 		.object(DetailFields)
@@ -51,7 +52,7 @@ export const updateInsecticideDetails = website(
 		}),
 );
 
-export const deleteInsecticide = website("deleteInsecticide", EmptyPayload);
+export const deleteInsecticide = command("deleteInsecticide", EmptyPayload);
 
 export const INSECTICIDE_COMMANDS = [
 	createInsecticide,

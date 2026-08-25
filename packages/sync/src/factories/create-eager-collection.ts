@@ -5,6 +5,7 @@
  * tables with a bounded row count. `startSync: false` defers the stream until the
  * collection is first previewed/preloaded (route loaders call `.preload()`).
  */
+import type { TableName } from "@mcmec/schemas/tables";
 import type z from "zod";
 import type { ZodObject } from "zod";
 import {
@@ -13,17 +14,26 @@ import {
 } from "./electric-collection";
 
 export type EagerCollectionOptions<
+	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape>,
 	TInsertSchema extends ZodObject<z.ZodRawShape>,
 	TUpdateSchema extends ZodObject<z.ZodRawShape>,
-> = ElectricCollectionOptions<TSchema, TInsertSchema, TUpdateSchema>;
+> = ElectricCollectionOptions<TTable, TSchema, TInsertSchema, TUpdateSchema>;
 
 export function createEagerCollection<
+	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape> & {
 		_zod: { output: { id: string } };
 	},
 	TInsertSchema extends ZodObject<z.ZodRawShape>,
 	TUpdateSchema extends ZodObject<z.ZodRawShape>,
->(options: EagerCollectionOptions<TSchema, TInsertSchema, TUpdateSchema>) {
+>(
+	options: EagerCollectionOptions<
+		TTable,
+		TSchema,
+		TInsertSchema,
+		TUpdateSchema
+	>,
+) {
 	return createElectricCollection(options, "eager", false);
 }

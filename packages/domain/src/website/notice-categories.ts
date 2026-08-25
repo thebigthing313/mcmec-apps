@@ -14,6 +14,7 @@ import z from "zod";
 import { defineDomain } from "../command";
 
 const website = defineDomain("website", "manage_website");
+const command = website.table("notice_types");
 
 const DetailFields = {
 	// Nullable rather than optional: the form clears a description by sending null, and a
@@ -25,7 +26,7 @@ const DetailFields = {
 /** The delete command takes no fields — the envelope id is the whole request. */
 const EmptyPayload = z.object({});
 
-export const createNoticeCategory = website(
+export const createNoticeCategory = command(
 	"createNoticeCategory",
 	z.object(DetailFields),
 	{ creates: true },
@@ -35,7 +36,7 @@ export const createNoticeCategory = website(
  * Partial, because the collection handler sends `mutation.changes`. The non-empty refinement is
  * what makes "an update that asks for nothing" a refusal.
  */
-export const updateNoticeCategoryDetails = website(
+export const updateNoticeCategoryDetails = command(
 	"updateNoticeCategoryDetails",
 	z
 		.object(DetailFields)
@@ -45,7 +46,7 @@ export const updateNoticeCategoryDetails = website(
 		}),
 );
 
-export const deleteNoticeCategory = website(
+export const deleteNoticeCategory = command(
 	"deleteNoticeCategory",
 	EmptyPayload,
 );
