@@ -27,7 +27,7 @@ import { count, eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { notices, noticeTypes } from "@/src/lib/db";
+import { intents, notices, noticeTypes } from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/categories")({
@@ -83,10 +83,14 @@ function RouteComponent() {
 	const handleEditSave = () => {
 		if (!editingCategory) return;
 
-		const tx = noticeTypes.update(editingCategory.id, (draft) => {
-			draft.name = editForm.name;
-			draft.description = editForm.description || null;
-		});
+		const tx = noticeTypes.update(
+			editingCategory.id,
+			intents("website.updateNoticeCategoryDetails"),
+			(draft) => {
+				draft.name = editForm.name;
+				draft.description = editForm.description || null;
+			},
+		);
 		toastOnError(tx, "Failed to update category.");
 
 		setEditingCategory(null);
@@ -98,13 +102,18 @@ function RouteComponent() {
 	};
 
 	const handleCreateSave = () => {
-		const tx = noticeTypes.insert({
-			created_at: new Date(),
-			description: createForm.description || null,
-			id: crypto.randomUUID(),
-			name: createForm.name,
-			updated_at: new Date(),
-		});
+		const tx = noticeTypes.insert(
+			{
+				created_at: new Date(),
+				description: createForm.description || null,
+				// The id minted here is the id the row will have — the envelope carries it and
+				// the handler honours it, so the optimistic row and the committed row share a key.
+				id: crypto.randomUUID(),
+				name: createForm.name,
+				updated_at: new Date(),
+			},
+			intents("website.createNoticeCategory"),
+		);
 		toastOnError(tx, "Failed to create category.");
 		setIsCreating(false);
 	};
@@ -112,7 +121,13 @@ function RouteComponent() {
 	const handleDelete = (categoryId: string) => {
 		setIsDeleting(true);
 		try {
-			const tx = noticeTypes.delete(categoryId);
+			const tx = noticeTypes.delete(
+				categoryId,
+				intents("website.deleteNoticeCategory"),
+			);
+			// The button is already disabled while the category holds notices; the handler
+			// refuses the raced case with a 409 whose message toastOnError shows in place of
+			// this fallback.
 			toastOnError(tx, "Failed to delete category.");
 		} finally {
 			setIsDeleting(false);

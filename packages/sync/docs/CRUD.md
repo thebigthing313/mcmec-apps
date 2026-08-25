@@ -16,9 +16,9 @@ Every request sets `credentials: "include"` so the Better Auth session cookie is
 
 **This is the retiring path.** Tables cut over to named commands one at a time (#152) and
 write through `POST /api/commands` instead — see "Command mode" in
-[COLLECTIONS.md](COLLECTIONS.md). `notices` is already across, so the examples below, which
-use it, describe how the tables still on the generic door behave rather than how `notices`
-behaves today. When the last table crosses (#140) this module is deleted.
+[COLLECTIONS.md](COLLECTIONS.md). `notices`, `job_postings`, `notice_types`, `document_types`
+and `insecticides` are already across, so the examples below, which use `notices`, describe how
+the tables still on the generic door behave rather than how `notices` behaves today. When the last table crosses (#140) this module is deleted.
 
 ---
 
