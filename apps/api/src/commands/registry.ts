@@ -6,8 +6,17 @@
  * compiling until it is implemented. That compile error is the entire safety mechanism of the
  * define/implement split (#135 Q6).
  *
- * Empty while the vocabulary is — each slice adds its handlers here alongside its definitions.
+ * Each slice of the cutover adds its handlers here alongside its definitions.
  */
 import type { CommandRegistry } from "./types";
+import * as notices from "./website/notices";
 
-export const REGISTRY: CommandRegistry = {};
+export const REGISTRY: CommandRegistry = {
+	"website.archiveNotice": notices.archiveNotice,
+	"website.createNotice": notices.createNotice,
+	"website.deleteNotice": notices.deleteNotice,
+	"website.publishNotice": notices.publishNotice,
+	"website.unarchiveNotice": notices.unarchiveNotice,
+	"website.unpublishNotice": notices.unpublishNotice,
+	"website.updateNoticeDetails": notices.updateNoticeDetails,
+};

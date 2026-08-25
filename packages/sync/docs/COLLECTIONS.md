@@ -32,8 +32,22 @@ Both factories take the same `ElectricCollectionOptions`:
 | `insertSchema` | `ZodObject` | no | — | Enables inserts |
 | `updateSchema` | `ZodObject` | no | — | Enables updates |
 | `allowDelete` | `boolean` | no | `false` | Enables deletes |
+| `commands` | `boolean` | no | `false` | Routes every write through `POST /api/commands` instead of `/api/data/:table` |
 
 `getKey` is always `row.id`, and the collection `id` is the table name.
+
+### Command mode
+
+`commands: true` puts a collection on the named-command path (#152). Its writes carry an
+intent — `collection.update(id, { metadata: { intents: ["website.publishNotice"] } }, draft
+=> …)` — and a write without one is refused at runtime, not at compile time. `insertSchema`
+and `updateSchema` are ignored, because a command payload is not "a row minus the server
+columns": the payload schema lives in `@mcmec/domain`, and the server learns the operation
+from the command name rather than from an HTTP verb.
+
+Tables cut over one at a time; when the last one has (#140), this is the only mode and the
+flag, `crud.ts` and the Insert/Update pairs all disappear. **`notices` is already across**,
+so the CRUD examples below describe the tables still on the generic door.
 
 ### Parsing
 

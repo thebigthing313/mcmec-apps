@@ -12,3 +12,4 @@ export {
 	type PayloadOf,
 } from "./command";
 export { COMMANDS, type CommandName, isCommandName } from "./vocabulary";
+export * as notices from "./website/notices";

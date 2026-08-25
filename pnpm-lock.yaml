@@ -474,6 +474,9 @@ importers:
       '@mcmec/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@mcmec/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib

@@ -23,6 +23,7 @@ export {
 	type CommandEnvelope,
 	type CommandMetadata,
 	CommandRefusedError,
+	findCommandRefusal,
 	readCommandMetadata,
 	sendCommand,
 } from "./command-write";

@@ -116,7 +116,6 @@ const WRITABLE: Record<string, CrudEntry> = {
 		schema.noticeTypes.id,
 		"manage_website",
 	),
-	notices: makeCrud(schema.notices, schema.notices.id, "manage_website"),
 	meetings: makeCrud(schema.meetings, schema.meetings.id, "manage_website"),
 	insecticides: makeCrud(
 		schema.insecticides,

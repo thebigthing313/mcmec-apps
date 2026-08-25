@@ -84,7 +84,10 @@ export const noticesCollection = createOnDemandCollection({
 });
 ```
 
-See [docs/COLLECTIONS.md](docs/COLLECTIONS.md) for the full option reference.
+See [docs/COLLECTIONS.md](docs/COLLECTIONS.md) for the full option reference — including
+`commands: true`, which routes a collection's writes through the named-command dispatcher.
+`notices` is on that path already (#152), so the `insertSchema` / `updateSchema` pair above
+illustrates the tables still on the generic door.
 
 ---
 
