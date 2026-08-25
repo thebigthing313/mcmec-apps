@@ -3,11 +3,7 @@ import { DocumentsRowSchema } from "@mcmec/schemas/db/documents";
 import { EmployeesRowSchema } from "@mcmec/schemas/db/employees";
 import { InsecticidesRowSchema } from "@mcmec/schemas/db/insecticides";
 import { JobPostingsRowSchema } from "@mcmec/schemas/db/job-postings";
-import {
-	MeetingsInsertSchema,
-	MeetingsRowSchema,
-	MeetingsUpdateSchema,
-} from "@mcmec/schemas/db/meetings";
+import { MeetingsRowSchema } from "@mcmec/schemas/db/meetings";
 import { MosquitoActivityDataRowSchema } from "@mcmec/schemas/db/mosquito-activity-data";
 import { MunicipalitiesRowSchema } from "@mcmec/schemas/db/municipalities";
 import { NoticeTypesRowSchema } from "@mcmec/schemas/db/notice-types";
@@ -72,10 +68,9 @@ export function createNoticesCollections({
 	const meetings = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
-		insertSchema: MeetingsInsertSchema,
+		commands: true,
 		schema: MeetingsRowSchema,
 		table: "meetings",
-		updateSchema: MeetingsUpdateSchema,
 	});
 
 	const documentTypes = createEagerCollection({

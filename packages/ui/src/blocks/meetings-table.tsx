@@ -27,6 +27,7 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import * as React from "react";
 import { useState } from "react";
+import { type RowAction, RowActionsMenu } from "./row-actions-menu";
 
 export type MeetingTableRowType = {
 	id: string;
@@ -42,12 +43,20 @@ interface MeetingsTableProps {
 	data: MeetingTableRowType[];
 	linkToDetail?: boolean;
 	onRowClick?: (meetingId: string) => void;
+	/**
+	 * Lifecycle shortcuts for a row (ADR 0001). The route builds them, because the table has no
+	 * business knowing the command vocabulary — and everything offered here is also on the
+	 * meeting's detail view, which is what makes the column optional rather than load-bearing.
+	 * The public site renders the same table and passes none.
+	 */
+	rowActions?: (meeting: MeetingTableRowType) => RowAction[];
 }
 
 export function MeetingsTable({
 	data,
 	linkToDetail = false,
 	onRowClick,
+	rowActions,
 }: MeetingsTableProps) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{
@@ -221,6 +230,14 @@ export function MeetingsTable({
 			header: "Notes",
 		},
 	];
+
+	if (rowActions) {
+		columns.push({
+			cell: ({ row }) => <RowActionsMenu actions={rowActions(row.original)} />,
+			header: "",
+			id: "actions",
+		});
+	}
 
 	const table = useReactTable({
 		columns,

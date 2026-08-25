@@ -1,20 +1,49 @@
-import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import {
 	NonEmptyStringSchema,
 	ValidURLSchema,
 } from "@mcmec/lib/constants/validators";
-import {
-	MeetingsRowSchema,
-	type MeetingsRowType,
-} from "@mcmec/schemas/db/meetings";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
-import z from "zod";
 
-interface MeetingFormProps {
-	defaultValues: MeetingsRowType;
-	onSubmit: (value: MeetingsRowType) => void | Promise<void>;
+/**
+ * The details of a meeting — exactly the fields `website.updateMeetingDetails` accepts.
+ *
+ * `is_cancelled` is not here. It was a `SwitchField` at the bottom of this form, which is the
+ * conflation ADR 0001 exists to remove: a lifecycle column read as something you set and then
+ * saved. It now moves only through `cancelMeeting` / `uncancelMeeting`, so cancelling is an
+ * action on the meeting rather than a field inside its edit form.
+ *
+ * `notes` stays, and keeps its own field — but loses the conditional validator that used to
+ * require it whenever the switch was on, and the `onChange` hook on the switch that
+ * revalidated it. That rule is a precondition on `cancelMeeting` now, checked server-side
+ * against the stored row. Re-homing it takes two interlocking validators out of this form and
+ * leaves one plain optional field, which is the simplification #138 predicted.
+ *
+ * Nor are `id`, `created_at` and `updated_at`: they were only ever here because the old generic
+ * `PATCH /api/data/meetings` wanted a whole row.
+ */
+export interface MeetingFormValues {
+	name: string;
+	location: string;
+	meeting_at: Date;
+	minutes_url: string | null;
+	notice_url: string | null;
+	notes: string | null;
+}
+
+interface MeetingsFormProps {
+	defaultValues: MeetingFormValues;
+	onSubmit: (value: MeetingFormValues) => void | Promise<void>;
 	formLabel: string;
 	submitLabel: string;
+	/**
+	 * Lifecycle actions rendered beneath the fields — ADR 0001's buttons, never fields.
+	 *
+	 * A render prop rather than a plain node because Save-and-X needs the form's *current*
+	 * values: the caller diffs them against the live row to decide whether the label says
+	 * "Cancel Meeting" or "Save and Cancel Meeting", and to fill the `updateMeetingDetails`
+	 * half of the envelope. The form keeps owning its state; the caller borrows a read of it.
+	 */
+	actions?: (state: { values: MeetingFormValues }) => React.ReactNode;
 }
 
 export function MeetingsForm({
@@ -22,12 +51,12 @@ export function MeetingsForm({
 	onSubmit,
 	formLabel,
 	submitLabel,
-}: MeetingFormProps) {
+	actions,
+}: MeetingsFormProps) {
 	const form = useAppForm({
 		defaultValues,
 		onSubmit: async ({ value }) => {
-			const parsedValue = MeetingsRowSchema.parse(value);
-			await onSubmit(parsedValue);
+			await onSubmit(value);
 		},
 	});
 
@@ -68,46 +97,20 @@ export function MeetingsForm({
 						<field.TextField label="48-Hour Notice Link" showPaste={true} />
 					)}
 				</form.AppField>
-				<form.AppField
-					name="notes"
-					validators={{
-						onBlur: ({ fieldApi }) => {
-							const isCancelled = fieldApi.form.getFieldValue("is_cancelled");
-							if (isCancelled) {
-								const errors = fieldApi.parseValueWithSchema(
-									z
-										.string("Notes are required if the meeting is cancelled.")
-										.min(5, ErrorMessages.VALIDATION.FIELD_TOO_SHORT(5)),
-								);
-								if (errors) return errors;
-							}
-							return undefined;
-						},
-					}}
-				>
-					{(field) => <field.TextField label="Notes" />}
-				</form.AppField>
-				<form.AppField
-					name="is_cancelled"
-					validators={{
-						onChange: ({ fieldApi }) => {
-							// Revalidate notes field when is_cancelled changes
-							fieldApi.form.validateField("notes", "blur");
-							return undefined;
-						},
-					}}
-				>
+				<form.AppField name="notes">
 					{(field) => (
-						<field.SwitchField
-							description="Cancelled meetings will still be shown on the public meetings page. If cancelled, put the reason in the notes."
-							label="Cancelled"
-							labelWhenFalse="This meeting is scheduled or has already occurred."
-							labelWhenTrue="This meeting was cancelled."
-							orientation="vertical"
+						<field.TextField
+							description="Shown on the public meetings page. Cancelling a meeting requires a note saying why."
+							label="Notes"
 						/>
 					)}
 				</form.AppField>
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
+				{actions ? (
+					<form.Subscribe selector={(state) => state.values}>
+						{(values) => actions({ values })}
+					</form.Subscribe>
+				) : null}
 			</form.FormWrapper>
 		</form.AppForm>
 	);
