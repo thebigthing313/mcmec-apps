@@ -7,24 +7,18 @@
  */
 import type { notices as noticeCommands } from "@mcmec/domain";
 import { eq } from "drizzle-orm";
-import type { Tx } from "../../actor";
 import { notices } from "../../db/schema";
 import { toColumnValues } from "../columns";
+import {
+	deleteRow,
+	isForeignKeyViolation,
+	NOT_FOUND,
+	setFields,
+} from "../rows";
 import { CommandError, type CommandHandler } from "../types";
-
-const NOT_FOUND = new CommandError(404, { error: "not found" });
 
 /** Days a legal notice must stay on the current-notices page before it may be archived. */
 const RETENTION_DAYS = 7;
-
-async function setFields(tx: Tx, id: string, values: Record<string, unknown>) {
-	const rows = await tx
-		.update(notices)
-		.set(values)
-		.where(eq(notices.id, id))
-		.returning({ id: notices.id });
-	if (rows.length === 0) throw NOT_FOUND;
-}
 
 export const createNotice: CommandHandler<
 	typeof noticeCommands.createNotice
@@ -42,19 +36,19 @@ export const createNotice: CommandHandler<
 export const updateNoticeDetails: CommandHandler<
 	typeof noticeCommands.updateNoticeDetails
 > = async ({ payload, id, tx }) => {
-	await setFields(tx, id, toColumnValues(notices, payload));
+	await setFields(tx, notices, id, toColumnValues(notices, payload));
 };
 
 export const publishNotice: CommandHandler<
 	typeof noticeCommands.publishNotice
 > = async ({ id, tx }) => {
-	await setFields(tx, id, { isPublished: true });
+	await setFields(tx, notices, id, { isPublished: true });
 };
 
 export const unpublishNotice: CommandHandler<
 	typeof noticeCommands.unpublishNotice
 > = async ({ id, tx }) => {
-	await setFields(tx, id, { isPublished: false });
+	await setFields(tx, notices, id, { isPublished: false });
 };
 
 /**
@@ -104,24 +98,20 @@ export const archiveNotice: CommandHandler<
 		});
 	}
 
-	await setFields(tx, id, { isArchived: true });
+	await setFields(tx, notices, id, { isArchived: true });
 };
 
 export const unarchiveNotice: CommandHandler<
 	typeof noticeCommands.unarchiveNotice
 > = async ({ id, tx }) => {
-	await setFields(tx, id, { isArchived: false });
+	await setFields(tx, notices, id, { isArchived: false });
 };
 
 export const deleteNotice: CommandHandler<
 	typeof noticeCommands.deleteNotice
 > = async ({ id, tx }) => {
 	try {
-		const rows = await tx
-			.delete(notices)
-			.where(eq(notices.id, id))
-			.returning({ id: notices.id });
-		if (rows.length === 0) throw NOT_FOUND;
+		await deleteRow(tx, notices, id);
 	} catch (e) {
 		// A deleting handler owns the FK→409 mapping itself: the row is still referenced
 		// (a notice_postings ledger entry), which is a conflict, not bad input.
@@ -135,12 +125,3 @@ export const deleteNotice: CommandHandler<
 		throw e;
 	}
 };
-
-function isForeignKeyViolation(e: unknown): boolean {
-	return (
-		typeof e === "object" &&
-		e !== null &&
-		"code" in e &&
-		(e as { code?: string }).code === "23503"
-	);
-}

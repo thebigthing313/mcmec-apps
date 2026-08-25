@@ -10,6 +10,7 @@
 import { NoticesRowSchema } from "@mcmec/schemas/db/notices";
 import z from "zod";
 import { defineDomain } from "../command";
+import { TiptapDocument } from "../tiptap";
 
 const website = defineDomain("website", "manage_website");
 
@@ -23,7 +24,9 @@ const NoticeDate = z.coerce
 	.transform((d) => d.toISOString().slice(0, 10));
 
 const DetailFields = {
-	content: NoticesRowSchema.shape.content,
+	// Not `NoticesRowSchema.shape.content`, which is `z.any()` and would let an update carry
+	// `content: null` into a NOT NULL column — a 500 where a 422 is the truth.
+	content: TiptapDocument,
 	notice_date: NoticeDate,
 	notice_type_id: NoticesRowSchema.shape.notice_type_id,
 	title: z.string().min(5),

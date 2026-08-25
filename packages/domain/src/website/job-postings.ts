@@ -16,18 +16,12 @@
  */
 import z from "zod";
 import { defineDomain } from "../command";
+import { TiptapDocument } from "../tiptap";
 
 const website = defineDomain("website", "manage_website");
 
-/**
- * A Tiptap document. The row schema types this `z.any()`, which would let an update send
- * `content: null` into a NOT NULL column; an object is the narrowest true statement we can
- * make about it without teaching the domain package Tiptap's node grammar.
- */
-const Content = z.record(z.string(), z.unknown());
-
 const DetailFields = {
-	content: Content,
+	content: TiptapDocument,
 	title: z.string().min(1),
 } as const;
 
