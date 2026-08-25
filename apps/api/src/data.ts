@@ -116,7 +116,6 @@ function makeCrud<T extends PgTable>(
 const WRITABLE: Record<string, CrudEntry> = {
 	// manage_website — public-website content
 	meetings: makeCrud(schema.meetings, schema.meetings.id, "manage_website"),
-	documents: makeCrud(schema.documents, schema.documents.id, "manage_website"),
 	spray_schedules: makeCrud(
 		schema.spraySchedules,
 		schema.spraySchedules.id,

@@ -8,6 +8,7 @@
 
 import type { AnyCommand } from "./command";
 import { DOCUMENT_CATEGORY_COMMANDS } from "./website/document-categories";
+import { DOCUMENT_COMMANDS } from "./website/documents";
 import { INSECTICIDE_COMMANDS } from "./website/insecticides";
 import { JOB_POSTING_COMMANDS } from "./website/job-postings";
 import { NOTICE_CATEGORY_COMMANDS } from "./website/notice-categories";
@@ -19,6 +20,7 @@ const ALL = [
 	...NOTICE_CATEGORY_COMMANDS,
 	...DOCUMENT_CATEGORY_COMMANDS,
 	...INSECTICIDE_COMMANDS,
+	...DOCUMENT_COMMANDS,
 ] as const;
 
 // The callback is annotated rather than inferred: it stays correct whether ALL is empty (its
