@@ -25,6 +25,12 @@ _Avoid_: module, area, bounded context (in prose — the term of art, but not wh
 The command a pending change means, recorded alongside it so the change survives the trip to
 the server as something more than a set of altered fields.
 
+**Lifecycle Action**:
+A command that moves a record from one state to another — publishing, archiving, cancelling,
+closing, resolving — as opposed to one that edits its fields. Always performed as a deliberate
+act on a record, never as a field someone sets and saves.
+_Avoid_: status change, toggle, flag
+
 **App Role**:
 A capability granted to a person's login, and the same string a command names as its
 permission. One per staff surface: `manage_website`, `manage_employees`, `manage_users`,
@@ -101,7 +107,8 @@ _Avoid_: spray schedule, spray event, treatment, application
 
 **Mission Status**:
 Where a Spray Mission stands — Scheduled when created, then Delayed, Cancelled or Completed.
-A Delayed mission carries a rain date.
+A Delayed mission carries a rain date. A Delayed or Cancelled mission can be returned to
+Scheduled; a Completed one is finished for good.
 
 **Weekly Mosquito Activity**:
 Trap counts and rainfall by species, week and year, loaded a season at a time. Loading a
