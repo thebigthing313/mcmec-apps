@@ -11,6 +11,7 @@ import { DOCUMENT_CATEGORY_COMMANDS } from "./website/document-categories";
 import { DOCUMENT_COMMANDS } from "./website/documents";
 import { INSECTICIDE_COMMANDS } from "./website/insecticides";
 import { JOB_POSTING_COMMANDS } from "./website/job-postings";
+import { MEETING_COMMANDS } from "./website/meetings";
 import { NOTICE_CATEGORY_COMMANDS } from "./website/notice-categories";
 import { NOTICE_COMMANDS } from "./website/notices";
 
@@ -21,6 +22,7 @@ const ALL = [
 	...DOCUMENT_CATEGORY_COMMANDS,
 	...INSECTICIDE_COMMANDS,
 	...DOCUMENT_COMMANDS,
+	...MEETING_COMMANDS,
 ] as const;
 
 // The callback is annotated rather than inferred: it stays correct whether ALL is empty (its
