@@ -119,11 +119,6 @@ function makeCrud<T extends PgTable>(
 // the union (#174).
 const WRITABLE: Partial<Record<TableName, CrudEntry>> = {
 	// manage_website — public-website content
-	spray_schedules: makeCrud(
-		schema.spraySchedules,
-		schema.spraySchedules.id,
-		"manage_website",
-	),
 	mosquito_activity_data: makeCrud(
 		schema.mosquitoActivityData,
 		schema.mosquitoActivityData.id,

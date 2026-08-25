@@ -1,30 +1,30 @@
-import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import type { SpraySchedulesRowType } from "@mcmec/schemas/db/spray-schedules";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@mcmec/ui/components/alert-dialog";
+import { formatDateShort } from "@mcmec/lib/functions/date-fns";
+import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { createFileRoute } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { SprayScheduleForm } from "@/src/components/spray-schedule-form";
-import { apiFetch } from "@/src/lib/api";
+import {
+	createFileRoute,
+	Link,
+	notFound,
+	useNavigate,
+} from "@tanstack/react-router";
+import { ArrowLeft, Edit, ExternalLink } from "lucide-react";
+import {
+	formatTimeRange,
+	statusBadgeVariant,
+} from "@/src/components/spray-schedule-table";
 import {
 	insecticides,
+	intents,
 	municipalities,
 	sprayScheduleMunicipalities,
 	spraySchedules,
 } from "@/src/lib/db";
+import { runLifecycle } from "@/src/lib/lifecycle";
+import { transitionsFrom } from "@/src/lib/spray-mission-transitions";
 import { toastOnError } from "@/src/lib/toast-on-error";
-import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
 	component: RouteComponent,
@@ -32,18 +32,19 @@ export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
 		await spraySchedules.preload();
 		const schedule = spraySchedules.get(params.sprayScheduleId);
 		if (!schedule) {
-			throw new Error(ErrorMessages.DATABASE.RECORD_NOT_AVAILABLE);
+			throw notFound();
 		}
-		return { crumb: "Edit", schedule };
+		return { crumb: formatDateShort(schedule.mission_date), schedule };
 	},
 });
 
 function RouteComponent() {
-	const navigate = Route.useNavigate();
 	const { schedule: loadedSchedule } = Route.useLoaderData();
 	const { sprayScheduleId } = Route.useParams();
+	const navigate = useNavigate();
 
-	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	// Read live rather than from the loader's one-shot read, which can land on the shape
+	// snapshot before the change log applies — see lib/use-form-seed.ts.
 	const { data: liveSchedules } = useLiveQuery(
 		(q) =>
 			q
@@ -53,110 +54,117 @@ function RouteComponent() {
 	);
 	const schedule = liveSchedules[0] ?? loadedSchedule;
 
-	const { data: insecticideData } = useLiveQuery((q) =>
-		q.from({ insecticide: insecticides }).select(({ insecticide }) => ({
-			label: insecticide.trade_name,
-			value: insecticide.id,
-		})),
-	);
-
-	const { data: municipalityData } = useLiveQuery((q) =>
-		q.from({ municipality: municipalities }).select(({ municipality }) => ({
-			label: municipality.name,
-			value: municipality.id,
-		})),
-	);
-
-	const { data: currentLinks } = useLiveQuery(
+	const { data: links } = useLiveQuery(
 		(q) =>
 			q
 				.from({ link: sprayScheduleMunicipalities })
 				.where(({ link }) => eq(link.spray_schedule_id, sprayScheduleId)),
 		[sprayScheduleId],
 	);
-	const currentMunicipalityIds = currentLinks.map(
-		(link) => link.municipality_id,
-	);
+	const municipalityNames = links
+		.map((link) => municipalities.get(link.municipality_id)?.name)
+		.filter((name): name is string => !!name)
+		.sort();
 
-	// The municipality set is part of the seed too, and it lives in a separate collection with
-	// no updated_at of its own — so fold the linked ids into the version stamp.
-	const { seedKey, latchProps } = useFormSeed(
-		rowVersion(schedule, [...currentMunicipalityIds].sort().join(",")),
-	);
+	const insecticideName =
+		insecticides.get(schedule.insecticide_id)?.trade_name ?? "";
 
-	const handleSubmit = async (
-		value: SpraySchedulesRowType,
-		municipalityIds: string[],
-	) => {
-		const tx = spraySchedules.update(sprayScheduleId, (draft) => {
-			Object.assign(draft, value);
-		});
-		toastOnError(tx, "Failed to update spray schedule.");
+	// One button per legal transition, never a dropdown of states. No form under this, so no
+	// `isDirty` and no relabel: a detail-view lifecycle button always sends exactly one intent.
+	// The page stays put afterwards — the badge below is live, so the result of the click is
+	// visible where the click was.
+	const transitions = transitionsFrom(schedule.status);
 
-		// Full-replace the municipality set in one transaction; the junction collection picks
-		// the change up through Electric.
-		try {
-			await apiFetch(`/api/spray-schedules/${sprayScheduleId}/municipalities`, {
-				body: JSON.stringify({ municipalityIds }),
-				method: "PUT",
-			});
-		} catch (error) {
-			toast.error(
-				error instanceof Error
-					? error.message
-					: "Failed to save municipalities.",
-			);
-			return;
-		}
-
-		navigate({ to: "/spray-schedule" });
-	};
-
-	const handleDelete = async () => {
-		const tx = spraySchedules.delete(sprayScheduleId);
-		toastOnError(tx, "Failed to delete spray schedule.");
+	// Delete is the one action whose placement is not free — detail page only, danger zone,
+	// behind a confirm (ADR 0001). It leaves the page because the record it was showing is gone.
+	const handleDelete = () => {
+		const tx = spraySchedules.delete(
+			sprayScheduleId,
+			intents("website.deleteSprayMission"),
+		);
+		toastOnError(tx, "Failed to delete spray mission.");
 		navigate({ to: "/spray-schedule" });
 	};
 
 	return (
-		<div className="space-y-4" {...latchProps}>
-			<SprayScheduleForm
-				defaultValues={{
-					...schedule,
-					municipality_ids: currentMunicipalityIds ?? [],
-				}}
-				formLabel="Edit Spray Mission"
-				insecticideOptions={insecticideData}
-				key={seedKey}
-				municipalityOptions={municipalityData}
-				onSubmit={handleSubmit}
-				submitLabel="Update"
-			/>
+		<div className="max-w-2xl space-y-6">
+			<nav className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card p-4">
+				<Button asChild size="sm" variant="outline">
+					<Link to="/spray-schedule">
+						<ArrowLeft />
+						Back to Spray Schedule
+					</Link>
+				</Button>
+				<div className="flex flex-wrap items-center gap-2">
+					<Button asChild size="sm" variant="outline">
+						<Link
+							params={{ sprayScheduleId }}
+							to="/spray-schedule/$sprayScheduleId/edit"
+						>
+							<Edit />
+							Edit
+						</Link>
+					</Button>
+					{transitions.map((transition) => (
+						<LifecycleButton
+							icon={transition.icon}
+							key={transition.command}
+							label={transition.label}
+							onAct={() =>
+								runLifecycle(spraySchedules, sprayScheduleId, {
+									apply: (draft) => {
+										draft.status = transition.to;
+									},
+									command: transition.command,
+									failure: transition.failure,
+								})
+							}
+							size="sm"
+						/>
+					))}
+				</div>
+			</nav>
 
-			<div className="max-w-2xl">
-				<AlertDialog>
-					<AlertDialogTrigger asChild>
-						<Button className="w-full" variant="destructive">
-							Delete Spray Mission
-						</Button>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This action cannot be undone. This will permanently delete this
-								spray schedule entry.
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDelete}>
-								Delete
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</div>
+			<article className="prose">
+				<div className="flex flex-row items-baseline gap-2">
+					<h2>{formatDateShort(schedule.mission_date)}</h2>
+					<Badge variant={statusBadgeVariant(schedule.status)}>
+						{schedule.status.charAt(0).toUpperCase() + schedule.status.slice(1)}
+					</Badge>
+				</div>
+				<h4>{formatTimeRange(schedule.start_time, schedule.end_time)}</h4>
+				{schedule.rain_date ? (
+					<p>Rain date: {formatDateShort(schedule.rain_date)}</p>
+				) : null}
+				<p>{schedule.area_description}</p>
+				<dl>
+					<dt>Insecticide</dt>
+					<dd>{insecticideName}</dd>
+					<dt>Municipalities</dt>
+					<dd>
+						{municipalityNames.length > 0
+							? municipalityNames.join(", ")
+							: "None selected"}
+					</dd>
+				</dl>
+				{schedule.map_url ? (
+					<a
+						className="inline-flex items-center gap-1"
+						href={schedule.map_url}
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						<ExternalLink className="h-4 w-4" />
+						Spray area map
+					</a>
+				) : null}
+			</article>
+
+			<DangerZoneCard
+				description="This action cannot be undone. This will permanently delete this spray mission and the municipalities linked to it."
+				label="Delete Spray Mission"
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 }

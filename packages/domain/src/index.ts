@@ -32,3 +32,4 @@ export * as jobPostings from "./website/job-postings";
 export * as meetings from "./website/meetings";
 export * as noticeCategories from "./website/notice-categories";
 export * as notices from "./website/notices";
+export * as sprayMissions from "./website/spray-missions";

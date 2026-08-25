@@ -1,6 +1,6 @@
 import type { CommandName } from "@mcmec/domain";
 import type { OperationConfig, WritableDeep } from "@tanstack/react-db";
-import { intents } from "./db";
+import { intents, withArguments } from "./db";
 import { toastOnError } from "./toast-on-error";
 
 /**
@@ -51,7 +51,15 @@ export interface LifecycleAction<TDraft> {
 	 * never a sticky `isDirty`, or a typed-then-reverted form sends `update*Details` an empty
 	 * payload and earns a 400 from its own non-empty refinement.
 	 */
-	save?: { command: CommandName; changes: Record<string, unknown> };
+	save?: {
+		command: CommandName;
+		changes: Record<string, unknown>;
+		/**
+		 * Non-column values the saved command needs — `municipality_ids` on a spray mission.
+		 * A save carrying only these is still a real save, so it counts towards "dirty".
+		 */
+		arguments?: Record<string, unknown>;
+	};
 }
 
 export function runLifecycle<TDraft extends object>(
@@ -60,13 +68,18 @@ export function runLifecycle<TDraft extends object>(
 	{ command, apply, failure, save }: LifecycleAction<TDraft>,
 ) {
 	const changes = save?.changes;
-	const savedTogether = !!save && !!changes && Object.keys(changes).length > 0;
+	const savedTogether =
+		!!save &&
+		((!!changes && Object.keys(changes).length > 0) || !!save.arguments);
 
 	const tx = collection.update(
 		id,
-		intents(...(savedTogether && save ? [save.command, command] : [command])),
+		withArguments(
+			intents(...(savedTogether && save ? [save.command, command] : [command])),
+			savedTogether ? save?.arguments : undefined,
+		),
 		(draft) => {
-			if (savedTogether && changes) Object.assign(draft, changes);
+			if (changes) Object.assign(draft, changes);
 			apply(draft);
 		},
 	);

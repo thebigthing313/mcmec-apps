@@ -42,6 +42,7 @@ import { Route as appInsecticidesCreateRouteImport } from './routes/(app)/insect
 import { Route as appInsecticidesInsecticideIdRouteImport } from './routes/(app)/insecticides/$insecticideId'
 import { Route as appDocumentsCreateRouteImport } from './routes/(app)/documents/create'
 import { Route as appDocumentsDocumentIdRouteImport } from './routes/(app)/documents/$documentId'
+import { Route as appSprayScheduleSprayScheduleIdEditRouteImport } from './routes/(app)/spray-schedule/$sprayScheduleId_.edit'
 import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
 import { Route as appMeetingsMeetingIdEditRouteImport } from './routes/(app)/meetings/$meetingId_.edit'
 import { Route as appJobPostingsPostingIdEditRouteImport } from './routes/(app)/job-postings/$postingId_.edit'
@@ -214,6 +215,12 @@ const appDocumentsDocumentIdRoute = appDocumentsDocumentIdRouteImport.update({
   path: '/$documentId',
   getParentRoute: () => appDocumentsRouteRoute,
 } as any)
+const appSprayScheduleSprayScheduleIdEditRoute =
+  appSprayScheduleSprayScheduleIdEditRouteImport.update({
+    id: '/$sprayScheduleId_/edit',
+    path: '/$sprayScheduleId/edit',
+    getParentRoute: () => appSprayScheduleRouteRoute,
+  } as any)
 const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
   id: '/$noticeId_/edit',
   path: '/$noticeId/edit',
@@ -275,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
   '/meetings/$meetingId/edit': typeof appMeetingsMeetingIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
+  '/spray-schedule/$sprayScheduleId/edit': typeof appSprayScheduleSprayScheduleIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -306,6 +314,7 @@ export interface FileRoutesByTo {
   '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
   '/meetings/$meetingId/edit': typeof appMeetingsMeetingIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
+  '/spray-schedule/$sprayScheduleId/edit': typeof appSprayScheduleSprayScheduleIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -346,6 +355,7 @@ export interface FileRoutesById {
   '/(app)/job-postings/$postingId_/edit': typeof appJobPostingsPostingIdEditRoute
   '/(app)/meetings/$meetingId_/edit': typeof appMeetingsMeetingIdEditRoute
   '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
+  '/(app)/spray-schedule/$sprayScheduleId_/edit': typeof appSprayScheduleSprayScheduleIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -386,6 +396,7 @@ export interface FileRouteTypes {
     | '/job-postings/$postingId/edit'
     | '/meetings/$meetingId/edit'
     | '/notices/$noticeId/edit'
+    | '/spray-schedule/$sprayScheduleId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/job-postings/$postingId/edit'
     | '/meetings/$meetingId/edit'
     | '/notices/$noticeId/edit'
+    | '/spray-schedule/$sprayScheduleId/edit'
   id:
     | '__root__'
     | '/(app)'
@@ -456,6 +468,7 @@ export interface FileRouteTypes {
     | '/(app)/job-postings/$postingId_/edit'
     | '/(app)/meetings/$meetingId_/edit'
     | '/(app)/notices/$noticeId_/edit'
+    | '/(app)/spray-schedule/$sprayScheduleId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -696,6 +709,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDocumentsDocumentIdRouteImport
       parentRoute: typeof appDocumentsRouteRoute
     }
+    '/(app)/spray-schedule/$sprayScheduleId_/edit': {
+      id: '/(app)/spray-schedule/$sprayScheduleId_/edit'
+      path: '/$sprayScheduleId/edit'
+      fullPath: '/spray-schedule/$sprayScheduleId/edit'
+      preLoaderRoute: typeof appSprayScheduleSprayScheduleIdEditRouteImport
+      parentRoute: typeof appSprayScheduleRouteRoute
+    }
     '/(app)/notices/$noticeId_/edit': {
       id: '/(app)/notices/$noticeId_/edit'
       path: '/$noticeId/edit'
@@ -831,12 +851,15 @@ interface appSprayScheduleRouteRouteChildren {
   appSprayScheduleSprayScheduleIdRoute: typeof appSprayScheduleSprayScheduleIdRoute
   appSprayScheduleCreateRoute: typeof appSprayScheduleCreateRoute
   appSprayScheduleIndexRoute: typeof appSprayScheduleIndexRoute
+  appSprayScheduleSprayScheduleIdEditRoute: typeof appSprayScheduleSprayScheduleIdEditRoute
 }
 
 const appSprayScheduleRouteRouteChildren: appSprayScheduleRouteRouteChildren = {
   appSprayScheduleSprayScheduleIdRoute: appSprayScheduleSprayScheduleIdRoute,
   appSprayScheduleCreateRoute: appSprayScheduleCreateRoute,
   appSprayScheduleIndexRoute: appSprayScheduleIndexRoute,
+  appSprayScheduleSprayScheduleIdEditRoute:
+    appSprayScheduleSprayScheduleIdEditRoute,
 }
 
 const appSprayScheduleRouteRouteWithChildren =
