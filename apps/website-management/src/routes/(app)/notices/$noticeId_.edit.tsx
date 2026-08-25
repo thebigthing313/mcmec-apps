@@ -1,16 +1,6 @@
+import type { CommandName } from "@mcmec/domain";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@mcmec/ui/components/alert-dialog";
-import { Button } from "@mcmec/ui/components/button";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -18,6 +8,7 @@ import {
 	type NoticeFormValues,
 } from "@/src/components/notice-form";
 import { intents, notices, noticeTypes } from "@/src/lib/db";
+import { changedFields, type Draft, runLifecycle } from "@/src/lib/lifecycle";
 import { toastOnError } from "@/src/lib/toast-on-error";
 import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
@@ -32,6 +23,18 @@ export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 		return { crumb: "Edit", notice };
 	},
 });
+
+type NoticeDraft = Draft<typeof notices>;
+
+/** Exactly the fields `website.updateNoticeDetails` accepts — the Save half of a Save-and-X. */
+function detailValues(value: NoticeFormValues) {
+	return {
+		content: value.content,
+		notice_date: value.notice_date,
+		notice_type_id: value.notice_type_id,
+		title: value.title,
+	};
+}
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
@@ -65,59 +68,102 @@ function RouteComponent() {
 			noticeId,
 			intents("website.updateNoticeDetails"),
 			(draft) => {
-				draft.content = value.content;
-				draft.notice_date = value.notice_date;
-				draft.notice_type_id = value.notice_type_id;
-				draft.title = value.title;
+				Object.assign(draft, detailValues(value));
 			},
 		);
 		toastOnError(tx, "Failed to update notice.");
-		navigate({ to: "/notices" });
-	};
-
-	// One lifecycle action: the draft says what the user sees change, the intent says what they
-	// meant. The audit row gets the name, not an inferred boolean flip.
-	const togglePublished = () => {
-		const publishing = !notice.is_published;
-		const tx = notices.update(
-			noticeId,
-			intents(publishing ? "website.publishNotice" : "website.unpublishNotice"),
-			(draft) => {
-				draft.is_published = publishing;
-			},
-		);
-		toastOnError(
-			tx,
-			publishing ? "Failed to publish notice." : "Failed to unpublish notice.",
-		);
-	};
-
-	// The server owns P.L. 2025 c.72 now, so this button does not need to know the rule. A
-	// refusal comes back as a 409 whose message is written for the person who clicked.
-	const toggleArchived = () => {
-		const archiving = !notice.is_archived;
-		const tx = notices.update(
-			noticeId,
-			intents(archiving ? "website.archiveNotice" : "website.unarchiveNotice"),
-			(draft) => {
-				draft.is_archived = archiving;
-			},
-		);
-		toastOnError(
-			tx,
-			archiving ? "Failed to archive notice." : "Failed to unarchive notice.",
-		);
-	};
-
-	const handleDelete = async () => {
-		const tx = notices.delete(noticeId, intents("website.deleteNotice"));
-		toastOnError(tx, "Failed to delete notice.");
-		navigate({ to: "/notices" });
+		navigate({ params: { noticeId }, to: "/notices/$noticeId" });
 	};
 
 	return (
 		<div className="space-y-4" {...latchProps}>
 			<NoticeForm
+				actions={({ values }) => {
+					// Diffed against the LIVE row, so the label and the payload cannot disagree: if
+					// this is empty the button stays "Publish" and sends one intent, and
+					// `updateNoticeDetails` is never handed a payload its own non-empty refinement
+					// would refuse.
+					const changes = changedFields(detailValues(values), notice);
+					const isDirty = Object.keys(changes).length > 0;
+
+					// One request, both intents, one transaction. A refused archive rolls the field
+					// save back with it — which is the sentence `savedTogether` adds to the toast.
+					const act =
+						(
+							command: CommandName,
+							apply: (draft: NoticeDraft) => void,
+							failure: string,
+						) =>
+						(withSave: boolean) =>
+							runLifecycle(notices, noticeId, {
+								apply,
+								command,
+								failure,
+								save: withSave
+									? { changes, command: "website.updateNoticeDetails" }
+									: undefined,
+							});
+
+					const publish = notice.is_published
+						? {
+								label: "Unpublish",
+								onAct: act(
+									"website.unpublishNotice",
+									(draft) => {
+										draft.is_published = false;
+									},
+									"Failed to unpublish notice.",
+								),
+							}
+						: {
+								label: "Publish",
+								onAct: act(
+									"website.publishNotice",
+									(draft) => {
+										draft.is_published = true;
+									},
+									"Failed to publish notice.",
+								),
+							};
+
+					// The server owns P.L. 2025 c.72, so this button does not know the rule — a
+					// refusal arrives as a 409 written for the person who clicked.
+					const archive = notice.is_archived
+						? {
+								label: "Unarchive",
+								onAct: act(
+									"website.unarchiveNotice",
+									(draft) => {
+										draft.is_archived = false;
+									},
+									"Failed to unarchive notice.",
+								),
+							}
+						: {
+								label: "Archive",
+								onAct: act(
+									"website.archiveNotice",
+									(draft) => {
+										draft.is_archived = true;
+									},
+									"Failed to archive notice.",
+								),
+							};
+
+					return (
+						<div className="flex gap-2">
+							{[publish, archive].map(({ label, onAct }) => (
+								<LifecycleButton
+									className="flex-1"
+									isDirty={isDirty}
+									key={label}
+									label={label}
+									onAct={onAct}
+								/>
+							))}
+						</div>
+					);
+				}}
 				categories={items}
 				defaultValues={{
 					content: notice.content,
@@ -131,44 +177,6 @@ function RouteComponent() {
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>
-
-			<div className="max-w-2xl space-y-2">
-				<div className="flex gap-2">
-					<Button
-						className="flex-1"
-						onClick={togglePublished}
-						variant="outline"
-					>
-						{notice.is_published ? "Unpublish" : "Publish"}
-					</Button>
-					<Button className="flex-1" onClick={toggleArchived} variant="outline">
-						{notice.is_archived ? "Unarchive" : "Archive"}
-					</Button>
-				</div>
-
-				<AlertDialog>
-					<AlertDialogTrigger asChild>
-						<Button className="w-full" variant="destructive">
-							Delete Notice
-						</Button>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This action cannot be undone. This will permanently delete the
-								notice "{notice.title}".
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDelete}>
-								Delete
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</div>
 		</div>
 	);
 }

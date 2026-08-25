@@ -2,6 +2,7 @@ import {
 	getJobPostingStatus,
 	type JobPostingStatus,
 } from "@mcmec/lib/functions/job-posting-status";
+import { RowActionsMenu } from "@mcmec/ui/blocks/row-actions-menu";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -30,9 +31,17 @@ import {
 	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Plus } from "lucide-react";
+import {
+	ArrowDown,
+	ArrowUp,
+	ArrowUpDown,
+	Plus,
+	Undo2,
+	Upload,
+} from "lucide-react";
 import { useState } from "react";
 import { jobPostings } from "@/src/lib/db";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 export const Route = createFileRoute("/(app)/job-postings/")({
 	component: JobPostingsPage,
@@ -118,6 +127,47 @@ const columns: ColumnDef<JobPosting>[] = [
 		},
 		header: "Status",
 		id: "status",
+	},
+	{
+		// A shortcut, never the only way in: publishing is also on the detail view and in the
+		// edit form (ADR 0001). Close/Reopen stays off the row — closing a posting is the end of
+		// a hiring round and reads as a decision, not a one-click toggle in a list.
+		cell: ({ row }) => {
+			const { id, published_at } = row.original;
+			return (
+				<RowActionsMenu
+					actions={[
+						published_at
+							? {
+									icon: <Undo2 />,
+									label: "Unpublish",
+									onAct: () =>
+										runLifecycle(jobPostings, id, {
+											apply: (draft) => {
+												draft.published_at = null;
+											},
+											command: "website.unpublishJobPosting",
+											failure: "Failed to unpublish job posting.",
+										}),
+								}
+							: {
+									icon: <Upload />,
+									label: "Publish",
+									onAct: () =>
+										runLifecycle(jobPostings, id, {
+											apply: (draft) => {
+												draft.published_at = new Date();
+											},
+											command: "website.publishJobPosting",
+											failure: "Failed to publish job posting.",
+										}),
+								},
+					]}
+				/>
+			);
+		},
+		header: "",
+		id: "actions",
 	},
 ];
 

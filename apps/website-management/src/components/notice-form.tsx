@@ -35,6 +35,15 @@ interface NoticeFormProps {
 	 * send it to.
 	 */
 	mode: "create" | "edit";
+	/**
+	 * Lifecycle actions rendered beneath the fields — ADR 0001's buttons, never fields.
+	 *
+	 * A render prop rather than a plain node because Save-and-X needs the form's *current*
+	 * values: the caller diffs them against the live row to decide whether the label says
+	 * "Publish" or "Save and Publish", and to fill the `updateNoticeDetails` half of the
+	 * envelope. The form keeps owning its state; the caller borrows a read of it.
+	 */
+	actions?: (state: { values: NoticeFormValues }) => React.ReactNode;
 }
 
 export function NoticeForm({
@@ -44,6 +53,7 @@ export function NoticeForm({
 	formLabel,
 	submitLabel,
 	mode,
+	actions,
 }: NoticeFormProps) {
 	const form = useAppForm({
 		defaultValues: { ...defaultValues, is_published: true },
@@ -105,6 +115,11 @@ export function NoticeForm({
 					</form.AppField>
 				) : null}
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
+				{actions ? (
+					<form.Subscribe selector={(state) => state.values}>
+						{(values) => actions({ values })}
+					</form.Subscribe>
+				) : null}
 			</form.FormWrapper>
 		</form.AppForm>
 	);

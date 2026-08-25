@@ -3,6 +3,10 @@ import {
 	getTodayUTC,
 	isOnOrBeforeDay,
 } from "@mcmec/lib/functions/date-fns";
+import {
+	type RowAction,
+	RowActionsMenu,
+} from "@mcmec/ui/blocks/row-actions-menu";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -45,6 +49,12 @@ type Notice = {
 
 interface NoticesTableProps {
 	data: Notice[];
+	/**
+	 * Lifecycle shortcuts for a row (ADR 0001). The route builds them, because the table has no
+	 * business knowing the command vocabulary — and everything offered here is also on the
+	 * notice's detail view, which is what makes the column optional rather than load-bearing.
+	 */
+	rowActions?: (notice: Notice) => RowAction[];
 }
 
 function getPublicationStatus(
@@ -69,7 +79,7 @@ function getPublicationStatus(
 	return { label: "Pending", variant: "secondary" };
 }
 
-export function NoticesTable({ data }: NoticesTableProps) {
+export function NoticesTable({ data, rowActions }: NoticesTableProps) {
 	const navigate = useNavigate();
 	const [sorting, setSorting] = useState<SortingState>([
 		{
@@ -201,6 +211,14 @@ export function NoticesTable({ data }: NoticesTableProps) {
 			},
 		},
 	];
+
+	if (rowActions) {
+		columns.push({
+			cell: ({ row }) => <RowActionsMenu actions={rowActions(row.original)} />,
+			header: "",
+			id: "actions",
+		});
+	}
 
 	const table = useReactTable({
 		columns,
