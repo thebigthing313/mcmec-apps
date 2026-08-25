@@ -3,11 +3,6 @@ import {
 	EmployeesRowSchema,
 	EmployeesUpdateSchema,
 } from "@mcmec/schemas/db/employees";
-import {
-	JobPostingsInsertSchema,
-	JobPostingsRowSchema,
-	JobPostingsUpdateSchema,
-} from "@mcmec/schemas/db/job-postings";
 import { createEagerCollection } from "../factories";
 
 export interface CreateHrCollectionsOptions {
@@ -25,18 +20,8 @@ export function createHrCollections({ apiUrl }: CreateHrCollectionsOptions) {
 		updateSchema: EmployeesUpdateSchema,
 	});
 
-	const jobPostings = createEagerCollection({
-		allowDelete: true,
-		apiUrl,
-		insertSchema: JobPostingsInsertSchema,
-		schema: JobPostingsRowSchema,
-		table: "job_postings",
-		updateSchema: JobPostingsUpdateSchema,
-	});
-
 	return {
 		employees,
-		jobPostings,
 	};
 }
 

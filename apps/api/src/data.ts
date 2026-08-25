@@ -156,11 +156,6 @@ const WRITABLE: Record<string, CrudEntry> = {
 		schema.employees.id,
 		"manage_employees",
 	),
-	job_postings: makeCrud(
-		schema.jobPostings,
-		schema.jobPostings.id,
-		"manage_employees",
-	),
 };
 
 // Resolve the target table + enforce session/permission. Returns a Response on failure.

@@ -7,7 +7,7 @@ import {
 	SidebarMenuItem,
 } from "@mcmec/ui/components/sidebar";
 import { Link, type LinkProps } from "@tanstack/react-router";
-import { Briefcase, Home, Users } from "lucide-react";
+import { Home, Users } from "lucide-react";
 
 type SidebarItem = {
 	icon: React.ReactNode;
@@ -21,11 +21,6 @@ const items: SidebarItem[] = [
 		icon: <Users />,
 		label: "Manage Employees",
 		linkProps: { to: "/employees" },
-	},
-	{
-		icon: <Briefcase />,
-		label: "Job Postings",
-		linkProps: { to: "/job-postings" },
 	},
 ];
 

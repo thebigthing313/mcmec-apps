@@ -5,6 +5,7 @@ import {
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Edit } from "lucide-react";
 import { jobPostings } from "@/src/lib/db";
@@ -12,12 +13,12 @@ import { jobPostings } from "@/src/lib/db";
 export const Route = createFileRoute("/(app)/job-postings/$postingId")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
-		await jobPostings.stateWhenReady();
+		await jobPostings.preload();
 		const posting = jobPostings.get(params.postingId);
 		if (!posting) {
 			throw notFound();
 		}
-		return { crumb: posting.title, posting };
+		return { crumb: posting.title };
 	},
 });
 
@@ -35,8 +36,19 @@ const statusDisplay: Record<
 };
 
 function RouteComponent() {
-	const { posting } = Route.useLoaderData();
 	const { postingId } = Route.useParams();
+
+	// Live, so returning from a Publish or Close on the edit screen shows the new status rather
+	// than the one the loader captured.
+	const { data: posting } = useLiveQuery((q) =>
+		q
+			.from({ posting: jobPostings })
+			.where(({ posting }) => eq(posting.id, postingId))
+			.findOne(),
+	);
+
+	if (!posting) return null;
+
 	const status = statusDisplay[getJobPostingStatus(posting)];
 
 	return (
