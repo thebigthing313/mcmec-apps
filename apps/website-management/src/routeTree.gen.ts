@@ -43,6 +43,7 @@ import { Route as appInsecticidesInsecticideIdRouteImport } from './routes/(app)
 import { Route as appDocumentsCreateRouteImport } from './routes/(app)/documents/create'
 import { Route as appDocumentsDocumentIdRouteImport } from './routes/(app)/documents/$documentId'
 import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
+import { Route as appMeetingsMeetingIdEditRouteImport } from './routes/(app)/meetings/$meetingId_.edit'
 import { Route as appJobPostingsPostingIdEditRouteImport } from './routes/(app)/job-postings/$postingId_.edit'
 import { Route as appDocumentsDocumentIdEditRouteImport } from './routes/(app)/documents/$documentId_.edit'
 
@@ -218,6 +219,12 @@ const appNoticesNoticeIdEditRoute = appNoticesNoticeIdEditRouteImport.update({
   path: '/$noticeId/edit',
   getParentRoute: () => appNoticesRouteRoute,
 } as any)
+const appMeetingsMeetingIdEditRoute =
+  appMeetingsMeetingIdEditRouteImport.update({
+    id: '/$meetingId_/edit',
+    path: '/$meetingId/edit',
+    getParentRoute: () => appMeetingsRouteRoute,
+  } as any)
 const appJobPostingsPostingIdEditRoute =
   appJobPostingsPostingIdEditRouteImport.update({
     id: '/$postingId_/edit',
@@ -266,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/weekly-activity/': typeof appWeeklyActivityIndexRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
+  '/meetings/$meetingId/edit': typeof appMeetingsMeetingIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -296,6 +304,7 @@ export interface FileRoutesByTo {
   '/weekly-activity': typeof appWeeklyActivityIndexRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
+  '/meetings/$meetingId/edit': typeof appMeetingsMeetingIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
 }
 export interface FileRoutesById {
@@ -335,6 +344,7 @@ export interface FileRoutesById {
   '/(app)/weekly-activity/': typeof appWeeklyActivityIndexRoute
   '/(app)/documents/$documentId_/edit': typeof appDocumentsDocumentIdEditRoute
   '/(app)/job-postings/$postingId_/edit': typeof appJobPostingsPostingIdEditRoute
+  '/(app)/meetings/$meetingId_/edit': typeof appMeetingsMeetingIdEditRoute
   '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
 }
 export interface FileRouteTypes {
@@ -374,6 +384,7 @@ export interface FileRouteTypes {
     | '/weekly-activity/'
     | '/documents/$documentId/edit'
     | '/job-postings/$postingId/edit'
+    | '/meetings/$meetingId/edit'
     | '/notices/$noticeId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -404,6 +415,7 @@ export interface FileRouteTypes {
     | '/weekly-activity'
     | '/documents/$documentId/edit'
     | '/job-postings/$postingId/edit'
+    | '/meetings/$meetingId/edit'
     | '/notices/$noticeId/edit'
   id:
     | '__root__'
@@ -442,6 +454,7 @@ export interface FileRouteTypes {
     | '/(app)/weekly-activity/'
     | '/(app)/documents/$documentId_/edit'
     | '/(app)/job-postings/$postingId_/edit'
+    | '/(app)/meetings/$meetingId_/edit'
     | '/(app)/notices/$noticeId_/edit'
   fileRoutesById: FileRoutesById
 }
@@ -690,6 +703,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appNoticesNoticeIdEditRouteImport
       parentRoute: typeof appNoticesRouteRoute
     }
+    '/(app)/meetings/$meetingId_/edit': {
+      id: '/(app)/meetings/$meetingId_/edit'
+      path: '/$meetingId/edit'
+      fullPath: '/meetings/$meetingId/edit'
+      preLoaderRoute: typeof appMeetingsMeetingIdEditRouteImport
+      parentRoute: typeof appMeetingsRouteRoute
+    }
     '/(app)/job-postings/$postingId_/edit': {
       id: '/(app)/job-postings/$postingId_/edit'
       path: '/$postingId/edit'
@@ -760,12 +780,14 @@ interface appMeetingsRouteRouteChildren {
   appMeetingsMeetingIdRoute: typeof appMeetingsMeetingIdRoute
   appMeetingsCreateRoute: typeof appMeetingsCreateRoute
   appMeetingsIndexRoute: typeof appMeetingsIndexRoute
+  appMeetingsMeetingIdEditRoute: typeof appMeetingsMeetingIdEditRoute
 }
 
 const appMeetingsRouteRouteChildren: appMeetingsRouteRouteChildren = {
   appMeetingsMeetingIdRoute: appMeetingsMeetingIdRoute,
   appMeetingsCreateRoute: appMeetingsCreateRoute,
   appMeetingsIndexRoute: appMeetingsIndexRoute,
+  appMeetingsMeetingIdEditRoute: appMeetingsMeetingIdEditRoute,
 }
 
 const appMeetingsRouteRouteWithChildren =

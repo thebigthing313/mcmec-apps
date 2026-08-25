@@ -19,17 +19,21 @@ import {
 import * as React from "react";
 import { Label } from "../components/label";
 import type { MeetingTableRowType } from "./meetings-table";
+import { type RowAction, RowActionsMenu } from "./row-actions-menu";
 
 interface MeetingsMobileListProps {
 	data: MeetingTableRowType[];
 	linkToDetail?: boolean;
 	onRowClick?: (meetingId: string) => void;
+	/** The mobile half of `MeetingsTable`'s row shortcuts (ADR 0001). Public passes none. */
+	rowActions?: (meeting: MeetingTableRowType) => RowAction[];
 }
 
 export function MeetingsMobileList({
 	data,
 	linkToDetail = false,
 	onRowClick,
+	rowActions,
 }: MeetingsMobileListProps) {
 	const getMeetingStatus = (
 		isCancelled: boolean,
@@ -127,7 +131,12 @@ export function MeetingsMobileList({
 												meeting.name
 											)}
 										</ItemTitle>
-										<Badge variant={variant}>{status}</Badge>
+										<div className="flex items-center gap-1">
+											<Badge variant={variant}>{status}</Badge>
+											{rowActions ? (
+												<RowActionsMenu actions={rowActions(meeting)} />
+											) : null}
+										</div>
 									</ItemHeader>
 
 									<ItemContent>

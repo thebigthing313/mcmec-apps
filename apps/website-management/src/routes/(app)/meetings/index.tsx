@@ -3,12 +3,14 @@ import {
 	MeetingsTable,
 	type MeetingTableRowType,
 } from "@mcmec/ui/blocks/meetings-table";
+import type { RowAction } from "@mcmec/ui/blocks/row-actions-menu";
 import { Button } from "@mcmec/ui/components/button";
 import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+import { CalendarOff, CalendarPlus, Plus } from "lucide-react";
 import { meetings } from "@/src/lib/db";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 export const Route = createFileRoute("/(app)/meetings/")({
 	component: RouteComponent,
@@ -31,6 +33,39 @@ function RouteComponent() {
 		noticeUrl: meeting.notice_url,
 	}));
 
+	// A shortcut, never the only way in: cancelling is also on the detail view and in the edit
+	// form (ADR 0001). Delete is not here and never can be — it lives in the danger zone on the
+	// detail page. A cancel from a row carries no notes with it, so a meeting that has none is
+	// refused here with the handler's own sentence, which is the same answer the detail view
+	// gives.
+	const rowActions = (meeting: MeetingTableRowType): RowAction[] => [
+		meeting.isCancelled
+			? {
+					icon: <CalendarPlus />,
+					label: "Reinstate Meeting",
+					onAct: () =>
+						runLifecycle(meetings, meeting.id, {
+							apply: (draft) => {
+								draft.is_cancelled = false;
+							},
+							command: "website.uncancelMeeting",
+							failure: "Failed to reinstate meeting.",
+						}),
+				}
+			: {
+					icon: <CalendarOff />,
+					label: "Cancel Meeting",
+					onAct: () =>
+						runLifecycle(meetings, meeting.id, {
+							apply: (draft) => {
+								draft.is_cancelled = true;
+							},
+							command: "website.cancelMeeting",
+							failure: "Failed to cancel meeting.",
+						}),
+				},
+	];
+
 	return (
 		<div className="flex flex-col gap-2">
 			<Button
@@ -47,6 +82,7 @@ function RouteComponent() {
 					onRowClick={(meetingId) =>
 						navigate({ params: { meetingId }, to: "/meetings/$meetingId" })
 					}
+					rowActions={rowActions}
 				/>
 			) : (
 				<MeetingsTable
@@ -55,6 +91,7 @@ function RouteComponent() {
 					onRowClick={(meetingId) =>
 						navigate({ params: { meetingId }, to: "/meetings/$meetingId" })
 					}
+					rowActions={rowActions}
 				/>
 			)}
 		</div>

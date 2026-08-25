@@ -115,7 +115,6 @@ function makeCrud<T extends PgTable>(
 // management belongs to the `reference` domain, which ships no commands until that screen exists.
 const WRITABLE: Record<string, CrudEntry> = {
 	// manage_website — public-website content
-	meetings: makeCrud(schema.meetings, schema.meetings.id, "manage_website"),
 	spray_schedules: makeCrud(
 		schema.spraySchedules,
 		schema.spraySchedules.id,
