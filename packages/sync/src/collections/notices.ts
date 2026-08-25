@@ -1,9 +1,5 @@
 import { DocumentTypesRowSchema } from "@mcmec/schemas/db/document-types";
-import {
-	DocumentsInsertSchema,
-	DocumentsRowSchema,
-	DocumentsUpdateSchema,
-} from "@mcmec/schemas/db/documents";
+import { DocumentsRowSchema } from "@mcmec/schemas/db/documents";
 import { EmployeesRowSchema } from "@mcmec/schemas/db/employees";
 import { InsecticidesRowSchema } from "@mcmec/schemas/db/insecticides";
 import { JobPostingsRowSchema } from "@mcmec/schemas/db/job-postings";
@@ -93,10 +89,9 @@ export function createNoticesCollections({
 	const documents = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
-		insertSchema: DocumentsInsertSchema,
+		commands: true,
 		schema: DocumentsRowSchema,
 		table: "documents",
-		updateSchema: DocumentsUpdateSchema,
 	});
 
 	const insecticides = createEagerCollection({
