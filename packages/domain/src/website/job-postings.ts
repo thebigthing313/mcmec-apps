@@ -19,6 +19,7 @@ import { defineDomain } from "../command";
 import { TiptapDocument } from "../tiptap";
 
 const website = defineDomain("website", "manage_website");
+const command = website.table("job_postings");
 
 const DetailFields = {
 	content: TiptapDocument,
@@ -33,7 +34,7 @@ const EmptyPayload = z.object({});
  * the UI genuinely offers it — there is no publish switch here to preserve: publishing stamps a
  * server timestamp, and a create cannot stamp one it was not asked for.
  */
-export const createJobPosting = website(
+export const createJobPosting = command(
 	"createJobPosting",
 	z.object(DetailFields),
 	{
@@ -45,7 +46,7 @@ export const createJobPosting = website(
  * Partial, because the collection handler sends `mutation.changes`. The non-empty refinement is
  * what makes "an update that asks for nothing" a refusal.
  */
-export const updateJobPostingDetails = website(
+export const updateJobPostingDetails = command(
 	"updateJobPostingDetails",
 	z
 		.object(DetailFields)
@@ -56,11 +57,11 @@ export const updateJobPostingDetails = website(
 );
 
 /** Stamps `published_at = now()` server-side — the client no longer picks the date. */
-export const publishJobPosting = website("publishJobPosting", EmptyPayload);
-export const unpublishJobPosting = website("unpublishJobPosting", EmptyPayload);
-export const closeJobPosting = website("closeJobPosting", EmptyPayload);
-export const reopenJobPosting = website("reopenJobPosting", EmptyPayload);
-export const deleteJobPosting = website("deleteJobPosting", EmptyPayload);
+export const publishJobPosting = command("publishJobPosting", EmptyPayload);
+export const unpublishJobPosting = command("unpublishJobPosting", EmptyPayload);
+export const closeJobPosting = command("closeJobPosting", EmptyPayload);
+export const reopenJobPosting = command("reopenJobPosting", EmptyPayload);
+export const deleteJobPosting = command("deleteJobPosting", EmptyPayload);
 
 export const JOB_POSTING_COMMANDS = [
 	createJobPosting,

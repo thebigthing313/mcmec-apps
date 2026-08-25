@@ -16,6 +16,7 @@
  * snapshots are bounded by what the session may read; client-side filtering stays in
  * live-query `where()`. The old PostgREST predicate pushdown no longer applies.
  */
+import type { TableName } from "@mcmec/schemas/tables";
 import type z from "zod";
 import type { ZodObject } from "zod";
 import {
@@ -24,17 +25,26 @@ import {
 } from "./electric-collection";
 
 export type OnDemandCollectionOptions<
+	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape>,
 	TInsertSchema extends ZodObject<z.ZodRawShape>,
 	TUpdateSchema extends ZodObject<z.ZodRawShape>,
-> = ElectricCollectionOptions<TSchema, TInsertSchema, TUpdateSchema>;
+> = ElectricCollectionOptions<TTable, TSchema, TInsertSchema, TUpdateSchema>;
 
 export function createOnDemandCollection<
+	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape> & {
 		_zod: { output: { id: string } };
 	},
 	TInsertSchema extends ZodObject<z.ZodRawShape>,
 	TUpdateSchema extends ZodObject<z.ZodRawShape>,
->(options: OnDemandCollectionOptions<TSchema, TInsertSchema, TUpdateSchema>) {
+>(
+	options: OnDemandCollectionOptions<
+		TTable,
+		TSchema,
+		TInsertSchema,
+		TUpdateSchema
+	>,
+) {
 	return createElectricCollection(options, "on-demand", true);
 }

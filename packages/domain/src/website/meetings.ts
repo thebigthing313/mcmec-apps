@@ -28,6 +28,7 @@ import z from "zod";
 import { defineDomain } from "../command";
 
 const website = defineDomain("website", "manage_website");
+const command = website.table("meetings");
 
 const DetailFields = {
 	location: MeetingsRowSchema.shape.location,
@@ -44,7 +45,7 @@ const DetailFields = {
 /** The lifecycle commands take no fields — the envelope id is the whole request. */
 const EmptyPayload = z.object({});
 
-export const createMeeting = website(
+export const createMeeting = command(
 	"createMeeting",
 	// No `is_cancelled`, unlike `createDocument`'s `is_published`: creation may set initial
 	// state where the UI genuinely offers the choice, and nobody schedules a meeting in order
@@ -57,7 +58,7 @@ export const createMeeting = website(
  * Partial, because the collection handler sends `mutation.changes` — a notes-only edit carries
  * one key. The non-empty refinement is what makes "an update that asks for nothing" a refusal.
  */
-export const updateMeetingDetails = website(
+export const updateMeetingDetails = command(
 	"updateMeetingDetails",
 	z
 		.object(DetailFields)
@@ -67,9 +68,9 @@ export const updateMeetingDetails = website(
 		}),
 );
 
-export const cancelMeeting = website("cancelMeeting", EmptyPayload);
-export const uncancelMeeting = website("uncancelMeeting", EmptyPayload);
-export const deleteMeeting = website("deleteMeeting", EmptyPayload);
+export const cancelMeeting = command("cancelMeeting", EmptyPayload);
+export const uncancelMeeting = command("uncancelMeeting", EmptyPayload);
+export const deleteMeeting = command("deleteMeeting", EmptyPayload);
 
 export const MEETING_COMMANDS = [
 	createMeeting,

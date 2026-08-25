@@ -13,6 +13,7 @@ import z from "zod";
 import { defineDomain } from "../command";
 
 const website = defineDomain("website", "manage_website");
+const command = website.table("document_types");
 
 const DetailFields = {
 	description: z.string().nullable(),
@@ -22,13 +23,13 @@ const DetailFields = {
 /** The delete command takes no fields — the envelope id is the whole request. */
 const EmptyPayload = z.object({});
 
-export const createDocumentCategory = website(
+export const createDocumentCategory = command(
 	"createDocumentCategory",
 	z.object(DetailFields),
 	{ creates: true },
 );
 
-export const updateDocumentCategoryDetails = website(
+export const updateDocumentCategoryDetails = command(
 	"updateDocumentCategoryDetails",
 	z
 		.object(DetailFields)
@@ -38,7 +39,7 @@ export const updateDocumentCategoryDetails = website(
 		}),
 );
 
-export const deleteDocumentCategory = website(
+export const deleteDocumentCategory = command(
 	"deleteDocumentCategory",
 	EmptyPayload,
 );

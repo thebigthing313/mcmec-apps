@@ -8,14 +8,23 @@
  * the API's build until someone implements it. That compile error is the whole point of the
  * split.
  */
+import type { TableName } from "@mcmec/schemas/tables";
 import type z from "zod";
 
 export type CommandDefinition<
 	TName extends string = string,
 	TPayload extends z.ZodType = z.ZodType,
+	TTable extends TableName = TableName,
 > = {
 	/** `<domain>.<command>` — globally unique, so it fixes the table, the op and the permission. */
 	readonly name: TName;
+	/**
+	 * The row this command is about. Inherited from the module's `.table()` binding, so a
+	 * module cannot disagree with itself, and `packages/sync` derives a collection's write
+	 * path from the union of these (#174). Naming a table is not touching a database — the
+	 * definition still holds no query, no column types and no drizzle import.
+	 */
+	readonly table: TTable;
 	/** Inherited from the domain. `null` means "declared public, served from its own route". */
 	readonly permission: string | null;
 	readonly payload: TPayload;
@@ -23,30 +32,47 @@ export type CommandDefinition<
 	readonly creates?: true;
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: registry values are heterogeneous by construction
-export type AnyCommand = CommandDefinition<string, z.ZodType<any, any>>;
+export type AnyCommand = CommandDefinition<
+	string,
+	// biome-ignore lint/suspicious/noExplicitAny: registry values are heterogeneous by construction
+	z.ZodType<any, any>,
+	TableName
+>;
 
 export type PayloadOf<TDef extends AnyCommand> = z.infer<TDef["payload"]>;
 
 /**
- * Opens a domain. Permission is declared once here and inherited by every command in it, so
- * the dispatcher reads one field and never learns what a domain is (#135 Q11).
+ * Opens a domain, then a table within it.
+ *
+ * Two calls rather than one, because domain and table are different scopes: `website` owns
+ * seven tables, so folding the table into `defineDomain` would re-declare `manage_website`
+ * seven times — the duplication permission inheritance exists to remove (#135 Q11). Chained,
+ * each fact is written once at the level it belongs to:
+ *
+ *     const website = defineDomain("website", "manage_website");
+ *     const command = website.table("meetings");
+ *     export const cancelMeeting = command("cancelMeeting", EmptyPayload);
  */
 export function defineDomain<TDomain extends string>(
 	domain: TDomain,
 	permission: string | null,
 ) {
-	return function command<TName extends string, TPayload extends z.ZodType>(
-		name: TName,
-		payload: TPayload,
-		options?: { creates?: true },
-	): CommandDefinition<`${TDomain}.${TName}`, TPayload> {
-		return {
-			name: `${domain}.${name}` as const,
-			payload,
-			permission,
-			...(options?.creates ? { creates: true as const } : {}),
-		};
+	return {
+		table<TTable extends TableName>(table: TTable) {
+			return function command<TName extends string, TPayload extends z.ZodType>(
+				name: TName,
+				payload: TPayload,
+				options?: { creates?: true },
+			): CommandDefinition<`${TDomain}.${TName}`, TPayload, TTable> {
+				return {
+					name: `${domain}.${name}` as const,
+					payload,
+					permission,
+					table,
+					...(options?.creates ? { creates: true as const } : {}),
+				};
+			};
+		},
 	};
 }
 

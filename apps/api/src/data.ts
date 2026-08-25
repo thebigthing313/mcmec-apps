@@ -7,6 +7,7 @@
 // Each write runs in a transaction that first sets the `app.*` GUCs so the audit trigger
 // (log_mutation) records who/where. Permissions mirror the old RLS write policies.
 
+import { COMMANDED_TABLES, type TableName } from "@mcmec/domain";
 import { eq, getTableColumns } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
@@ -113,7 +114,10 @@ function makeCrud<T extends PgTable>(
 // so a cut-over table keeps no generic door whose writes would log `audit_log.command = null`.
 // `municipalities` left without commands (#159): nothing writes it from any app, and municipality
 // management belongs to the `reference` domain, which ships no commands until that screen exists.
-const WRITABLE: Record<string, CrudEntry> = {
+// Keyed by `TableName` rather than `string`, so a typo here cannot quietly create a door onto
+// a table that does not exist — the same reason the collections and the command modules take
+// the union (#174).
+const WRITABLE: Partial<Record<TableName, CrudEntry>> = {
 	// manage_website — public-website content
 	spray_schedules: makeCrud(
 		schema.spraySchedules,
@@ -140,12 +144,32 @@ const WRITABLE: Record<string, CrudEntry> = {
 	),
 };
 
+// Boot-time assertion, the mirror of dispatch.ts's `permission: null` check.
+//
+// A table cuts over in two places, and until #174 nothing tied them together: it leaves this
+// map, and its collection gains `commands: true`. `packages/sync` now derives the second from
+// the vocabulary, so that half cannot disagree; this is the other half. A table that has
+// commands but keeps its entry here keeps a working generic door, and writes through it land
+// `audit_log.command = null` — the exact hole #144 built that column to close, and the quieter
+// of the two failures because nothing breaks.
+//
+// Deliberately an assertion rather than a filter (#150 Q5): filtering would leave the entry as
+// dead code that nothing forces a slice to delete, and `WRITABLE` shrinking to empty is this
+// cutover's progress bar. The slice deletes its own entry, in its own diff.
+for (const table of Object.keys(WRITABLE)) {
+	if (COMMANDED_TABLES.has(table as TableName)) {
+		throw new Error(
+			`${table} has named commands but is still in WRITABLE — its generic door would log audit_log.command = null`,
+		);
+	}
+}
+
 // Resolve the target table + enforce session/permission. Returns a Response on failure.
 async function guard(
 	c: Context,
 ): Promise<{ entry: CrudEntry; session: SessionInfo } | Response> {
 	const table = c.req.param("table");
-	const entry = table ? WRITABLE[table] : undefined;
+	const entry = table ? WRITABLE[table as TableName] : undefined;
 	if (!table || !entry) return c.json({ error: `not writable: ${table}` }, 404);
 	const session = await getSessionInfo(c.req.raw.headers);
 	if (!session) return c.json({ error: "unauthenticated" }, 401);
