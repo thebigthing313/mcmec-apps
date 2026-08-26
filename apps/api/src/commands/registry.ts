@@ -16,11 +16,14 @@ import * as jobPostings from "./website/job-postings";
 import * as meetings from "./website/meetings";
 import * as noticeCategories from "./website/notice-categories";
 import * as notices from "./website/notices";
+import * as sprayMissions from "./website/spray-missions";
 
 export const REGISTRY: CommandRegistry = {
 	"website.archiveNotice": notices.archiveNotice,
 	"website.cancelMeeting": meetings.cancelMeeting,
+	"website.cancelSprayMission": sprayMissions.cancelSprayMission,
 	"website.closeJobPosting": jobPostings.closeJobPosting,
+	"website.completeSprayMission": sprayMissions.completeSprayMission,
 	"website.createDocument": documents.createDocument,
 	"website.createDocumentCategory": documentCategories.createDocumentCategory,
 	"website.createInsecticide": insecticides.createInsecticide,
@@ -28,6 +31,8 @@ export const REGISTRY: CommandRegistry = {
 	"website.createMeeting": meetings.createMeeting,
 	"website.createNotice": notices.createNotice,
 	"website.createNoticeCategory": noticeCategories.createNoticeCategory,
+	"website.createSprayMission": sprayMissions.createSprayMission,
+	"website.delaySprayMission": sprayMissions.delaySprayMission,
 	"website.deleteDocument": documents.deleteDocument,
 	"website.deleteDocumentCategory": documentCategories.deleteDocumentCategory,
 	"website.deleteInsecticide": insecticides.deleteInsecticide,
@@ -35,10 +40,12 @@ export const REGISTRY: CommandRegistry = {
 	"website.deleteMeeting": meetings.deleteMeeting,
 	"website.deleteNotice": notices.deleteNotice,
 	"website.deleteNoticeCategory": noticeCategories.deleteNoticeCategory,
+	"website.deleteSprayMission": sprayMissions.deleteSprayMission,
 	"website.publishDocument": documents.publishDocument,
 	"website.publishJobPosting": jobPostings.publishJobPosting,
 	"website.publishNotice": notices.publishNotice,
 	"website.reopenJobPosting": jobPostings.reopenJobPosting,
+	"website.rescheduleSprayMission": sprayMissions.rescheduleSprayMission,
 	"website.unarchiveNotice": notices.unarchiveNotice,
 	"website.uncancelMeeting": meetings.uncancelMeeting,
 	"website.unpublishDocument": documents.unpublishDocument,
@@ -53,4 +60,5 @@ export const REGISTRY: CommandRegistry = {
 	"website.updateNoticeCategoryDetails":
 		noticeCategories.updateNoticeCategoryDetails,
 	"website.updateNoticeDetails": notices.updateNoticeDetails,
+	"website.updateSprayMissionDetails": sprayMissions.updateSprayMissionDetails,
 };

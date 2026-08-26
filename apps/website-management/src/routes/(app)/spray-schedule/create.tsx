@@ -1,10 +1,16 @@
-import type { SpraySchedulesRowType } from "@mcmec/schemas/db/spray-schedules";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { SprayScheduleForm } from "@/src/components/spray-schedule-form";
-import { apiFetch } from "@/src/lib/api";
-import { insecticides, municipalities, spraySchedules } from "@/src/lib/db";
+import {
+	type SprayMissionFormValues,
+	SprayScheduleForm,
+} from "@/src/components/spray-schedule-form";
+import {
+	insecticides,
+	intents,
+	municipalities,
+	spraySchedules,
+	withArguments,
+} from "@/src/lib/db";
 import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/spray-schedule/create")({
@@ -31,31 +37,33 @@ function RouteComponent() {
 		})),
 	);
 
-	const handleSubmit = async (
-		value: SpraySchedulesRowType,
-		municipalityIds: string[],
-	) => {
-		const tx = spraySchedules.insert(value);
-		toastOnError(tx, "Failed to create spray schedule.");
-		// The schedule row must exist before the junction write can reference it.
-		await tx.isPersisted.promise;
-
-		if (municipalityIds.length > 0) {
-			try {
-				await apiFetch(`/api/spray-schedules/${value.id}/municipalities`, {
-					body: JSON.stringify({ municipalityIds }),
-					method: "PUT",
-				});
-			} catch (error) {
-				toast.error(
-					error instanceof Error
-						? error.message
-						: "Failed to save municipalities.",
-				);
-				return;
-			}
-		}
-
+	const handleSubmit = async (value: SprayMissionFormValues) => {
+		const now = new Date();
+		const { municipality_ids, ...details } = value;
+		// One request, both tables. Under the old path this was an insert followed by a
+		// separate PUT of the junction set, with an `await tx.isPersisted.promise` between them
+		// so the schedule existed before the second write could reference it — and nothing to
+		// undo the first if the second failed.
+		const tx = spraySchedules.insert(
+			{
+				...details,
+				created_at: now,
+				// The id we mint here is the id the row will have: the envelope carries it, the
+				// handler honours it, and the junction rows written in the same transaction
+				// point at it. Under the old path it was thrown away server-side.
+				id: crypto.randomUUID(),
+				// Not on the form and not in `createSprayMission`'s payload: a mission is born
+				// scheduled. The old status dropdown was offered here too, so a mission could be
+				// created already cancelled. The optimistic row still needs the column, because
+				// the collection holds whole rows.
+				status: "scheduled",
+				updated_at: now,
+			},
+			withArguments(intents("website.createSprayMission"), {
+				municipality_ids,
+			}),
+		);
+		toastOnError(tx, "Failed to create spray mission.");
 		navigate({ to: "/spray-schedule" });
 	};
 
@@ -63,17 +71,13 @@ function RouteComponent() {
 		<SprayScheduleForm
 			defaultValues={{
 				area_description: "",
-				created_at: new Date(),
 				end_time: "23:00",
-				id: crypto.randomUUID(),
 				insecticide_id: "",
 				map_url: null,
 				mission_date: new Date(),
 				municipality_ids: [],
 				rain_date: null,
 				start_time: "19:00",
-				status: "scheduled",
-				updated_at: new Date(),
 			}}
 			formLabel="Create New Spray Mission"
 			insecticideOptions={insecticideData}

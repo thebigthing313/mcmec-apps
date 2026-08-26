@@ -59,3 +59,23 @@ export const {
 export function intents(...names: CommandName[]) {
 	return { metadata: { intents: names } };
 }
+
+/**
+ * Carries a value that is not a column of the row being written.
+ *
+ *   spraySchedules.insert(row, withArguments(intents("website.createSprayMission"), {
+ *     municipality_ids: ids,
+ *   }))
+ *
+ * A collection handler only ever sees the row — `mutation.changes` for an update, the whole
+ * row for an insert — so a payload field that lives in another table has no way through.
+ * `arguments` is the channel #137 added for it; `packages/sync` flattens it into the envelope
+ * beside the changed fields, and the API's `toColumnValues` skips it because it is not a column
+ * of the table. One command uses it today, and it is the one command that writes two tables.
+ */
+export function withArguments(
+	config: { metadata: { intents: CommandName[] } },
+	args?: Record<string, unknown>,
+) {
+	return args ? { metadata: { ...config.metadata, arguments: args } } : config;
+}

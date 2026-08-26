@@ -44,7 +44,8 @@ interface SprayScheduleTableProps {
 	data: SprayScheduleRow[];
 }
 
-function getStatusBadgeVariant(
+/** Shared with the mission detail view, so one status reads the same colour on both screens. */
+export function statusBadgeVariant(
 	status: string,
 ): "default" | "secondary" | "outline" | "destructive" {
 	switch (status) {
@@ -61,7 +62,7 @@ function getStatusBadgeVariant(
 	}
 }
 
-function formatTimeRange(startTime: string, endTime: string): string {
+export function formatTimeRange(startTime: string, endTime: string): string {
 	const format = (t: string) => {
 		const parts = t.split(":");
 		const h = Number.parseInt(parts[0] ?? "0", 10);
@@ -115,7 +116,7 @@ export function SprayScheduleTable({ data }: SprayScheduleTableProps) {
 			cell: ({ row }) => {
 				const status = row.getValue("status") as string;
 				return (
-					<Badge variant={getStatusBadgeVariant(status)}>
+					<Badge variant={statusBadgeVariant(status)}>
 						{status.charAt(0).toUpperCase() + status.slice(1)}
 					</Badge>
 				);

@@ -13,11 +13,7 @@ import {
 	PublicRequestsUpdateSchema,
 } from "@mcmec/schemas/db/public-requests";
 import { SprayScheduleMunicipalitiesRowSchema } from "@mcmec/schemas/db/spray-schedule-municipalities";
-import {
-	SpraySchedulesInsertSchema,
-	SpraySchedulesRowSchema,
-	SpraySchedulesUpdateSchema,
-} from "@mcmec/schemas/db/spray-schedules";
+import { SpraySchedulesRowSchema } from "@mcmec/schemas/db/spray-schedules";
 import { ZipCodesRowSchema } from "@mcmec/schemas/db/zip-codes";
 import { createEagerCollection, createOnDemandCollection } from "../factories";
 
@@ -139,14 +135,15 @@ export function createNoticesCollections({
 	const spraySchedules = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
-		insertSchema: SpraySchedulesInsertSchema,
+		commands: true,
 		schema: SpraySchedulesRowSchema,
 		table: "spray_schedules",
-		updateSchema: SpraySchedulesUpdateSchema,
 	});
 
-	// Read-only here — a schedule's municipality set is replaced through the API's junction
-	// endpoint, and the change syncs back through this collection.
+	// Read-only here, and read-only everywhere: a mission's municipality set is not written row
+	// by row but replaced whole, by the same command that writes the mission (#162). The ids
+	// ride in that mutation's `arguments` metadata, the server writes both tables in one
+	// transaction, and the result syncs back through this collection.
 	const sprayScheduleMunicipalities = createEagerCollection({
 		apiUrl,
 		schema: SprayScheduleMunicipalitiesRowSchema,
