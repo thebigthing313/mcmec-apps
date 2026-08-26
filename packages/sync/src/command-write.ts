@@ -84,9 +84,15 @@ export function readCommandMetadata(metadata: unknown): CommandMetadata {
 	return { arguments: meta.arguments, intents: meta.intents };
 }
 
+/**
+ * `id` is optional because one command is not about a row: the mosquito import replaces every
+ * row for the years its payload names, so there is nothing for an id to point at and the
+ * definition says so (#163). Every other envelope carries one, and the dispatcher refuses the
+ * ones that should.
+ */
 export type CommandEnvelope = {
 	intents: string[];
-	id: string;
+	id?: string;
 } & Record<string, unknown>;
 
 /**

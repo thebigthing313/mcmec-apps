@@ -1,4 +1,5 @@
 import { MosquitoActivityDataInsertSchema } from "@mcmec/schemas/db/mosquito-activity-data";
+import { findCommandRefusal, sendCommand } from "@mcmec/sync";
 import {
 	MosquitoActivityCharts,
 	type MosquitoActivityRow,
@@ -18,8 +19,8 @@ import { AlertTriangle, CheckCircle, Loader2, Upload } from "lucide-react";
 import Papa from "papaparse";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { apiFetch } from "@/src/lib/api";
 import { mosquitoActivityData } from "@/src/lib/db";
+import { API_URL } from "@/src/lib/queryClient";
 
 export const Route = createFileRoute("/(app)/weekly-activity/")({
 	component: RouteComponent,
@@ -175,20 +176,17 @@ function RouteComponent() {
 
 		setIsUploading(true);
 		try {
-			// The endpoint replaces every row for the years present in the payload, in one
-			// transaction — so a re-imported season swaps cleanly and other years are untouched.
-			await apiFetch("/api/mosquito-activity/import", {
-				body: JSON.stringify({
-					rows: parsedRows.map((row) => ({
-						mosquitoCount: row.mosquito_count,
-						rainfallInches: row.rainfall_inches,
-						speciesGroup: row.species_group,
-						speciesName: row.species_name,
-						weekNumber: row.week_number,
-						year: row.year,
-					})),
-				}),
-				method: "POST",
+			// Straight to the dispatcher rather than through the collection: the command
+			// replaces every row for the years in the file, so there is no single optimistic
+			// row to write, and this screen reads aggregates rather than rows. The new season
+			// arrives on its own when Electric streams the write back (#163).
+			//
+			// The rows go over the wire named for their columns — the same snake_case the
+			// parser already produced, so there is no mapping step here to disagree with the
+			// payload schema.
+			await sendCommand(API_URL, {
+				intents: ["website.importMosquitoActivity"],
+				rows: parsedRows,
 			});
 
 			toast.success(`Successfully uploaded ${parsedRows.length} rows.`);
@@ -202,9 +200,10 @@ function RouteComponent() {
 			if (fileInput) fileInput.value = "";
 		} catch (err) {
 			toast.error(
-				err instanceof Error
-					? err.message
-					: "An unexpected error occurred during upload.",
+				findCommandRefusal(err)?.message ??
+					(err instanceof Error
+						? err.message
+						: "An unexpected error occurred during upload."),
 			);
 		} finally {
 			setIsUploading(false);

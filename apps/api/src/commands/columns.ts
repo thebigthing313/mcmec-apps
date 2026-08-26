@@ -32,12 +32,23 @@ export function toColumnValues(
 		// Columns drizzle hands back as a JS Date want a Date on the way in; a JSON body can
 		// only carry an ISO string. Empty string is left alone so it fails as a string rather
 		// than as an Invalid Date.
-		values[hit.property] =
+		if (
 			hit.column.dataType === "date" &&
 			typeof value === "string" &&
 			value !== ""
-				? new Date(value)
-				: value;
+		) {
+			values[hit.property] = new Date(value);
+			continue;
+		}
+		// A `numeric` column is `dataType: "string"` in Drizzle — the driver refuses to guess
+		// how a float should round — while the wire carries it as a number, because that is
+		// what Electric's parser hands the collection back (`rainfall_inches`). Postgres
+		// applies the column's own scale, so the string need not be pre-rounded.
+		if (hit.column.dataType === "string" && typeof value === "number") {
+			values[hit.property] = String(value);
+			continue;
+		}
+		values[hit.property] = value;
 	}
 	return values;
 }

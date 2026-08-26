@@ -30,6 +30,18 @@ export type CommandDefinition<
 	readonly payload: TPayload;
 	/** Marks the commands that mint a row, so the dispatcher can answer 201 rather than 200. */
 	readonly creates?: true;
+	/**
+	 * Marks a command that is not about a row at all, so the dispatcher stops demanding an
+	 * envelope `id` for it.
+	 *
+	 * Every other command in the vocabulary addresses one row by the envelope id. The mosquito
+	 * import addresses a *year* — it deletes every row for the years its payload names and
+	 * inserts the file (#163) — so there is no id to send, and a generated uuid would be a
+	 * value that points at nothing. Naming the fact here rather than minting a fake id keeps
+	 * the envelope honest: a targetless command may not share an envelope with a row-scoped
+	 * one, which the dispatcher enforces.
+	 */
+	readonly targetless?: true;
 };
 
 export type AnyCommand = CommandDefinition<
@@ -62,7 +74,7 @@ export function defineDomain<TDomain extends string>(
 			return function command<TName extends string, TPayload extends z.ZodType>(
 				name: TName,
 				payload: TPayload,
-				options?: { creates?: true },
+				options?: { creates?: true; targetless?: true },
 			): CommandDefinition<`${TDomain}.${TName}`, TPayload, TTable> {
 				return {
 					name: `${domain}.${name}` as const,
@@ -70,6 +82,7 @@ export function defineDomain<TDomain extends string>(
 					permission,
 					table,
 					...(options?.creates ? { creates: true as const } : {}),
+					...(options?.targetless ? { targetless: true as const } : {}),
 				};
 			};
 		},

@@ -114,10 +114,15 @@ export function createNoticesCollections({
 	});
 
 	// Surveillance dataset — thousands of rows and growing a season at a time, read only by
-	// the weekly-activity screen. Rows arrive via the CSV import endpoint, never this
-	// collection. On-demand for the same reason as publicRequests.
+	// the weekly-activity screen. Rows arrive through `website.importMosquitoActivity`, which
+	// this collection does not carry: the import replaces a whole year, so there is no
+	// optimistic row to insert and the screen reads aggregates, never rows (#163). It goes
+	// straight to the dispatcher via `sendCommand` and the new season streams back in here.
+	// `commands: true` is still required — the flag says how this TABLE is written, and the
+	// table has commands (#174).
 	const mosquitoActivityData = createOnDemandCollection({
 		apiUrl,
+		commands: true,
 		schema: MosquitoActivityDataRowSchema,
 		table: "mosquito_activity_data",
 	});

@@ -13,8 +13,12 @@ export type AfterCommit = () => Promise<void>;
 export type CommandHandler<TDef extends AnyCommand> = (ctx: {
 	/** Already parsed by the command's own payload schema. */
 	payload: PayloadOf<TDef>;
-	/** The envelope target — the row this command is about. */
-	id: string;
+	/**
+	 * The envelope target — the row this command is about, and `undefined` for the one command
+	 * that is about no row (#163). A targetless handler therefore cannot read an id that would
+	 * point at nothing.
+	 */
+	id: TDef extends { targetless: true } ? undefined : string;
 	session: SessionInfo;
 	/** The request's shared transaction. Every handler in one request writes through this. */
 	tx: Tx;

@@ -7,7 +7,6 @@ import { auth } from "./auth";
 import { postCommands } from "./commands/dispatch";
 import { deleteRow, insertRow, updateRow } from "./data";
 import { inviteEmployee } from "./invite";
-import { importMosquitoActivity } from "./mosquito";
 import { submitRequest } from "./requests";
 import { shapeProxy } from "./shapes";
 import { setUserRoles } from "./users";
@@ -62,7 +61,6 @@ app.delete("/api/data/:table/:id", deleteRow);
 
 // Non-CRUD writes (composite-key / bulk / role) that the generic /api/data path can't express
 app.put("/api/users/:id/roles", setUserRoles); // manage_users
-app.post("/api/mosquito-activity/import", importMosquitoActivity); // manage_website
 
 // Employee invite (manage_employees) + set-password email
 app.post("/api/invite", inviteEmployee);
