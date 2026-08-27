@@ -238,6 +238,11 @@ But narrow is a state they must *survive*, because the job occasionally follows 
 
 The distinction is between a floor and a target. Nothing here asks for a phone-optimised layout, a thumb-zone action bar, or a mobile-specific flow; spending design effort there is spending it in the wrong place. What it forbids is the failure mode where a staff screen is unusable rather than merely cramped. A cramped table someone can scroll is fine. A form whose Save button sits outside the viewport is not.
 
+Browser zoom counts as narrow here, and should. A staff screen at 200% zoom has roughly the
+viewport of a phone, and WCAG 1.4.10 asks it to reflow rather than scroll in two directions — so
+the same collapse that serves a phone serves a magnified desktop, and the rail becoming an overlay
+at that size is the rule working rather than misfiring.
+
 `apps/public` is the exact inverse and is not covered by this rule: residents arrive on phones more often than not, and its layouts are decided at both ends.
 
 ## Elevation & Depth

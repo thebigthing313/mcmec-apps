@@ -71,10 +71,20 @@ export function LayoutNav<TLinkProps extends { to: string }>({
 	groups: Array<LayoutNavGroup<TLinkProps>>;
 	LinkComponent: ComponentType<TLinkProps & { children?: ReactNode }>;
 }) {
-	const { currentPath } = useLayoutContext();
+	const { activeApp, currentPath } = useLayoutContext();
 
 	return (
-		<>
+		/*
+		 * A landmark, not a div.
+		 *
+		 * The rail was `div > div > ul` all the way down, so the only `nav` on a staff screen was
+		 * the breadcrumb. A screen-reader user had no way to jump to the navigation or past it, and
+		 * the rail is the primary means of moving around all four applications.
+		 *
+		 * Labelled with the application name because a staff screen has two landmarks of this type
+		 * and "navigation" twice tells nobody which is which.
+		 */
+		<nav aria-label={`${activeApp} sections`}>
 			{groups.map((group, groupIndex) => (
 				<SidebarGroup key={group.label ?? `group-${groupIndex}`}>
 					{group.label ? (
@@ -145,6 +155,6 @@ export function LayoutNav<TLinkProps extends { to: string }>({
 					</SidebarGroupContent>
 				</SidebarGroup>
 			))}
-		</>
+		</nav>
 	);
 }

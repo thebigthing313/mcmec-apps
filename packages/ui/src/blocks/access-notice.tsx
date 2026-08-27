@@ -28,8 +28,11 @@ function AccessNotice({
 	icon: React.ReactNode;
 	remedy: string;
 }) {
+	// Padded rather than viewport-centred. `min-h-screen` with centring puts the card in the middle
+	// of the window, which at 200% zoom means scrolling down past an empty half-screen to reach the
+	// only content on the page.
 	return (
-		<div className="flex min-h-screen items-center justify-center p-6">
+		<div className="flex justify-center p-6 pt-16">
 			<Card className="w-full max-w-lg">
 				<CardContent className="flex flex-col items-start gap-4">
 					<span

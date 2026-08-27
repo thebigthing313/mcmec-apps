@@ -50,7 +50,26 @@ export function LayoutRoot({ children, value }: LayoutRootProps) {
 				...value,
 			}}
 		>
-			<SidebarProvider defaultOpen={defaultOpen}>{children}</SidebarProvider>
+			<SidebarProvider defaultOpen={defaultOpen}>
+				{/*
+				 * First focusable element on every staff screen.
+				 *
+				 * Without it a keyboard user tabs the sidebar trigger, the app switcher, every
+				 * destination in the rail — eleven of them in Website Management — and the user menu
+				 * before reaching the page, on every single navigation. The public site has had one
+				 * of these all along; the staff applications, which people use all day, did not.
+				 *
+				 * Hidden until focused, then drawn as a real control rather than a ghost: someone
+				 * who tabs into it needs to see where the focus went.
+				 */}
+				<a
+					className="absolute top-0 left-0 z-50 -translate-y-full rounded-b-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-transform focus:translate-y-0"
+					href="#main-content"
+				>
+					Skip to main content
+				</a>
+				{children}
+			</SidebarProvider>
 		</LayoutContextProvider>
 	);
 }

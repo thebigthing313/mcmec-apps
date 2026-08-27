@@ -57,7 +57,18 @@ export function LayoutContent({ children, breadcrumb }: LayoutContentProps) {
 					) : null}
 				</div>
 			</header>
-			<div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+			{/*
+			 * The skip link's destination. `tabIndex={-1}` so focus can actually move here — a
+			 * container is not focusable otherwise and the jump would silently do nothing. Matches
+			 * the id the public site already uses for the same purpose.
+			 */}
+			<div
+				className="flex flex-1 flex-col gap-4 p-4 pt-0"
+				id="main-content"
+				tabIndex={-1}
+			>
+				{children}
+			</div>
 		</SidebarInset>
 	);
 }

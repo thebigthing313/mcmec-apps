@@ -157,3 +157,10 @@ it is a deliberate fork rather than a tweak — hence documented here rather tha
   active-row colour.
 - Staff layouts are decided at desktop widths but must survive narrow ones. Below the `md`
   breakpoint the rail becomes a sheet rather than truncating, and no destination is lost.
+- **Browser zoom counts as narrow, and that is deliberate.** `useIsMobile` is a width breakpoint,
+  so 200% zoom on a 1280px display reports roughly 640px and the rail becomes a sheet. That reads
+  as a surprise — persistent navigation turning into an overlay — but it is the correct behaviour:
+  WCAG 1.4.10 requires content to reflow at 320 CSS px without two-dimensional scrolling, and a
+  256px rail inside a 640px viewport takes 40% of it. Suppressing the sheet at high zoom would
+  trade a small surprise for a likely reflow failure. The hook is also shared with `apps/public`,
+  so guarding it on `pointer: coarse` would change which hero image the public home page picks.
