@@ -5,7 +5,6 @@ import { cors } from "hono/cors";
 import { assetsRouter } from "./assets";
 import { auth } from "./auth";
 import { postCommands } from "./commands/dispatch";
-import { deleteRow, insertRow, updateRow } from "./data";
 import { submitRequest } from "./requests";
 import { shapeProxy } from "./shapes";
 
@@ -51,12 +50,7 @@ app.get("/api/shapes/:table", shapeProxy);
 // honeypot/Turnstile checks, so bound it up front on this unauthenticated route.
 app.post("/api/requests", bodyLimit({ maxSize: 64 * 1024 }), submitRequest);
 
-// Write path (permission-gated, audit-logged via app.* GUCs)
+// Write path — the only one. Every write in every app names a command, permission-gated and
+// audit-logged via the app.* GUCs. The three generic doors that stood beside this line
+// (`POST`/`PATCH`/`DELETE /api/data/:table`) went with `data.ts` in #140.
 app.post(COMMAND_PATH, postCommands);
-//
-// The three generic doors are the last of the pre-command write path and serve nothing: their
-// table map is empty as of #165, so every request to them is already a 404. They go with
-// `data.ts` in #140.
-app.post("/api/data/:table", insertRow);
-app.patch("/api/data/:table/:id", updateRow);
-app.delete("/api/data/:table/:id", deleteRow);

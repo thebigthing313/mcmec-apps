@@ -21,7 +21,6 @@ export {
 } from "./tiptap";
 export * as users from "./users/users";
 export {
-	COMMANDED_TABLES,
 	COMMANDS,
 	type CommandedTable,
 	type CommandName,

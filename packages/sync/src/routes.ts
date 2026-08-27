@@ -19,13 +19,3 @@ export const COMMAND_PATH = "/api/commands";
 export function shapePathFor(table: string): string {
 	return `/api/shapes/${table}`;
 }
-
-/**
- * The legacy generic CRUD door (`apps/api/src/data.ts`).
- *
- * Every table still on it is a table that has not cut over to named commands; it is deleted
- * with the last of them (#140).
- */
-export function dataPathFor(table: string, id?: string | number): string {
-	return id === undefined ? `/api/data/${table}` : `/api/data/${table}/${id}`;
-}

@@ -32,7 +32,6 @@ export function createNoticesCollections({
 	});
 
 	const noticeTypes = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: NoticeTypesRowSchema,
@@ -46,7 +45,6 @@ export function createNoticesCollections({
 	// Job postings moved here from `apps/hr` with #145: they are website content, so they are
 	// read and written under `manage_website`.
 	const jobPostings = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: JobPostingsRowSchema,
@@ -54,7 +52,6 @@ export function createNoticesCollections({
 	});
 
 	const notices = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: NoticesRowSchema,
@@ -62,7 +59,6 @@ export function createNoticesCollections({
 	});
 
 	const meetings = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: MeetingsRowSchema,
@@ -70,7 +66,6 @@ export function createNoticesCollections({
 	});
 
 	const documentTypes = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: DocumentTypesRowSchema,
@@ -78,7 +73,6 @@ export function createNoticesCollections({
 	});
 
 	const documents = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: DocumentsRowSchema,
@@ -86,7 +80,6 @@ export function createNoticesCollections({
 	});
 
 	const insecticides = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: InsecticidesRowSchema,
@@ -111,7 +104,6 @@ export function createNoticesCollections({
 	// On-demand: this table only grows, and pulling all of it on every page load doesn't
 	// scale. Requires the shape proxy to forward `subset__*` params (see shapes.ts).
 	const publicRequests = createOnDemandCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: PublicRequestsRowSchema,
@@ -143,7 +135,6 @@ export function createNoticesCollections({
 	});
 
 	const spraySchedules = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: SpraySchedulesRowSchema,

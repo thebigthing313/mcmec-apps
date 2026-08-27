@@ -16,24 +16,13 @@ import {
 export type EagerCollectionOptions<
 	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape>,
-	TInsertSchema extends ZodObject<z.ZodRawShape>,
-	TUpdateSchema extends ZodObject<z.ZodRawShape>,
-> = ElectricCollectionOptions<TTable, TSchema, TInsertSchema, TUpdateSchema>;
+> = ElectricCollectionOptions<TTable, TSchema>;
 
 export function createEagerCollection<
 	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape> & {
 		_zod: { output: { id: string } };
 	},
-	TInsertSchema extends ZodObject<z.ZodRawShape>,
-	TUpdateSchema extends ZodObject<z.ZodRawShape>,
->(
-	options: EagerCollectionOptions<
-		TTable,
-		TSchema,
-		TInsertSchema,
-		TUpdateSchema
-	>,
-) {
+>(options: EagerCollectionOptions<TTable, TSchema>) {
 	return createElectricCollection(options, "eager", false);
 }

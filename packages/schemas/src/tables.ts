@@ -1,12 +1,14 @@
 /**
  * Every table in the Postgres schema, as a type.
  *
- * A table name is spelled in four places that have no way to disagree politely: a collection's
- * `table`, a command module's `.table()` binding, `WRITABLE`'s keys and `shapes.ts`'s read
- * gate. All four were free strings, so `"meeting"` for `"meetings"` compiled everywhere and
- * failed at runtime — and once #174 derives a collection's write path from whether the
- * vocabulary names its table, a typo silently routes the collection back to the generic door.
- * That is the exact failure the documents slice shipped (#160), reached by a different road.
+ * A table name is spelled in places that have no way to disagree politely: a collection's
+ * `table`, a command module's `.table()` binding and `shapes.ts`'s read gate. All were free
+ * strings, so `"meeting"` for `"meetings"` compiled everywhere and failed at runtime — and
+ * once #174 derived a collection's write path from whether the vocabulary names its table, a
+ * typo would silently route the collection back to the generic door. That was the exact
+ * failure the documents slice shipped (#160), reached by a different road; since #140 deleted
+ * the generic door, the same typo now leaves the collection unwritable instead — louder, and
+ * still worth refusing here. (`WRITABLE`'s keys were a fourth site, and went with it.)
  *
  * Hand-written rather than derived from `apps/api/src/db/schema.ts`: deriving it would drag
  * `drizzle-orm` into this package, which #148 deliberately reduced to a pure Zod leaf so the

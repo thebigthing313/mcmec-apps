@@ -12,7 +12,6 @@
  * Scheduled. The dropdown had been supplying one and no command did.
  */
 
-import type { TableName } from "@mcmec/schemas/tables";
 import type { AnyCommand } from "./command";
 import { EMPLOYEE_COMMANDS } from "./employees/employees";
 import { USER_COMMANDS } from "./users/users";
@@ -57,19 +56,18 @@ export function isCommandName(value: string): value is CommandName {
 }
 
 /**
- * The tables the vocabulary names — the single fact both halves of a cut-over now read.
+ * The tables the vocabulary names.
  *
- * `packages/sync` takes the TYPE and refuses, at the call site, a collection whose `commands`
- * flag disagrees with it; `apps/api` takes the SET and refuses, at boot, a `WRITABLE` entry
- * for a table that has commands. Neither half is hand-written any more, so the pair that
- * broke the documents slice (#160) — table out of `WRITABLE`, collection still generic — can
- * no longer be spelled.
+ * `packages/sync` refuses, at the call site, a collection whose `commands` flag disagrees
+ * with this — which is now the whole of whether a table can be written at all, since #140
+ * deleted the generic door a mismatch used to route back to. Derived, never hand-written, so
+ * the pair that broke the documents slice (#160) cannot be spelled.
  *
- * The type is exported for a type-only import: `packages/sync` erases it at build, so the
- * three apps that name no intent (`hr`, `admin`, `central`) pay nothing at runtime for it.
+ * The runtime `COMMANDED_TABLES` set stood beside this until #140: `apps/api` read it at boot
+ * to refuse a `WRITABLE` entry for a commanded table. `WRITABLE` is gone, so there is nothing
+ * left to assert against and the set went with it.
+ *
+ * Exported for a type-only import: `packages/sync` erases it at build, so the three apps that
+ * name no intent (`hr`, `admin`, `central`) pay nothing at runtime for it.
  */
 export type CommandedTable = (typeof ALL)[number]["table"];
-
-export const COMMANDED_TABLES: ReadonlySet<TableName> = new Set(
-	ALL.map((c: AnyCommand) => c.table),
-);

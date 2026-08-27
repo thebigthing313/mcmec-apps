@@ -10,20 +10,4 @@ export const JobPostingsRowSchema = z.object({
 	updated_at: z.coerce.date<Date>(),
 });
 
-export const JobPostingsInsertSchema = z.object({
-	content: z.any(),
-	is_closed: z.boolean().optional(),
-	published_at: z.coerce.date<Date>().nullable().optional(),
-	title: z.string(),
-});
-
-export const JobPostingsUpdateSchema = z.object({
-	content: z.any().optional(),
-	is_closed: z.boolean().optional(),
-	published_at: z.coerce.date<Date>().nullable().optional(),
-	title: z.string().optional(),
-});
-
 export type JobPostingsRowType = z.infer<typeof JobPostingsRowSchema>;
-export type JobPostingsInsertType = z.infer<typeof JobPostingsInsertSchema>;
-export type JobPostingsUpdateType = z.infer<typeof JobPostingsUpdateSchema>;
