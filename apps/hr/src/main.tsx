@@ -7,8 +7,16 @@ import {
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "@mcmec/ui/styles/globals.css";
+import { ForbiddenError, NotOnboardedError } from "@mcmec/auth/errors";
+import { signOut } from "@mcmec/auth/signOut";
+import { CENTRAL_URL } from "@mcmec/lib/constants/apps";
 import { favicon } from "@mcmec/lib/constants/assets";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
+import { APP_ROLE_LABELS, type AppRole } from "@mcmec/lib/constants/roles";
+import {
+	AppRoleRequired,
+	OnboardingRequired,
+} from "@mcmec/ui/blocks/access-notice";
 import { ErrorDisplay } from "@mcmec/ui/blocks/error";
 import { NotFound } from "@mcmec/ui/blocks/not-found";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -24,6 +32,10 @@ const faviconLink = document.querySelector(
 if (faviconLink) {
 	faviconLink.href = favicon;
 }
+
+/** This application's name and the one App Role it requires, for the refusal screen. */
+const APP_NAME = "HR";
+const REQUIRED_ROLE: AppRole = "manage_employees";
 
 const router = createRouter({
 	context: {
@@ -65,8 +77,42 @@ interface ErrorComponentProps {
 	error: Error;
 }
 
+/**
+ * The application's single error boundary.
+ *
+ * A refusal is not a failure, so the two auth outcomes are pulled out before the generic
+ * display gets a chance at them. Both used to land in `ErrorDisplay`, which framed a permission
+ * rule in destructive red under "An Error Has Occurred" and offered "Try Again" as the primary
+ * action — and "Try Again" here calls `router.invalidate()`, which re-runs the same `beforeLoad`
+ * and refuses again. The one button on the screen was a loop.
+ *
+ * Everything else keeps `ErrorDisplay` and keeps retry, because a dropped shape request or a
+ * network blip is exactly the case retry is for.
+ */
 function ErrorComponent({ error }: ErrorComponentProps) {
 	const router = useRouter();
+
+	if (error instanceof NotOnboardedError) {
+		return (
+			<OnboardingRequired
+				onSignOut={async () => {
+					await signOut({ client: authClient });
+					router.navigate({ to: "/login" });
+				}}
+			/>
+		);
+	}
+
+	if (error instanceof ForbiddenError) {
+		return (
+			<AppRoleRequired
+				appName={APP_NAME}
+				centralUrl={CENTRAL_URL}
+				roleLabel={APP_ROLE_LABELS[REQUIRED_ROLE]}
+			/>
+		);
+	}
+
 	return (
 		<ErrorDisplay
 			message={error.message}

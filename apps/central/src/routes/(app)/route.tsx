@@ -1,4 +1,4 @@
-import { NotOnboardedError, UnauthenticatedError } from "@mcmec/auth/errors";
+import { UnauthenticatedError } from "@mcmec/auth/errors";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
@@ -30,33 +30,6 @@ export const Route = createFileRoute("/(app)")({
 		}
 	},
 	component: LayoutComponent,
-	errorComponent: ({ error }) => {
-		if (error instanceof NotOnboardedError) {
-			return (
-				<div className="flex min-h-screen items-center justify-center">
-					<div className="text-center">
-						<h1 className="mb-4 font-bold text-2xl">Onboarding Required</h1>
-						<p className="text-muted-foreground">
-							Your account needs to be linked to an employee record before you
-							can access this application.
-						</p>
-						<p className="mt-2 text-muted-foreground">
-							Please contact your administrator for assistance.
-						</p>
-					</div>
-				</div>
-			);
-		}
-
-		return (
-			<div className="flex min-h-screen items-center justify-center">
-				<div className="text-center">
-					<h1 className="mb-4 font-bold text-2xl">Authentication Error</h1>
-					<p className="text-destructive">{error.message}</p>
-				</div>
-			</div>
-		);
-	},
 });
 
 function LayoutComponent() {
