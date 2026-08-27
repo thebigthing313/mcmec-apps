@@ -1,6 +1,6 @@
 "use client";
 
-import type { AccessibleApps } from "@mcmec/lib/constants/apps";
+import type { AccessibleApps, AppName } from "@mcmec/lib/constants/apps";
 import * as React from "react";
 
 export interface LayoutContextData {
@@ -11,7 +11,8 @@ export interface LayoutContextData {
 	 * branded rather than a plain array.
 	 */
 	apps: AccessibleApps;
-	activeApp: string;
+	/** Which application this is. A union rather than a string: see `AppName`. */
+	activeApp: AppName;
 	/**
 	 * The current pathname, supplied once by the application that owns the router.
 	 *
@@ -22,12 +23,19 @@ export interface LayoutContextData {
 	 * field exists to end.
 	 */
 	currentPath: string;
+	/**
+	 * The signed-in person. `name` and `title` are optional because they arrive over Electric and
+	 * are genuinely absent on a cold load — every application was papering over that with the
+	 * literal strings "[missing name]" and "[missing title]", which is bracket-notation debug text
+	 * rendered in the sidebar of a public agency's tool. `NavUser` shows a skeleton instead.
+	 */
 	user: {
-		name: string;
-		title: string;
+		name?: string | null;
+		title?: string | null;
 		avatar: string | null | undefined;
 	};
-	onLogout?: () => void;
+	/** Required: an application that omitted it shipped a "Log out" that did nothing. */
+	onLogout: () => void;
 }
 
 const LayoutContext = React.createContext<LayoutContextData | undefined>(

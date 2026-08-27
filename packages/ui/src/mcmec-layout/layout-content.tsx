@@ -63,7 +63,7 @@ export function LayoutContent({ children, breadcrumb }: LayoutContentProps) {
 			 * the id the public site already uses for the same purpose.
 			 */}
 			<div
-				className="flex flex-1 flex-col gap-4 p-4 pt-0"
+				className="flex flex-1 flex-col gap-4 p-6 pt-0"
 				id="main-content"
 				tabIndex={-1}
 			>

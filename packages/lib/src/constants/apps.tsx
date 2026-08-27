@@ -1,8 +1,19 @@
 import { Home, Newspaper, Shield, Users } from "lucide-react";
 import type { AppRole } from "./roles";
 
+/**
+ * The four staff applications, by name.
+ *
+ * `activeApp` on the layout context carried a documented invariant — "must match an
+ * AVAILABLE_APPS name" — and no type to hold it, which made it the one field in that context a
+ * typo could quietly break. A mismatched name takes the app switcher's `activeApp` lookup to
+ * nothing, and the switcher's answer to that was to render nothing at all: no mark, no name, no
+ * way out of the application.
+ */
+export type AppName = "Admin" | "Central" | "HR" | "Website Management";
+
 export type App = {
-	name: string;
+	name: AppName;
 	logo: React.ReactNode;
 	description: string;
 	href: string;

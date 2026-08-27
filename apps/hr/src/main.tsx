@@ -108,6 +108,10 @@ function ErrorComponent({ error }: ErrorComponentProps) {
 			<AppRoleRequired
 				appName={APP_NAME}
 				centralUrl={CENTRAL_URL}
+				onSignOut={async () => {
+					await signOut({ client: authClient });
+					router.navigate({ to: "/login" });
+				}}
 				roleLabel={APP_ROLE_LABELS[REQUIRED_ROLE]}
 			/>
 		);

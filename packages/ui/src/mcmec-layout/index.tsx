@@ -24,8 +24,6 @@ export type { LayoutContextData } from "./layout-context";
 export { useLayoutContext } from "./layout-context";
 export type { LayoutNavGroup, LayoutNavItem } from "./layout-nav";
 export { LayoutNav } from "./layout-nav";
-// Export individual components for flexibility
-// Backwards compatibility exports
 export { LayoutRoot } from "./layout-root";
 export { LayoutSidebar } from "./layout-sidebar";
 export { NavUser } from "./nav-user";

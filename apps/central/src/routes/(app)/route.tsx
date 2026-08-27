@@ -72,8 +72,8 @@ function LayoutComponent() {
 				onLogout: handleLogout,
 				user: {
 					avatar: undefined,
-					name: employee?.display_name ?? "[missing name]",
-					title: employee?.display_title ?? "[missing title]",
+					name: employee?.display_name,
+					title: employee?.display_title,
 				},
 			}}
 		>

@@ -164,7 +164,9 @@ function RouteComponent() {
 
 			<div className="space-y-4 rounded-lg border bg-card p-6">
 				<div className="flex items-center gap-3">
-					<h2 className="font-bold text-2xl">{posting.title}</h2>
+					<h1 className="font-semibold text-foreground text-xl leading-tight">
+						{posting.title}
+					</h1>
 					<Badge variant={status.variant}>{status.label}</Badge>
 				</div>
 

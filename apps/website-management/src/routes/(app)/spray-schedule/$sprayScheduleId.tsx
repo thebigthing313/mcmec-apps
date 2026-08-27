@@ -127,7 +127,9 @@ function RouteComponent() {
 
 			<article className="prose">
 				<div className="flex flex-row items-baseline gap-2">
-					<h2>{formatDateShort(schedule.mission_date)}</h2>
+					<h1 className="font-semibold text-foreground text-xl leading-tight">
+						{formatDateShort(schedule.mission_date)}
+					</h1>
 					<Badge variant={statusBadgeVariant(schedule.status)}>
 						{schedule.status.charAt(0).toUpperCase() + schedule.status.slice(1)}
 					</Badge>

@@ -75,21 +75,35 @@ function AccessNotice({
 export function AppRoleRequired({
 	appName,
 	centralUrl,
+	onSignOut,
 	roleLabel,
 }: {
 	/** The application that refused, e.g. "Website Management". */
 	appName: string;
 	/** Absolute URL of the Central app, from `@mcmec/lib/constants/apps`. */
 	centralUrl: string;
+	/**
+	 * Offered alongside Central because the likeliest cause of this screen is the wrong account.
+	 * Without it the only exit was Central, which the same account also lands in — so someone
+	 * signed in as the wrong person had no way back to a sign-in form from inside the app.
+	 */
+	onSignOut?: () => void;
 	/** The App Role's user-facing label, e.g. "Website" — never the permission string. */
 	roleLabel: string;
 }) {
 	return (
 		<AccessNotice
 			actions={
-				<Button asChild>
-					<a href={centralUrl}>Go to Central</a>
-				</Button>
+				<>
+					<Button asChild>
+						<a href={centralUrl}>Go to Central</a>
+					</Button>
+					{onSignOut ? (
+						<Button onClick={onSignOut} variant="outline">
+							Sign out
+						</Button>
+					) : null}
+				</>
 			}
 			explanation={`${appName} requires the ${roleLabel} App Role, and your account does not have it.`}
 			heading={`You do not have access to ${appName}`}

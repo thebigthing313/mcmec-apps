@@ -87,7 +87,9 @@ function RouteComponent() {
 			</nav>
 
 			<article className="prose">
-				<h2>{trade_name}</h2>
+				<h1 className="font-semibold text-foreground text-xl leading-tight">
+					{trade_name}
+				</h1>
 				<h4>{type_name}</h4>
 				<p>
 					<a
