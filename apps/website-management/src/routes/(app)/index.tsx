@@ -3,6 +3,8 @@ import {
 	formatDateTime,
 	getTodayUTC,
 } from "@mcmec/lib/functions/date-fns";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
+
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -132,12 +134,10 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h1 className="font-bold text-3xl">Dashboard</h1>
-				<p className="text-muted-foreground">
-					Overview of notices, requests, and submissions
-				</p>
-			</div>
+			<PageHeader
+				description="Overview of notices, requests, and submissions."
+				title="Dashboard"
+			/>
 
 			{/* Stats Row */}
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

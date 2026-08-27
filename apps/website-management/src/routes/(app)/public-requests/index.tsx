@@ -1,4 +1,5 @@
 import type { RequestStatus } from "@mcmec/schemas/db/public-requests";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -35,12 +36,10 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div>
-				<h1 className="font-bold text-2xl">Public Requests</h1>
-				<p className="text-muted-foreground">
-					Service requests and inquiries submitted from the public website.
-				</p>
-			</div>
+			<PageHeader
+				description="Requests and inquiries submitted from the public website."
+				title="Public Requests"
+			/>
 			<PublicRequestsTable
 				data={
 					(requests ?? []) as (PublicRequestRow & { status: RequestStatus })[]

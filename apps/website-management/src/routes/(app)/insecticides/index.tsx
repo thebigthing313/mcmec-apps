@@ -1,5 +1,6 @@
 import type { InsecticideTableRowType } from "@mcmec/ui/blocks/insecticides-table";
 import { InsecticidesTable } from "@mcmec/ui/blocks/insecticides-table";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { Button } from "@mcmec/ui/components/button";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
@@ -36,12 +37,14 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-4">
-			<div className="flex items-center justify-between">
-				<h1 className="font-semibold text-2xl">Insecticides</h1>
-				<Button onClick={() => navigate({ to: "/insecticides/create" })}>
-					Add Insecticide
-				</Button>
-			</div>
+			<PageHeader
+				actions={
+					<Button onClick={() => navigate({ to: "/insecticides/create" })}>
+						Add Insecticide
+					</Button>
+				}
+				title="Insecticides"
+			/>
 			<InsecticidesTable
 				data={tableData}
 				linkToDetail={true}

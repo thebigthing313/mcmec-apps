@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { Button } from "@mcmec/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
@@ -28,13 +29,15 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-4">
-			<div className="flex items-center justify-between">
-				<h1 className="font-semibold text-2xl">Spray Missions</h1>
-				<Button onClick={() => navigate({ to: "/spray-schedule/create" })}>
-					<Plus />
-					Create New Mission
-				</Button>
-			</div>
+			<PageHeader
+				actions={
+					<Button onClick={() => navigate({ to: "/spray-schedule/create" })}>
+						<Plus />
+						Create New Mission
+					</Button>
+				}
+				title="Spray Missions"
+			/>
 			<SprayScheduleTable data={tableData} />
 		</div>
 	);

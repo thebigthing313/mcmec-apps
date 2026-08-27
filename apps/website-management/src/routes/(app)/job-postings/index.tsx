@@ -2,6 +2,8 @@ import {
 	getJobPostingStatus,
 	type JobPostingStatus,
 } from "@mcmec/lib/functions/job-posting-status";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
+
 import { RowActionsMenu } from "@mcmec/ui/blocks/row-actions-menu";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
@@ -200,20 +202,18 @@ function JobPostingsPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="font-bold text-2xl">Job Postings</h1>
-					<p className="text-muted-foreground">
-						Create and manage job postings for the public website.
-					</p>
-				</div>
-				<Button asChild>
-					<Link to="/job-postings/new">
-						<Plus className="mr-1 h-4 w-4" />
-						Add Job Posting
-					</Link>
-				</Button>
-			</div>
+			<PageHeader
+				actions={
+					<Button asChild>
+						<Link to="/job-postings/new">
+							<Plus />
+							Add Job Posting
+						</Link>
+					</Button>
+				}
+				description="Create and manage job postings for the public website."
+				title="Job Postings"
+			/>
 
 			<div className="space-y-4">
 				<div className="rounded-md border">

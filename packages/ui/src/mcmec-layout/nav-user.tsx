@@ -41,6 +41,8 @@ export function NavUser() {
 						<SidebarMenuButton
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							size="lg"
+							// Collapsed, the avatar is all that remains of the signed-in person.
+							tooltip={user.title ? `${user.name} — ${user.title}` : user.name}
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
 								<AvatarImage alt={user.name} src={user.avatar || undefined} />

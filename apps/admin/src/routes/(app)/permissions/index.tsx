@@ -5,6 +5,7 @@ import {
 	type AppRole,
 	parseRoles,
 } from "@mcmec/lib/constants/roles";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { Checkbox } from "@mcmec/ui/components/checkbox";
 import {
 	Table,
@@ -20,6 +21,7 @@ import { authClient } from "@/src/lib/queryClient";
 import { setAppRole } from "@/src/lib/user-roles";
 
 export const Route = createFileRoute("/(app)/permissions/")({
+	loader: () => ({ crumb: "Manage Permissions" }),
 	component: PermissionsPage,
 });
 
@@ -72,12 +74,10 @@ function PermissionsPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div>
-				<h1 className="font-bold text-2xl">Manage Permissions</h1>
-				<p className="text-muted-foreground">
-					Grant or revoke each app's role for users with accounts.
-				</p>
-			</div>
+			<PageHeader
+				description="Grant or revoke each App Role for users with accounts."
+				title="Manage Permissions"
+			/>
 
 			{error ? (
 				<div className="rounded-md border border-destructive/50 p-4 text-destructive text-sm">

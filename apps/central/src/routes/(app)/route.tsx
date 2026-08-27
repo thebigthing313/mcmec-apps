@@ -7,9 +7,12 @@ import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
 	createFileRoute,
+	isMatch,
+	Link,
 	Outlet,
 	redirect,
 	useLocation,
+	useMatches,
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/central-sidebar";
@@ -30,6 +33,8 @@ export const Route = createFileRoute("/(app)")({
 		}
 	},
 	component: LayoutComponent,
+	// Seeds the breadcrumb so every trail reaches the dashboard.
+	loader: () => ({ crumb: "Dashboard" }),
 });
 
 function LayoutComponent() {
@@ -37,6 +42,13 @@ function LayoutComponent() {
 	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 	const location = useLocation();
+	const matches = useMatches();
+	const breadcrumbParts = matches
+		.filter((match) => isMatch(match, "loaderData.crumb"))
+		.map((match) => ({
+			href: match.pathname as string,
+			label: match.loaderData?.crumb as string,
+		}));
 
 	const navigate = useNavigate();
 	const handleLogout = async () => {
@@ -76,7 +88,18 @@ function LayoutComponent() {
 					<Layout.NavUser />
 				</Layout.Sidebar.Footer>
 			</Layout.Sidebar>
-			<Layout.Content>
+			<Layout.Content
+				breadcrumb={
+					<Layout.Breadcrumb
+						getLinkProps={(href) => ({
+							activeOptions: { exact: true },
+							to: href,
+						})}
+						items={breadcrumbParts}
+						LinkComponent={Link}
+					/>
+				}
+			>
 				<Outlet />
 			</Layout.Content>
 		</Layout>

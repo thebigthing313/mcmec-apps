@@ -32,6 +32,16 @@ export function AppSwitcher() {
 						<SidebarMenuButton
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							size="lg"
+							/*
+							 * Collapsed, this row is the only thing that says which application you are
+							 * in — and it was the one row without a tooltip. The rail clips its
+							 * "MCMEC / Website Management" block to a bare logo at `size-8`, and four
+							 * staff applications share one mark, one palette and one rail shape. Someone
+							 * who works collapsed could act on the wrong application's data with nothing
+							 * on screen to catch it. Every nav row got this guarantee; the row carrying
+							 * the identity should not have been the exception.
+							 */
+							tooltip={`${companyName} — ${activeApp}`}
 						>
 							<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white text-sidebar-primary-foreground">
 								<img
