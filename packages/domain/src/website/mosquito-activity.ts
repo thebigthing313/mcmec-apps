@@ -42,8 +42,15 @@ const MAX_ROWS = 20_000;
  * `week_number` mirrors the table's check constraint so a bad week is a 422 naming the row
  * rather than a constraint violation naming the statement. The bounds on the two measures are
  * the column's own: `int4` max, and `numeric(5, 2)`.
+ *
+ * Exported because the browser checks each parsed row against it before offering the
+ * preview — the per-row error reporting this command is parsed client-side *for*. It used
+ * to check `MosquitoActivityDataInsertSchema`, a second spelling of the same rule that had
+ * already drifted (it demanded an `id` the screen minted and the payload has no place for),
+ * and that schema went with the generic write path in #140. One spelling now, on the
+ * definition side, so “row 214 is bad” and “the server refuses row 214” cannot disagree.
  */
-const ImportRow = z.object({
+export const MosquitoImportRow = z.object({
 	mosquito_count: z.coerce.number().int().min(0).max(2_147_483_647).default(0),
 	rainfall_inches: z.coerce.number().min(0).max(999.99).default(0),
 	species_group: z.string().min(1),
@@ -54,7 +61,7 @@ const ImportRow = z.object({
 
 export const importMosquitoActivity = command(
 	"importMosquitoActivity",
-	z.object({ rows: z.array(ImportRow).min(1).max(MAX_ROWS) }),
+	z.object({ rows: z.array(MosquitoImportRow).min(1).max(MAX_ROWS) }),
 	{ targetless: true },
 );
 

@@ -12,25 +12,4 @@ export const InsecticidesRowSchema = z.object({
 	updated_at: z.coerce.date<Date>(),
 });
 
-export const InsecticidesInsertSchema = z.object({
-	active_ingredient: z.string(),
-	active_ingredient_url: z.url(),
-	id: z.uuid(),
-	label_url: z.url(),
-	msds_url: z.url(),
-	trade_name: z.string(),
-	type_name: z.string(),
-});
-
-export const InsecticidesUpdateSchema = z.object({
-	active_ingredient: z.string().optional(),
-	active_ingredient_url: z.url().optional(),
-	label_url: z.url().optional(),
-	msds_url: z.url().optional(),
-	trade_name: z.string().optional(),
-	type_name: z.string().optional(),
-});
-
 export type InsecticidesRowType = z.infer<typeof InsecticidesRowSchema>;
-export type InsecticidesInsertType = z.infer<typeof InsecticidesInsertSchema>;
-export type InsecticidesUpdateType = z.infer<typeof InsecticidesUpdateSchema>;

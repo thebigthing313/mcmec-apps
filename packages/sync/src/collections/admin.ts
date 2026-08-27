@@ -13,7 +13,6 @@ export function createAdminCollections({
 	apiUrl,
 }: CreateAdminCollectionsOptions) {
 	const employees = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: EmployeesRowSchema,

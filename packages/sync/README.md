@@ -3,7 +3,7 @@
 TanStack DB collection factories backed by the Railway API:
 
 - **reads** stream from the ElectricSQL shape proxy — `GET /api/shapes/:table`
-- **writes** go through the generic data API — `POST`/`PATCH`/`DELETE /api/data/:table`
+- **writes** are named commands — `POST /api/commands`, one envelope per command
 
 Both are permission-gated server-side, and every request carries the Better Auth session
 cookie (`credentials: "include"`).
@@ -17,8 +17,7 @@ cookie (`credentials: "include"`).
 | `createEagerCollection` | Full-shape stream, deferred start. For lookup/reference tables. |
 | `createOnDemandCollection` | Incremental snapshots per live query. For large operational tables. |
 | `createElectricCollection` | Shared builder — `syncMode` and `startSync` are explicit. |
-| `apiInsertRows` / `apiUpdateRow` / `apiDeleteRows` | Write helpers the factories use. |
-| `toCamelCaseKeys` / `snakeToCamel` | snake_case (Electric) → camelCase (API) key mapping. |
+| `sendCommand` | Posts one command envelope. Used by the factories, and directly for commands no collection owns. |
 | `fetchShapeSnapshot` | One-shot shape read for SSR — no live stream left open. |
 | `electricParser` | Coerces Electric's string `timestamptz`/`date`/`numeric` to `Date`/`number`. |
 
@@ -48,14 +47,12 @@ This package does **not** generate schemas. Row schemas live in `@mcmec/schemas`
 Electric streams.
 
 ```ts
-import {
-  NoticesRowSchema,
-  NoticesInsertSchema,
-  NoticesUpdateSchema,
-} from "@mcmec/schemas/db/notices";
+import { NoticesRowSchema } from "@mcmec/schemas/db/notices";
 ```
 
-The row schema's output must include an `id` — it is the collection key.
+The row schema's output must include an `id` — it is the collection key. Row schemas are
+all `@mcmec/schemas` holds: what a *write* may carry is a command's payload schema, and
+those live in `@mcmec/domain`.
 
 ### 2. Create collections
 
@@ -67,10 +64,12 @@ import {
 
 // Eager — streams the whole (server-narrowed) shape. `startSync: false`, so nothing
 // is fetched until a route loader calls `.preload()`.
-export const meetingsCollection = createEagerCollection({
-  table: "meetings",
-  schema: MeetingsRowSchema,
+export const zipCodesCollection = createEagerCollection({
+  table: "zip_codes",
+  schema: ZipCodesRowSchema,
   apiUrl,
+  // No `commands` — the vocabulary names no command for this table, so the collection
+  // is read-only by construction.
 });
 
 // On-demand — ready immediately, syncs slices as live queries ask for them.
@@ -78,17 +77,14 @@ export const noticesCollection = createOnDemandCollection({
   table: "notices",
   schema: NoticesRowSchema,
   apiUrl,
-  insertSchema: NoticesInsertSchema,
-  updateSchema: NoticesUpdateSchema,
-  allowDelete: true,
+  commands: true,
 });
 ```
 
-See [docs/COLLECTIONS.md](docs/COLLECTIONS.md) for the full option reference — including
-`commands: true`, which routes a collection's writes through the named-command dispatcher.
-`notices`, `job_postings`, `notice_types`, `document_types` and `insecticides` are on that
-path already (#152, #159), so the `insertSchema` / `updateSchema` pair above illustrates the
-tables still on the generic door.
+`commands: true` is not a choice: it is derived from the vocabulary, so a table that has
+commands must say it and a table that has none may not — the compiler settles it at the
+call site (#174). See [docs/COLLECTIONS.md](docs/COLLECTIONS.md) for the full option
+reference.
 
 ---
 
@@ -116,22 +112,41 @@ proxy has already narrowed the rows to what the session may read.
 
 ## Mutations
 
-Pass `insertSchema` / `updateSchema` / `allowDelete` to enable them; the factory wires
-`onInsert` / `onUpdate` / `onDelete` to the data API.
+`commands: true` wires `onInsert` / `onUpdate` / `onDelete`; every write names the command
+it is, in `metadata.intents`.
 
 ```ts
-noticesCollection.insert({ title: "Spray notice", published: false /* … */ });
-noticesCollection.update(id, (draft) => {
-  draft.published = true;
-});
-noticesCollection.delete(id);
+noticesCollection.insert(
+  { id: crypto.randomUUID(), title: "Spray notice" /* … */ },
+  { metadata: { intents: ["website.createNotice"] } },
+);
+noticesCollection.update(
+  id,
+  { metadata: { intents: ["website.publishNotice"] } },
+  (draft) => {
+    draft.is_published = true;
+  },
+);
 ```
+
+A write with no intent is refused by the server, not by the compiler — `@mcmec/sync`
+deliberately does not know the vocabulary, so `intents` is `string[]` here. A collection
+with no `commands` has no handlers at all and cannot be written.
 
 Each write returns the Postgres `txid`, and the handler holds optimistic state until
 that txid streams back through Electric. A 2xx from the API is the durability signal —
 a non-2xx throws and rolls the optimistic state back. See `settleTxids` in
-`src/collections/electric-collection.ts` for why the wait is done there rather than
+`src/factories/electric-collection.ts` for why the wait is done there rather than
 handed to the collection.
+
+Some commands own no row to be optimistic about — the mosquito import addresses a year,
+Send Invite's only column change is a server-minted id. Those post directly:
+
+```ts
+import { sendCommand } from "@mcmec/sync";
+
+await sendCommand(apiUrl, { id, intents: ["employees.inviteEmployee"] });
+```
 
 ---
 
@@ -151,7 +166,6 @@ The stream is aborted once the snapshot lands, so no long-poll outlives the requ
 ## Docs
 
 - [Collections (eager + on-demand)](docs/COLLECTIONS.md)
-- [Write helpers](docs/CRUD.md)
 
 ---
 

@@ -1,4 +1,4 @@
-import { MosquitoActivityDataInsertSchema } from "@mcmec/schemas/db/mosquito-activity-data";
+import { mosquitoActivity } from "@mcmec/domain";
 import { findCommandRefusal, sendCommand } from "@mcmec/sync";
 import {
 	MosquitoActivityCharts,
@@ -71,10 +71,9 @@ function parseCsvRows(raw: CsvRow[]): {
 			year: Number(r.year),
 		};
 
-		const result = MosquitoActivityDataInsertSchema.safeParse({
-			...parsed,
-			id: crypto.randomUUID(),
-		});
+		// The command's own row schema, so a row this screen accepts is a row the server
+		// accepts. No `id`: an import addresses a year, not a row (#163).
+		const result = mosquitoActivity.MosquitoImportRow.safeParse(parsed);
 
 		if (result.success) {
 			rows.push(parsed);

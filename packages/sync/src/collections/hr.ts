@@ -11,7 +11,6 @@ export function createHrCollections({ apiUrl }: CreateHrCollectionsOptions) {
 	// this collection through the same four `employees.*` commands, which is what stops the two
 	// apps' byte-identical write call sites from being two implementations.
 	const employees = createEagerCollection({
-		allowDelete: true,
 		apiUrl,
 		commands: true,
 		schema: EmployeesRowSchema,

@@ -5,9 +5,15 @@
  * proxy (`/api/shapes/:table`). The proxy sets `table`/`where`/`columns` server-side
  * (authorization); the client only carries sync-cursor params + the session cookie.
  *
- * Writes: `onInsert/onUpdate/onDelete` go through the data API (see ../crud), then hold the
- * optimistic state until that write's Postgres `txid` streams back through Electric — see
- * `settleTxids` for why we do that wait ourselves rather than handing it to the collection.
+ * Writes: `onInsert/onUpdate/onDelete` post one command envelope each (see ../command-write),
+ * then hold the optimistic state until that write's Postgres `txid` streams back through
+ * Electric — see `settleTxids` for why we do that wait ourselves rather than handing it to the
+ * collection.
+ *
+ * A collection that names no command has no write handlers at all. That is not a degraded
+ * mode: the generic door those tables used to write through is gone (#140), so a read-only
+ * collection is now spelled by the absence of `commands`, and the type below is what makes the
+ * spelling compulsory.
  */
 import type { CommandedTable } from "@mcmec/domain";
 import type { TableName } from "@mcmec/schemas/tables";
@@ -29,7 +35,6 @@ import {
 	readCommandMetadata,
 	sendCommand,
 } from "../command-write";
-import { apiDeleteRows, apiInsertRows, apiUpdateRow } from "../crud";
 import { shapePathFor } from "../routes";
 
 // Electric leaves these Postgres types as strings on the sync path (the collection
@@ -63,8 +68,8 @@ type TxidSettler = {
  * marked failed and the UI rolls back — an edit disappearing from the screen that Postgres
  * has already durably committed.
  *
- * The API returning 2xx is our durability signal: `handleWrite` in ../crud throws on any
- * non-2xx, so a genuine failure still rejects and still rolls back. Everything after that
+ * The API returning 2xx is our durability signal: `sendCommand` throws on any non-2xx, so a
+ * genuine failure still rejects and still rolls back. Everything after that
  * response is sync latency, which is not the user's problem and must not look like data loss.
  *
  * So we do the wait here and swallow a timeout, then return a result with NO `txid` key —
@@ -114,61 +119,50 @@ function envelopeFor(
 }
 
 /**
- * How a table writes — derived from the vocabulary, not declared twice.
+ * Whether a table writes — derived from the vocabulary, not declared twice.
  *
- * A table cuts over in two places that nothing used to tie together: it leaves `WRITABLE` in
- * `apps/api/src/data.ts`, and its collection gains `commands: true` here. `commands` was an
- * optional boolean, so a table could leave one without leaving the other with every gate
- * green — which is what the documents slice shipped (#160): the table left `WRITABLE`, the
- * collection stayed generic, and every document write came back `404 not writable`.
+ * `CommandedTable` is the union of tables the vocabulary names, and this conditional keys off
+ * the `table` literal: a commanded table MUST say `commands: true`, an uncommanded table may
+ * not say it at all. The compiler settles it at the call site.
  *
- * So the flag is no longer a free choice. `CommandedTable` is the union of tables the
- * vocabulary names, and this conditional keys off the `table` literal: a commanded table
- * MUST say `commands: true` and may carry no Insert/Update schema (a leftover one is a third
- * way for the halves to disagree, and it used to be silently ignored); an uncommanded table
- * may not say it at all. The compiler settles it at the call site.
+ * The guard was built (#174) against a table cutting over in two places that nothing tied
+ * together — leaving `WRITABLE` in `apps/api/src/data.ts` while its collection stayed generic,
+ * which is what the documents slice shipped (#160) and what came back `404 not writable`. That
+ * failure mode died with `WRITABLE` (#140), but the type earns its place twice over now: with
+ * no generic path left, a missing `commands: true` is not a table on the old door, it is a
+ * collection that cannot be written at all.
  *
  * `import type` on purpose — the vocabulary is erased at build, so `hr`, `admin` and
  * `central`, which name no intent, pay nothing at runtime to be correct by construction.
  */
-type WriteMode<
-	TTable extends TableName,
-	TInsertSchema extends ZodObject<z.ZodRawShape>,
-	TUpdateSchema extends ZodObject<z.ZodRawShape>,
-> = TTable extends CommandedTable
+type WriteMode<TTable extends TableName> = TTable extends CommandedTable
 	? {
 			/**
 			 * Writes carry an intent and go to POST /api/commands. Required, because this
-			 * table has commands; when the last table cuts over (#140) the flag, `crud.ts`
-			 * and this whole union disappear together.
+			 * table has commands.
 			 */
 			commands: true;
-			insertSchema?: never;
-			updateSchema?: never;
 		}
 	: {
+			/**
+			 * Forbidden, because this table has no commands — and with the generic door
+			 * gone there is no other way for it to be written, so its collection is
+			 * read-only by construction.
+			 */
 			commands?: never;
-			/** Zod schema for INSERT payloads (omit generated fields) */
-			insertSchema?: TInsertSchema;
-			/** Zod schema for UPDATE payloads (all fields optional) */
-			updateSchema?: TUpdateSchema;
 		};
 
 export type ElectricCollectionOptions<
 	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape>,
-	TInsertSchema extends ZodObject<z.ZodRawShape>,
-	TUpdateSchema extends ZodObject<z.ZodRawShape>,
 > = {
-	/** Table name — the `/api/shapes/:table` + `/api/data/:table` segment */
+	/** Table name — the `/api/shapes/:table` segment */
 	table: TTable;
 	/** Zod schema for the full row shape (snake_case; typed against Electric output) */
 	schema: TSchema;
 	/** API origin (VITE_API_URL) */
 	apiUrl: string;
-	/** Allow delete mutations on this collection. Default: false */
-	allowDelete?: boolean;
-} & WriteMode<TTable, TInsertSchema, TUpdateSchema>;
+} & WriteMode<TTable>;
 
 export function createElectricCollection<
 	TTable extends TableName,
@@ -176,15 +170,8 @@ export function createElectricCollection<
 		StandardSchemaV1 & {
 			_zod: { output: { id: string } };
 		},
-	TInsertSchema extends ZodObject<z.ZodRawShape>,
-	TUpdateSchema extends ZodObject<z.ZodRawShape>,
 >(
-	options: ElectricCollectionOptions<
-		TTable,
-		TSchema,
-		TInsertSchema,
-		TUpdateSchema
-	>,
+	options: ElectricCollectionOptions<TTable, TSchema>,
 	syncMode: "eager" | "on-demand",
 	startSync: boolean,
 ): Collection<
@@ -201,21 +188,13 @@ export function createElectricCollection<
 		table,
 		schema,
 		apiUrl,
-		allowDelete = false,
 		commands = false,
-		insertSchema,
-		updateSchema,
 	} = options as {
 		table: TTable;
 		schema: TSchema;
 		apiUrl: string;
-		allowDelete?: boolean;
 		commands?: boolean;
-		insertSchema?: TInsertSchema;
-		updateSchema?: TUpdateSchema;
 	};
-
-	const target = { apiUrl, table };
 
 	// `electricCollectionOptions` validates the full config below. Handing it to
 	// createCollection, though, defeats the latter's overload resolution: it reduces
@@ -239,10 +218,11 @@ export function createElectricCollection<
 		// Each handler awaits its own txids via settleTxids and returns nothing, so the
 		// collection does not re-await them with its rollback-on-timeout default.
 		//
-		// In command mode all three handlers are the same three lines: read the intent the
-		// call site named, post one envelope, settle. The difference between insert, update
-		// and delete is which fields go in the body — the server learns the operation from
-		// the command name, not from an HTTP verb.
+		// All three are the same three lines: read the intent the call site named, post one
+		// envelope, settle. The difference between insert, update and delete is which fields
+		// go in the body — the server learns the operation from the command name, not from
+		// an HTTP verb. A collection that names no command leaves all three undefined, which
+		// is what makes TanStack DB refuse the mutation.
 		onInsert: commands
 			? async ({ transaction, collection }) => {
 					const txids = await Promise.all(
@@ -253,18 +233,7 @@ export function createElectricCollection<
 					await settleTxids(collection as TxidSettler, txids, table);
 					return undefined;
 				}
-			: insertSchema
-				? async ({ transaction, collection }) => {
-						const rows = transaction.mutations.map((m) => m.modified);
-						const txids = await apiInsertRows(
-							target,
-							insertSchema,
-							rows as unknown[],
-						);
-						await settleTxids(collection as TxidSettler, txids, table);
-						return undefined;
-					}
-				: undefined,
+			: undefined,
 
 		onUpdate: commands
 			? async ({ transaction, collection }) => {
@@ -282,22 +251,7 @@ export function createElectricCollection<
 					await settleTxids(collection as TxidSettler, txids, table);
 					return undefined;
 				}
-			: updateSchema
-				? async ({ transaction, collection }) => {
-						const txids: number[] = [];
-						for (const m of transaction.mutations) {
-							const txid = await apiUpdateRow(
-								target,
-								updateSchema,
-								m.key,
-								m.changes,
-							);
-							if (txid !== undefined) txids.push(txid);
-						}
-						await settleTxids(collection as TxidSettler, txids, table);
-						return undefined;
-					}
-				: undefined,
+			: undefined,
 
 		onDelete: commands
 			? async ({ transaction, collection }) => {
@@ -309,14 +263,7 @@ export function createElectricCollection<
 					await settleTxids(collection as TxidSettler, txids, table);
 					return undefined;
 				}
-			: allowDelete
-				? async ({ transaction, collection }) => {
-						const ids = transaction.mutations.map((m) => m.key);
-						const txids = await apiDeleteRows(target, ids);
-						await settleTxids(collection as TxidSettler, txids, table);
-						return undefined;
-					}
-				: undefined,
+			: undefined,
 	});
 
 	return createCollection(config as never) as Collection<

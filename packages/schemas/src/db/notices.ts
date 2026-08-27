@@ -12,28 +12,4 @@ export const NoticesRowSchema = z.object({
 	updated_at: z.coerce.date<Date>(),
 });
 
-export const NoticesInsertSchema = z.object({
-	content: z.any(),
-	id: z.uuid(),
-	is_archived: z.boolean(),
-	is_published: z.boolean(),
-	notice_date: z.coerce.date<Date>().transform((date) => date.toISOString()),
-	notice_type_id: z.uuid(),
-	title: z.string(),
-});
-
-export const NoticesUpdateSchema = z.object({
-	content: z.any().optional(),
-	is_archived: z.boolean().optional(),
-	is_published: z.boolean().optional(),
-	notice_date: z.coerce
-		.date()
-		.optional()
-		.transform((date) => (date ? date.toISOString() : date)),
-	notice_type_id: z.uuid().optional(),
-	title: z.string().optional(),
-});
-
 export type NoticesRowType = z.infer<typeof NoticesRowSchema>;
-export type NoticesInsertType = z.infer<typeof NoticesInsertSchema>;
-export type NoticesUpdateType = z.infer<typeof NoticesUpdateSchema>;

@@ -27,24 +27,13 @@ import {
 export type OnDemandCollectionOptions<
 	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape>,
-	TInsertSchema extends ZodObject<z.ZodRawShape>,
-	TUpdateSchema extends ZodObject<z.ZodRawShape>,
-> = ElectricCollectionOptions<TTable, TSchema, TInsertSchema, TUpdateSchema>;
+> = ElectricCollectionOptions<TTable, TSchema>;
 
 export function createOnDemandCollection<
 	TTable extends TableName,
 	TSchema extends ZodObject<z.ZodRawShape> & {
 		_zod: { output: { id: string } };
 	},
-	TInsertSchema extends ZodObject<z.ZodRawShape>,
-	TUpdateSchema extends ZodObject<z.ZodRawShape>,
->(
-	options: OnDemandCollectionOptions<
-		TTable,
-		TSchema,
-		TInsertSchema,
-		TUpdateSchema
-	>,
-) {
+>(options: OnDemandCollectionOptions<TTable, TSchema>) {
 	return createElectricCollection(options, "on-demand", true);
 }

@@ -4,7 +4,8 @@ TanStack DB collection factories backed by the ElectricSQL shape proxy on the Ra
 
 Reads stream from `GET /api/shapes/:table`. The proxy sets `table` / `where` / `columns`
 server-side — that is the authorization boundary — so the client only carries sync-cursor
-params and the session cookie. Writes go through `/api/data/:table` (see [CRUD.md](CRUD.md)).
+params and the session cookie. Writes are named commands — one envelope per command to
+`POST /api/commands`, whose payload schemas and permissions live in `@mcmec/domain`.
 
 ---
 
@@ -16,7 +17,7 @@ params and the session cookie. Writes go through `/api/data/:table` (see [CRUD.m
 | **`startSync`** | `false` — deferred until first preview/`preload()` | `true` — ready immediately |
 | **Best for** | Lookup / reference tables | Large operational tables |
 | **Typical row count** | < 1 000 | Unbounded |
-| **Mutations** | Yes (optional) | Yes (optional) |
+| **Mutations** | Iff the table has commands | Iff the table has commands |
 
 ---
 
@@ -26,29 +27,38 @@ Both factories take the same `ElectricCollectionOptions`:
 
 | Option | Type | Required | Default | Description |
 |---|---|---|---|---|
-| `table` | `string` | yes | — | The `/api/shapes/:table` + `/api/data/:table` segment |
+| `table` | `TableName` | yes | — | The `/api/shapes/:table` segment |
 | `schema` | `ZodObject` | yes | — | Full row shape, snake_case; its output must include `id` |
 | `apiUrl` | `string` | yes | — | API origin (`VITE_API_URL`) |
-| `insertSchema` | `ZodObject` | no | — | Enables inserts |
-| `updateSchema` | `ZodObject` | no | — | Enables updates |
-| `allowDelete` | `boolean` | no | `false` | Enables deletes |
-| `commands` | `boolean` | no | `false` | Routes every write through `POST /api/commands` instead of `/api/data/:table` |
+| `commands` | `true` | iff the table has commands | — | Wires the write handlers |
 
 `getKey` is always `row.id`, and the collection `id` is the table name.
 
-### Command mode
+### `commands` is derived, not chosen
 
-`commands: true` puts a collection on the named-command path (#152). Its writes carry an
-intent — `collection.update(id, { metadata: { intents: ["website.publishNotice"] } }, draft
-=> …)` — and a write without one is refused at runtime, not at compile time. `insertSchema`
-and `updateSchema` are ignored, because a command payload is not "a row minus the server
-columns": the payload schema lives in `@mcmec/domain`, and the server learns the operation
-from the command name rather than from an HTTP verb.
+`commands: true` is **compulsory** on a table the vocabulary names and **forbidden** on one
+it does not — the type keys off the `table` literal against `CommandedTable`, so the
+compiler settles it at the call site (#174). It is `import type`, so the vocabulary erases
+at build and an app that names no intent pays nothing for it.
 
-Tables cut over one at a time; when the last one has (#140), this is the only mode and the
-flag, `crud.ts` and the Insert/Update pairs all disappear. **`notices`, `job_postings`,
-`notice_types`, `document_types` and `insecticides` are already across**, so the CRUD examples
-below describe the tables still on the generic door.
+A collection without it has no `onInsert` / `onUpdate` / `onDelete` at all. That is the
+whole of read-only now: the generic write door those tables used to share was deleted with
+the last slice (#140), so there is no second path to forget to close.
+
+Writes carry the command they are in `metadata.intents`:
+
+```ts
+collection.update(
+  id,
+  { metadata: { intents: ["website.publishNotice"] } },
+  (draft) => { draft.is_published = true; },
+);
+```
+
+A write with no intent is refused by the server, not by the compiler: `@mcmec/sync` does
+not know the vocabulary, so `intents` is `string[]` here. A command payload is not "a row
+minus the server columns" — its schema lives in `@mcmec/domain`, and the server learns the
+operation from the command name rather than from an HTTP verb.
 
 ### Parsing
 
@@ -68,11 +78,7 @@ const meetingsCollection = createEagerCollection({
   table: "meetings",
   schema: MeetingsRowSchema,
   apiUrl,
-
-  // Mutations (all optional):
-  insertSchema: MeetingsInsertSchema,
-  updateSchema: MeetingsUpdateSchema,
-  allowDelete: false, // default
+  commands: true, // `meetings` has commands, so this is compulsory
 });
 ```
 
@@ -121,15 +127,14 @@ const noticesCollection = createOnDemandCollection({
   table: "notices",
   schema: NoticesRowSchema,
   apiUrl,
-
-  insertSchema: NoticesInsertSchema,
-  updateSchema: NoticesUpdateSchema,
-  allowDelete: true,
+  commands: true,
 });
 ```
 
-Read-only tables (e.g. `mosquito_activity_data`, `zip_codes`) simply omit
-`insertSchema` / `updateSchema` / `allowDelete`.
+Tables the vocabulary does not name (e.g. `zip_codes`, `municipalities`) omit `commands`
+and get no write handlers. `mosquito_activity_data` is the odd one: it *has* a command, but
+that command addresses a year rather than a row, so it goes through `sendCommand` and the
+collection is read in this app and written by nobody.
 
 ### The `subset__*` requirement
 
@@ -167,17 +172,27 @@ function NoticeList({ typeId }: { typeId: string }) {
 
 ## Mutations
 
-Mutations are optimistic: TanStack DB applies the change locally, the handler calls the
-data API, and the optimistic state is held until that write's Postgres `txid` streams
-back through Electric.
+Mutations are optimistic: TanStack DB applies the change locally, the handler posts one
+command envelope, and the optimistic state is held until that write's Postgres `txid`
+streams back through Electric.
 
 ```ts
-noticesCollection.insert({ id: crypto.randomUUID(), title: "Spray notice" /* … */ });
-noticesCollection.update(noticeId, (draft) => {
-  draft.published = true;
+noticesCollection.insert(
+  { id: crypto.randomUUID(), title: "Spray notice" /* … */ },
+  { metadata: { intents: ["website.createNotice"] } },
+);
+noticesCollection.update(
+  noticeId,
+  { metadata: { intents: ["website.publishNotice"] } },
+  (draft) => { draft.is_published = true; },
+);
+noticesCollection.delete(noticeId, {
+  metadata: { intents: ["website.deleteNotice"] },
 });
-noticesCollection.delete(noticeId);
 ```
+
+Two intents may ride one envelope — that is what Save-and-Publish is, and it is atomic, so
+a refused lifecycle command rolls the field save back with it.
 
 ### Why the txid wait lives here
 
@@ -195,8 +210,8 @@ signal. Worst case after a timeout is a brief flicker, not a lost edit.
 
 ## Registering collections
 
-Collections are created once per app by the factories in `@mcmec/schemas`
-(`packages/schemas/src/collections/*`), which take `{ apiUrl }` and return the app's
+Collections are created once per app by the sets in `@mcmec/sync/collections/*`
+(`packages/sync/src/collections/*`), which take `{ apiUrl }` and return the app's
 collection map. Apps expose it through a `getDb()` / `useDb()` singleton in
 `src/lib/db.ts` and hand it to the router context.
 

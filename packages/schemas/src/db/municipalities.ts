@@ -7,19 +7,4 @@ export const MunicipalitiesRowSchema = z.object({
 	updated_at: z.coerce.date<Date>(),
 });
 
-export const MunicipalitiesInsertSchema = z.object({
-	id: z.uuid(),
-	name: z.string(),
-});
-
-export const MunicipalitiesUpdateSchema = z.object({
-	name: z.string().optional(),
-});
-
 export type MunicipalitiesRowType = z.infer<typeof MunicipalitiesRowSchema>;
-export type MunicipalitiesInsertType = z.infer<
-	typeof MunicipalitiesInsertSchema
->;
-export type MunicipalitiesUpdateType = z.infer<
-	typeof MunicipalitiesUpdateSchema
->;

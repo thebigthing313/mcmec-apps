@@ -2,7 +2,8 @@
 //
 // The append-only `log_mutation` trigger reads who/where from the `app.*` GUCs. Any write path
 // that wants the audit row attributed to a user must run inside a transaction and call the
-// returned setter first (see data.ts, users.ts). Shared so the GUC contract can't drift.
+// returned setter first (see commands/dispatch.ts, requests.ts). Shared so the GUC contract
+// can't drift.
 
 import { sql } from "drizzle-orm";
 import type { Context } from "hono";
