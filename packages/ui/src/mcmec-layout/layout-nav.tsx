@@ -78,7 +78,19 @@ export function LayoutNav<TLinkProps extends { to: string }>({
 			{groups.map((group, groupIndex) => (
 				<SidebarGroup key={group.label ?? `group-${groupIndex}`}>
 					{group.label ? (
-						<SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+						/*
+						 * DESIGN.md's Overline role: uppercase, letterspaced, bold, muted.
+						 *
+						 * A group heading is not read as language — it is read as the edge between
+						 * one cluster of work and the next. Setting it in caps at a size below the
+						 * destinations it covers is what makes it legible as structure rather than
+						 * as another, quieter menu item, which is how the previous sentence-case
+						 * label read. The letterspacing is not decoration: caps set at 0.75rem
+						 * without it close up and stop being scannable.
+						 */
+						<SidebarGroupLabel className="font-bold uppercase tracking-wide">
+							{group.label}
+						</SidebarGroupLabel>
 					) : null}
 					<SidebarGroupContent>
 						<SidebarMenu>
@@ -92,6 +104,30 @@ export function LayoutNav<TLinkProps extends { to: string }>({
 											// state must never be carried by color alone.
 											aria-current={isActive ? "page" : undefined}
 											asChild
+											/*
+											 * Commission Green marks where you are.
+											 *
+											 * The primitive's default active ground is `sidebar-accent`,
+											 * a pale green one step off the rail's own background —
+											 * legible on inspection, invisible from a normal seated
+											 * distance, which makes it barely better than the nothing it
+											 * replaced. DESIGN.md spends the signature colour on exactly
+											 * three things and the active navigation state is one of them.
+											 *
+											 * Overridden here rather than in `sidebar.tsx`, which is
+											 * generated shadcn and excluded from linting: the shell owns
+											 * the chrome, so the shell carries the deviation. The hover
+											 * pair is restated because the base variant's own `hover:`
+											 * rule would otherwise drop the active row back to pale green
+											 * under the cursor.
+											 *
+											 * Light theme only, which is all the staff applications
+											 * render — none of them mounts a theme provider. Wiring dark
+											 * mode means revisiting this, because `.dark` resolves
+											 * `--sidebar-primary` to a blue with nothing to do with this
+											 * palette.
+											 */
+											className="data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground data-[active=true]:hover:bg-sidebar-primary data-[active=true]:hover:text-sidebar-primary-foreground"
 											isActive={isActive}
 											// Rendered only while the rail is collapsed; this is the entire
 											// reason a collapsed rail remains navigable.

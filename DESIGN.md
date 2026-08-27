@@ -156,7 +156,7 @@ A single institutional green against a family of neutrals that share its hue, so
 
 ### Secondary
 
-- **Pale Green** (`oklch(0.92 0.03 150)`): The quiet fill. Secondary buttons, the staff sidebar's active-item ground, and any surface that needs to separate from paper without introducing a border.
+- **Pale Green** (`oklch(0.92 0.03 150)`): The quiet fill. Secondary buttons, the hover ground for staff sidebar rows, the Archived badge, and any surface that needs to separate from paper without introducing a border. It marks *hover*, never *location* — the active row is Commission Green, and a pale-green active state a single step off the rail's own background is the version that reads as nothing from a normal seated distance.
 
 ### Tertiary
 
@@ -204,13 +204,13 @@ A single institutional green against a family of neutrals that share its hue, so
 - **Title** (600, `1.25rem`, 1.0): Card titles, including notice titles in the public feed. The 1.0 line-height is deliberate: titles are one or two lines and should sit tight against their date line.
 - **Body** (400, `1rem`, 1.5): All reading text, including Tiptap-rendered notice bodies. Cap the measure at 65–75ch. Prose paragraphs take a `0.5rem` vertical margin and normal leading so a rendered notice stays dense enough to scan.
 - **Label** (500, `0.875rem`, 1.25): Buttons, form labels, table cells, badges, metadata. The workhorse size across all four staff applications.
-- **Overline** (700, `0.875rem`, tracking `0.025em`, uppercase): The agency's name in the public footer and the footer's column headings. Structural only.
+- **Overline** (700, tracking `0.025em`, uppercase): The agency's name in the public footer and the footer's column headings at `0.875rem`; the staff sidebar's group labels at `0.75rem`, a step below the destinations they cover. Structural only.
 
 ### Named Rules
 
 **The One Family Rule.** Roboto sets everything. There is no display face, no serif for long reading, and no accent family. A second family is a system change, not a page decision.
 
-**The Uppercase Is Structural Rule.** Uppercase with `0.025em` tracking marks the agency's identity block and column headings in the footer. It never appears on a button, never on a heading a visitor reads for content, and never as emphasis inside a sentence.
+**The Uppercase Is Structural Rule.** Uppercase with `0.025em` tracking marks a boundary, never a sentence. It has three homes: the agency's identity block in the public footer, that footer's column headings, and the group labels in the staff sidebar. All three are edges between regions rather than text anyone reads for meaning, which is why caps suit them and why they are set below the size of what they cover. It never appears on a button, never on a heading a visitor reads for content, and never as emphasis inside a sentence.
 
 **Known drift.** `--font-serif: "Lora"` and `--font-mono: "Fira Code"` are declared in `globals.css`, but only Roboto is imported from Google Fonts. Any consumer of those tokens silently falls back to Georgia and Courier New. Treat both as unavailable until they are actually loaded or the tokens are removed.
 
@@ -231,6 +231,14 @@ The public site and the staff applications use two different spatial models over
 **The Eighty-Rem Rule.** No content region exceeds `max-w-7xl` (80rem). The hero photograph may bleed past it; nothing readable may.
 
 **The Shell Owns The Chrome Rule.** Staff applications import `mcmec-layout` and fill it. An app that defines its own sidebar, header, or breadcrumb has forked the system, and four forks is how five applications stop looking like one.
+
+**The Desktop-First, Mobile-Survivable Rule.** The four staff applications are designed for the screen they are actually used on: a desk, a large display, a considered edit. Density, column count, keyboard reach, and information-per-screen are decided at desktop widths and are not compromised to suit a phone.
+
+But narrow is a state they must *survive*, because the job occasionally follows someone out of the building — a meeting cancelled from a car, a spray mission delayed from the field. On a phone every staff screen must therefore: fit the viewport with no horizontal page scroll; keep wide content (tables, toolbars, date ranges) scrolling inside its own `overflow-x: auto` container rather than pushing the page; keep every primary action reachable without a hover; and lose no destination — the rail becomes a sheet, never a truncation.
+
+The distinction is between a floor and a target. Nothing here asks for a phone-optimised layout, a thumb-zone action bar, or a mobile-specific flow; spending design effort there is spending it in the wrong place. What it forbids is the failure mode where a staff screen is unusable rather than merely cramped. A cramped table someone can scroll is fine. A form whose Save button sits outside the viewport is not.
+
+`apps/public` is the exact inverse and is not covered by this rule: residents arrive on phones more often than not, and its layouts are decided at both ends.
 
 ## Elevation & Depth
 
@@ -307,6 +315,8 @@ Icons are Lucide, at `1rem` inside buttons and badges, `1.5rem` on public quick-
 
 **Staff.** The `mcmec-layout` sidebar, collapsible to an icon rail, with the MCMEC mark in the header, navigation in the content, and the user menu in the footer. The app switcher lists only the applications the signed-in user's App Roles permit.
 
+The rail is rendered by the shell, not by each application: `Layout.Sidebar.Nav` takes groups of destinations and owns the three things a hand-rolled rail keeps losing. Every row carries a tooltip, which is the only label a collapsed rail has. The current destination takes Commission Green (`4.57:1` against its own label, `4.33:1` against the rail) and carries `aria-current="page"`, so location is never signalled by colour alone. Matching is by path prefix, so a drill-down keeps its parent lit. Groups run to four items or fewer and are labelled in the Overline; a rail of three or fewer destinations drops the label rather than inventing one.
+
 ### Lifecycle Button
 
 The system's signature control, and the subject of ADR 0001. A lifecycle action — Publish, Archive, Cancel, Close, Resolve, Reschedule — is always a button that fires its own named command. It is never a switch, never a checkbox, and never a status field the user edits and saves.
@@ -328,7 +338,8 @@ It defaults to the outline variant so it reads as a deliberate act rather than t
 - **Do** use the `CONTEXT.md` vocabulary in visible copy — "Spray Mission," "Public Request," "Notice" — regardless of what a legacy route path says.
 - **Do** cap reading measure at 65–75ch on the public site and keep `max-w-7xl` as the outer bound everywhere.
 - **Do** preserve the `3px` focus ring at 50% opacity on every interactive element. It is the only focus treatment in the system.
-- **Do** keep uppercase and letterspacing structural — the footer identity block and column headings, nothing else.
+- **Do** keep uppercase and letterspacing structural — the public footer's identity block and column headings, and the staff rail's group labels, nothing else.
+- **Do** decide staff layouts at desktop widths, then confirm nothing is unreachable or clipped at `375px`. Survivable, not optimised.
 
 ### Don't:
 
@@ -340,5 +351,7 @@ It defaults to the outline variant so it reads as a deliberate act rather than t
 - **Don't** use a pill radius for anything that isn't a status badge.
 - **Don't** render a lifecycle action as a switch, checkbox, or status dropdown.
 - **Don't** hide a disabled action. Show it disabled so staff can see the action exists.
+- **Don't** let a staff screen scroll horizontally at the page level, or strand a primary action outside a narrow viewport. Wide content scrolls inside its own container; the rail becomes a sheet rather than losing destinations.
+- **Don't** spend design effort on phone-optimised staff layouts — thumb-zone bars, mobile-only flows. The floor is that narrow works, not that narrow is the target.
 - **Don't** bury, paginate, collapse, or lazily defer a statutorily required posting — a legal Notice within its seven-day Retention Period, a meeting agenda, or a cancelled meeting. Layout may never obstruct the public record.
 - **Don't** reach for gradient meshes, glassmorphism, or marketing-hero patterns. Equally, don't accept clip-art seals, unstyled link lists, or PDFs standing in for an interface.

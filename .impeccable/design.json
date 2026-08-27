@@ -298,7 +298,7 @@
 			},
 			"overline": {
 				"displayName": "Overline",
-				"purpose": "Uppercase, letterspaced. The agency's name in the public footer and the footer's column headings. Structural only."
+				"purpose": "Uppercase, letterspaced. The agency's name and column headings in the public footer at 0.875rem; the staff sidebar's group labels at 0.75rem, a step below the destinations they cover. Structural only."
 			}
 		},
 		"shadows": [
@@ -326,11 +326,26 @@
 			}
 		],
 		"breakpoints": [
-			{ "name": "sm", "value": "640px" },
-			{ "name": "md", "value": "768px" },
-			{ "name": "lg", "value": "1024px" },
-			{ "name": "xl", "value": "1280px" },
-			{ "name": "container-max", "value": "1280px" }
+			{
+				"name": "sm",
+				"value": "640px"
+			},
+			{
+				"name": "md",
+				"value": "768px"
+			},
+			{
+				"name": "lg",
+				"value": "1024px"
+			},
+			{
+				"name": "xl",
+				"value": "1280px"
+			},
+			{
+				"name": "container-max",
+				"value": "1280px"
+			}
 		]
 	},
 	"components": [
@@ -425,7 +440,7 @@
 			},
 			{
 				"name": "The Uppercase Is Structural Rule",
-				"body": "Uppercase with 0.025em tracking marks the agency's identity block and column headings in the footer. It never appears on a button, never on a heading a visitor reads for content, and never as emphasis inside a sentence.",
+				"body": "Uppercase with 0.025em tracking marks a boundary, never a sentence. It has three homes: the agency's identity block in the public footer, that footer's column headings, and the group labels in the staff sidebar. All three are edges between regions rather than text anyone reads for meaning. It never appears on a button, never on a heading a visitor reads for content, and never as emphasis inside a sentence.",
 				"section": "typography"
 			},
 			{
@@ -452,6 +467,11 @@
 				"name": "The Lifecycle Is A Button Rule",
 				"body": "State transitions are performed, not set. If a design shows a record's state as a toggle, a select, or a checkbox, the design is wrong regardless of how it looks - see docs/adr/0001-lifecycle-actions-are-buttons.md.",
 				"section": "components"
+			},
+			{
+				"name": "The Desktop-First, Mobile-Survivable Rule",
+				"body": "The four staff applications are designed for the screen they are used on: a desk, a large display, a considered edit. Density and column count are decided at desktop widths and not compromised for a phone. But narrow is a state they must survive, because the job occasionally follows someone out of the building. On a phone every staff screen must fit the viewport with no horizontal page scroll, keep wide content scrolling inside its own container, keep every primary action reachable without hover, and lose no destination. A cramped table someone can scroll is fine; a form whose Save button sits outside the viewport is not. apps/public is the inverse and is not covered by this rule.",
+				"section": "layout"
 			}
 		],
 		"dos": [
@@ -462,7 +482,8 @@
 			"Do use the CONTEXT.md vocabulary in visible copy - \"Spray Mission,\" \"Public Request,\" \"Notice\" - regardless of what a legacy route path says.",
 			"Do cap reading measure at 65-75ch on the public site and keep max-w-7xl as the outer bound everywhere.",
 			"Do preserve the 3px focus ring at 50% opacity on every interactive element. It is the only focus treatment in the system.",
-			"Do keep uppercase and letterspacing structural - the footer identity block and column headings, nothing else."
+			"Do keep uppercase and letterspacing structural - the public footer's identity block and column headings, and the staff rail's group labels, nothing else.",
+			"Do decide staff layouts at desktop widths, then confirm nothing is unreachable or clipped at 375px. Survivable, not optimised."
 		],
 		"donts": [
 			"Don't add a second type family. Roboto sets everything until the system says otherwise.",
@@ -474,7 +495,9 @@
 			"Don't render a lifecycle action as a switch, checkbox, or status dropdown.",
 			"Don't hide a disabled action. Show it disabled so staff can see the action exists.",
 			"Don't bury, paginate, collapse, or lazily defer a statutorily required posting - a legal Notice within its seven-day Retention Period, a meeting agenda, or a cancelled meeting. Layout may never obstruct the public record.",
-			"Don't reach for gradient meshes, glassmorphism, or marketing-hero patterns. Equally, don't accept clip-art seals, unstyled link lists, or PDFs standing in for an interface."
+			"Don't reach for gradient meshes, glassmorphism, or marketing-hero patterns. Equally, don't accept clip-art seals, unstyled link lists, or PDFs standing in for an interface.",
+			"Don't let a staff screen scroll horizontally at the page level, or strand a primary action outside a narrow viewport.",
+			"Don't spend design effort on phone-optimised staff layouts. The floor is that narrow works, not that narrow is the target."
 		]
 	}
 }
