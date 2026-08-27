@@ -13,6 +13,7 @@ import { DOCUMENT_COMMANDS } from "./website/documents";
 import { INSECTICIDE_COMMANDS } from "./website/insecticides";
 import { JOB_POSTING_COMMANDS } from "./website/job-postings";
 import { MEETING_COMMANDS } from "./website/meetings";
+import { MOSQUITO_ACTIVITY_COMMANDS } from "./website/mosquito-activity";
 import { NOTICE_CATEGORY_COMMANDS } from "./website/notice-categories";
 import { NOTICE_COMMANDS } from "./website/notices";
 import { SPRAY_MISSION_COMMANDS } from "./website/spray-missions";
@@ -26,6 +27,7 @@ const ALL = [
 	...DOCUMENT_COMMANDS,
 	...MEETING_COMMANDS,
 	...SPRAY_MISSION_COMMANDS,
+	...MOSQUITO_ACTIVITY_COMMANDS,
 ] as const;
 
 // The callback is annotated rather than inferred: it stays correct whether ALL is empty (its

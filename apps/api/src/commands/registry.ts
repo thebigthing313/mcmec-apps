@@ -14,6 +14,7 @@ import * as documents from "./website/documents";
 import * as insecticides from "./website/insecticides";
 import * as jobPostings from "./website/job-postings";
 import * as meetings from "./website/meetings";
+import * as mosquitoActivity from "./website/mosquito-activity";
 import * as noticeCategories from "./website/notice-categories";
 import * as notices from "./website/notices";
 import * as sprayMissions from "./website/spray-missions";
@@ -41,6 +42,7 @@ export const REGISTRY: CommandRegistry = {
 	"website.deleteNotice": notices.deleteNotice,
 	"website.deleteNoticeCategory": noticeCategories.deleteNoticeCategory,
 	"website.deleteSprayMission": sprayMissions.deleteSprayMission,
+	"website.importMosquitoActivity": mosquitoActivity.importMosquitoActivity,
 	"website.publishDocument": documents.publishDocument,
 	"website.publishJobPosting": jobPostings.publishJobPosting,
 	"website.publishNotice": notices.publishNotice,

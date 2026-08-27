@@ -92,8 +92,23 @@ export async function postCommands(c: Context): Promise<Response> {
 		}
 	}
 
+	// Almost every command is about one row, addressed by the envelope id. The exception is a
+	// command that declares itself `targetless` — the mosquito import, which addresses a year
+	// (#163). It may not share an envelope with a row-scoped command, because the one `id` a
+	// request carries would then mean something to half its intents and nothing to the rest.
+	const targetless = definitions.filter((d) => d.targetless);
+	if (targetless.length > 0 && definitions.length > 1) {
+		return c.json(
+			{
+				error: "malformed_envelope",
+				reason: `${targetless[0]?.name} is not about a row and must be sent alone`,
+			},
+			400,
+		);
+	}
+
 	const id = typeof envelope.id === "string" ? envelope.id : "";
-	if (!id) {
+	if (!id && targetless.length === 0) {
 		return c.json(
 			{ error: "malformed_envelope", reason: "id must be a non-empty string" },
 			400,
@@ -118,7 +133,15 @@ export async function postCommands(c: Context): Promise<Response> {
 				const handler = REGISTRY[
 					def.name as CommandName
 				] as CommandHandler<AnyCommand>;
-				const after = await handler({ id, payload, session, tx });
+				// `id` is typed away for a targetless handler, which by construction cannot
+				// read it; the loop has already lost that correlation, so the cast at this
+				// seam covers it along with the payload union.
+				const after = await handler({
+					id: id as string,
+					payload,
+					session,
+					tx,
+				});
 				if (after) thunks.push(after);
 			}
 			return { afterCommit: thunks, txid: await getTxid(tx) };

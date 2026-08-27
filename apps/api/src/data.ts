@@ -118,12 +118,6 @@ function makeCrud<T extends PgTable>(
 // a table that does not exist — the same reason the collections and the command modules take
 // the union (#174).
 const WRITABLE: Partial<Record<TableName, CrudEntry>> = {
-	// manage_website — public-website content
-	mosquito_activity_data: makeCrud(
-		schema.mosquitoActivityData,
-		schema.mosquitoActivityData.id,
-		"manage_website",
-	),
 	// staff triage of intake — insert is public via /api/requests
 	public_requests: makeCrud(
 		schema.publicRequests,
