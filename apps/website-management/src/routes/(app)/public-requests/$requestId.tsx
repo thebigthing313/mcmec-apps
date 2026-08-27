@@ -158,9 +158,9 @@ function RouteComponent() {
 
 			<article className="space-y-4">
 				<div className="flex items-baseline gap-2">
-					<h2 className="font-bold text-2xl">
+					<h1 className="font-semibold text-foreground text-xl leading-tight">
 						{requestTypeLabel(request.request_type)}
-					</h2>
+					</h1>
 					<Badge variant={REQUEST_STATUS_VARIANTS[status]}>
 						{REQUEST_STATUS_LABELS[status]}
 					</Badge>

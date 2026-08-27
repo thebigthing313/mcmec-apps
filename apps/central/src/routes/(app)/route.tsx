@@ -1,4 +1,4 @@
-import { NotOnboardedError, UnauthenticatedError } from "@mcmec/auth/errors";
+import { UnauthenticatedError } from "@mcmec/auth/errors";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
@@ -7,8 +7,12 @@ import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
 	createFileRoute,
+	isMatch,
+	Link,
 	Outlet,
 	redirect,
+	useLocation,
+	useMatches,
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/central-sidebar";
@@ -29,39 +33,22 @@ export const Route = createFileRoute("/(app)")({
 		}
 	},
 	component: LayoutComponent,
-	errorComponent: ({ error }) => {
-		if (error instanceof NotOnboardedError) {
-			return (
-				<div className="flex min-h-screen items-center justify-center">
-					<div className="text-center">
-						<h1 className="mb-4 font-bold text-2xl">Onboarding Required</h1>
-						<p className="text-gray-600">
-							Your account needs to be linked to an employee record before you
-							can access this application.
-						</p>
-						<p className="mt-2 text-gray-600">
-							Please contact your administrator for assistance.
-						</p>
-					</div>
-				</div>
-			);
-		}
-
-		return (
-			<div className="flex min-h-screen items-center justify-center">
-				<div className="text-center">
-					<h1 className="mb-4 font-bold text-2xl">Authentication Error</h1>
-					<p className="text-red-600">{error.message}</p>
-				</div>
-			</div>
-		);
-	},
+	// Seeds the breadcrumb so every trail reaches the dashboard.
+	loader: () => ({ crumb: "Dashboard" }),
 });
 
 function LayoutComponent() {
 	const { authClient, claims, db } = Route.useRouteContext();
 	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
+	const location = useLocation();
+	const matches = useMatches();
+	const breadcrumbParts = matches
+		.filter((match) => isMatch(match, "loaderData.crumb"))
+		.map((match) => ({
+			href: match.pathname as string,
+			label: match.loaderData?.crumb as string,
+		}));
 
 	const navigate = useNavigate();
 	const handleLogout = async () => {
@@ -81,11 +68,12 @@ function LayoutComponent() {
 			value={{
 				activeApp: "Central",
 				apps: accessibleApps,
+				currentPath: location.pathname,
 				onLogout: handleLogout,
 				user: {
 					avatar: undefined,
-					name: employee?.display_name ?? "[missing name]",
-					title: employee?.display_title ?? "[missing title]",
+					name: employee?.display_name,
+					title: employee?.display_title,
 				},
 			}}
 		>
@@ -100,7 +88,20 @@ function LayoutComponent() {
 					<Layout.NavUser />
 				</Layout.Sidebar.Footer>
 			</Layout.Sidebar>
-			<Layout.Content>
+			<Layout.Content
+				breadcrumb={
+					breadcrumbParts.length > 0 ? (
+						<Layout.Breadcrumb
+							getLinkProps={(href) => ({
+								activeOptions: { exact: true },
+								to: href,
+							})}
+							items={breadcrumbParts}
+							LinkComponent={Link}
+						/>
+					) : undefined
+				}
+			>
 				<Outlet />
 			</Layout.Content>
 		</Layout>

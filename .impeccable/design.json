@@ -1,0 +1,503 @@
+{
+	"schemaVersion": 2,
+	"generatedAt": "2026-08-27T00:00:00.000Z",
+	"title": "Design System: MCMEC",
+	"extensions": {
+		"colorMeta": {
+			"commission-green": {
+				"role": "primary",
+				"displayName": "Commission Green",
+				"canonical": "oklch(0.5364 0.1457 150.5842)",
+				"tonalRamp": [
+					"oklch(0.15 0.05 150.58)",
+					"oklch(0.26 0.08 150.58)",
+					"oklch(0.37 0.11 150.58)",
+					"oklch(0.48 0.135 150.58)",
+					"oklch(0.5364 0.1457 150.58)",
+					"oklch(0.68 0.12 150.58)",
+					"oklch(0.82 0.07 150.58)",
+					"oklch(0.95 0.025 150.58)"
+				]
+			},
+			"brackish-teal": {
+				"role": "tertiary",
+				"displayName": "Brackish Teal",
+				"canonical": "oklch(0.6638 0.0267 183.8599)",
+				"tonalRamp": [
+					"oklch(0.15 0.012 183.86)",
+					"oklch(0.26 0.016 183.86)",
+					"oklch(0.37 0.02 183.86)",
+					"oklch(0.48 0.024 183.86)",
+					"oklch(0.6638 0.0267 183.86)",
+					"oklch(0.76 0.024 183.86)",
+					"oklch(0.86 0.018 183.86)",
+					"oklch(0.95 0.008 183.86)"
+				]
+			},
+			"pale-green": {
+				"role": "secondary",
+				"displayName": "Pale Green",
+				"canonical": "oklch(0.92 0.03 150)",
+				"tonalRamp": [
+					"oklch(0.15 0.014 150)",
+					"oklch(0.26 0.02 150)",
+					"oklch(0.37 0.024 150)",
+					"oklch(0.48 0.028 150)",
+					"oklch(0.62 0.03 150)",
+					"oklch(0.78 0.03 150)",
+					"oklch(0.92 0.03 150)",
+					"oklch(0.97 0.014 150)"
+				]
+			},
+			"paper": {
+				"role": "neutral",
+				"displayName": "Paper",
+				"canonical": "oklch(0.985 0.002 150)",
+				"tonalRamp": [
+					"oklch(0.15 0.002 150)",
+					"oklch(0.26 0.002 150)",
+					"oklch(0.37 0.002 150)",
+					"oklch(0.48 0.002 150)",
+					"oklch(0.62 0.002 150)",
+					"oklch(0.78 0.002 150)",
+					"oklch(0.9 0.002 150)",
+					"oklch(0.985 0.002 150)"
+				]
+			},
+			"surface": {
+				"role": "neutral",
+				"displayName": "Surface",
+				"canonical": "oklch(0.98 0.005 150)",
+				"tonalRamp": [
+					"oklch(0.15 0.005 150)",
+					"oklch(0.26 0.005 150)",
+					"oklch(0.37 0.005 150)",
+					"oklch(0.48 0.005 150)",
+					"oklch(0.62 0.005 150)",
+					"oklch(0.78 0.005 150)",
+					"oklch(0.9 0.005 150)",
+					"oklch(0.98 0.005 150)"
+				]
+			},
+			"sidebar-ground": {
+				"role": "neutral",
+				"displayName": "Sidebar Ground",
+				"canonical": "oklch(0.96 0.01 150)",
+				"tonalRamp": [
+					"oklch(0.15 0.01 150)",
+					"oklch(0.26 0.01 150)",
+					"oklch(0.37 0.01 150)",
+					"oklch(0.48 0.01 150)",
+					"oklch(0.62 0.01 150)",
+					"oklch(0.78 0.01 150)",
+					"oklch(0.9 0.01 150)",
+					"oklch(0.96 0.01 150)"
+				]
+			},
+			"muted-surface": {
+				"role": "neutral",
+				"displayName": "Muted Surface",
+				"canonical": "oklch(0.94 0.01 150)",
+				"tonalRamp": [
+					"oklch(0.15 0.01 150)",
+					"oklch(0.26 0.01 150)",
+					"oklch(0.37 0.01 150)",
+					"oklch(0.48 0.01 150)",
+					"oklch(0.62 0.01 150)",
+					"oklch(0.78 0.01 150)",
+					"oklch(0.88 0.01 150)",
+					"oklch(0.94 0.01 150)"
+				]
+			},
+			"ink": {
+				"role": "neutral",
+				"displayName": "Ink",
+				"canonical": "oklch(0.2537 0.0035 164.7797)",
+				"tonalRamp": [
+					"oklch(0.15 0.0035 164.78)",
+					"oklch(0.2537 0.0035 164.78)",
+					"oklch(0.37 0.0035 164.78)",
+					"oklch(0.48 0.0035 164.78)",
+					"oklch(0.62 0.0035 164.78)",
+					"oklch(0.78 0.0035 164.78)",
+					"oklch(0.9 0.0035 164.78)",
+					"oklch(0.95 0.0035 164.78)"
+				]
+			},
+			"muted-ink": {
+				"role": "neutral",
+				"displayName": "Muted Ink",
+				"canonical": "oklch(0.45 0.02 150)",
+				"tonalRamp": [
+					"oklch(0.15 0.02 150)",
+					"oklch(0.26 0.02 150)",
+					"oklch(0.37 0.02 150)",
+					"oklch(0.45 0.02 150)",
+					"oklch(0.62 0.02 150)",
+					"oklch(0.78 0.02 150)",
+					"oklch(0.9 0.02 150)",
+					"oklch(0.95 0.02 150)"
+				]
+			},
+			"rule": {
+				"role": "neutral",
+				"displayName": "Rule",
+				"canonical": "oklch(0.8 0.02 150)",
+				"tonalRamp": [
+					"oklch(0.15 0.02 150)",
+					"oklch(0.26 0.02 150)",
+					"oklch(0.37 0.02 150)",
+					"oklch(0.48 0.02 150)",
+					"oklch(0.62 0.02 150)",
+					"oklch(0.8 0.02 150)",
+					"oklch(0.9 0.02 150)",
+					"oklch(0.95 0.02 150)"
+				]
+			},
+			"field": {
+				"role": "neutral",
+				"displayName": "Field",
+				"canonical": "oklch(0.92 0.01 150)",
+				"tonalRamp": [
+					"oklch(0.15 0.01 150)",
+					"oklch(0.26 0.01 150)",
+					"oklch(0.37 0.01 150)",
+					"oklch(0.48 0.01 150)",
+					"oklch(0.62 0.01 150)",
+					"oklch(0.78 0.01 150)",
+					"oklch(0.92 0.01 150)",
+					"oklch(0.96 0.01 150)"
+				]
+			},
+			"focus-ring": {
+				"role": "primary",
+				"displayName": "Focus Ring",
+				"canonical": "oklch(0.5353 0.1357 153.5529)",
+				"tonalRamp": [
+					"oklch(0.15 0.047 153.55)",
+					"oklch(0.26 0.075 153.55)",
+					"oklch(0.37 0.103 153.55)",
+					"oklch(0.48 0.126 153.55)",
+					"oklch(0.5353 0.1357 153.55)",
+					"oklch(0.68 0.112 153.55)",
+					"oklch(0.82 0.065 153.55)",
+					"oklch(0.95 0.023 153.55)"
+				]
+			},
+			"refusal-red": {
+				"role": "tertiary",
+				"displayName": "Refusal Red",
+				"canonical": "oklch(0.5046 0.2053 29.0423)",
+				"tonalRamp": [
+					"oklch(0.15 0.07 29.04)",
+					"oklch(0.26 0.115 29.04)",
+					"oklch(0.37 0.16 29.04)",
+					"oklch(0.5046 0.2053 29.04)",
+					"oklch(0.62 0.19 29.04)",
+					"oklch(0.74 0.145 29.04)",
+					"oklch(0.86 0.085 29.04)",
+					"oklch(0.95 0.03 29.04)"
+				]
+			},
+			"chart-1": {
+				"role": "tertiary",
+				"displayName": "Series Violet",
+				"canonical": "oklch(0.6104 0.0767 299.7335)",
+				"tonalRamp": [
+					"oklch(0.15 0.027 299.73)",
+					"oklch(0.26 0.043 299.73)",
+					"oklch(0.37 0.058 299.73)",
+					"oklch(0.48 0.07 299.73)",
+					"oklch(0.6104 0.0767 299.73)",
+					"oklch(0.74 0.064 299.73)",
+					"oklch(0.86 0.042 299.73)",
+					"oklch(0.95 0.016 299.73)"
+				]
+			},
+			"chart-2": {
+				"role": "tertiary",
+				"displayName": "Series Rose",
+				"canonical": "oklch(0.7889 0.0802 359.9375)",
+				"tonalRamp": [
+					"oklch(0.15 0.028 359.94)",
+					"oklch(0.26 0.045 359.94)",
+					"oklch(0.37 0.061 359.94)",
+					"oklch(0.48 0.073 359.94)",
+					"oklch(0.62 0.08 359.94)",
+					"oklch(0.7889 0.0802 359.94)",
+					"oklch(0.88 0.05 359.94)",
+					"oklch(0.95 0.018 359.94)"
+				]
+			},
+			"chart-3": {
+				"role": "tertiary",
+				"displayName": "Series Mint",
+				"canonical": "oklch(0.7321 0.0749 169.867)",
+				"tonalRamp": [
+					"oklch(0.15 0.026 169.87)",
+					"oklch(0.26 0.042 169.87)",
+					"oklch(0.37 0.057 169.87)",
+					"oklch(0.48 0.068 169.87)",
+					"oklch(0.62 0.075 169.87)",
+					"oklch(0.7321 0.0749 169.87)",
+					"oklch(0.86 0.047 169.87)",
+					"oklch(0.95 0.017 169.87)"
+				]
+			},
+			"chart-4": {
+				"role": "tertiary",
+				"displayName": "Series Sand",
+				"canonical": "oklch(0.854 0.0882 76.8292)",
+				"tonalRamp": [
+					"oklch(0.15 0.031 76.83)",
+					"oklch(0.26 0.049 76.83)",
+					"oklch(0.37 0.067 76.83)",
+					"oklch(0.48 0.08 76.83)",
+					"oklch(0.62 0.088 76.83)",
+					"oklch(0.75 0.088 76.83)",
+					"oklch(0.854 0.0882 76.83)",
+					"oklch(0.95 0.03 76.83)"
+				]
+			},
+			"chart-5": {
+				"role": "tertiary",
+				"displayName": "Series Periwinkle",
+				"canonical": "oklch(0.7857 0.0645 258.0839)",
+				"tonalRamp": [
+					"oklch(0.15 0.023 258.08)",
+					"oklch(0.26 0.036 258.08)",
+					"oklch(0.37 0.049 258.08)",
+					"oklch(0.48 0.059 258.08)",
+					"oklch(0.62 0.064 258.08)",
+					"oklch(0.7857 0.0645 258.08)",
+					"oklch(0.88 0.04 258.08)",
+					"oklch(0.95 0.015 258.08)"
+				]
+			}
+		},
+		"typographyMeta": {
+			"display": {
+				"displayName": "Display",
+				"purpose": "The hero headline on the public home page, set in white over the Commission Green scrim. One per page, and only where a photograph backs it."
+			},
+			"headline": {
+				"displayName": "Headline",
+				"purpose": "Section headings on public pages and the page title in staff applications."
+			},
+			"title": {
+				"displayName": "Title",
+				"purpose": "Card titles, including notice titles in the public feed. Line-height 1.0 keeps the title tight against its date line."
+			},
+			"body": {
+				"displayName": "Body",
+				"purpose": "All reading text, including Tiptap-rendered notice bodies. Measure capped at 65-75ch."
+			},
+			"label": {
+				"displayName": "Label",
+				"purpose": "Buttons, form labels, table cells, badges, metadata. The workhorse size across all four staff applications."
+			},
+			"overline": {
+				"displayName": "Overline",
+				"purpose": "Uppercase, letterspaced. The agency's name and column headings in the public footer at 0.875rem; the staff sidebar's group labels at 0.75rem, a step below the destinations they cover. Structural only."
+			}
+		},
+		"shadows": [
+			{
+				"name": "hairline",
+				"value": "0 1px 3px 0 hsl(150 3% 13% / 0.06)",
+				"purpose": "Vestigial edge on inputs and outline buttons. Do not extend to new components."
+			},
+			{
+				"name": "resting-card",
+				"value": "0 1px 3px 0 hsl(150 3% 13% / 0.08), 0 1px 2px -1px hsl(150 3% 13% / 0.08)",
+				"purpose": "The single step cards take. Borders do the real separating."
+			},
+			{
+				"name": "floating-layer",
+				"value": "0 8px 16px -2px hsl(150 3% 13% / 0.1), 0 4px 6px -2px hsl(150 3% 13% / 0.06)",
+				"purpose": "Popovers, dropdown menus, dialogs, sheets, and toasts - elements that genuinely leave the page plane."
+			}
+		],
+		"motion": [
+			{
+				"name": "state-transition",
+				"value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+				"purpose": "Default for hover, focus, and color/box-shadow state changes on buttons, inputs, and badges."
+			}
+		],
+		"breakpoints": [
+			{
+				"name": "sm",
+				"value": "640px"
+			},
+			{
+				"name": "md",
+				"value": "768px"
+			},
+			{
+				"name": "lg",
+				"value": "1024px"
+			},
+			{
+				"name": "xl",
+				"value": "1280px"
+			},
+			{
+				"name": "container-max",
+				"value": "1280px"
+			}
+		]
+	},
+	"components": [
+		{
+			"name": "Primary Button",
+			"kind": "button",
+			"refersTo": "button-primary",
+			"description": "The primary action on any screen. One per view; Commission Green marks the agency's action, not decoration.",
+			"html": "<button class=\"ds-btn-primary\">Save Notice</button>",
+			"css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 8px 16px; border: none; border-radius: 8px; background: var(--primary, oklch(0.5364 0.1457 150.5842)); color: var(--primary-foreground, oklch(0.9556 0.0199 112.9333)); font-family: Roboto, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.25; white-space: nowrap; cursor: pointer; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { background: color-mix(in oklab, var(--primary, oklch(0.5364 0.1457 150.5842)) 90%, transparent); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.5353 0.1357 153.5529)) 50%, transparent); } .ds-btn-primary:disabled { opacity: 0.5; pointer-events: none; }"
+		},
+		{
+			"name": "Lifecycle Button",
+			"kind": "button",
+			"refersTo": "button-outline",
+			"description": "A state transition performed as a deliberate act - Publish, Archive, Cancel, Close, Resolve. Never a switch or checkbox (ADR 0001). Relabels to 'Save and Publish' when the form beneath it is dirty.",
+			"html": "<button class=\"ds-btn-lifecycle\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg>Save and Publish</button>",
+			"css": ".ds-btn-lifecycle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 8px 16px; border: 1px solid var(--border, oklch(0.8 0.02 150)); border-radius: 8px; background: var(--background, oklch(0.985 0.002 150)); color: var(--foreground, oklch(0.2537 0.0035 164.7797)); font-family: Roboto, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.25; white-space: nowrap; cursor: pointer; box-shadow: 0 1px 3px 0 hsl(150 3% 13% / 0.06); transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-lifecycle svg { flex-shrink: 0; pointer-events: none; } .ds-btn-lifecycle:hover { background: var(--accent, oklch(0.6638 0.0267 183.8599)); color: var(--accent-foreground, oklch(0.98 0.005 150)); } .ds-btn-lifecycle:focus-visible { outline: none; border-color: var(--ring, oklch(0.5353 0.1357 153.5529)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.5353 0.1357 153.5529)) 50%, transparent); }"
+		},
+		{
+			"name": "Text Input",
+			"kind": "input",
+			"refersTo": "input-field",
+			"description": "The standard field across all staff forms and the public request intake. Always paired with a real label; the placeholder never substitutes for one.",
+			"html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Notice title\" aria-label=\"Notice title\" />",
+			"css": ".ds-input { display: block; width: 100%; min-width: 0; height: 36px; padding: 4px 12px; border: 1px solid var(--border, oklch(0.8 0.02 150)); border-radius: 8px; background: transparent; color: var(--foreground, oklch(0.2537 0.0035 164.7797)); font-family: Roboto, system-ui, sans-serif; font-size: 0.875rem; box-shadow: 0 1px 3px 0 hsl(150 3% 13% / 0.06); outline: none; transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: var(--muted-foreground, oklch(0.45 0.02 150)); } .ds-input:focus-visible { border-color: var(--ring, oklch(0.5353 0.1357 153.5529)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.5353 0.1357 153.5529)) 50%, transparent); } .ds-input[aria-invalid=\"true\"] { border-color: var(--destructive, oklch(0.5046 0.2053 29.0423)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--destructive, oklch(0.5046 0.2053 29.0423)) 20%, transparent); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; }"
+		},
+		{
+			"name": "Status Badge",
+			"kind": "chip",
+			"refersTo": "badge-status",
+			"description": "A record's state, always spelled as a word. Published and Pending take the filled green; Archived takes pale green; Draft takes the outline variant. The pill radius is reserved for this component alone.",
+			"html": "<span class=\"ds-badge ds-badge-published\">Published</span> <span class=\"ds-badge ds-badge-archived\">Archived</span> <span class=\"ds-badge ds-badge-draft\">Draft</span>",
+			"css": ".ds-badge { display: inline-flex; align-items: center; justify-content: center; gap: 4px; width: fit-content; padding: 2px 8px; border: 1px solid transparent; border-radius: 9999px; font-family: Roboto, system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-badge-published { background: var(--primary, oklch(0.5364 0.1457 150.5842)); color: var(--primary-foreground, oklch(0.9556 0.0199 112.9333)); } .ds-badge-archived { background: var(--secondary, oklch(0.92 0.03 150)); color: var(--secondary-foreground, oklch(0.2537 0.0035 164.7797)); } .ds-badge-draft { background: transparent; border-color: var(--border, oklch(0.8 0.02 150)); color: var(--foreground, oklch(0.2537 0.0035 164.7797)); }"
+		},
+		{
+			"name": "Notice Card",
+			"kind": "card",
+			"refersTo": "card",
+			"description": "The public notice feed's unit. A bordered surface a half-step above paper, with a ruled header carrying the title and publication date, a fade-clipped excerpt, and a ruled footer for the notice type.",
+			"html": "<article class=\"ds-card\"><header class=\"ds-card-header\"><h3 class=\"ds-card-title\">Notice of Aerial Larviciding Operations</h3><p class=\"ds-card-date\">Published on: Aug 14, 2026</p></header><div class=\"ds-card-body\"><div class=\"ds-card-excerpt\"><p>The Commission will conduct aerial larviciding operations over designated wetland areas in Edison, Woodbridge, and Sayreville, weather permitting. Operations are scheduled between sunrise and 11:00 AM.</p><div class=\"ds-card-fade\"></div></div></div><footer class=\"ds-card-footer\"><span class=\"ds-card-meta\"><strong>Type:</strong> Legal Notice</span><span class=\"ds-badge ds-badge-published\">Published</span></footer></article>",
+			"css": ".ds-card { display: flex; flex-direction: column; gap: 24px; padding: 24px 0; border: 1px solid var(--border, oklch(0.8 0.02 150)); border-radius: 14px; background: var(--card, oklch(0.98 0.005 150)); color: var(--card-foreground, oklch(0.2537 0.0035 164.7797)); font-family: Roboto, system-ui, sans-serif; box-shadow: 0 1px 3px 0 hsl(150 3% 13% / 0.08), 0 1px 2px -1px hsl(150 3% 13% / 0.08); } .ds-card-header { display: grid; gap: 8px; padding: 0 24px 24px; border-bottom: 1px solid var(--border, oklch(0.8 0.02 150)); } .ds-card-title { margin: 0; font-size: 1.25rem; font-weight: 600; line-height: 1; } .ds-card-date { margin: 0; font-size: 0.875rem; color: var(--muted-foreground, oklch(0.45 0.02 150)); } .ds-card-body { padding: 0 24px; } .ds-card-excerpt { position: relative; max-height: 12rem; overflow: hidden; } .ds-card-excerpt p { margin: 8px 0; font-size: 1rem; line-height: 1.5; } .ds-card-fade { position: absolute; right: 0; bottom: 0; left: 0; height: 48px; pointer-events: none; background: linear-gradient(to top, var(--card, oklch(0.98 0.005 150)), transparent); } .ds-card-footer { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px 0; border-top: 1px solid var(--border, oklch(0.8 0.02 150)); } .ds-card-meta { font-size: 0.875rem; color: var(--muted-foreground, oklch(0.45 0.02 150)); } .ds-card-meta strong { font-weight: 500; }"
+		},
+		{
+			"name": "Public Navigation Link",
+			"kind": "nav",
+			"refersTo": null,
+			"description": "A top-level group in the public navigation bar. The popover beneath each group pairs every link with a one-line description - load-bearing copy that lets a resident tell a legal notice from an archived one.",
+			"html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\">Home</a><button class=\"ds-nav-link ds-nav-link-active\" aria-expanded=\"false\">Public Notices<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></button><a class=\"ds-nav-link\" href=\"#\">Contact</a></nav>",
+			"css": ".ds-nav { display: flex; align-items: center; gap: 4px; font-family: Roboto, system-ui, sans-serif; } .ds-nav-link { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 8px 12px; border: none; border-radius: 8px; background: transparent; color: var(--foreground, oklch(0.2537 0.0035 164.7797)); font-family: inherit; font-size: 0.875rem; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-nav-link:hover { background: var(--accent, oklch(0.6638 0.0267 183.8599)); color: var(--accent-foreground, oklch(0.98 0.005 150)); } .ds-nav-link-active { color: var(--primary, oklch(0.5364 0.1457 150.5842)); } .ds-nav-link:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.5353 0.1357 153.5529)) 50%, transparent); }"
+		},
+		{
+			"name": "Sidebar Nav Item",
+			"kind": "nav",
+			"refersTo": null,
+			"description": "A row in the staff sidebar rail provided by mcmec-layout. Every staff application composes the same shell; none define their own chrome.",
+			"html": "<div class=\"ds-sidebar\"><a class=\"ds-sidebar-item ds-sidebar-item-active\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2\"/><path d=\"M18 14h-8\"/><path d=\"M15 18h-5\"/><path d=\"M10 6h8v4h-8V6Z\"/></svg>Notices</a><a class=\"ds-sidebar-item\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/></svg>Spray Schedule</a></div>",
+			"css": ".ds-sidebar { display: flex; flex-direction: column; gap: 4px; width: 240px; padding: 8px; background: var(--sidebar, oklch(0.96 0.01 150)); border-right: 1px solid var(--sidebar-border, oklch(0.8 0.02 150)); font-family: Roboto, system-ui, sans-serif; } .ds-sidebar-item { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 8px; border-radius: 8px; color: var(--sidebar-foreground, oklch(0.2713 0.0023 145.5111)); font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-sidebar-item svg { flex-shrink: 0; } .ds-sidebar-item:hover { background: var(--sidebar-accent, oklch(0.92 0.03 150)); color: var(--sidebar-accent-foreground, oklch(0.3867 0.0191 145.1951)); } .ds-sidebar-item-active { background: var(--sidebar-primary, oklch(0.5353 0.1357 153.5529)); color: var(--sidebar-primary-foreground, oklch(0.98 0.005 150)); } .ds-sidebar-item:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--sidebar-ring, oklch(0.5353 0.1357 153.5529)) 50%, transparent); }"
+		}
+	],
+	"narrative": {
+		"northStar": "The Public Record, Legibly Kept",
+		"overview": "This is an archival register that happens to be a website. The Commission's authority does not come from persuasion - it comes from the fact that what is posted here *is* the legal notice, and that nothing posted is ever quietly lost. Cancelled meetings stay visible. Archived notices stay reachable. The visual system exists to make that permanence feel deliberate rather than accidental: hairline rules, generous dates, columnar order, and a green so specific to this agency that it needs no explanation.\n\nThe surfaces are warm, not clinical. Every neutral in the light theme carries a faint green cast (hue 150), so backgrounds read as paper in daylight rather than as a gray dashboard. Structure is carried entirely by borders and tonal steps, never by shadow. The result should feel crisp and institutional - tight registration, consistent rhythm, a faint formality - without ever tipping into decoration. A resident who arrives asking whether their street is being sprayed should get the answer and forget the interface existed.\n\nTwo failure modes are rejected by name. The first is startup SaaS: gradient meshes, glassmorphism, oversized marketing heroes, \"Get Started Free.\" This is a New Jersey county agency, not a product launch. The second is municipal-site decay: clip-art seals, unstyled link lists, tables from 2006, PDFs used as the interface. Being civic is not a license to be ugly. The system lives in the narrow band between them, and both edges are equally out of bounds.",
+		"keyCharacteristics": [
+			"Green-cast neutrals throughout - warm paper, not cold gray",
+			"Flat by default; borders and tonal steps carry all structure",
+			"One type family, Roboto, working across five applications",
+			"Status is always spelled as a word, never encoded in color alone",
+			"Uppercase and letterspacing are structural, never decorative",
+			"One design system, five frontends: packages/ui is the only visual authority"
+		],
+		"rules": [
+			{
+				"name": "The One Green Rule",
+				"body": "Commission Green is the only color on a resting screen that carries meaning by itself. Reserve it for the agency's mark, the primary action, and the active navigation state. It is never a background for decoration, never a highlight, and never used twice in the same visual group.",
+				"section": "colors"
+			},
+			{
+				"name": "The Status Is A Word Rule",
+				"body": "A record's state - Draft, Published, Pending, Archived, Cancelled, Closed, Resolved, New - is always spelled out in the badge. Color may reinforce it; color may never be the only thing carrying it. This is a WCAG requirement on the public site and a legibility requirement everywhere else.",
+				"section": "colors"
+			},
+			{
+				"name": "The Hue-150 Rule",
+				"body": "Every neutral in the light theme sits on hue 150 at low chroma. A neutral pulled from outside that family will read as a foreign gray against the rest of the page, however close its lightness.",
+				"section": "colors"
+			},
+			{
+				"name": "The One Family Rule",
+				"body": "Roboto sets everything. There is no display face, no serif for long reading, and no accent family. A second family is a system change, not a page decision.",
+				"section": "typography"
+			},
+			{
+				"name": "The Uppercase Is Structural Rule",
+				"body": "Uppercase with 0.025em tracking marks a boundary, never a sentence. It has three homes: the agency's identity block in the public footer, that footer's column headings, and the group labels in the staff sidebar. All three are edges between regions rather than text anyone reads for meaning. It never appears on a button, never on a heading a visitor reads for content, and never as emphasis inside a sentence.",
+				"section": "typography"
+			},
+			{
+				"name": "The Eighty-Rem Rule",
+				"body": "No content region exceeds max-w-7xl (80rem). The hero photograph may bleed past it; nothing readable may.",
+				"section": "layout"
+			},
+			{
+				"name": "The Shell Owns The Chrome Rule",
+				"body": "Staff applications import mcmec-layout and fill it. An app that defines its own sidebar, header, or breadcrumb has forked the system, and four forks is how five applications stop looking like one.",
+				"section": "layout"
+			},
+			{
+				"name": "The Flat-By-Default Rule",
+				"body": "A shadow means the element is genuinely above the page and can be dismissed. Cards, tables, inputs, buttons, and panels are held by their border and their tonal step. If a new component wants a shadow to feel separated, it needs a border instead.",
+				"section": "elevation"
+			},
+			{
+				"name": "The Pill Is A Status Rule",
+				"body": "A fully rounded shape means \"this is the state of a record.\" Nothing else in the system - no button, no tag, no avatar frame, no input - is a pill.",
+				"section": "shapes"
+			},
+			{
+				"name": "The Lifecycle Is A Button Rule",
+				"body": "State transitions are performed, not set. If a design shows a record's state as a toggle, a select, or a checkbox, the design is wrong regardless of how it looks - see docs/adr/0001-lifecycle-actions-are-buttons.md.",
+				"section": "components"
+			},
+			{
+				"name": "The Desktop-First, Mobile-Survivable Rule",
+				"body": "The four staff applications are designed for the screen they are used on: a desk, a large display, a considered edit. Density and column count are decided at desktop widths and not compromised for a phone. But narrow is a state they must survive, because the job occasionally follows someone out of the building. On a phone every staff screen must fit the viewport with no horizontal page scroll, keep wide content scrolling inside its own container, keep every primary action reachable without hover, and lose no destination. A cramped table someone can scroll is fine; a form whose Save button sits outside the viewport is not. apps/public is the inverse and is not covered by this rule. Browser zoom counts as narrow and should: a staff screen at 200% zoom has roughly the viewport of a phone, and WCAG 1.4.10 asks it to reflow rather than scroll in two directions, so the rail becoming an overlay at that size is the rule working rather than misfiring.",
+				"section": "layout"
+			}
+		],
+		"dos": [
+			"Do keep every neutral on hue 150 at low chroma so surfaces read as one warm material.",
+			"Do let borders in Rule (oklch(0.8 0.02 150)) carry structure. Reach for a border before a shadow, every time.",
+			"Do spell out record state as a word inside the badge, with color as reinforcement only.",
+			"Do compose staff screens from mcmec-layout and packages/ui. A pattern solved once is solved for all five frontends and every one added later.",
+			"Do use the CONTEXT.md vocabulary in visible copy - \"Spray Mission,\" \"Public Request,\" \"Notice\" - regardless of what a legacy route path says.",
+			"Do cap reading measure at 65-75ch on the public site and keep max-w-7xl as the outer bound everywhere.",
+			"Do preserve the 3px focus ring at 50% opacity on every interactive element. It is the only focus treatment in the system.",
+			"Do keep uppercase and letterspacing structural - the public footer's identity block and column headings, and the staff rail's group labels, nothing else.",
+			"Do decide staff layouts at desktop widths, then confirm nothing is unreachable or clipped at 375px. Survivable, not optimised."
+		],
+		"donts": [
+			"Don't add a second type family. Roboto sets everything until the system says otherwise.",
+			"Don't consume --font-serif or --font-mono while Lora and Fira Code remain unloaded.",
+			"Don't put a shadow on a resting surface. Cards, tables, panels, and inputs are flat.",
+			"Don't use Commission Green decoratively. It marks the agency, the primary action, and the active state - nothing else.",
+			"Don't let the chart-1 to chart-5 pastels out of the Weekly Mosquito Activity chart. They are a species series, not a UI palette.",
+			"Don't use a pill radius for anything that isn't a status badge.",
+			"Don't render a lifecycle action as a switch, checkbox, or status dropdown.",
+			"Don't hide a disabled action. Show it disabled so staff can see the action exists.",
+			"Don't bury, paginate, collapse, or lazily defer a statutorily required posting - a legal Notice within its seven-day Retention Period, a meeting agenda, or a cancelled meeting. Layout may never obstruct the public record.",
+			"Don't reach for gradient meshes, glassmorphism, or marketing-hero patterns. Equally, don't accept clip-art seals, unstyled link lists, or PDFs standing in for an interface.",
+			"Don't let a staff screen scroll horizontally at the page level, or strand a primary action outside a narrow viewport.",
+			"Don't spend design effort on phone-optimised staff layouts. The floor is that narrow works, not that narrow is the target."
+		]
+	}
+}

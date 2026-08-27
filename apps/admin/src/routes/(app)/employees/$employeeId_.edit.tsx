@@ -17,7 +17,7 @@ export const Route = createFileRoute("/(app)/employees/$employeeId_/edit")({
 		if (!employee) {
 			throw new Error(ErrorMessages.DATABASE.RECORD_NOT_AVAILABLE);
 		}
-		return { employee };
+		return { crumb: "Edit", employee };
 	},
 });
 

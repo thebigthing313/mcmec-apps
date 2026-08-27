@@ -1,4 +1,5 @@
 import { InviteButton } from "@mcmec/ui/blocks/invite-button";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import {
@@ -34,6 +35,7 @@ import { useDb } from "@/src/lib/db";
 import { sendInvite } from "@/src/lib/employees";
 
 export const Route = createFileRoute("/(app)/employees/")({
+	loader: () => ({ crumb: "Manage Employees" }),
 	component: EmployeesPage,
 });
 
@@ -159,15 +161,11 @@ function EmployeesPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="font-bold text-2xl">Manage Employees</h1>
-					<p className="text-muted-foreground">
-						View and manage employee records.
-					</p>
-				</div>
-				<AddEmployeeDialog />
-			</div>
+			<PageHeader
+				actions={<AddEmployeeDialog />}
+				description="View and manage employee records."
+				title="Manage Employees"
+			/>
 
 			<div className="space-y-4">
 				<div className="rounded-md border">

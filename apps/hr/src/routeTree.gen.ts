@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
+import { Route as appEmployeesRouteRouteImport } from './routes/(app)/employees/route'
 import { Route as appEmployeesIndexRouteImport } from './routes/(app)/employees/index'
 import { Route as appEmployeesEmployeeIdRouteImport } from './routes/(app)/employees/$employeeId'
 import { Route as appEmployeesEmployeeIdEditRouteImport } from './routes/(app)/employees/$employeeId_.edit'
@@ -30,25 +31,31 @@ const appIndexRoute = appIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appEmployeesIndexRoute = appEmployeesIndexRouteImport.update({
-  id: '/employees/',
-  path: '/employees/',
+const appEmployeesRouteRoute = appEmployeesRouteRouteImport.update({
+  id: '/employees',
+  path: '/employees',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appEmployeesIndexRoute = appEmployeesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appEmployeesRouteRoute,
+} as any)
 const appEmployeesEmployeeIdRoute = appEmployeesEmployeeIdRouteImport.update({
-  id: '/employees/$employeeId',
-  path: '/employees/$employeeId',
-  getParentRoute: () => appRouteRoute,
+  id: '/$employeeId',
+  path: '/$employeeId',
+  getParentRoute: () => appEmployeesRouteRoute,
 } as any)
 const appEmployeesEmployeeIdEditRoute =
   appEmployeesEmployeeIdEditRouteImport.update({
-    id: '/employees/$employeeId_/edit',
-    path: '/employees/$employeeId/edit',
-    getParentRoute: () => appRouteRoute,
+    id: '/$employeeId_/edit',
+    path: '/$employeeId/edit',
+    getParentRoute: () => appEmployeesRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/employees': typeof appEmployeesRouteRouteWithChildren
   '/': typeof appIndexRoute
   '/employees/$employeeId': typeof appEmployeesEmployeeIdRoute
   '/employees/': typeof appEmployeesIndexRoute
@@ -65,6 +72,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/(app)/employees': typeof appEmployeesRouteRouteWithChildren
   '/(app)/': typeof appIndexRoute
   '/(app)/employees/$employeeId': typeof appEmployeesEmployeeIdRoute
   '/(app)/employees/': typeof appEmployeesIndexRoute
@@ -74,6 +82,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
+    | '/employees'
     | '/'
     | '/employees/$employeeId'
     | '/employees/'
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/(app)'
     | '/login'
+    | '/(app)/employees'
     | '/(app)/'
     | '/(app)/employees/$employeeId'
     | '/(app)/employees/'
@@ -123,42 +133,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/employees': {
+      id: '/(app)/employees'
+      path: '/employees'
+      fullPath: '/employees'
+      preLoaderRoute: typeof appEmployeesRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/employees/': {
       id: '/(app)/employees/'
-      path: '/employees'
+      path: '/'
       fullPath: '/employees/'
       preLoaderRoute: typeof appEmployeesIndexRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appEmployeesRouteRoute
     }
     '/(app)/employees/$employeeId': {
       id: '/(app)/employees/$employeeId'
-      path: '/employees/$employeeId'
+      path: '/$employeeId'
       fullPath: '/employees/$employeeId'
       preLoaderRoute: typeof appEmployeesEmployeeIdRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appEmployeesRouteRoute
     }
     '/(app)/employees/$employeeId_/edit': {
       id: '/(app)/employees/$employeeId_/edit'
-      path: '/employees/$employeeId/edit'
+      path: '/$employeeId/edit'
       fullPath: '/employees/$employeeId/edit'
       preLoaderRoute: typeof appEmployeesEmployeeIdEditRouteImport
-      parentRoute: typeof appRouteRoute
+      parentRoute: typeof appEmployeesRouteRoute
     }
   }
 }
 
-interface appRouteRouteChildren {
-  appIndexRoute: typeof appIndexRoute
+interface appEmployeesRouteRouteChildren {
   appEmployeesEmployeeIdRoute: typeof appEmployeesEmployeeIdRoute
   appEmployeesIndexRoute: typeof appEmployeesIndexRoute
   appEmployeesEmployeeIdEditRoute: typeof appEmployeesEmployeeIdEditRoute
 }
 
-const appRouteRouteChildren: appRouteRouteChildren = {
-  appIndexRoute: appIndexRoute,
+const appEmployeesRouteRouteChildren: appEmployeesRouteRouteChildren = {
   appEmployeesEmployeeIdRoute: appEmployeesEmployeeIdRoute,
   appEmployeesIndexRoute: appEmployeesIndexRoute,
   appEmployeesEmployeeIdEditRoute: appEmployeesEmployeeIdEditRoute,
+}
+
+const appEmployeesRouteRouteWithChildren =
+  appEmployeesRouteRoute._addFileChildren(appEmployeesRouteRouteChildren)
+
+interface appRouteRouteChildren {
+  appEmployeesRouteRoute: typeof appEmployeesRouteRouteWithChildren
+  appIndexRoute: typeof appIndexRoute
+}
+
+const appRouteRouteChildren: appRouteRouteChildren = {
+  appEmployeesRouteRoute: appEmployeesRouteRouteWithChildren,
+  appIndexRoute: appIndexRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(

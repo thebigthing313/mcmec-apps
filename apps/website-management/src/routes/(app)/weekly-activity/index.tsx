@@ -4,6 +4,7 @@ import {
 	MosquitoActivityCharts,
 	type MosquitoActivityRow,
 } from "@mcmec/ui/blocks/mosquito-activity-chart";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	Card,
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/(app)/weekly-activity/")({
 	component: RouteComponent,
 	loader: async () => {
 		await mosquitoActivityData.preload();
-		return { crumb: "Weekly Activity" };
+		return { crumb: "Weekly Mosquito Activity" };
 	},
 });
 
@@ -211,7 +212,10 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-6">
-			<h1 className="font-semibold text-2xl">Weekly Mosquito Activity</h1>
+			<PageHeader
+				description="Trap counts and rainfall by species, week and year. Loading a season replaces every record for the years in it."
+				title="Weekly Mosquito Activity"
+			/>
 
 			{/* Upload Section */}
 			<Card>

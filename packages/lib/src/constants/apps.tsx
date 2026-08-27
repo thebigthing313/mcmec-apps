@@ -1,8 +1,19 @@
 import { Home, Newspaper, Shield, Users } from "lucide-react";
 import type { AppRole } from "./roles";
 
+/**
+ * The four staff applications, by name.
+ *
+ * `activeApp` on the layout context carried a documented invariant — "must match an
+ * AVAILABLE_APPS name" — and no type to hold it, which made it the one field in that context a
+ * typo could quietly break. A mismatched name takes the app switcher's `activeApp` lookup to
+ * nothing, and the switcher's answer to that was to render nothing at all: no mark, no name, no
+ * way out of the application.
+ */
+export type AppName = "Admin" | "Central" | "HR" | "Website Management";
+
 export type App = {
-	name: string;
+	name: AppName;
 	logo: React.ReactNode;
 	description: string;
 	href: string;
@@ -98,17 +109,36 @@ export const AVAILABLE_APPS: App[] = [
 	},
 ];
 
+declare const accessibleApps: unique symbol;
+
+/**
+ * A list of apps that has been through `filterAppsByPermissions`.
+ *
+ * The brand exists because the app switcher's one job is to not offer a door the user cannot
+ * open, and for a while it did: three apps passed the filtered list and one passed
+ * `AVAILABLE_APPS` straight through, so from Website Management the switcher advertised HR and
+ * Admin to people without the roles for them. Both values were `App[]`, so nothing caught it.
+ *
+ * The layout context now demands this type, and the only way to obtain one is to call the
+ * filter. The bug stops being something to remember and becomes something that does not compile.
+ */
+export type AccessibleApps = readonly App[] & {
+	readonly [accessibleApps]: true;
+};
+
 /**
  * Filters apps based on user permissions
  * @param userPermissions Array of permission strings the user has
  * @returns Filtered list of apps the user can access
  */
-export function filterAppsByPermissions(userPermissions: string[]): App[] {
+export function filterAppsByPermissions(
+	userPermissions: readonly string[],
+): AccessibleApps {
 	return AVAILABLE_APPS.filter(
 		(app) =>
 			app.requiredPermission === null ||
 			userPermissions.includes(app.requiredPermission),
-	);
+	) as unknown as AccessibleApps;
 }
 
 /**

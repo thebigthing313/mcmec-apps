@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { Button } from "@mcmec/ui/components/button";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Plus, Undo2, Upload } from "lucide-react";
@@ -9,7 +10,7 @@ import { runLifecycle } from "@/src/lib/lifecycle";
 export const Route = createFileRoute("/(app)/notices/")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Public Notices Index" };
+		return { crumb: "Public Notices" };
 	},
 });
 
@@ -28,13 +29,16 @@ function RouteComponent() {
 
 	return (
 		<div className="flex flex-col gap-2">
-			<Button
-				onClick={() => navigate({ to: "/notices/create" })}
-				variant="default"
-			>
-				<Plus />
-				Create New Notice
-			</Button>
+			<PageHeader
+				actions={
+					<Button onClick={() => navigate({ to: "/notices/create" })}>
+						<Plus />
+						Create New Notice
+					</Button>
+				}
+				description="Dated public announcements, including the legal notices the Commission is required to post."
+				title="Public Notices"
+			/>
 			<NoticesTable
 				data={mappedData ?? []}
 				// A shortcut, never the only way in: publishing is also on the detail view and in

@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	Dialog,
@@ -131,18 +132,16 @@ function RouteComponent() {
 
 	return (
 		<div className="container mx-auto py-6">
-			<div className="mb-6 flex items-start justify-between">
-				<div>
-					<h1 className="font-bold text-3xl">Document Categories</h1>
-					<p className="text-muted-foreground">
-						Manage document categories and their descriptions.
-					</p>
-				</div>
-				<Button onClick={handleCreateClick}>
-					<Plus className="mr-2 h-4 w-4" />
-					New Category
-				</Button>
-			</div>
+			<PageHeader
+				actions={
+					<Button onClick={handleCreateClick}>
+						<Plus className="mr-2 h-4 w-4" />
+						New Category
+					</Button>
+				}
+				description="Manage document categories and their descriptions."
+				title="Document Categories"
+			/>
 
 			<div className="rounded-md border">
 				<Table>

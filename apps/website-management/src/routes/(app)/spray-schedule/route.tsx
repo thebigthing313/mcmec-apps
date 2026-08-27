@@ -17,7 +17,7 @@ export const Route = createFileRoute("/(app)/spray-schedule")({
 			municipalities.preload(),
 			sprayScheduleMunicipalities.preload(),
 		]);
-		return { crumb: "Spray Schedule" };
+		return { crumb: "Spray Missions" };
 	},
 });
 

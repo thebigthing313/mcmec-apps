@@ -22,7 +22,7 @@ export const Route = createFileRoute("/(app)/employees/$employeeId")({
 		if (!employee) {
 			throw notFound();
 		}
-		return { employee };
+		return { crumb: employee.display_name, employee };
 	},
 });
 
@@ -78,7 +78,9 @@ function RouteComponent() {
 
 			<div className="space-y-4 rounded-lg border bg-card p-6">
 				<div className="flex items-center gap-3">
-					<h2 className="font-bold text-2xl">{employee.display_name}</h2>
+					<h1 className="font-semibold text-foreground text-xl leading-tight">
+						{employee.display_name}
+					</h1>
 					{employee.user_id ? (
 						<Badge variant="default">Active</Badge>
 					) : (
