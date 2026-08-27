@@ -24,17 +24,25 @@ export async function getTxid(tx: Tx): Promise<string> {
 }
 
 // Returns a fn that stamps the per-transaction audit GUCs (is_local => rolled back with the tx).
-export function setActor(session: SessionInfo, c: Context) {
+//
+// `session` is nullable because one write in the system has no actor: a member of the public
+// submitting a request through POST /api/requests (#164). The two halves are stamped separately
+// for that reason — where the request came from is known either way, who sent it is not — and
+// log_mutation() reads every GUC with missing_ok, so an anonymous submission logs its command,
+// its IP and its request id against a null actor rather than failing or borrowing someone's.
+export function setActor(session: SessionInfo | null, c: Context) {
 	const ip =
 		c.req.header("cf-connecting-ip") ?? c.req.header("x-forwarded-for") ?? "";
 	const requestId = c.req.header("x-request-id") ?? "";
 	return async (tx: Tx) => {
-		await tx.execute(
-			sql`select set_config('app.actor_user_id', ${session.userId}, true)`,
-		);
-		await tx.execute(
-			sql`select set_config('app.actor_email', ${session.userEmail}, true)`,
-		);
+		if (session) {
+			await tx.execute(
+				sql`select set_config('app.actor_user_id', ${session.userId}, true)`,
+			);
+			await tx.execute(
+				sql`select set_config('app.actor_email', ${session.userEmail}, true)`,
+			);
+		}
 		await tx.execute(
 			sql`select set_config('app.request_id', ${requestId}, true)`,
 		);

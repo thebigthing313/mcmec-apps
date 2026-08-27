@@ -33,4 +33,5 @@ export * as meetings from "./website/meetings";
 export * as mosquitoActivity from "./website/mosquito-activity";
 export * as noticeCategories from "./website/notice-categories";
 export * as notices from "./website/notices";
+export * as publicRequests from "./website/public-requests";
 export * as sprayMissions from "./website/spray-missions";

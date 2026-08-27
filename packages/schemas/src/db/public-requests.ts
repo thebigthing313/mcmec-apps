@@ -8,8 +8,12 @@ import z from "zod";
  * discriminated by `request_type`; per-type answers live in the `details` jsonb (validated
  * server-side by the API's discriminated union — see apps/api/src/requests.ts).
  *
- * Inserts happen ONLY via the public intake endpoint (POST /api/requests); the staff-facing
- * collection is read + status-triage + delete (no insert). Snake_case matches Electric output.
+ * Inserts happen ONLY via the public intake endpoint (POST /api/requests), which is the route
+ * `website.submitPublicRequest` is served from; the staff-facing collection reads, resolves,
+ * reopens and deletes. Snake_case matches Electric output.
+ *
+ * The submission payloads below are no longer "the client's copy" of anything — they ARE the
+ * command's payload schema, imported by `@mcmec/domain` and parsed by the API (#164).
  */
 
 export const RequestStatusEnum = z.enum(["new", "in_progress", "resolved"]);
@@ -39,32 +43,20 @@ export const PublicRequestsRowSchema = z.object({
 	updated_at: z.coerce.date<Date>(),
 });
 
-// Staff triage: status transitions (and optional contact corrections). No insert — the
-// public endpoint owns creation; drizzle-zod strips id/timestamps server-side regardless.
-export const PublicRequestsUpdateSchema = z.object({
-	status: RequestStatusEnum.optional(),
-	name: z.string().optional(),
-	email: z.string().nullable().optional(),
-	phone: z.string().nullable().optional(),
-	address_line_1: z.string().nullable().optional(),
-	address_line_2: z.string().nullable().optional(),
-});
-
 export type PublicRequestsRowType = z.infer<typeof PublicRequestsRowSchema>;
-export type PublicRequestsUpdateType = z.infer<
-	typeof PublicRequestsUpdateSchema
->;
 
 // ---------------------------------------------------------------------------
 // Submission payloads — the public intake contract
 // ---------------------------------------------------------------------------
 
 /**
- * Mirrors the discriminated union the API validates in `apps/api/src/requests.ts`.
- * camelCase, because that's what the endpoint accepts; the columns it lands in are
- * snake_case (see the row schema above).
+ * The public intake contract — the payload of `website.submitPublicRequest`.
  *
- * Keep the two in sync — the API is the authority, this is the client's copy of it.
+ * camelCase, because that's what the endpoint accepts; the columns it lands in are
+ * snake_case (see the row schema above), and the handler maps between them. Unlike every other
+ * command's payload, this one is not shaped like a row: it is shaped like the four forms on the
+ * public website, discriminated on `requestType`, because that is what decides which questions
+ * a request even has.
  */
 
 const shortText = z.string().min(1).max(300);

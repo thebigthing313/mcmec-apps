@@ -16,6 +16,7 @@ import { MEETING_COMMANDS } from "./website/meetings";
 import { MOSQUITO_ACTIVITY_COMMANDS } from "./website/mosquito-activity";
 import { NOTICE_CATEGORY_COMMANDS } from "./website/notice-categories";
 import { NOTICE_COMMANDS } from "./website/notices";
+import { PUBLIC_REQUEST_COMMANDS } from "./website/public-requests";
 import { SPRAY_MISSION_COMMANDS } from "./website/spray-missions";
 
 const ALL = [
@@ -28,6 +29,7 @@ const ALL = [
 	...MEETING_COMMANDS,
 	...SPRAY_MISSION_COMMANDS,
 	...MOSQUITO_ACTIVITY_COMMANDS,
+	...PUBLIC_REQUEST_COMMANDS,
 ] as const;
 
 // The callback is annotated rather than inferred: it stays correct whether ALL is empty (its

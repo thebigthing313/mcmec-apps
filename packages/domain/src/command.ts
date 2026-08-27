@@ -15,6 +15,7 @@ export type CommandDefinition<
 	TName extends string = string,
 	TPayload extends z.ZodType = z.ZodType,
 	TTable extends TableName = TableName,
+	TPermission extends string | null = string | null,
 > = {
 	/** `<domain>.<command>` — globally unique, so it fixes the table, the op and the permission. */
 	readonly name: TName;
@@ -25,8 +26,16 @@ export type CommandDefinition<
 	 * definition still holds no query, no column types and no drizzle import.
 	 */
 	readonly table: TTable;
-	/** Inherited from the domain. `null` means "declared public, served from its own route". */
-	readonly permission: string | null;
+	/**
+	 * Inherited from the domain. `null` means "declared public, served from its own route".
+	 *
+	 * Carried in the TYPE, not only in the value, so the one thing that follows from being
+	 * public — there is no session — is settled by the compiler rather than by a null check in
+	 * every handler that can never see one. `CommandHandler` reads this the way it reads
+	 * `targetless`: the fact is declared once here and the seam it implies is derived from it
+	 * (#164).
+	 */
+	readonly permission: TPermission;
 	readonly payload: TPayload;
 	/** Marks the commands that mint a row, so the dispatcher can answer 201 rather than 200. */
 	readonly creates?: true;
@@ -48,7 +57,8 @@ export type AnyCommand = CommandDefinition<
 	string,
 	// biome-ignore lint/suspicious/noExplicitAny: registry values are heterogeneous by construction
 	z.ZodType<any, any>,
-	TableName
+	TableName,
+	string | null
 >;
 
 export type PayloadOf<TDef extends AnyCommand> = z.infer<TDef["payload"]>;
@@ -64,18 +74,30 @@ export type PayloadOf<TDef extends AnyCommand> = z.infer<TDef["payload"]>;
  *     const website = defineDomain("website", "manage_website");
  *     const command = website.table("meetings");
  *     export const cancelMeeting = command("cancelMeeting", EmptyPayload);
+ *
+ * A domain may also be opened with `null`, which declares its commands public — they are
+ * served from their own route rather than from `/api/commands`, because the thing standing in
+ * for a permission (Turnstile, a honeypot) guards the route. One command in fifty is (#164),
+ * and it re-opens `website` for the one table that has a public door:
+ *
+ *     const publicWebsite = defineDomain("website", null);
  */
-export function defineDomain<TDomain extends string>(
-	domain: TDomain,
-	permission: string | null,
-) {
+export function defineDomain<
+	TDomain extends string,
+	TPermission extends string | null,
+>(domain: TDomain, permission: TPermission) {
 	return {
 		table<TTable extends TableName>(table: TTable) {
 			return function command<TName extends string, TPayload extends z.ZodType>(
 				name: TName,
 				payload: TPayload,
 				options?: { creates?: true; targetless?: true },
-			): CommandDefinition<`${TDomain}.${TName}`, TPayload, TTable> {
+			): CommandDefinition<
+				`${TDomain}.${TName}`,
+				TPayload,
+				TTable,
+				TPermission
+			> {
 				return {
 					name: `${domain}.${name}` as const,
 					payload,
