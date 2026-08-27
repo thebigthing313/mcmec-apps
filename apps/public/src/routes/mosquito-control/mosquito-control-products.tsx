@@ -61,7 +61,7 @@ function RouteComponent() {
 				</p>
 			</article>
 			<div className="mt-8">
-				<InsecticidesTable data={tableData} linkToEdit={false} />
+				<InsecticidesTable data={tableData} linkToDetail={false} />
 			</div>
 		</div>
 	);

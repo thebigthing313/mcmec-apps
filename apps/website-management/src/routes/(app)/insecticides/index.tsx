@@ -31,7 +31,7 @@ function RouteComponent() {
 	);
 
 	const handleRowClick = (insecticideId: string) => {
-		navigate({ to: `/insecticides/${insecticideId}` });
+		navigate({ params: { insecticideId }, to: "/insecticides/$insecticideId" });
 	};
 
 	return (
@@ -44,7 +44,7 @@ function RouteComponent() {
 			</div>
 			<InsecticidesTable
 				data={tableData}
-				linkToEdit={true}
+				linkToDetail={true}
 				onRowClick={handleRowClick}
 			/>
 		</div>
