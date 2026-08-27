@@ -7,7 +7,7 @@ import { useSpraySchedules } from "@/src/hooks/use-spray-schedules";
 export const Route = createFileRoute("/(app)/spray-schedule/")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Spray Schedule" };
+		return { crumb: "Spray Missions" };
 	},
 });
 
@@ -29,7 +29,7 @@ function RouteComponent() {
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
-				<h1 className="font-semibold text-2xl">Spray Schedule</h1>
+				<h1 className="font-semibold text-2xl">Spray Missions</h1>
 				<Button onClick={() => navigate({ to: "/spray-schedule/create" })}>
 					<Plus />
 					Create New Mission

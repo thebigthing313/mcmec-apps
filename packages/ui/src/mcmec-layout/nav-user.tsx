@@ -8,7 +8,6 @@ import {
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
@@ -21,7 +20,7 @@ import {
 	useSidebar,
 } from "@mcmec/ui/components/sidebar";
 import { useLayoutContext } from "@mcmec/ui/mcmec-layout/layout-context.js";
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 
 export function NavUser() {
 	const { user, onLogout } = useLayoutContext();
@@ -40,11 +39,11 @@ export function NavUser() {
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton
-							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+							size="lg"
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
-								<AvatarImage src={user.avatar || undefined} alt={user.name} />
+								<AvatarImage alt={user.name} src={user.avatar || undefined} />
 								<AvatarFallback className="rounded-lg">
 									{userInitials}
 								</AvatarFallback>
@@ -57,15 +56,15 @@ export function NavUser() {
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
+						align="end"
 						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
 						side={isMobile ? "bottom" : "right"}
-						align="end"
 						sideOffset={4}
 					>
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage src={user.avatar || undefined} alt={user.name} />
+									<AvatarImage alt={user.name} src={user.avatar || undefined} />
 									<AvatarFallback className="rounded-lg">
 										{userInitials}
 									</AvatarFallback>
@@ -76,17 +75,12 @@ export function NavUser() {
 								</div>
 							</div>
 						</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuGroup>
-							<DropdownMenuItem disabled>
-								<BadgeCheck />
-								Account
-							</DropdownMenuItem>
-							<DropdownMenuItem disabled>
-								<Bell />
-								Notifications
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
+						{/*
+						 * Account and Notifications used to sit here, permanently `disabled`, for two
+						 * features MCMEC has never had. DESIGN.md's "don't hide a disabled action" is
+						 * about an action that exists and is currently unavailable — it was being used
+						 * to justify demo furniture. Two thirds of this menu did nothing.
+						 */}
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={onLogout}>
 							<LogOut />

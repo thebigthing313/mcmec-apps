@@ -41,6 +41,9 @@ export const Route = createFileRoute("/(app)")({
 	component: LayoutComponent,
 	loader: async ({ context }) => {
 		await context.db.employees.preload();
+		// Seeds the breadcrumb so every trail starts at the dashboard. Without it the deepest
+		// screens offered no route home but the browser's own back button.
+		return { crumb: "Dashboard" };
 	},
 });
 
@@ -99,7 +102,10 @@ function LayoutComponent() {
 				<Layout.Content
 					breadcrumb={
 						<Layout.Breadcrumb
-							getLinkProps={(href) => ({ to: href })}
+							getLinkProps={(href) => ({
+								activeOptions: { exact: true },
+								to: href,
+							})}
 							items={breadcrumbParts}
 							LinkComponent={Link}
 						/>

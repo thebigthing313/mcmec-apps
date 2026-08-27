@@ -92,7 +92,7 @@ function RouteComponent() {
 				<Button asChild size="sm" variant="outline">
 					<Link to="/spray-schedule">
 						<ArrowLeft />
-						Back to Spray Schedule
+						Back to Spray Missions
 					</Link>
 				</Button>
 				<div className="flex flex-wrap items-center gap-2">

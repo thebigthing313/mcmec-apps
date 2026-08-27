@@ -1,329 +1,148 @@
-# MCMEC Layout Components
+# MCMEC Layout
 
-A comprehensive, shared layout system for MCMEC applications built with React and shadcn/ui components.
+The chrome every staff application wears: `central`, `website-management`, `hr`, `admin`.
 
-## Overview
+An application supplies its identity, its user, its navigation data and its breadcrumbs. The
+shell supplies everything else — the rail, the app switcher, the user menu, the header, the
+collapsed-state tooltips, the active state, and the persistence of whether the rail was left
+open. `DESIGN.md` calls this The Shell Owns The Chrome Rule: an application that hand-builds a
+sidebar, header or breadcrumb has forked the system, and four forks is how five applications
+stop looking like one.
 
-This layout provides a consistent user experience across all MCMEC applications with:
-- Collapsible sidebar navigation
-- Company branding and app switcher
-- User profile menu with logout functionality
-- Breadcrumb navigation
-- Error boundary protection
-- Responsive design for mobile and desktop
+## The shape
 
-## Components
+```tsx
+<Layout value={/* LayoutContextData, minus the brand */}>
+  <Layout.Sidebar>
+    <Layout.Sidebar.Header><Layout.AppSwitcher /></Layout.Sidebar.Header>
+    <Layout.Sidebar.Content><AppSidebar /></Layout.Sidebar.Content>
+    <Layout.Sidebar.Footer><Layout.NavUser /></Layout.Sidebar.Footer>
+  </Layout.Sidebar>
 
-### `LayoutProvider`
+  <Layout.Content breadcrumb={/* optional <Layout.Breadcrumb /> */}>
+    <Outlet />
+  </Layout.Content>
+</Layout>
+```
 
-The root component that provides context and wraps all layout components.
+`Layout.Sidebar` also exposes `.Nav`, covered below. `Layout.AppSwitcher` and `Layout.NavUser`
+take no props — both read the context.
 
-**Props:**
-- `children` (ReactNode) - The application content
-- `companyLogoUrl` (string) - URL to the company logo
-- `companyName` (string) - Name of the company
-- `apps` (Array<App>) - List of available applications
-- `activeApp` (string) - Name of the currently active application
-- `user` (object) - User information
-  - `name` (string) - User's full name
-  - `title` (string) - User's job title/role
-  - `avatar` (string) - URL to user's avatar image
-- `onLogout?` (function) - Callback function when user clicks logout
+## The context value
 
-### `LayoutSidebar`
+```ts
+interface LayoutContextData {
+  companyLogoUrl: string;   // injected by the shell — not yours to pass
+  companyName: string;      // injected by the shell — not yours to pass
+  apps: AccessibleApps;     // must come from filterAppsByPermissions()
+  activeApp: string;        // must match an AVAILABLE_APPS name
+  currentPath: string;      // from useLocation().pathname
+  user: { name: string; title: string; avatar: string | null | undefined };
+  onLogout?: () => void;
+}
+```
 
-Wraps the sidebar navigation content provided by consuming applications.
+Three of these are load-bearing in ways worth stating:
 
-**Props:**
-- `children?` (ReactNode) - Custom sidebar navigation content
-- Accepts all props from shadcn/ui `Sidebar` component
+**`companyLogoUrl` / `companyName` are not accepted.** `LayoutRoot` omits them from its public
+prop type and reads them from `@mcmec/lib/constants`. An application cannot show a wrong mark or
+a wrong agency name, which matters for a body whose authority is that the page is its own word.
 
-### `LayoutInset`
+**`apps` is branded.** Only `filterAppsByPermissions()` produces an `AccessibleApps`, so the
+switcher cannot be handed the unfiltered list and offer doors the signed-in user cannot open.
+Passing `AVAILABLE_APPS` is a type error, not a bug to notice in review.
 
-Wraps the main content area, typically containing the application's router outlet.
+**`currentPath` is required.** It is the shell's entire knowledge of routing — `Layout.Sidebar.Nav`
+compares destinations against it to decide the active state, which is how `@mcmec/ui` owns the nav
+without depending on TanStack Router. Optional would mean an app could quietly render a rail where
+nothing is ever current.
 
-**Props:**
-- `children` (ReactNode) - Main application content (usually `<Outlet />`)
+## Navigation
 
-### `LayoutBreadcrumb`
+Give `Layout.Sidebar.Nav` the destinations; do not hand-roll `SidebarMenuButton` rows.
 
-Displays breadcrumb navigation based on provided items.
+```tsx
+const NAV_GROUPS: Array<LayoutNavGroup<{ to: string }>> = [
+  { items: [{ icon: <Home />, label: "Dashboard", linkProps: { to: "/" } }] },
+  {
+    label: "Publishing",
+    items: [
+      { icon: <BookOpen />, label: "Public Notices", linkProps: { to: "/notices" } },
+      { icon: <Users />, label: "Meetings", linkProps: { to: "/meetings" } },
+    ],
+  },
+];
 
-**Props:**
-- `items` (Array<BreadcrumbItem>) - Breadcrumb items to display
-  - `label` (string) - Text to display
-  - `href?` (string) - Optional link URL (omit for current page)
+<Layout.Sidebar.Nav groups={NAV_GROUPS} LinkComponent={Link} />
+```
 
-## Installation
+What the shell guarantees, and what four hand-written copies each forgot:
 
-This package is part of the `@mcmec/ui` monorepo package. Ensure you have the following dependencies:
+- **A tooltip on every row.** It is the only label a collapsed rail has. Without it, collapsing
+  the rail leaves a column of unlabeled glyphs.
+- **The active row**, in Commission Green, carrying `aria-current="page"` so location is never
+  signalled by colour alone. Matching is by path prefix, so `/notices/42/edit` keeps Notices lit;
+  `/` is exempt from the prefix rule or Dashboard would be permanently current.
+- **Group labels in the Overline** — uppercase, letterspaced, below the size of what they cover.
 
-```json
-{
-  "dependencies": {
-    "@mcmec/ui": "workspace:*",
-    "@mcmec/lib": "workspace:*"
+`label` on a group is optional and should be omitted rather than filled with a word that divides
+nothing. Keep groups to four items or fewer. A rail of three or fewer destinations needs no
+headings at all.
+
+`LinkComponent` is injected so this package never imports a router. The only constraint on
+`linkProps` is that it carries a `to`.
+
+## Breadcrumbs
+
+`Layout.Content` accepts a `breadcrumb` node; pass `<Layout.Breadcrumb />` built from the router's
+matches. The header renders its separator only when a breadcrumb is present, so an application
+that passes none gets a clean header rather than a rule dividing nothing.
+
+```tsx
+const matchesWithCrumbs = useMatches().filter((m) => isMatch(m, "loaderData.crumb"));
+const items = matchesWithCrumbs.map((m) => ({
+  href: m.pathname as string,
+  label: m.loaderData?.crumb as string,
+}));
+
+<Layout.Content
+  breadcrumb={
+    <Layout.Breadcrumb
+      items={items}
+      LinkComponent={Link}
+      getLinkProps={(href) => ({ activeOptions: { exact: true }, to: href })}
+    />
   }
-}
+>
 ```
 
-## Usage
+Two behaviours are handled for you:
 
-### Basic Setup
+- **Crumbs sharing a URL collapse to the first.** A section route and its index are two matches at
+  one pathname and both usually declare a crumb; without this the trail reads "Documents /
+  Documents". The section route's name wins.
+- **The last crumb is never a link.** It renders as `BreadcrumbPage`, which is what emits
+  `aria-current="page"`.
 
-```tsx
-import { LayoutProvider, LayoutSidebar, LayoutInset } from '@mcmec/ui/mcmec-layout';
-import { Outlet } from '@tanstack/react-router';
+One thing the shell cannot do for you: `activeOptions: { exact: true }` above is required. A
+TanStack `Link` to `/notices` reports itself active on `/notices/42` and sets `aria-current="page"`
+from that, so without it an ancestor crumb claims to be the current page alongside the real one.
+The router computes the attribute internally and ignores one passed in from outside, so this has
+to be set where the link props are built.
 
-function App() {
-  const apps = [
-    {
-      name: 'Central',
-      logo: <LayoutDashboard />,
-      description: 'Main dashboard',
-      href: '/central',
-      requiredPermission: null
-    },
-    // ... more apps
-  ];
+Seed the trail with a crumb on the `(app)` route so it always reaches the dashboard.
 
-  const handleLogout = async () => {
-    // Your logout logic
-    await signOut();
-  };
+## Rail state
 
-  return (
-    <LayoutProvider
-      companyLogoUrl="/logo.png"
-      companyName="MCMEC"
-      apps={apps}
-      activeApp="Central"
-      user={{
-        name: "John Doe",
-        title: "Administrator",
-        avatar: "/avatars/john.jpg"
-      }}
-      onLogout={handleLogout}
-    >
-      <LayoutSidebar>
-        {/* Your custom sidebar navigation */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/dashboard">Dashboard</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {/* More menu items */}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </LayoutSidebar>
+`SidebarProvider` writes a `sidebar_state` cookie; `LayoutRoot` reads it back into `defaultOpen`
+on mount, so a collapsed rail survives a reload and an app switch. Expanded is the fallback when
+the cookie is absent or unreadable.
 
-      <LayoutInset>
-        <Outlet />
-      </LayoutInset>
-    </LayoutProvider>
-  );
-}
-```
+## Notes
 
-### Using Breadcrumbs
-
-```tsx
-import { LayoutBreadcrumb } from '@mcmec/ui/mcmec-layout';
-
-function MyPage() {
-  const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Settings', href: '/settings' },
-    { label: 'Profile' } // Current page (no href)
-  ];
-
-  return (
-    <div>
-      <LayoutBreadcrumb items={breadcrumbs} />
-      {/* Page content */}
-    </div>
-  );
-}
-```
-
-### Customizing Sidebar Content
-
-The `LayoutSidebar` component provides a wrapper with fixed header (app switcher) and footer (user menu). You can add your application-specific navigation in between:
-
-```tsx
-<LayoutSidebar>
-  <SidebarGroup>
-    <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
-    <SidebarGroupContent>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link to="/">
-              <Home />
-              <span>Home</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        {/* More items */}
-      </SidebarMenu>
-    </SidebarGroupContent>
-  </SidebarGroup>
-
-  <SidebarGroup>
-    <SidebarGroupLabel>Admin</SidebarGroupLabel>
-    {/* More content */}
-  </SidebarGroup>
-</LayoutSidebar>
-```
-
-## App Type Definition
-
-Applications are defined using the `App` type from `@mcmec/lib/constants/apps`:
-
-```tsx
-type App = {
-  name: string;              // Display name
-  logo: React.ReactNode;     // Icon/logo component
-  description: string;       // App description
-  href: string;             // URL to navigate to (e.g., '/central')
-  requiredPermission: string | null;  // Permission required or null for public
-};
-```
-
-## Features
-
-### App Switcher
-- Displays company logo and name
-- Shows current active application
-- Dropdown menu to switch between available apps
-- Apps are filtered based on user permissions
-- Navigates using anchor tags for cross-subdomain navigation
-
-### User Menu
-- Displays user avatar with fallback initials (e.g., "JD" for John Doe)
-- Shows user name and title
-- Logout functionality via callback
-- Placeholder for Account and Notifications (disabled by default)
-
-### Responsive Design
-- Sidebar collapses to icon-only mode
-- Mobile-friendly dropdown positioning
-- Adaptive layouts for different screen sizes
-
-### Error Boundary
-- Catches and handles layout errors gracefully
-- Provides fallback UI with reload option
-- Prevents entire app crashes
-
-## Styling
-
-The components use Tailwind CSS with shadcn/ui design tokens. Ensure your consuming application has:
-- Tailwind CSS configured
-- shadcn/ui theme setup
-- Required CSS variables defined
-
-## TypeScript Support
-
-All components are fully typed with TypeScript. Import types as needed:
-
-```tsx
-import type { BreadcrumbItem } from '@mcmec/ui/mcmec-layout/layout-breadcrumb';
-import type { LayoutContextData } from '@mcmec/ui/mcmec-layout/layout-context';
-```
-
-## Accessing Layout Context
-
-If you need to access layout data in nested components:
-
-```tsx
-import { useLayoutContext } from '@mcmec/ui/mcmec-layout/layout-context';
-
-function MyComponent() {
-  const { user, activeApp, apps } = useLayoutContext();
-  
-  return <div>Current app: {activeApp}</div>;
-}
-```
-
-## Local Development Notes
-
-The app switcher uses anchor tags (`<a href>`) for navigation between apps. In local development, these links may not work correctly as they expect proper subdomain/domain structure. In production with correct domain setup, navigation between apps will work seamlessly.
-
-## Best Practices
-
-1. **Logout Handling**: Always provide an `onLogout` callback that properly clears session data
-2. **Avatar Images**: Provide avatar URLs when available; the component automatically generates initials as fallback
-3. **Permissions**: Use the `requiredPermission` field in apps to control access
-4. **Breadcrumbs**: Keep breadcrumb trails concise (3-5 items max)
-5. **Sidebar Content**: Keep sidebar navigation organized with `SidebarGroup` components
-
-## Example: Complete Implementation
-
-```tsx
-// app.tsx
-import { LayoutProvider, LayoutSidebar, LayoutInset } from '@mcmec/ui/mcmec-layout';
-import { AVAILABLE_APPS } from '@mcmec/lib/constants/apps';
-import { Outlet, Link } from '@tanstack/react-router';
-import { signOut } from '@mcmec/auth/signOut';
-
-function RootLayout() {
-  const user = {
-    name: "Jane Smith",
-    title: "Manager",
-    avatar: "https://example.com/avatar.jpg"
-  };
-
-  return (
-    <LayoutProvider
-      companyLogoUrl="/logo.svg"
-      companyName="MCMEC"
-      apps={AVAILABLE_APPS}
-      activeApp="Central"
-      user={user}
-      onLogout={signOut}
-    >
-      <LayoutSidebar>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/">
-                    <Home />
-                    Dashboard
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </LayoutSidebar>
-
-      <LayoutInset>
-        <Outlet />
-      </LayoutInset>
-    </LayoutProvider>
-  );
-}
-```
-
-## Troubleshooting
-
-### Context Error
-If you see "useLayoutContext must be used within LayoutContextProvider", ensure your component is rendered inside `<LayoutProvider>`.
-
-### Avatar Not Showing
-Check that the avatar URL is accessible. The component will automatically show user initials as fallback.
-
-### Sidebar Not Collapsing
-Ensure you're using the `SidebarTrigger` component (included in `LayoutInset` header by default).
-
-## License
-
-Internal use only - MCMEC organization.
+- `SidebarProvider` already supplies a `TooltipProvider`. Applications do not need to add one.
+- The staff applications render light theme only; none mounts a theme provider. The `.dark`
+  sidebar tokens have known drift — see `DESIGN.md` — so wiring dark mode means revisiting the
+  active-row colour.
+- Staff layouts are decided at desktop widths but must survive narrow ones. Below the `md`
+  breakpoint the rail becomes a sheet rather than truncating, and no destination is lost.

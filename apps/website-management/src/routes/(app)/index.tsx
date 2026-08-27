@@ -399,12 +399,12 @@ function RouteComponent() {
 						)}
 					</CardContent>
 				</Card>
-				{/* Spray Schedule */}
+				{/* Spray Missions */}
 				<Card>
 					<CardHeader>
 						<div className="flex items-center justify-between">
 							<div>
-								<CardTitle>Spray Schedule</CardTitle>
+								<CardTitle>Spray Missions</CardTitle>
 								<CardDescription>Recent and upcoming missions</CardDescription>
 							</div>
 							<Button asChild size="sm" variant="outline">

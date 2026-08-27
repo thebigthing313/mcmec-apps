@@ -57,7 +57,7 @@ const NAV_GROUPS: Array<LayoutNavGroup<NavLinkProps>> = [
 		items: [
 			{
 				icon: <Calendar />,
-				label: "Spray Schedule",
+				label: "Spray Missions",
 				linkProps: { to: "/spray-schedule" },
 			},
 			{
@@ -67,7 +67,7 @@ const NAV_GROUPS: Array<LayoutNavGroup<NavLinkProps>> = [
 			},
 			{
 				icon: <BarChart3 />,
-				label: "Weekly Activity",
+				label: "Weekly Mosquito Activity",
 				linkProps: { to: "/weekly-activity" },
 			},
 		],

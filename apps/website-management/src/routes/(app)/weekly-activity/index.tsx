@@ -26,7 +26,7 @@ export const Route = createFileRoute("/(app)/weekly-activity/")({
 	component: RouteComponent,
 	loader: async () => {
 		await mosquitoActivityData.preload();
-		return { crumb: "Weekly Activity" };
+		return { crumb: "Weekly Mosquito Activity" };
 	},
 });
 

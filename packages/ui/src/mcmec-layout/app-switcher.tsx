@@ -5,7 +5,6 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@mcmec/ui/components/dropdown-menu";
 import {
@@ -31,14 +30,14 @@ export function AppSwitcher() {
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton
-							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+							size="lg"
 						>
 							<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white text-sidebar-primary-foreground">
 								<img
-									src={companyLogoUrl}
 									alt={companyName}
 									className="size-8"
+									src={companyLogoUrl}
 								/>
 							</div>
 							<div className="grid flex-1 text-left text-sm leading-tight">
@@ -49,22 +48,33 @@ export function AppSwitcher() {
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
-						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
 						align="start"
+						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
 						side={isMobile ? "bottom" : "right"}
 						sideOffset={4}
 					>
 						<DropdownMenuLabel className="text-muted-foreground text-xs">
 							Applications
 						</DropdownMenuLabel>
-						{apps.map((app, index) => (
-							<DropdownMenuItem key={app.name} className="gap-2 p-2" asChild>
+						{/*
+						 * No keyboard shortcut is advertised here.
+						 *
+						 * Each row used to print ⌘1–⌘4, inherited verbatim from the shadcn block this
+						 * switcher was built from. Nothing ever listened for them: the only modifier
+						 * handler in the codebase is ⌘B for the rail. Advertising a shortcut that does
+						 * nothing is worse than offering none, because the person who tries it learns
+						 * the chrome cannot be trusted, and that lesson generalises.
+						 *
+						 * Nor were they implementable as written — Chrome binds ⌘/Ctrl+1–8 to tab
+						 * switching, so the app would have been fighting the browser for them.
+						 */}
+						{apps.map((app) => (
+							<DropdownMenuItem asChild className="gap-2 p-2" key={app.name}>
 								<a href={app.href}>
 									<div className="flex size-6 items-center justify-center rounded-md border">
 										{app.logo}
 									</div>
 									{app.name}
-									<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
 								</a>
 							</DropdownMenuItem>
 						))}
