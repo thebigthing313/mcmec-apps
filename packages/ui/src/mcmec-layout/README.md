@@ -135,8 +135,19 @@ Seed the trail with a crumb on the `(app)` route so it always reaches the dashbo
 ## Rail state
 
 `SidebarProvider` writes a `sidebar_state` cookie; `LayoutRoot` reads it back into `defaultOpen`
-on mount, so a collapsed rail survives a reload and an app switch. Expanded is the fallback when
-the cookie is absent or unreadable.
+on mount, so a collapsed rail survives a reload. Expanded is the fallback when the cookie is
+absent or unreadable.
+
+It does **not** survive an app switch in production. The cookie is written `path=/` with no
+`domain=`, which makes it host-scoped, and the four applications are served from four subdomains
+of `middlesexmosquito.org`. Someone who works collapsed gets an expanded rail every time they move
+between applications. Local development hides this, because all four are `localhost` and share one
+host — so the behaviour you see in dev is the behaviour you will not get in production.
+
+Making it true would mean writing the cookie with `domain=.middlesexmosquito.org`, the way the
+session cookie is already scoped so SSO can span the subdomains. That write lives in
+`packages/ui/src/components/sidebar.tsx`, which is generated shadcn and excluded from linting, so
+it is a deliberate fork rather than a tweak — hence documented here rather than done quietly.
 
 ## Notes
 
