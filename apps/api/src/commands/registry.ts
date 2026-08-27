@@ -17,6 +17,7 @@ import * as meetings from "./website/meetings";
 import * as mosquitoActivity from "./website/mosquito-activity";
 import * as noticeCategories from "./website/notice-categories";
 import * as notices from "./website/notices";
+import * as publicRequests from "./website/public-requests";
 import * as sprayMissions from "./website/spray-missions";
 
 export const REGISTRY: CommandRegistry = {
@@ -41,13 +42,17 @@ export const REGISTRY: CommandRegistry = {
 	"website.deleteMeeting": meetings.deleteMeeting,
 	"website.deleteNotice": notices.deleteNotice,
 	"website.deleteNoticeCategory": noticeCategories.deleteNoticeCategory,
+	"website.deleteRequest": publicRequests.deleteRequest,
 	"website.deleteSprayMission": sprayMissions.deleteSprayMission,
 	"website.importMosquitoActivity": mosquitoActivity.importMosquitoActivity,
 	"website.publishDocument": documents.publishDocument,
 	"website.publishJobPosting": jobPostings.publishJobPosting,
 	"website.publishNotice": notices.publishNotice,
 	"website.reopenJobPosting": jobPostings.reopenJobPosting,
+	"website.reopenRequest": publicRequests.reopenRequest,
 	"website.rescheduleSprayMission": sprayMissions.rescheduleSprayMission,
+	"website.resolveRequest": publicRequests.resolveRequest,
+	"website.submitPublicRequest": publicRequests.submitPublicRequest,
 	"website.unarchiveNotice": notices.unarchiveNotice,
 	"website.uncancelMeeting": meetings.uncancelMeeting,
 	"website.unpublishDocument": documents.unpublishDocument,

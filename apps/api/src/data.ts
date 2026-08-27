@@ -63,7 +63,6 @@ function coerceDates(body: unknown, keys: string[]): unknown {
 
 type CrudEntry = {
 	permission: string;
-	insertable: boolean;
 	insert: (body: unknown, tx: Tx) => Promise<unknown>;
 	update: (id: string, body: unknown, tx: Tx) => Promise<unknown>;
 	remove: (id: string, tx: Tx) => Promise<unknown>;
@@ -73,14 +72,12 @@ function makeCrud<T extends PgTable>(
 	table: T,
 	idCol: PgColumn,
 	permission: string,
-	insertable = true,
 ): CrudEntry {
 	const insertSchema = createInsertSchema(table);
 	const updateSchema = createUpdateSchema(table);
 	const dates = dateColumns(table);
 	return {
 		permission,
-		insertable,
 		insert: async (body, tx) => {
 			const data = insertSchema.parse(
 				coerceDates(stripServerCols(body), dates),
@@ -117,14 +114,12 @@ function makeCrud<T extends PgTable>(
 // Keyed by `TableName` rather than `string`, so a typo here cannot quietly create a door onto
 // a table that does not exist — the same reason the collections and the command modules take
 // the union (#174).
+//
+// `insertable` left with `public_requests` (#164), the only entry that ever set it false. It was
+// this map's way of saying "one of my three verbs is off for this table" without being able to
+// say why or where the insert had gone instead; the vocabulary says it properly, by giving
+// `website.submitPublicRequest` a null permission and its own public route.
 const WRITABLE: Partial<Record<TableName, CrudEntry>> = {
-	// staff triage of intake — insert is public via /api/requests
-	public_requests: makeCrud(
-		schema.publicRequests,
-		schema.publicRequests.id,
-		"manage_website",
-		false,
-	),
 	// manage_employees — HR
 	employees: makeCrud(
 		schema.employees,
@@ -172,9 +167,6 @@ export async function insertRow(c: Context): Promise<Response> {
 	const g = await guard(c);
 	if (g instanceof Response) return g;
 	const { entry, session } = g;
-	if (!entry.insertable) {
-		return c.json({ error: "insert not allowed on this resource" }, 405);
-	}
 	const body = await c.req.json().catch(() => null);
 	try {
 		const actor = setActor(session, c);

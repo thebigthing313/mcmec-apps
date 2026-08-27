@@ -8,10 +8,7 @@ import { MosquitoActivityDataRowSchema } from "@mcmec/schemas/db/mosquito-activi
 import { MunicipalitiesRowSchema } from "@mcmec/schemas/db/municipalities";
 import { NoticeTypesRowSchema } from "@mcmec/schemas/db/notice-types";
 import { NoticesRowSchema } from "@mcmec/schemas/db/notices";
-import {
-	PublicRequestsRowSchema,
-	PublicRequestsUpdateSchema,
-} from "@mcmec/schemas/db/public-requests";
+import { PublicRequestsRowSchema } from "@mcmec/schemas/db/public-requests";
 import { SprayScheduleMunicipalitiesRowSchema } from "@mcmec/schemas/db/spray-schedule-municipalities";
 import { SpraySchedulesRowSchema } from "@mcmec/schemas/db/spray-schedules";
 import { ZipCodesRowSchema } from "@mcmec/schemas/db/zip-codes";
@@ -99,18 +96,23 @@ export function createNoticesCollections({
 		table: "zip_codes",
 	});
 
-	// Merged intake — replaces the four legacy request collections. Insert is via the public
-	// endpoint (POST /api/requests), so this staff collection is read + status-triage + delete.
-	// The notices UI filters by `request_type`.
+	// Merged intake — replaces the four legacy request collections. Rows are minted by the
+	// public website through POST /api/requests, the one bespoke door the cutover keeps (#164);
+	// this staff collection triages and deletes them. The notices UI filters by `request_type`.
+	//
+	// The Update schema went with the cutover: it declared contact corrections — name, email,
+	// phone, address — that no screen has ever offered and no command names, so it was
+	// advertising a write this collection could not make. `municipalities` lost its the same
+	// way in #159.
 	//
 	// On-demand: this table only grows, and pulling all of it on every page load doesn't
 	// scale. Requires the shape proxy to forward `subset__*` params (see shapes.ts).
 	const publicRequests = createOnDemandCollection({
 		allowDelete: true,
 		apiUrl,
+		commands: true,
 		schema: PublicRequestsRowSchema,
 		table: "public_requests",
-		updateSchema: PublicRequestsUpdateSchema,
 	});
 
 	// Surveillance dataset — thousands of rows and growing a season at a time, read only by

@@ -1,32 +1,14 @@
 import { formatDateShort } from "@mcmec/lib/functions/date-fns";
-import {
-	type RequestStatus,
-	RequestStatusEnum,
-} from "@mcmec/schemas/db/public-requests";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@mcmec/ui/components/alert-dialog";
+import type { RequestStatus } from "@mcmec/schemas/db/public-requests";
+import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
-import { Label } from "@mcmec/ui/components/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@mcmec/ui/components/select";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, RotateCcw } from "lucide-react";
+import { intents } from "@/src/lib/db";
+import { runLifecycle } from "@/src/lib/lifecycle";
 import {
 	humanizeDetailKey,
 	REQUEST_STATUS_LABELS,
@@ -111,17 +93,48 @@ function RouteComponent() {
 
 	const status = request.status as RequestStatus;
 
-	const handleStatusChange = (next: string) => {
-		const parsed = RequestStatusEnum.safeParse(next);
-		if (!parsed.success) return;
-		const tx = db.publicRequests.update(requestId, (draft) => {
-			draft.status = parsed.data;
-		});
-		toastOnError(tx, "Failed to update the request status.");
-	};
+	// One button per legal transition, not a dropdown of states (ADR 0001). The dropdown this
+	// replaces offered `in_progress` as a third equal choice, which `CONTEXT.md` rejects — a
+	// request is either New or Resolved. So no command mints it, and the only thing that can be
+	// done to a request that already holds it is resolve it.
+	//
+	// No form under this, so no `isDirty` and no relabel: a detail-view lifecycle button always
+	// sends exactly one intent. The page stays put — the badge above is live, so the result of
+	// the click shows where the click was.
+	const triage =
+		status === "resolved"
+			? {
+					icon: <RotateCcw />,
+					label: "Reopen Request",
+					onAct: () =>
+						runLifecycle(db.publicRequests, requestId, {
+							apply: (draft) => {
+								draft.status = "new";
+							},
+							command: "website.reopenRequest",
+							failure: "Failed to reopen the request.",
+						}),
+				}
+			: {
+					icon: <CheckCircle2 />,
+					label: "Resolve Request",
+					onAct: () =>
+						runLifecycle(db.publicRequests, requestId, {
+							apply: (draft) => {
+								draft.status = "resolved";
+							},
+							command: "website.resolveRequest",
+							failure: "Failed to resolve the request.",
+						}),
+				};
 
+	// Delete is the one action whose placement is not free — detail page only, danger zone,
+	// behind a confirm (ADR 0001). It leaves the page because the record it was showing is gone.
 	const handleDelete = () => {
-		const tx = db.publicRequests.delete(requestId);
+		const tx = db.publicRequests.delete(
+			requestId,
+			intents("website.deleteRequest"),
+		);
 		toastOnError(tx, "Failed to delete the request.");
 		navigate({ to: "/public-requests" });
 	};
@@ -135,6 +148,12 @@ function RouteComponent() {
 						Back to Requests
 					</Link>
 				</Button>
+				<LifecycleButton
+					icon={triage.icon}
+					label={triage.label}
+					onAct={triage.onAct}
+					size="sm"
+				/>
 			</nav>
 
 			<article className="space-y-4">
@@ -145,22 +164,6 @@ function RouteComponent() {
 					<Badge variant={REQUEST_STATUS_VARIANTS[status]}>
 						{REQUEST_STATUS_LABELS[status]}
 					</Badge>
-				</div>
-
-				<div className="flex max-w-xs flex-col gap-2">
-					<Label htmlFor="status">Status</Label>
-					<Select onValueChange={handleStatusChange} value={status}>
-						<SelectTrigger id="status">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{Object.entries(REQUEST_STATUS_LABELS).map(([value, label]) => (
-								<SelectItem key={value} value={value}>
-									{label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
 				</div>
 
 				<div className="grid grid-cols-2 gap-4 rounded-lg border p-4">
@@ -202,31 +205,13 @@ function RouteComponent() {
 				</div>
 
 				<DetailsPanel details={request.details} />
-
-				<AlertDialog>
-					<AlertDialogTrigger asChild>
-						<Button variant="destructive">
-							<Trash2 />
-							Delete Request
-						</Button>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Delete this request?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This permanently removes the submission, including the
-								submitter's contact details. This cannot be undone.
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDelete}>
-								Delete
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
 			</article>
+
+			<DangerZoneCard
+				description="This permanently removes the submission, including the submitter's contact details. This cannot be undone."
+				label="Delete Request"
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 }

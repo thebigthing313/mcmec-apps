@@ -20,15 +20,35 @@ import { getSessionInfo } from "../session";
 import { REGISTRY } from "./registry";
 import { type AfterCommit, CommandError, type CommandHandler } from "./types";
 
-// Boot-time assertion: `permission: null` means "declared public, served from its own route"
-// (today, POST /api/requests). If one ever reached this dispatcher it would be an open door.
-for (const command of Object.values(COMMANDS) as AnyCommand[]) {
-	if (command.permission === null) {
-		throw new Error(
-			`command ${command.name} has no permission and cannot be served from /api/commands`,
-		);
-	}
-}
+/** A command this route will serve — which is to say, one that names a permission. */
+type ServedCommand = AnyCommand & { permission: string };
+
+/**
+ * What this route serves: the vocabulary minus the commands that declare their own door.
+ *
+ * This used to be a boot-time assertion that the vocabulary contained NO `permission: null`
+ * command at all, and it was the right guard for as long as none existed. `submitPublicRequest`
+ * is the first, and it makes the two facts come apart: the invariant worth protecting is a
+ * property of this ROUTE — `/api/commands` never serves a public command — and the assertion
+ * had been stating it as a property of the VOCABULARY. Stated that way it forbids the design
+ * #137 chose, where a public command is declared here and served from `POST /api/requests`
+ * calling the same handler.
+ *
+ * So the check becomes a derivation, and the refusal becomes structural: a public command is
+ * not in this table, so there is nothing to assert about it and nothing to leak. Filtering is
+ * right here in a way it was not for `WRITABLE` (#150 Q5) — the null-permission set is a
+ * permanent fact about who may send a command, not cutover debris that a slice is supposed to
+ * delete and might forget.
+ *
+ * The permission type is what makes it honest: every value in this map has a non-null
+ * `permission`, so the check below reads it directly instead of testing a truthiness that a
+ * public command would silently pass.
+ */
+const SERVED = new Map<string, ServedCommand>(
+	(Object.values(COMMANDS) as AnyCommand[])
+		.filter((c): c is ServedCommand => c.permission !== null)
+		.map((c) => [c.name, c]),
+);
 
 type Envelope = { intents: string[]; id?: string } & Record<string, unknown>;
 
@@ -68,6 +88,15 @@ function readEnvelope(body: unknown): Envelope | CommandError {
 				reason: `no such command: ${intent}`,
 			});
 		}
+		// A real command, but not one this door has. Same code, because from here the two are
+		// the same refusal — the caller cannot send it either way — and a different one would
+		// only tell them which other route to go looking for.
+		if (!SERVED.has(intent)) {
+			return new CommandError(400, {
+				error: "unknown_command",
+				reason: `${intent} is public and is served from its own route`,
+			});
+		}
 	}
 	return body as Envelope;
 }
@@ -78,8 +107,9 @@ export async function postCommands(c: Context): Promise<Response> {
 		return c.json(envelope.body, envelope.status);
 	}
 
-	const definitions: AnyCommand[] = envelope.intents.map(
-		(name) => COMMANDS[name as keyof typeof COMMANDS],
+	// Present by construction: `readEnvelope` refused every intent this map does not hold.
+	const definitions = envelope.intents.map(
+		(name) => SERVED.get(name) as ServedCommand,
 	);
 
 	// Permission is checked before any builder runs, so a caller who may not send a command
@@ -87,7 +117,7 @@ export async function postCommands(c: Context): Promise<Response> {
 	const session = await getSessionInfo(c.req.raw.headers);
 	if (!session) return c.json({ error: "unauthenticated" }, 401);
 	for (const def of definitions) {
-		if (def.permission && !session.permissions.includes(def.permission)) {
+		if (!session.permissions.includes(def.permission)) {
 			return c.json({ error: "forbidden" }, 403);
 		}
 	}

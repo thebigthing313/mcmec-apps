@@ -19,7 +19,16 @@ export type CommandHandler<TDef extends AnyCommand> = (ctx: {
 	 * point at nothing.
 	 */
 	id: TDef extends { targetless: true } ? undefined : string;
-	session: SessionInfo;
+	/**
+	 * Who sent it — and `null` for the one command that declares itself public (#164).
+	 *
+	 * `submitPublicRequest` is sent by a member of the public through `POST /api/requests`, so
+	 * there is no session to hand it. Read off the definition the same way `id` is, rather than
+	 * widening this to `SessionInfo | null` for everyone: a `manage_website` handler would then
+	 * have to narrow a null it can never be given, which is the sort of falsely-nullable seam
+	 * this effort has been deleting rather than adding.
+	 */
+	session: TDef extends { permission: null } ? null : SessionInfo;
 	/** The request's shared transaction. Every handler in one request writes through this. */
 	tx: Tx;
 }) => Promise<void | AfterCommit>;
