@@ -16,7 +16,8 @@ import {
 } from "@mcmec/ui/components/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { API_URL, authClient } from "@/src/lib/queryClient";
+import { authClient } from "@/src/lib/queryClient";
+import { setAppRole } from "@/src/lib/user-roles";
 
 export const Route = createFileRoute("/(app)/permissions/")({
 	component: PermissionsPage,
@@ -52,29 +53,19 @@ function PermissionsPage() {
 		},
 	});
 
-	// Full-replace the user's role set via the audited backend endpoint, then refetch.
-	const setRoles = useMutation({
-		mutationFn: async (vars: { userId: string; roles: AppRole[] }) => {
-			const res = await fetch(`${API_URL}/api/users/${vars.userId}/roles`, {
-				body: JSON.stringify({ roles: vars.roles }),
-				credentials: "include",
-				headers: { "content-type": "application/json" },
-				method: "PUT",
-			});
-			if (!res.ok) {
-				throw new Error(`Failed to update roles (${res.status})`);
-			}
-			return res.json();
-		},
+	// One checkbox, one role, one command. This used to read the row's whole role set, compute
+	// the next array and PUT it — so two admins ticking different boxes on the same user
+	// clobbered each other, and the audit row recorded a list rewritten rather than a role
+	// moved. `users.grantAppRole` / `users.revokeAppRole` are named for the gesture, and the
+	// server applies it to whatever the row holds when it commits.
+	const setRole = useMutation({
+		mutationFn: (vars: { userId: string; role: AppRole; granted: boolean }) =>
+			setAppRole(vars.userId, vars.role, vars.granted),
 		onSuccess: () => queryClient.invalidateQueries({ queryKey: USERS_KEY }),
 	});
 
 	function toggle(user: AdminUser, roleKey: AppRole, checked: boolean) {
-		const current = parseRoles(user.role);
-		const next = checked
-			? [...new Set([...current, roleKey])]
-			: current.filter((r) => r !== roleKey);
-		setRoles.mutate({ roles: next, userId: user.id });
+		setRole.mutate({ granted: checked, role: roleKey, userId: user.id });
 	}
 
 	const users = data ?? [];
@@ -94,12 +85,12 @@ function PermissionsPage() {
 				</div>
 			) : null}
 
-			{setRoles.error ? (
+			{setRole.error ? (
 				<div
 					className="rounded-md border border-destructive/50 p-4 text-destructive text-sm"
 					role="alert"
 				>
-					{(setRoles.error as Error).message}
+					{(setRole.error as Error).message}
 				</div>
 			) : null}
 
@@ -140,8 +131,8 @@ function PermissionsPage() {
 												user.id === currentUserId && role === "manage_users";
 											// Only the row being saved locks, not the whole table.
 											const isSaving =
-												setRoles.isPending &&
-												setRoles.variables?.userId === user.id;
+												setRole.isPending &&
+												setRole.variables?.userId === user.id;
 											return (
 												<TableCell className="text-center" key={role}>
 													<Checkbox

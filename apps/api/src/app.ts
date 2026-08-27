@@ -6,10 +6,8 @@ import { assetsRouter } from "./assets";
 import { auth } from "./auth";
 import { postCommands } from "./commands/dispatch";
 import { deleteRow, insertRow, updateRow } from "./data";
-import { inviteEmployee } from "./invite";
 import { submitRequest } from "./requests";
 import { shapeProxy } from "./shapes";
-import { setUserRoles } from "./users";
 
 export const app = new Hono();
 
@@ -55,12 +53,10 @@ app.post("/api/requests", bodyLimit({ maxSize: 64 * 1024 }), submitRequest);
 
 // Write path (permission-gated, audit-logged via app.* GUCs)
 app.post(COMMAND_PATH, postCommands);
+//
+// The three generic doors are the last of the pre-command write path and serve nothing: their
+// table map is empty as of #165, so every request to them is already a 404. They go with
+// `data.ts` in #140.
 app.post("/api/data/:table", insertRow);
 app.patch("/api/data/:table/:id", updateRow);
 app.delete("/api/data/:table/:id", deleteRow);
-
-// Non-CRUD writes (composite-key / bulk / role) that the generic /api/data path can't express
-app.put("/api/users/:id/roles", setUserRoles); // manage_users
-
-// Employee invite (manage_employees) + set-password email
-app.post("/api/invite", inviteEmployee);

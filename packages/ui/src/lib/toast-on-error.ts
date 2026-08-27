@@ -1,4 +1,4 @@
-import { findCommandRefusal } from "@mcmec/sync";
+import { findCommandRefusal } from "@mcmec/sync/command-write";
 import { toast } from "sonner";
 
 /**
@@ -14,6 +14,17 @@ const ROLLED_BACK_TOGETHER =
 
 /**
  * Attaches an error toast to a TanStack DB transaction's `isPersisted` promise.
+ *
+ * Lives here rather than in each app because #165 was the first slice to need it in more than
+ * one — `employees` is written by `hr` and by `admin`, and a third hand-rolled copy is how the
+ * three drift. It is the one helper that needs both sonner and `@mcmec/sync`, and nothing else
+ * imported both: `@mcmec/sync` has neither React nor sonner, and this package had no reason to
+ * know about writes. The edge is deliberately narrow — it imports the `@mcmec/sync/command-write`
+ * subpath, which itself imports only the route constant, so taking it does not drag TanStack DB
+ * or Electric into a page that only wanted a toast.
+ *
+ * The transaction is typed structurally for the same reason: this file must not know what a
+ * collection is.
  *
  * A named command can refuse for a reason worth reading — "this notice was posted 3 days ago,
  * P.L. 2025 c.72 requires seven" — so the server's own sentence wins over the caller's generic

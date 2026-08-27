@@ -1,3 +1,4 @@
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -11,7 +12,6 @@ import {
 	spraySchedules,
 	withArguments,
 } from "@/src/lib/db";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/spray-schedule/create")({
 	component: RouteComponent,

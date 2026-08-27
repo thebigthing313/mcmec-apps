@@ -23,12 +23,12 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@mcmec/ui/components/tooltip";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { count, eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { intents, notices, noticeTypes } from "@/src/lib/db";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/categories")({
 	component: RouteComponent,

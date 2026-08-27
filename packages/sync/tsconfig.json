@@ -2,7 +2,11 @@
 	"extends": "@mcmec/typescript-config/base.json",
 	"compilerOptions": {
 		"outDir": "dist",
-		"rootDir": "src"
+		"rootDir": "src",
+		"baseUrl": ".",
+		"paths": {
+			"@mcmec/lib/*": ["../../packages/lib/src/*"]
+		}
 	},
 	"include": ["src"],
 	"exclude": ["node_modules", "dist"]

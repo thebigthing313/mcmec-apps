@@ -22,8 +22,11 @@ export interface CreateNoticesCollectionsOptions {
 export function createNoticesCollections({
 	apiUrl,
 }: CreateNoticesCollectionsOptions) {
+	// Read-only here, and `commands: true` all the same: the flag says how the TABLE is
+	// written, not whether this app writes it (#174). `employees` cut over with #165.
 	const employees = createEagerCollection({
 		apiUrl,
+		commands: true,
 		schema: EmployeesRowSchema,
 		table: "employees",
 	});

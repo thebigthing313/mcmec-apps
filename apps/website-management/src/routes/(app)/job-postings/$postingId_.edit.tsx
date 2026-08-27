@@ -1,6 +1,8 @@
 import type { CommandName } from "@mcmec/domain";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -9,8 +11,6 @@ import {
 } from "@/src/components/job-posting-form";
 import { intents, jobPostings } from "@/src/lib/db";
 import { changedFields, type Draft, runLifecycle } from "@/src/lib/lifecycle";
-import { toastOnError } from "@/src/lib/toast-on-error";
-import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/job-postings/$postingId_/edit")({
 	component: RouteComponent,
@@ -43,7 +43,7 @@ function RouteComponent() {
 	const posting = livePostings[0] ?? loadedPosting;
 
 	// Seed from the live row, and re-seed when it changes until the user takes the form —
-	// see use-form-seed.ts. `updateJobPostingDetails` sends the diff against the LIVE row,
+	// see @mcmec/ui/hooks/use-form-seed. `updateJobPostingDetails` sends the diff against the LIVE row,
 	// so a stale seed writes itself back and silently reverts whatever changed meanwhile.
 	const { seedKey, latchProps } = useFormSeed(rowVersion(posting));
 

@@ -1,8 +1,4 @@
-import {
-	EmployeesInsertSchema,
-	EmployeesRowSchema,
-	EmployeesUpdateSchema,
-} from "@mcmec/schemas/db/employees";
+import { EmployeesRowSchema } from "@mcmec/schemas/db/employees";
 import { createEagerCollection } from "../factories";
 
 export interface CreateHrCollectionsOptions {
@@ -11,13 +7,15 @@ export interface CreateHrCollectionsOptions {
 }
 
 export function createHrCollections({ apiUrl }: CreateHrCollectionsOptions) {
+	// On the named-command path as of #165 — the last table to cut over. `hr` and `admin` write
+	// this collection through the same four `employees.*` commands, which is what stops the two
+	// apps' byte-identical write call sites from being two implementations.
 	const employees = createEagerCollection({
 		allowDelete: true,
 		apiUrl,
-		insertSchema: EmployeesInsertSchema,
+		commands: true,
 		schema: EmployeesRowSchema,
 		table: "employees",
-		updateSchema: EmployeesUpdateSchema,
 	});
 
 	return {

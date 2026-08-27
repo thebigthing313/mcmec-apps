@@ -12,12 +12,12 @@ import {
 	AlertDialogTrigger,
 } from "@mcmec/ui/components/alert-dialog";
 import { Button } from "@mcmec/ui/components/button";
+import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
 import { insecticides, intents } from "@/src/lib/db";
-import { toastOnError } from "@/src/lib/toast-on-error";
-import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/insecticides/$insecticideId")({
 	component: RouteComponent,
@@ -36,7 +36,7 @@ function RouteComponent() {
 	const { insecticide: loadedInsecticide } = Route.useLoaderData();
 	const { insecticideId } = Route.useParams();
 
-	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	// Seed from the live row, not the loader's one-shot read — see @mcmec/ui/hooks/use-form-seed.
 	const { data: liveInsecticides } = useLiveQuery(
 		(q) =>
 			q

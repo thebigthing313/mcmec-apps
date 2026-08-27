@@ -7,6 +7,11 @@
  *
  * `toCamelCaseKeys` has no successor here: the wire is snake_case end to end, and the API maps
  * to Drizzle's property names at the one place it hands data to Drizzle.
+ *
+ * Exposed as its own export (`@mcmec/sync/command-write`) alongside `./routes`, and for the same
+ * reason: it imports nothing but that module, so a consumer can take a refusal's sentence
+ * without taking TanStack DB and Electric with it. `@mcmec/ui` is the consumer — `toastOnError`
+ * is the one helper that genuinely needs both sonner and `findCommandRefusal` (#165).
  */
 import { COMMAND_PATH } from "./routes";
 

@@ -2,7 +2,11 @@
 	"extends": "@mcmec/typescript-config/base.json",
 	"compilerOptions": {
 		"types": ["node"],
-		"noEmit": true
+		"noEmit": true,
+		"baseUrl": ".",
+		"paths": {
+			"@mcmec/lib/*": ["../../packages/lib/src/*"]
+		}
 	},
 	"include": ["src", "drizzle.config.ts"]
 }

@@ -1,10 +1,18 @@
+import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { InviteButton } from "@mcmec/ui/blocks/invite-button";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
+import { eq, useLiveQuery } from "@tanstack/react-db";
+import {
+	createFileRoute,
+	Link,
+	notFound,
+	useNavigate,
+} from "@tanstack/react-router";
 import { ArrowLeft, Edit } from "lucide-react";
-import { employees } from "@/src/lib/db";
-import { API_URL } from "@/src/lib/queryClient";
+import { employees, intents } from "@/src/lib/db";
+import { sendInvite } from "@/src/lib/employees";
 
 export const Route = createFileRoute("/(app)/employees/$employeeId")({
 	component: RouteComponent,
@@ -19,8 +27,32 @@ export const Route = createFileRoute("/(app)/employees/$employeeId")({
 });
 
 function RouteComponent() {
-	const { employee } = Route.useLoaderData();
 	const { employeeId } = Route.useParams();
+	const { employee: loadedEmployee } = Route.useLoaderData();
+	const navigate = useNavigate();
+
+	// Live, so an invite's `user_id` link-up and an edit made on the next screen both show here
+	// rather than the values the loader captured.
+	const { data: liveEmployees } = useLiveQuery(
+		(q) =>
+			q
+				.from({ employee: employees })
+				.where(({ employee }) => eq(employee.id, employeeId)),
+		[employeeId],
+	);
+	const employee = liveEmployees[0] ?? loadedEmployee;
+
+	// Detail page only, danger zone, behind a confirm — ADR 0001's one exception to free
+	// placement. It moved here from the edit form, where it sat beside a Save button as an
+	// ordinary destructive action rather than as the one command nothing can undo.
+	const handleDelete = () => {
+		const tx = employees.delete(
+			employeeId,
+			intents("employees.deleteEmployee"),
+		);
+		toastOnError(tx, "Failed to delete employee.");
+		navigate({ to: "/employees" });
+	};
 
 	return (
 		<div className="max-w-2xl space-y-6">
@@ -33,7 +65,7 @@ function RouteComponent() {
 				</Button>
 				<div className="flex items-center gap-2">
 					{!employee.user_id && (
-						<InviteButton apiUrl={API_URL} email={employee.email} />
+						<InviteButton onInvite={() => sendInvite(employeeId)} />
 					)}
 					<Button asChild size="sm" variant="outline">
 						<Link params={{ employeeId }} to="/employees/$employeeId/edit">
@@ -68,6 +100,20 @@ function RouteComponent() {
 					<dd>{new Date(employee.updated_at).toLocaleDateString()}</dd>
 				</dl>
 			</div>
+
+			<DangerZoneCard
+				description={
+					<>
+						This action cannot be undone. This will permanently delete the
+						employee record for "{employee.display_name}"
+						{employee.user_id
+							? ". Their login is not deleted with it — revoke its roles from the Permissions screen if they should lose access."
+							: "."}
+					</>
+				}
+				label="Delete Employee"
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 }

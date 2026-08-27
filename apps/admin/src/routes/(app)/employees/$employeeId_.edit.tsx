@@ -1,22 +1,13 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@mcmec/ui/components/alert-dialog";
-import { Button } from "@mcmec/ui/components/button";
+import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
 	EmployeeForm,
 	type EmployeeFormValues,
 } from "@/src/components/employee-form";
-import { employees } from "@/src/lib/db";
+import { employees, intents } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/employees/$employeeId_/edit")({
 	component: RouteComponent,
@@ -32,25 +23,42 @@ export const Route = createFileRoute("/(app)/employees/$employeeId_/edit")({
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
-	const { employee } = Route.useLoaderData();
+	const { employee: loadedEmployee } = Route.useLoaderData();
 	const { employeeId } = Route.useParams();
 
+	const { data: liveEmployees } = useLiveQuery(
+		(q) =>
+			q
+				.from({ employee: employees })
+				.where(({ employee }) => eq(employee.id, employeeId)),
+		[employeeId],
+	);
+	const employee = liveEmployees[0] ?? loadedEmployee;
+
+	// Seed from the live row, and re-seed when it changes until the user takes the form — see
+	// @mcmec/ui/hooks/use-form-seed. `updateEmployeeDetails` sends the diff against the LIVE
+	// row, so a stale seed writes itself back and silently reverts whatever changed meanwhile.
+	// Two apps edit this table, which makes a concurrent edit likelier here than anywhere.
+	const { seedKey, latchProps } = useFormSeed(rowVersion(employee));
+
 	const handleSubmit = async (value: EmployeeFormValues) => {
-		employees.update(employeeId, (draft) => {
-			draft.display_name = value.display_name;
-			draft.display_title = value.display_title || null;
-			draft.email = value.email;
-		});
-		navigate({ to: "/employees/$employeeId", params: { employeeId } });
+		const tx = employees.update(
+			employeeId,
+			intents("employees.updateEmployeeDetails"),
+			(draft) => {
+				draft.display_name = value.display_name;
+				draft.display_title = value.display_title || null;
+				draft.email = value.email;
+			},
+		);
+		toastOnError(tx, "Failed to update employee.");
+		navigate({ params: { employeeId }, to: "/employees/$employeeId" });
 	};
 
-	const handleDelete = async () => {
-		employees.delete(employeeId);
-		navigate({ to: "/employees" });
-	};
-
+	// No delete here any more: ADR 0001 puts `delete*` on the detail page, in a danger zone,
+	// behind a confirm — and nowhere else.
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" {...latchProps}>
 			<EmployeeForm
 				defaultValues={{
 					display_name: employee.display_name,
@@ -58,34 +66,10 @@ function RouteComponent() {
 					email: employee.email,
 				}}
 				formLabel="Edit Employee"
+				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"
 			/>
-
-			<div className="max-w-2xl">
-				<AlertDialog>
-					<AlertDialogTrigger asChild>
-						<Button className="w-full" variant="destructive">
-							Delete Employee
-						</Button>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This action cannot be undone. This will permanently delete the
-								employee record for "{employee.display_name}".
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDelete}>
-								Delete
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</div>
 		</div>
 	);
 }

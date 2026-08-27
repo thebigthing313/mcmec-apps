@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+// Moved out of `apps/website-management` by #165, which was the first slice needing it in a
+// second app. Pure React with no MCMEC dependency, so this package takes it as-is — and it is
+// load-bearing rather than a convenience: `update*Details` sends the diff against the LIVE row,
+// so an edit form without the latch silently reverts whatever changed under it (#152).
+//
 // Keeps an edit form seeded from a LIVE collection row instead of a one-shot read.
 //
 // Route loaders read a collection once — `await c.preload()` then `c.get(id)`. `preload()`

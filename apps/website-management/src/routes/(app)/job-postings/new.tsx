@@ -1,10 +1,10 @@
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { createFileRoute } from "@tanstack/react-router";
 import {
 	JobPostingForm,
 	type JobPostingFormValues,
 } from "@/src/components/job-posting-form";
 import { intents, jobPostings } from "@/src/lib/db";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/job-postings/new")({
 	component: RouteComponent,

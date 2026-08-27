@@ -1,8 +1,8 @@
 import { findCommandRefusal, sendCommand } from "@mcmec/sync";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { toast } from "sonner";
 import { intents, spraySchedules, withArguments } from "./db";
 import { API_URL } from "./queryClient";
-import { toastOnError } from "./toast-on-error";
 
 /**
  * Saving a spray mission — the one write in this app that does not always fit a collection.

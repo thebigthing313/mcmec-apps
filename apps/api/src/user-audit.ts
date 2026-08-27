@@ -15,12 +15,18 @@
 // `audit_users` trigger, with a null actor and a null command. Nothing regresses; nothing new
 // is recorded either.
 //
-// ── Open question for the implementation ─────────────────────────────────────
-// `command` has no source here. Better Auth's hooks run inside its own request handling, not
-// inside our command dispatcher, so there is no ambient command name to read — unlike the
-// trigger path, where `setCommand` has already stamped the GUC. Whichever of the `users` domain
-// commands ends up routed through Better Auth will have to pass its own name down. The field is
-// on the event type so that requirement is visible rather than discovered later.
+// ── What #165 settled, and what it left ──────────────────────────────────────
+// This was written expecting one of the `users` domain commands to route through Better Auth,
+// and needing a way to pass its name down. None of them does. `grantAppRole`, `revokeAppRole`
+// and `inviteEmployee` all write `users` with Drizzle on the dispatcher's transaction, precisely
+// so the GUCs are set and `audit_users` names the actor and the command — which is why
+// `inviteEmployee` does not call `auth.api.createUser`.
+//
+// So `command` still has no source here, and now it never will: what is left running through
+// these hooks is sign-in, email verification and password reset — writes with no command behind
+// them, made by the account holder rather than by an admin. `command: null` is the honest value
+// for those, and the open question is no longer "where does the name come from" but "is an actor
+// recoverable for a write nobody else initiated", which is a different and much smaller one.
 
 export type UserAuditOperation = "INSERT" | "UPDATE";
 
@@ -31,7 +37,7 @@ export type UserAuditEvent = {
 	/** Who performed it, when Better Auth knows. Null for unattributed writes (signup, verification). */
 	actorUserId: string | null;
 	actorEmail: string | null;
-	/** The named domain command behind the write — see the open question above. */
+	/** The named domain command behind the write. Always null today — see the module doc. */
 	command: string | null;
 };
 
