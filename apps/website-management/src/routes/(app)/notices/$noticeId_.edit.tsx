@@ -1,6 +1,8 @@
 import type { CommandName } from "@mcmec/domain";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -9,8 +11,6 @@ import {
 } from "@/src/components/notice-form";
 import { intents, notices, noticeTypes } from "@/src/lib/db";
 import { changedFields, type Draft, runLifecycle } from "@/src/lib/lifecycle";
-import { toastOnError } from "@/src/lib/toast-on-error";
-import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 	component: RouteComponent,
@@ -41,7 +41,7 @@ function RouteComponent() {
 	const { notice: loadedNotice } = Route.useLoaderData();
 	const { noticeId } = Route.useParams();
 
-	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	// Seed from the live row, not the loader's one-shot read — see @mcmec/ui/hooks/use-form-seed.
 	const { data: liveNotices } = useLiveQuery(
 		(q) =>
 			q

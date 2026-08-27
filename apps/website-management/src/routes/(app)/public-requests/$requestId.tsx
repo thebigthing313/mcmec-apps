@@ -4,6 +4,7 @@ import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, RotateCcw } from "lucide-react";
@@ -15,7 +16,6 @@ import {
 	REQUEST_STATUS_VARIANTS,
 	requestTypeLabel,
 } from "@/src/lib/public-requests";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/public-requests/$requestId")({
 	component: RouteComponent,

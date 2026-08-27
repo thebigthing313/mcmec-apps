@@ -1,11 +1,11 @@
 import { COMPANY_INFO } from "@mcmec/lib/constants/company";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { createFileRoute } from "@tanstack/react-router";
 import {
 	type MeetingFormValues,
 	MeetingsForm,
 } from "@/src/components/meetings-form";
 import { intents, meetings } from "@/src/lib/db";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/meetings/create")({
 	component: RouteComponent,

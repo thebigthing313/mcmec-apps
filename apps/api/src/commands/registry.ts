@@ -6,9 +6,12 @@
  * compiling until it is implemented. That compile error is the entire safety mechanism of the
  * define/implement split (#135 Q6).
  *
- * Each slice of the cutover adds its handlers here alongside its definitions.
+ * Each slice of the cutover added its handlers here alongside its definitions; `employees` and
+ * `users` are the last (#165).
  */
+import * as employees from "./employees/employees";
 import type { CommandRegistry } from "./types";
+import * as users from "./users/users";
 import * as documentCategories from "./website/document-categories";
 import * as documents from "./website/documents";
 import * as insecticides from "./website/insecticides";
@@ -21,6 +24,12 @@ import * as publicRequests from "./website/public-requests";
 import * as sprayMissions from "./website/spray-missions";
 
 export const REGISTRY: CommandRegistry = {
+	"employees.addEmployee": employees.addEmployee,
+	"employees.deleteEmployee": employees.deleteEmployee,
+	"employees.inviteEmployee": employees.inviteEmployee,
+	"employees.updateEmployeeDetails": employees.updateEmployeeDetails,
+	"users.grantAppRole": users.grantAppRole,
+	"users.revokeAppRole": users.revokeAppRole,
 	"website.archiveNotice": notices.archiveNotice,
 	"website.cancelMeeting": meetings.cancelMeeting,
 	"website.cancelSprayMission": sprayMissions.cancelSprayMission,

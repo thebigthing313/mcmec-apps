@@ -2,11 +2,12 @@
 //
 // Reproduces the old Supabase-auth behavior on Better Auth:
 //   - email + password, cross-subdomain SSO cookie on .middlesexmosquito.org
-//   - code-defined roles (manage_website / manage_employees / manage_users) via the admin plugin
+//   - code-defined roles (APP_ROLES, from @mcmec/lib) via the admin plugin
 //   - customSession projects { employeeId, permissions } so the apps' verifyClaims() shape survives
 //   - uuid ids to match the schema + the apps' z.uuid() validators
 
 import { randomUUID } from "node:crypto";
+import type { AppRole } from "@mcmec/lib/constants/roles";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, customSession } from "better-auth/plugins";
@@ -24,36 +25,45 @@ import {
 import { passwordSetupHtml, sendEmail } from "./email";
 import { recordUserAudit } from "./user-audit";
 
-// ── Access control: three coarse roles, one per admin app ────────────────────
+// ── Access control: one coarse role per domain ───────────────────────────────
 // Authorization in the apps is by role membership (see customSession -> permissions[]).
 // The AC statements exist mainly so the admin plugin can gate its own endpoints.
 //
 // `defaultStatements` must be spread in: the plugin authorizes its own routes against its
 // `user`/`session` statements, so a role built only from our custom ones can't satisfy them.
 // (`adminRoles` does not cover this — it isn't consulted by the plugin's permission check.)
+//
+// The resources are the vocabulary's domains (#134/#135): `website`, `employees`, `users` and
+// `reference`. `reference` ships zero commands — there is no municipality or zip-code screen to
+// hang them off — but it is declared here with the cutover rather than the day that screen is
+// written, so nothing has to be added in two places later.
 const ac = createAccessControl({
 	...defaultStatements,
 	website: ["manage"],
 	employees: ["manage"],
 	users: ["manage"],
+	reference: ["manage"],
 });
 
-const roles = {
-	manage_website: ac.newRole({ website: ["manage"] }),
+// Typed `Record<AppRole, ...>`, so a role added to `APP_ROLES` fails this file's build until it
+// has an AC role. That is the same exhaustiveness the command registry gets from `CommandName`.
+const roles: Record<AppRole, ReturnType<typeof ac.newRole>> = {
 	manage_employees: ac.newRole({ employees: ["manage"] }),
-	// Only what the admin app actually calls: it lists users, and writes roles through our
-	// own audited endpoint rather than the plugin's set-role.
+	// Grants nothing yet — the `reference` domain has no commands. Reserved so the permissions
+	// grid can offer the column from the day the reference-data screen exists.
+	manage_reference_data: ac.newRole({ reference: ["manage"] }),
+	// Only what the admin app actually calls: it lists users, and writes roles through
+	// `users.grantAppRole` / `users.revokeAppRole` rather than the plugin's set-role.
 	manage_users: ac.newRole({ users: ["manage"], user: ["list", "get"] }),
+	manage_website: ac.newRole({ website: ["manage"] }),
 };
 
-// The assignable app roles (one per admin front-end). Source of truth for role-assignment
-// validation; `users.role` stores a comma-separated subset of these (see customSession).
-export const APP_ROLES = [
-	"manage_website",
-	"manage_employees",
-	"manage_users",
-] as const;
-export type AppRole = (typeof APP_ROLES)[number];
+// `APP_ROLES` no longer lives here. It was declared twice — once in this file, once in
+// `@mcmec/lib/constants/roles` under a comment asking someone to keep them in sync — and
+// `@mcmec/domain` now needs it as well, to validate `users.grantAppRole`. Three copies of a
+// list that `manage_reference_data` was about to be added to is how two of them end up wrong,
+// so the API takes `@mcmec/lib`'s (#165). It is plain data with no imports, so taking it costs
+// this bundle nothing.
 
 export const auth = betterAuth({
 	baseURL: process.env.BETTER_AUTH_URL, // https://api.middlesexmosquito.org
@@ -160,10 +170,12 @@ export const auth = betterAuth({
 		}),
 	],
 
-	// Audit for Better-Auth-initiated writes to `users` (signup, verification, role/ban changes
-	// made through the plugin's own endpoints). These run on Better Auth's connection, outside
-	// our transactions, so the `log_mutation` trigger sees no `app.*` GUCs and records them with
-	// a null actor and a null command.
+	// Audit for Better-Auth-initiated writes to `users` — sign-in, email verification, password
+	// reset. NOT role changes or invites: those are `users.grantAppRole`, `users.revokeAppRole`
+	// and `employees.inviteEmployee`, which write this table with Drizzle inside the command
+	// transaction so the audit trigger sees the GUCs (#165). What is left here runs on Better
+	// Auth's connection, outside our transactions, so `log_mutation` records it with a null actor
+	// and a null command.
 	//
 	// `recordUserAudit` is a NO-OP today — the seam is wired so the implementation has one home
 	// (see user-audit.ts). Behaviour is unchanged: the trigger still writes the row.

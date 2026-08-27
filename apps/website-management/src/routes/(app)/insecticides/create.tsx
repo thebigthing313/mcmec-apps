@@ -2,10 +2,10 @@ import {
 	InsecticidesRowSchema,
 	type InsecticidesRowType,
 } from "@mcmec/schemas/db/insecticides";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
 import { insecticides, intents } from "@/src/lib/db";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/insecticides/create")({
 	component: RouteComponent,

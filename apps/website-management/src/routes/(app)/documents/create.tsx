@@ -1,3 +1,4 @@
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -5,7 +6,6 @@ import {
 	type DocumentFormValues,
 } from "@/src/components/document-form";
 import { documents, documentTypes, intents } from "@/src/lib/db";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/documents/create")({
 	component: RouteComponent,

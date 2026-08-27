@@ -9,8 +9,11 @@ export interface CreateCentralCollectionsOptions {
 export function createCentralCollections({
 	apiUrl,
 }: CreateCentralCollectionsOptions) {
+	// Read-only here, and `commands: true` all the same: the flag says how the TABLE is
+	// written, not whether this app writes it (#174). `employees` cut over with #165.
 	const employees = createEagerCollection({
 		apiUrl,
+		commands: true,
 		schema: EmployeesRowSchema,
 		table: "employees",
 	});

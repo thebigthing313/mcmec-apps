@@ -31,7 +31,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 import { AddEmployeeDialog } from "@/src/components/add-employee-dialog";
 import { useDb } from "@/src/lib/db";
-import { API_URL } from "@/src/lib/queryClient";
+import { sendInvite } from "@/src/lib/employees";
 
 export const Route = createFileRoute("/(app)/employees/")({
 	component: EmployeesPage,
@@ -117,9 +117,11 @@ const columns: ColumnDef<Employee>[] = [
 		},
 	},
 	{
+		// A shortcut surface only — ADR 0001. Everything reachable from a row is also reachable
+		// from the detail page, and Send Invite is.
 		cell: ({ row }) => {
 			if (row.original.user_id) return null;
-			return <InviteButton apiUrl={API_URL} email={row.original.email} />;
+			return <InviteButton onInvite={() => sendInvite(row.original.id)} />;
 		},
 		header: "Actions",
 		id: "actions",

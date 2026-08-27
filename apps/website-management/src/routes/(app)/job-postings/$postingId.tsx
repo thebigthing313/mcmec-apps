@@ -7,6 +7,7 @@ import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
 	createFileRoute,
@@ -24,7 +25,6 @@ import {
 } from "lucide-react";
 import { intents, jobPostings } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/job-postings/$postingId")({
 	component: RouteComponent,

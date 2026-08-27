@@ -4,6 +4,7 @@
 	"dependencies": {
 		"@hono/node-server": "^2.0.12",
 		"@mcmec/domain": "workspace:*",
+		"@mcmec/lib": "workspace:*",
 		"@mcmec/sync": "workspace:*",
 		"better-auth": "^1.6.25",
 		"drizzle-kit": "^0.31.10",

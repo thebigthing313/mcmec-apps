@@ -1,7 +1,7 @@
 import type { CommandName } from "@mcmec/domain";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import type { OperationConfig, WritableDeep } from "@tanstack/react-db";
 import { intents, withArguments } from "./db";
-import { toastOnError } from "./toast-on-error";
 
 /**
  * Save-and-X, in one place.

@@ -7,8 +7,9 @@
 		".": "./src/index.ts"
 	},
 	"dependencies": {
-		"zod": "^4.3.5",
-		"@mcmec/schemas": "workspace:*"
+		"@mcmec/lib": "workspace:*",
+		"@mcmec/schemas": "workspace:*",
+		"zod": "^4.3.5"
 	},
 	"scripts": {
 		"check-types": "tsc --noEmit"

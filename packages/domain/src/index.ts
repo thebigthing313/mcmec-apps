@@ -14,10 +14,12 @@ export {
 	defineDomain,
 	type PayloadOf,
 } from "./command";
+export * as employees from "./employees/employees";
 export {
 	TiptapDocument,
 	type TiptapDocumentType,
 } from "./tiptap";
+export * as users from "./users/users";
 export {
 	COMMANDED_TABLES,
 	COMMANDS,

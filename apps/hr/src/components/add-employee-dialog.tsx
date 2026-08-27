@@ -11,10 +11,11 @@ import {
 } from "@mcmec/ui/components/dialog";
 import { FieldGroup, FieldSet } from "@mcmec/ui/components/field";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import z from "zod";
-import { useDb } from "@/src/lib/db";
+import { intents, useDb } from "@/src/lib/db";
 
 export function AddEmployeeDialog() {
 	const [open, setOpen] = useState(false);
@@ -27,15 +28,23 @@ export function AddEmployeeDialog() {
 			email: "",
 		},
 		onSubmit: async ({ value }) => {
-			employees.insert({
-				id: crypto.randomUUID(),
-				display_name: value.display_name,
-				display_title: value.display_title || null,
-				email: value.email,
-				user_id: null,
-				created_at: new Date(),
-				updated_at: new Date(),
-			});
+			const now = new Date();
+			const tx = employees.insert(
+				{
+					created_at: now,
+					display_name: value.display_name,
+					display_title: value.display_title || null,
+					email: value.email,
+					id: crypto.randomUUID(),
+					updated_at: now,
+					// Mirrors what `addEmployee` writes. `user_id` is in no payload, so there is
+					// no body that could create an employee already linked to an account — the
+					// link is `employees.inviteEmployee`'s to make.
+					user_id: null,
+				},
+				intents("employees.addEmployee"),
+			);
+			toastOnError(tx, "Failed to add employee.");
 			setOpen(false);
 			form.reset();
 		},

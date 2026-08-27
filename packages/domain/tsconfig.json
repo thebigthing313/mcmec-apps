@@ -1,5 +1,13 @@
 {
 	"extends": "@mcmec/typescript-config/base.json",
-	"compilerOptions": { "noEmit": true },
+	"compilerOptions": {
+		"noEmit": true,
+		"baseUrl": ".",
+		// `@mcmec/lib` exports `./constants/*` -> `./src/constants/*`, with no extension for TS
+		// to resolve. `packages/schemas` maps it the same way for the same reason.
+		"paths": {
+			"@mcmec/lib/*": ["../../packages/lib/src/*"]
+		}
+	},
 	"include": ["src"]
 }

@@ -1,13 +1,21 @@
 /**
  * The registry: every command in the system, keyed by its name.
  *
- * Each slice of the cutover appends its domain module here; `notices` and `job_postings` are
- * the first two (#152), followed by the three plain lookup tables (#159). The full vocabulary is
- * 49 commands across four domains (#134), so this list grows to that and stops.
+ * Each slice of the cutover appended its domain module here; `notices` and `job_postings` were
+ * the first two (#152), and `employees` + `users` are the last (#165). The vocabulary is now
+ * complete and nothing is left to append: `reference` is the fourth domain #134 named and ships
+ * zero commands, because the reference-data screen it would serve does not exist yet.
+ *
+ * **51 commands, against #134's 50.** The one addition is `website.rescheduleSprayMission`, and
+ * it is not a slip: ADR 0001 replaced the mission status `<Select>` with one button per legal
+ * transition, and doing that exposed that a delayed or cancelled mission had no route back to
+ * Scheduled. The dropdown had been supplying one and no command did.
  */
 
 import type { TableName } from "@mcmec/schemas/tables";
 import type { AnyCommand } from "./command";
+import { EMPLOYEE_COMMANDS } from "./employees/employees";
+import { USER_COMMANDS } from "./users/users";
 import { DOCUMENT_CATEGORY_COMMANDS } from "./website/document-categories";
 import { DOCUMENT_COMMANDS } from "./website/documents";
 import { INSECTICIDE_COMMANDS } from "./website/insecticides";
@@ -30,6 +38,8 @@ const ALL = [
 	...SPRAY_MISSION_COMMANDS,
 	...MOSQUITO_ACTIVITY_COMMANDS,
 	...PUBLIC_REQUEST_COMMANDS,
+	...EMPLOYEE_COMMANDS,
+	...USER_COMMANDS,
 ] as const;
 
 // The callback is annotated rather than inferred: it stays correct whether ALL is empty (its

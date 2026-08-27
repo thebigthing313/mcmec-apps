@@ -1,5 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -15,7 +16,6 @@ import {
 import { changedFields, runLifecycle } from "@/src/lib/lifecycle";
 import { transitionsFrom } from "@/src/lib/spray-mission-transitions";
 import { sameMunicipalities, saveSprayMission } from "@/src/lib/spray-missions";
-import { rowVersion, useFormSeed } from "@/src/lib/use-form-seed";
 
 export const Route = createFileRoute(
 	"/(app)/spray-schedule/$sprayScheduleId_/edit",
@@ -52,7 +52,7 @@ function RouteComponent() {
 	const { schedule: loadedSchedule } = Route.useLoaderData();
 	const { sprayScheduleId } = Route.useParams();
 
-	// Seed from the live row, not the loader's one-shot read — see use-form-seed.ts.
+	// Seed from the live row, not the loader's one-shot read — see @mcmec/ui/hooks/use-form-seed.
 	const { data: liveSchedules } = useLiveQuery(
 		(q) =>
 			q

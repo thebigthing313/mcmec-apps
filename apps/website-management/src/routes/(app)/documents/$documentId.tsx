@@ -2,6 +2,7 @@ import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
 	createFileRoute,
@@ -12,7 +13,6 @@ import {
 import { ArrowLeft, Edit, ExternalLink, Undo2, Upload } from "lucide-react";
 import { documents, documentTypes, intents } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/documents/$documentId")({
 	component: RouteComponent,
@@ -37,7 +37,7 @@ function RouteComponent() {
 	const navigate = useNavigate();
 
 	// Read live rather than from the loader's one-shot read, which can land on the shape
-	// snapshot before the change log applies — see lib/use-form-seed.ts.
+	// snapshot before the change log applies — see @mcmec/ui/hooks/use-form-seed.
 	const { data: liveDocuments } = useLiveQuery(
 		(q) =>
 			q
