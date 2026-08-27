@@ -22,7 +22,7 @@ export const Route = createFileRoute("/(app)/employees/$employeeId")({
 		if (!employee) {
 			throw notFound();
 		}
-		return { employee };
+		return { crumb: employee.display_name, employee };
 	},
 });
 

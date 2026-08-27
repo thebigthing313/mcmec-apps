@@ -98,14 +98,16 @@ function LayoutComponent() {
 			</Layout.Sidebar>
 			<Layout.Content
 				breadcrumb={
-					<Layout.Breadcrumb
-						getLinkProps={(href) => ({
-							activeOptions: { exact: true },
-							to: href,
-						})}
-						items={breadcrumbParts}
-						LinkComponent={Link}
-					/>
+					breadcrumbParts.length > 0 ? (
+						<Layout.Breadcrumb
+							getLinkProps={(href) => ({
+								activeOptions: { exact: true },
+								to: href,
+							})}
+							items={breadcrumbParts}
+							LinkComponent={Link}
+						/>
+					) : undefined
 				}
 			>
 				<Outlet />

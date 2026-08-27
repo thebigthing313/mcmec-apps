@@ -67,6 +67,15 @@ export function NavUser() {
 							</Avatar>
 							{isLoading ? (
 								<div className="grid flex-1 gap-1.5">
+									{/*
+									 * Skeletons carry no text, and the avatar's alt and initials are both
+									 * empty until the record arrives — so without this the trigger is a
+									 * button with no accessible name at all during the cold-load window,
+									 * announced as just "button". It previously got its name from
+									 * `{user.name}`. The tooltip does not substitute: it renders only
+									 * while the rail is collapsed.
+									 */}
+									<span className="sr-only">Account menu, loading</span>
 									<Skeleton className="h-3.5 w-28" />
 									<Skeleton className="h-3 w-20" />
 								</div>
@@ -97,8 +106,13 @@ export function NavUser() {
 									</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
-									<span className="truncate font-medium">{user.name}</span>
-									<span className="truncate text-xs">{user.title}</span>
+									{/* Same window, inside the open menu: two blank lines without this. */}
+									<span className="truncate font-medium">
+										{user.name ?? "Signed in"}
+									</span>
+									<span className="truncate text-xs">
+										{user.title ?? "Loading your record…"}
+									</span>
 								</div>
 							</div>
 						</DropdownMenuLabel>

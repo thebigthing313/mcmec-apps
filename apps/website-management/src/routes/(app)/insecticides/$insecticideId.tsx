@@ -90,7 +90,8 @@ function RouteComponent() {
 				<h1 className="font-semibold text-foreground text-xl leading-tight">
 					{trade_name}
 				</h1>
-				<h4>{type_name}</h4>
+				{/* A subtitle, not a section heading: an h4 beneath the h1 skipped two levels. */}
+				<p className="text-muted-foreground">{type_name}</p>
 				<p>
 					<a
 						className="inline-flex items-center gap-1"

@@ -1,5 +1,7 @@
+import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { Lock, UserRoundX } from "lucide-react";
 import type * as React from "react";
+import { toast } from "sonner";
 import { Button } from "../components/button";
 import { Card, CardContent } from "../components/card";
 
@@ -15,6 +17,21 @@ import { Card, CardContent } from "../components/card";
  * So: no alert, no red, no retry. Ink on paper, a muted glyph, the reason stated plainly, and
  * the one action that actually moves the person forward.
  */
+/**
+ * Runs a sign-out handler that may be async without dropping its promise.
+ *
+ * Every call site passes an `async` arrow that awaits `signOut(...)` and then navigates. Called
+ * bare from `onClick`, a rejection — an expired session, a network blip — became an unhandled
+ * rejection, and the person sat on this screen with no feedback and no sign the click had done
+ * anything. That matters most here: signing out is the only action on this screen that can change
+ * the outcome.
+ */
+function runSignOut(onSignOut: () => void | Promise<void>) {
+	void Promise.resolve(onSignOut()).catch(() => {
+		toast.error(ErrorMessages.SERVER.INTERNAL_ERROR);
+	});
+}
+
 function AccessNotice({
 	actions,
 	explanation,
@@ -87,7 +104,7 @@ export function AppRoleRequired({
 	 * Without it the only exit was Central, which the same account also lands in — so someone
 	 * signed in as the wrong person had no way back to a sign-in form from inside the app.
 	 */
-	onSignOut?: () => void;
+	onSignOut?: () => void | Promise<void>;
 	/** The App Role's user-facing label, e.g. "Website" — never the permission string. */
 	roleLabel: string;
 }) {
@@ -99,7 +116,7 @@ export function AppRoleRequired({
 						<a href={centralUrl}>Go to Central</a>
 					</Button>
 					{onSignOut ? (
-						<Button onClick={onSignOut} variant="outline">
+						<Button onClick={() => runSignOut(onSignOut)} variant="outline">
 							Sign out
 						</Button>
 					) : null}
@@ -121,12 +138,16 @@ export function AppRoleRequired({
  * to sign in as. Signing out is the only action that can change the outcome from this side —
  * the account may simply be the wrong one — so it is the only action offered.
  */
-export function OnboardingRequired({ onSignOut }: { onSignOut?: () => void }) {
+export function OnboardingRequired({
+	onSignOut,
+}: {
+	onSignOut?: () => void | Promise<void>;
+}) {
 	return (
 		<AccessNotice
 			actions={
 				onSignOut ? (
-					<Button onClick={onSignOut} variant="outline">
+					<Button onClick={() => runSignOut(onSignOut)} variant="outline">
 						Sign out
 					</Button>
 				) : null

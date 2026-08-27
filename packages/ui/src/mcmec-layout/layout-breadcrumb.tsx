@@ -8,6 +8,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@mcmec/ui/components/breadcrumb";
+import { useLayoutContext } from "@mcmec/ui/mcmec-layout/layout-context.js";
 import type { ComponentType, ReactNode } from "react";
 import { Fragment } from "react";
 
@@ -54,6 +55,7 @@ export function LayoutBreadcrumb<
 	LinkComponent,
 	getLinkProps = (href) => ({ to: href }) as TLinkProps,
 }: LayoutBreadcrumbProps<TLinkProps>) {
+	const { currentPath } = useLayoutContext();
 	if (!items || items.length === 0) {
 		return null;
 	}
@@ -85,7 +87,20 @@ export function LayoutBreadcrumb<
 			<BreadcrumbList>
 				{trail.map((item, index) => {
 					const itemKey = item.href || item.label;
-					const isLast = index === trail.length - 1;
+					/*
+					 * The deepest crumb is not automatically the page you are on.
+					 *
+					 * This rendered the last item as `BreadcrumbPage` unconditionally, which is only
+					 * correct when the leaf route declares a crumb. Where it does not — Admin's employee
+					 * detail was exactly that — the trail ends at the section, and marking the section
+					 * as the current page tells a screen reader the *list* is current and removes the
+					 * only link back to it. Comparing against the real path leaves a trail that stops
+					 * short fully navigable.
+					 */
+					const isLast =
+						index === trail.length - 1 &&
+						(!item.href ||
+							normalizePath(item.href) === normalizePath(currentPath));
 					return (
 						<Fragment key={itemKey}>
 							<BreadcrumbItem>

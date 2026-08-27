@@ -34,8 +34,12 @@ export interface LayoutContextData {
 		title?: string | null;
 		avatar: string | null | undefined;
 	};
-	/** Required: an application that omitted it shipped a "Log out" that did nothing. */
-	onLogout: () => void;
+	/**
+	 * Required: an application that omitted it shipped a "Log out" that did nothing. Allowed to be
+	 * async because every application's handler awaits `signOut` before navigating; `NavUser`
+	 * catches the rejection rather than dropping the promise.
+	 */
+	onLogout: () => void | Promise<void>;
 }
 
 const LayoutContext = React.createContext<LayoutContextData | undefined>(

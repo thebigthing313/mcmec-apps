@@ -12,16 +12,26 @@ interface LayoutRootProps {
 	value: Omit<LayoutContextData, "companyLogoUrl" | "companyName">;
 }
 
-/** The cookie `SidebarProvider` writes when the rail is expanded or collapsed. */
+/**
+ * The cookie `SidebarProvider` writes when the rail is expanded or collapsed.
+ *
+ * Duplicated rather than imported: the authoritative constant lives in `components/sidebar.tsx`,
+ * which is generated shadcn, excluded from linting, and does not export it. If that file is ever
+ * regenerated with a different name this reader stops matching and rail persistence dies with no
+ * compile error — so if you regenerate the sidebar, check this string.
+ */
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 
 /**
  * Reads the persisted rail state back.
  *
- * `SidebarProvider` has always written this cookie and nothing has ever read it, so collapsing
- * the rail lasted until the next reload and was lost on every app switch — which, since
- * switching apps is a cross-origin page load, meant it was lost constantly. Someone who works
- * collapsed had to re-collapse all day.
+ * `SidebarProvider` has always written this cookie and nothing has ever read it, so collapsing the
+ * rail lasted only until the next reload and someone who works collapsed re-collapsed all day.
+ *
+ * This restores the setting across reloads within one application, and no further: the cookie is
+ * written without a `domain` attribute, so it is host-scoped, and in production the four
+ * applications sit on four subdomains. A cross-origin app switch still lands on the default. See
+ * the README for what making that work would cost.
  *
  * Expanded is the default when the cookie is absent or unreadable: a rail whose labels are
  * showing is the safe failure.
