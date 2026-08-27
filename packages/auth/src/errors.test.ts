@@ -42,7 +42,7 @@ describe("ForbiddenError", () => {
 		expect(error.name).toBe("ForbiddenError");
 		expect(error.code).toBe("FORBIDDEN");
 		expect(error.message).toBe(
-			"You do not have permission to this action or resource.",
+			"You do not have permission for this action or resource.",
 		);
 	});
 });
