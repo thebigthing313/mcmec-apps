@@ -1,47 +1,24 @@
-import {
-	SidebarGroup,
-	SidebarGroupContent,
-	SidebarGroupLabel,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-} from "@mcmec/ui/components/sidebar";
-import { Link, type LinkProps } from "@tanstack/react-router";
+import type { LayoutNavGroup } from "@mcmec/ui/mcmec-layout";
+import { Layout } from "@mcmec/ui/mcmec-layout";
+import { Link } from "@tanstack/react-router";
 import { Home, Users } from "lucide-react";
 
-type SidebarItem = {
-	icon: React.ReactNode;
-	label: string;
-	linkProps: LinkProps;
-};
+type NavLinkProps = { to: string };
 
-const items: SidebarItem[] = [
-	{ icon: <Home />, label: "Dashboard", linkProps: { to: "/" } },
+/** Two destinations need no heading above them; an unlabeled group is the honest answer. */
+const NAV_GROUPS: Array<LayoutNavGroup<NavLinkProps>> = [
 	{
-		icon: <Users />,
-		label: "Manage Employees",
-		linkProps: { to: "/employees" },
+		items: [
+			{ icon: <Home />, label: "Dashboard", linkProps: { to: "/" } },
+			{
+				icon: <Users />,
+				label: "Manage Employees",
+				linkProps: { to: "/employees" },
+			},
+		],
 	},
 ];
 
 export function HrSidebar() {
-	return (
-		<SidebarGroup>
-			<SidebarGroupLabel>Menu</SidebarGroupLabel>
-			<SidebarGroupContent>
-				<SidebarMenu>
-					{items.map((item) => (
-						<SidebarMenuItem key={item.label}>
-							<SidebarMenuButton asChild>
-								<Link {...item.linkProps}>
-									{item.icon}
-									<span>{item.label}</span>
-								</Link>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					))}
-				</SidebarMenu>
-			</SidebarGroupContent>
-		</SidebarGroup>
-	);
+	return <Layout.Sidebar.Nav groups={NAV_GROUPS} LinkComponent={Link} />;
 }

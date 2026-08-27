@@ -9,6 +9,7 @@ import {
 	createFileRoute,
 	Outlet,
 	redirect,
+	useLocation,
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/central-sidebar";
@@ -35,11 +36,11 @@ export const Route = createFileRoute("/(app)")({
 				<div className="flex min-h-screen items-center justify-center">
 					<div className="text-center">
 						<h1 className="mb-4 font-bold text-2xl">Onboarding Required</h1>
-						<p className="text-gray-600">
+						<p className="text-muted-foreground">
 							Your account needs to be linked to an employee record before you
 							can access this application.
 						</p>
-						<p className="mt-2 text-gray-600">
+						<p className="mt-2 text-muted-foreground">
 							Please contact your administrator for assistance.
 						</p>
 					</div>
@@ -51,7 +52,7 @@ export const Route = createFileRoute("/(app)")({
 			<div className="flex min-h-screen items-center justify-center">
 				<div className="text-center">
 					<h1 className="mb-4 font-bold text-2xl">Authentication Error</h1>
-					<p className="text-red-600">{error.message}</p>
+					<p className="text-destructive">{error.message}</p>
 				</div>
 			</div>
 		);
@@ -62,6 +63,7 @@ function LayoutComponent() {
 	const { authClient, claims, db } = Route.useRouteContext();
 	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
+	const location = useLocation();
 
 	const navigate = useNavigate();
 	const handleLogout = async () => {
@@ -81,6 +83,7 @@ function LayoutComponent() {
 			value={{
 				activeApp: "Central",
 				apps: accessibleApps,
+				currentPath: location.pathname,
 				onLogout: handleLogout,
 				user: {
 					avatar: undefined,

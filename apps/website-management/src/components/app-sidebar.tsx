@@ -1,12 +1,6 @@
-import {
-	SidebarGroup,
-	SidebarGroupContent,
-	SidebarGroupLabel,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-} from "@mcmec/ui/components/sidebar";
-import { Link, type LinkProps } from "@tanstack/react-router";
+import type { LayoutNavGroup } from "@mcmec/ui/mcmec-layout";
+import { Layout } from "@mcmec/ui/mcmec-layout";
+import { Link } from "@tanstack/react-router";
 import {
 	BarChart3,
 	BookOpen,
@@ -21,79 +15,91 @@ import {
 	Users,
 } from "lucide-react";
 
-type SidebarItem = {
-	label: string;
-	linkProps: LinkProps;
-	icon: React.ReactNode;
-};
+type NavLinkProps = { to: string };
 
-const items: SidebarItem[] = [
-	{ icon: <Home />, label: "Dashboard", linkProps: { to: "/" } },
+/**
+ * Website Management's rail, grouped by the work rather than listed flat.
+ *
+ * Eleven destinations under a single heading reading "Menu" is not an information architecture;
+ * it is the absence of one, and it fails hardest exactly when it matters most — someone opening
+ * a seasonal screen for the first time in months has to read all eleven to find the one. The
+ * groups below are the Commission's own division of the work: what gets published, what happens
+ * in the field, what the public sends in, and the slow-changing lists the other three refer to.
+ *
+ * Each group stays at four items or fewer, which is the number a reader can hold at once.
+ */
+const NAV_GROUPS: Array<LayoutNavGroup<NavLinkProps>> = [
 	{
-		icon: <BookOpen />,
-		label: "Public Notices",
-		linkProps: { to: "/notices" },
+		items: [{ icon: <Home />, label: "Dashboard", linkProps: { to: "/" } }],
 	},
 	{
-		icon: <Group />,
-		label: "Notice Categories",
-		linkProps: { to: "/categories" },
-	},
-	{ icon: <Users />, label: "Meetings", linkProps: { to: "/meetings" } },
-	{
-		icon: <SprayCan />,
-		label: "Insecticides",
-		linkProps: { to: "/insecticides" },
-	},
-	{
-		icon: <Calendar />,
-		label: "Spray Schedule",
-		linkProps: { to: "/spray-schedule" },
-	},
-	{
-		icon: <BarChart3 />,
-		label: "Weekly Activity",
-		linkProps: { to: "/weekly-activity" },
-	},
-	{
-		icon: <FileText />,
-		label: "Documents",
-		linkProps: { to: "/documents" },
+		items: [
+			{
+				icon: <BookOpen />,
+				label: "Public Notices",
+				linkProps: { to: "/notices" },
+			},
+			{ icon: <Users />, label: "Meetings", linkProps: { to: "/meetings" } },
+			{
+				icon: <FileText />,
+				label: "Documents",
+				linkProps: { to: "/documents" },
+			},
+			{
+				icon: <Briefcase />,
+				label: "Job Postings",
+				linkProps: { to: "/job-postings" },
+			},
+		],
+		label: "Publishing",
 	},
 	{
-		icon: <FolderOpen />,
-		label: "Document Categories",
-		linkProps: { to: "/document-categories" },
+		items: [
+			{
+				icon: <Calendar />,
+				label: "Spray Schedule",
+				linkProps: { to: "/spray-schedule" },
+			},
+			{
+				icon: <SprayCan />,
+				label: "Insecticides",
+				linkProps: { to: "/insecticides" },
+			},
+			{
+				icon: <BarChart3 />,
+				label: "Weekly Activity",
+				linkProps: { to: "/weekly-activity" },
+			},
+		],
+		label: "Operations",
 	},
 	{
-		icon: <Inbox />,
-		label: "Public Requests",
-		linkProps: { to: "/public-requests" },
+		items: [
+			{
+				icon: <Inbox />,
+				label: "Public Requests",
+				linkProps: { to: "/public-requests" },
+			},
+		],
+		label: "Intake",
 	},
 	{
-		icon: <Briefcase />,
-		label: "Job Postings",
-		linkProps: { to: "/job-postings" },
+		items: [
+			{
+				icon: <Group />,
+				label: "Notice Categories",
+				linkProps: { to: "/categories" },
+			},
+			{
+				icon: <FolderOpen />,
+				label: "Document Categories",
+				linkProps: { to: "/document-categories" },
+			},
+		],
+		label: "Categories",
 	},
 ];
+
 export function AppSidebar() {
-	return (
-		<SidebarGroup>
-			<SidebarGroupLabel>Menu</SidebarGroupLabel>
-			<SidebarGroupContent>
-				<SidebarMenu>
-					{items.map((item) => (
-						<SidebarMenuItem key={item.label}>
-							<SidebarMenuButton asChild>
-								<Link {...item.linkProps}>
-									{item.icon}
-									<span>{item.label}</span>
-								</Link>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					))}
-				</SidebarMenu>
-			</SidebarGroupContent>
-		</SidebarGroup>
-	);
+	return <Layout.Sidebar.Nav groups={NAV_GROUPS} LinkComponent={Link} />;
 }

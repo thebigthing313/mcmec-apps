@@ -10,6 +10,7 @@ import {
 	createFileRoute,
 	Outlet,
 	redirect,
+	useLocation,
 	useNavigate,
 } from "@tanstack/react-router";
 import { HrSidebar } from "@/src/components/hr-sidebar";
@@ -44,6 +45,7 @@ function LayoutComponent() {
 	const { authClient, claims, db } = Route.useRouteContext();
 	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
+	const location = useLocation();
 
 	const navigate = useNavigate();
 	const handleLogout = async () => {
@@ -64,6 +66,7 @@ function LayoutComponent() {
 				value={{
 					activeApp: "HR",
 					apps: accessibleApps,
+					currentPath: location.pathname,
 					onLogout: handleLogout,
 					user: {
 						avatar: undefined,

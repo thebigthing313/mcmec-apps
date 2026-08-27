@@ -2,7 +2,7 @@ import { UnauthenticatedError } from "@mcmec/auth/errors";
 import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
-import { AVAILABLE_APPS } from "@mcmec/lib/constants/apps";
+import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
 import { TooltipProvider } from "@mcmec/ui/components/tooltip";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -12,6 +12,7 @@ import {
 	Link,
 	Outlet,
 	redirect,
+	useLocation,
 	useMatches,
 	useNavigate,
 } from "@tanstack/react-router";
@@ -45,7 +46,9 @@ export const Route = createFileRoute("/(app)")({
 
 function LayoutComponent() {
 	const { authClient, claims, db } = Route.useRouteContext();
-	const { userId } = claims as Claims;
+	const { permissions, userId } = claims as Claims;
+	const accessibleApps = filterAppsByPermissions(permissions);
+	const location = useLocation();
 	const navigate = useNavigate();
 	const matches = useMatches();
 	const matchesWithCrumbs = matches.filter((match) =>
@@ -72,7 +75,8 @@ function LayoutComponent() {
 			<Layout
 				value={{
 					activeApp: "Website Management",
-					apps: AVAILABLE_APPS,
+					apps: accessibleApps,
+					currentPath: location.pathname,
 					onLogout: handleLogout,
 					user: {
 						avatar: undefined,
