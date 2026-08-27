@@ -46,6 +46,7 @@ import { Route as appSprayScheduleSprayScheduleIdEditRouteImport } from './route
 import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
 import { Route as appMeetingsMeetingIdEditRouteImport } from './routes/(app)/meetings/$meetingId_.edit'
 import { Route as appJobPostingsPostingIdEditRouteImport } from './routes/(app)/job-postings/$postingId_.edit'
+import { Route as appInsecticidesInsecticideIdEditRouteImport } from './routes/(app)/insecticides/$insecticideId_.edit'
 import { Route as appDocumentsDocumentIdEditRouteImport } from './routes/(app)/documents/$documentId_.edit'
 
 const LoginRoute = LoginRouteImport.update({
@@ -238,6 +239,12 @@ const appJobPostingsPostingIdEditRoute =
     path: '/$postingId/edit',
     getParentRoute: () => appJobPostingsRouteRoute,
   } as any)
+const appInsecticidesInsecticideIdEditRoute =
+  appInsecticidesInsecticideIdEditRouteImport.update({
+    id: '/$insecticideId_/edit',
+    path: '/$insecticideId/edit',
+    getParentRoute: () => appInsecticidesRouteRoute,
+  } as any)
 const appDocumentsDocumentIdEditRoute =
   appDocumentsDocumentIdEditRouteImport.update({
     id: '/$documentId_/edit',
@@ -279,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/spray-schedule/': typeof appSprayScheduleIndexRoute
   '/weekly-activity/': typeof appWeeklyActivityIndexRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
+  '/insecticides/$insecticideId/edit': typeof appInsecticidesInsecticideIdEditRoute
   '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
   '/meetings/$meetingId/edit': typeof appMeetingsMeetingIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
@@ -311,6 +319,7 @@ export interface FileRoutesByTo {
   '/spray-schedule': typeof appSprayScheduleIndexRoute
   '/weekly-activity': typeof appWeeklyActivityIndexRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
+  '/insecticides/$insecticideId/edit': typeof appInsecticidesInsecticideIdEditRoute
   '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
   '/meetings/$meetingId/edit': typeof appMeetingsMeetingIdEditRoute
   '/notices/$noticeId/edit': typeof appNoticesNoticeIdEditRoute
@@ -352,6 +361,7 @@ export interface FileRoutesById {
   '/(app)/spray-schedule/': typeof appSprayScheduleIndexRoute
   '/(app)/weekly-activity/': typeof appWeeklyActivityIndexRoute
   '/(app)/documents/$documentId_/edit': typeof appDocumentsDocumentIdEditRoute
+  '/(app)/insecticides/$insecticideId_/edit': typeof appInsecticidesInsecticideIdEditRoute
   '/(app)/job-postings/$postingId_/edit': typeof appJobPostingsPostingIdEditRoute
   '/(app)/meetings/$meetingId_/edit': typeof appMeetingsMeetingIdEditRoute
   '/(app)/notices/$noticeId_/edit': typeof appNoticesNoticeIdEditRoute
@@ -393,6 +403,7 @@ export interface FileRouteTypes {
     | '/spray-schedule/'
     | '/weekly-activity/'
     | '/documents/$documentId/edit'
+    | '/insecticides/$insecticideId/edit'
     | '/job-postings/$postingId/edit'
     | '/meetings/$meetingId/edit'
     | '/notices/$noticeId/edit'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/spray-schedule'
     | '/weekly-activity'
     | '/documents/$documentId/edit'
+    | '/insecticides/$insecticideId/edit'
     | '/job-postings/$postingId/edit'
     | '/meetings/$meetingId/edit'
     | '/notices/$noticeId/edit'
@@ -465,6 +477,7 @@ export interface FileRouteTypes {
     | '/(app)/spray-schedule/'
     | '/(app)/weekly-activity/'
     | '/(app)/documents/$documentId_/edit'
+    | '/(app)/insecticides/$insecticideId_/edit'
     | '/(app)/job-postings/$postingId_/edit'
     | '/(app)/meetings/$meetingId_/edit'
     | '/(app)/notices/$noticeId_/edit'
@@ -737,6 +750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appJobPostingsPostingIdEditRouteImport
       parentRoute: typeof appJobPostingsRouteRoute
     }
+    '/(app)/insecticides/$insecticideId_/edit': {
+      id: '/(app)/insecticides/$insecticideId_/edit'
+      path: '/$insecticideId/edit'
+      fullPath: '/insecticides/$insecticideId/edit'
+      preLoaderRoute: typeof appInsecticidesInsecticideIdEditRouteImport
+      parentRoute: typeof appInsecticidesRouteRoute
+    }
     '/(app)/documents/$documentId_/edit': {
       id: '/(app)/documents/$documentId_/edit'
       path: '/$documentId/edit'
@@ -768,12 +788,14 @@ interface appInsecticidesRouteRouteChildren {
   appInsecticidesInsecticideIdRoute: typeof appInsecticidesInsecticideIdRoute
   appInsecticidesCreateRoute: typeof appInsecticidesCreateRoute
   appInsecticidesIndexRoute: typeof appInsecticidesIndexRoute
+  appInsecticidesInsecticideIdEditRoute: typeof appInsecticidesInsecticideIdEditRoute
 }
 
 const appInsecticidesRouteRouteChildren: appInsecticidesRouteRouteChildren = {
   appInsecticidesInsecticideIdRoute: appInsecticidesInsecticideIdRoute,
   appInsecticidesCreateRoute: appInsecticidesCreateRoute,
   appInsecticidesIndexRoute: appInsecticidesIndexRoute,
+  appInsecticidesInsecticideIdEditRoute: appInsecticidesInsecticideIdEditRoute,
 }
 
 const appInsecticidesRouteRouteWithChildren =

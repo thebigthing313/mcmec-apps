@@ -1,22 +1,14 @@
-import { ErrorMessages } from "@mcmec/lib/constants/errors";
-import type { InsecticidesRowType } from "@mcmec/schemas/db/insecticides";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@mcmec/ui/components/alert-dialog";
+import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { Button } from "@mcmec/ui/components/button";
-import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { createFileRoute } from "@tanstack/react-router";
-import { InsecticidesForm } from "@/src/components/insecticides-form";
+import {
+	createFileRoute,
+	Link,
+	notFound,
+	useNavigate,
+} from "@tanstack/react-router";
+import { ArrowLeft, Edit, ExternalLink } from "lucide-react";
 import { insecticides, intents } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/insecticides/$insecticideId")({
@@ -25,18 +17,19 @@ export const Route = createFileRoute("/(app)/insecticides/$insecticideId")({
 		await insecticides.preload();
 		const insecticide = insecticides.get(params.insecticideId);
 		if (!insecticide) {
-			throw new Error(ErrorMessages.DATABASE.RECORD_NOT_AVAILABLE);
+			throw notFound();
 		}
-		return { crumb: "Edit", insecticide };
+		return { crumb: insecticide.trade_name, insecticide };
 	},
 });
 
 function RouteComponent() {
-	const navigate = Route.useNavigate();
 	const { insecticide: loadedInsecticide } = Route.useLoaderData();
 	const { insecticideId } = Route.useParams();
+	const navigate = useNavigate();
 
-	// Seed from the live row, not the loader's one-shot read — see @mcmec/ui/hooks/use-form-seed.
+	// Read live rather than from the loader's one-shot read, which can land on the shape
+	// snapshot before the change log applies — see @mcmec/ui/hooks/use-form-seed.
 	const { data: liveInsecticides } = useLiveQuery(
 		(q) =>
 			q
@@ -45,67 +38,91 @@ function RouteComponent() {
 		[insecticideId],
 	);
 	const insecticide = liveInsecticides[0] ?? loadedInsecticide;
-	const { seedKey, latchProps } = useFormSeed(rowVersion(insecticide));
+	const {
+		id,
+		trade_name,
+		type_name,
+		active_ingredient,
+		active_ingredient_url,
+		label_url,
+		msds_url,
+	} = insecticide;
 
-	const handleSubmit = async (value: InsecticidesRowType) => {
-		const tx = insecticides.update(
-			insecticideId,
-			intents("website.updateInsecticideDetails"),
-			(draft) => {
-				Object.assign(draft, value);
-			},
-		);
-		toastOnError(tx, "Failed to update insecticide.");
-		navigate({ to: "/insecticides" });
-	};
+	const links = [
+		{ label: "Label", url: label_url },
+		{ label: "MSDS", url: msds_url },
+	].filter((link) => link.url);
 
-	const handleDelete = async () => {
-		const tx = insecticides.delete(
-			insecticideId,
-			intents("website.deleteInsecticide"),
-		);
-		// A spray mission still naming this product refuses with a 409 that says so — the
-		// dialog above asks without knowing, because only the server does.
+	// No LifecycleButton: insecticides have no lifecycle columns. This page exists to hold the
+	// danger zone and for nothing else, which is exactly what ADR 0001 decided — `delete*` is
+	// the one command whose placement is not free, so a table with no lifecycle at all still
+	// needs a detail page to put it on.
+	//
+	// A spray mission still naming this product refuses with a 409 that says which one — the
+	// dialog asks without knowing, because only the server does.
+	const handleDelete = () => {
+		const tx = insecticides.delete(id, intents("website.deleteInsecticide"));
 		toastOnError(tx, "Failed to delete insecticide.");
 		navigate({ to: "/insecticides" });
 	};
 
-	const defaultValues: InsecticidesRowType = { ...insecticide };
-
 	return (
-		<div className="space-y-4" {...latchProps}>
-			<InsecticidesForm
-				defaultValues={defaultValues}
-				formLabel="Edit Insecticide"
-				key={seedKey}
-				onSubmit={handleSubmit}
-				submitLabel="Update"
-			/>
+		<div className="max-w-2xl space-y-6">
+			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
+				<Button asChild size="sm" variant="outline">
+					<Link to="/insecticides">
+						<ArrowLeft />
+						Back to Insecticides
+					</Link>
+				</Button>
+				<Button asChild size="sm" variant="outline">
+					<Link
+						params={{ insecticideId: id }}
+						to="/insecticides/$insecticideId/edit"
+					>
+						<Edit />
+						Edit
+					</Link>
+				</Button>
+			</nav>
 
-			<div className="max-w-2xl">
-				<AlertDialog>
-					<AlertDialogTrigger asChild>
-						<Button className="w-full" variant="destructive">
-							Delete Insecticide
-						</Button>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This action cannot be undone. This will permanently delete the
-								insecticide "{insecticide.trade_name}".
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDelete}>
-								Delete
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</div>
+			<article className="prose">
+				<h2>{trade_name}</h2>
+				<h4>{type_name}</h4>
+				<p>
+					<a
+						className="inline-flex items-center gap-1"
+						href={active_ingredient_url}
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						<ExternalLink className="h-4 w-4" />
+						{active_ingredient}
+					</a>
+				</p>
+				{links.length > 0 ? (
+					<div className="flex flex-wrap gap-4">
+						{links.map((link) => (
+							<a
+								className="inline-flex items-center gap-1"
+								href={link.url}
+								key={link.label}
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								<ExternalLink className="h-4 w-4" />
+								{link.label}
+							</a>
+						))}
+					</div>
+				) : null}
+			</article>
+
+			<DangerZoneCard
+				label="Delete Insecticide"
+				onConfirm={handleDelete}
+				recordName={trade_name}
+			/>
 		</div>
 	);
 }

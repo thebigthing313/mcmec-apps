@@ -38,13 +38,13 @@ export type InsecticideTableRowType = {
 
 interface InsecticidesTableProps {
 	data: InsecticideTableRowType[];
-	linkToEdit?: boolean;
+	linkToDetail?: boolean;
 	onRowClick?: (insecticideId: string) => void;
 }
 
 export function InsecticidesTable({
 	data,
-	linkToEdit = false,
+	linkToDetail = false,
 	onRowClick,
 }: InsecticidesTableProps) {
 	const [sorting, setSorting] = useState<SortingState>([
@@ -79,7 +79,7 @@ export function InsecticidesTable({
 			accessorKey: "trade_name",
 			cell: ({ row }) => {
 				const tradeName = row.getValue("trade_name") as string;
-				if (linkToEdit && onRowClick) {
+				if (linkToDetail && onRowClick) {
 					return (
 						<button
 							className="text-left text-primary hover:underline"
