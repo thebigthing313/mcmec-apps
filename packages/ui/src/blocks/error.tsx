@@ -57,12 +57,12 @@ export function ErrorDisplay({
 
 					<div className="flex gap-2">
 						{onRetry && (
-							<Button onClick={onRetry} className="flex-1">
+							<Button className="flex-1" onClick={onRetry}>
 								Try Again
 							</Button>
 						)}
 						{onBack && (
-							<Button onClick={onBack} variant="outline" className="flex-1">
+							<Button className="flex-1" onClick={onBack} variant="outline">
 								Go Back
 							</Button>
 						)}
