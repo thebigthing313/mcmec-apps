@@ -1,5 +1,7 @@
 ---
 "@mcmec/ui": patch
+"website-management": patch
+"public": patch
 ---
 
 Give rendered rich text its documented vertical rhythm
@@ -28,3 +30,10 @@ and `max-w-none` had always defeated; the editor uses the same measure so an aut
 breaks a reader will get; and `prose-sm` is gone, so a legal notice is no longer served at 14px on a
 phone. Headings, blockquotes and nested lists get the same rhythm, and a rendered body no longer adds
 a leading or trailing gap inside the card that already owns its padding.
+
+**Rendered bodies now line up with the headings above them.** The renderer also carried its own
+`px-4 py-3`, which indented a notice's body 16px past its title and date on every surface that
+renders one — the public detail page, the staff detail page, and the notice cards. Every caller
+already sits inside something that owns its spacing, so the padding moved to them: body text now
+shares a left edge with its heading, and the four detail pages ask for the gap under their metadata
+themselves.

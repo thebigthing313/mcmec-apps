@@ -13,3 +13,9 @@ test-results/
 # Ignored as a backstop: the release commit stages with `git add -A`, so a stray copy would
 # otherwise be committed.
 changeset-status.tmp.json
+
+# Impeccable run artifacts — decision-page payloads and review screenshots are per-run
+# output, not work product. `.impeccable/critique/` is deliberately tracked: it is the
+# scored baseline later runs compare against.
+.impeccable/questions/
+.impeccable/review/
