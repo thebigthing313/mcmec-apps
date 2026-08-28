@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 2,
-	"generatedAt": "2026-08-27T00:00:00.000Z",
+	"generatedAt": "2026-08-28T00:00:00.000Z",
 	"title": "Design System: MCMEC",
 	"extensions": {
 		"colorMeta": {
@@ -323,6 +323,11 @@
 				"name": "state-transition",
 				"value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
 				"purpose": "Default for hover, focus, and color/box-shadow state changes on buttons, inputs, and badges."
+			},
+			{
+				"name": "panel-settle",
+				"value": "200ms fade + 4px slide-from-top, disabled under prefers-reduced-motion",
+				"purpose": "The Signal Band swapping queues. The only authored motion on the staff dashboard; keyed to the selected signal so it replays per switch."
 			}
 		],
 		"breakpoints": [
@@ -404,6 +409,22 @@
 			"description": "A row in the staff sidebar rail provided by mcmec-layout. Every staff application composes the same shell; none define their own chrome.",
 			"html": "<div class=\"ds-sidebar\"><a class=\"ds-sidebar-item ds-sidebar-item-active\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2\"/><path d=\"M18 14h-8\"/><path d=\"M15 18h-5\"/><path d=\"M10 6h8v4h-8V6Z\"/></svg>Notices</a><a class=\"ds-sidebar-item\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/></svg>Spray Schedule</a></div>",
 			"css": ".ds-sidebar { display: flex; flex-direction: column; gap: 4px; width: 240px; padding: 8px; background: var(--sidebar, oklch(0.96 0.01 150)); border-right: 1px solid var(--sidebar-border, oklch(0.8 0.02 150)); font-family: Roboto, system-ui, sans-serif; } .ds-sidebar-item { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 8px; border-radius: 8px; color: var(--sidebar-foreground, oklch(0.2713 0.0023 145.5111)); font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-sidebar-item svg { flex-shrink: 0; } .ds-sidebar-item:hover { background: var(--sidebar-accent, oklch(0.92 0.03 150)); color: var(--sidebar-accent-foreground, oklch(0.3867 0.0191 145.1951)); } .ds-sidebar-item-active { background: var(--sidebar-primary, oklch(0.5353 0.1357 153.5529)); color: var(--sidebar-primary-foreground, oklch(0.98 0.005 150)); } .ds-sidebar-item:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--sidebar-ring, oklch(0.5353 0.1357 153.5529)) 50%, transparent); }"
+		},
+		{
+			"name": "Signal Band",
+			"kind": "custom",
+			"refersTo": "signal-cell",
+			"description": "A band of named signals across the top of a staff screen, each opening its own queue in place. A real WAI-ARIA tablist; Commission Green marks the selected cell only.",
+			"html": "<section class=\"ds-signal-band\"><div class=\"ds-signal-tabs\" role=\"tablist\" aria-orientation=\"horizontal\"><button class=\"ds-signal-cell\" role=\"tab\" type=\"button\" aria-selected=\"false\"><span class=\"ds-signal-count\">3</span><span class=\"ds-signal-label\">Missions tonight</span><span class=\"ds-signal-condition\">scheduled tonight</span></button><button class=\"ds-signal-cell ds-signal-cell--selected\" role=\"tab\" type=\"button\" aria-selected=\"true\"><span class=\"ds-signal-count\">7</span><span class=\"ds-signal-label\">Requests aging</span><span class=\"ds-signal-condition\">open 5+ days</span></button><button class=\"ds-signal-cell\" role=\"tab\" type=\"button\" aria-selected=\"false\"><span class=\"ds-signal-count ds-signal-count--zero\">0</span><span class=\"ds-signal-label\">Not yet public</span><span class=\"ds-signal-condition\">everything is published</span></button></div><div class=\"ds-signal-panel\" role=\"tabpanel\" tabindex=\"0\"><div class=\"ds-signal-panel-head\"><h2>Requests aging <span>open 5+ days</span></h2></div></div></section>",
+			"css": ".ds-signal-band { border: 1px solid var(--border); border-radius: var(--radius-xl, 14px); background: var(--card); overflow: hidden; font-family: Roboto, system-ui, sans-serif; color: var(--foreground); } .ds-signal-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); } .ds-signal-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 16px; text-align: left; background: var(--card); color: var(--foreground); border: none; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-signal-cell:hover { background: var(--secondary); } .ds-signal-cell:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); position: relative; z-index: 1; } .ds-signal-cell--selected, .ds-signal-cell--selected:hover { background: var(--primary); color: var(--primary-foreground); } .ds-signal-count { font-size: 1.5rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; } .ds-signal-count--zero { color: var(--muted-foreground); } .ds-signal-label { font-size: 0.875rem; font-weight: 500; line-height: 1.25; } .ds-signal-condition { font-size: 0.75rem; line-height: 1.25; color: var(--muted-foreground); } .ds-signal-cell--selected .ds-signal-condition { color: color-mix(in oklab, var(--primary-foreground) 90%, transparent); } .ds-signal-panel { border-top: 1px solid var(--border); } .ds-signal-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 16px; border-bottom: 1px solid var(--border); } .ds-signal-panel-head h2 { margin: 0; font-size: 0.875rem; font-weight: 500; } .ds-signal-panel-head span { margin-left: 8px; font-weight: 400; color: var(--muted-foreground); }"
+		},
+		{
+			"name": "Signal Queue Row",
+			"kind": "custom",
+			"refersTo": "signal-queue-row",
+			"description": "The one row shape every queue in a Signal Band uses: primary / secondary / meta / badge, in the same four places whatever domain the record comes from. App-local to website-management today.",
+			"html": "<ul class=\"ds-queue\"><li><a class=\"ds-queue-row\" href=\"#\"><span class=\"ds-queue-text\"><span class=\"ds-queue-primary\">Standing water complaint</span><span class=\"ds-queue-secondary\">14 Mill Road, Piscataway</span></span><span class=\"ds-queue-trail\"><span class=\"ds-queue-meta\">8 days</span><span class=\"ds-queue-badge\">New</span></span></a></li><li><a class=\"ds-queue-row\" href=\"#\"><span class=\"ds-queue-text\"><span class=\"ds-queue-primary\">Mosquito activity report</span><span class=\"ds-queue-secondary\">Highland Park</span></span><span class=\"ds-queue-trail\"><span class=\"ds-queue-meta\">6 days</span><span class=\"ds-queue-badge\">Pending</span></span></a></li></ul>",
+			"css": ".ds-queue { list-style: none; margin: 0; padding: 0; font-family: Roboto, system-ui, sans-serif; } .ds-queue li { border-bottom: 1px solid var(--border); } .ds-queue li:last-child { border-bottom: none; } .ds-queue-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 10px 16px; color: var(--foreground); text-decoration: none; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-queue-row:hover { background: var(--secondary); } .ds-queue-row:focus-visible { outline: none; position: relative; z-index: 1; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); } .ds-queue-text { min-width: 0; display: block; } .ds-queue-primary { display: block; font-size: 0.875rem; font-weight: 500; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-queue-secondary { display: block; font-size: 0.75rem; line-height: 1.25; color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-queue-trail { display: flex; align-items: center; gap: 12px; flex-shrink: 0; } .ds-queue-meta { font-size: 0.75rem; color: var(--muted-foreground); font-variant-numeric: tabular-nums; } .ds-queue-badge { border-radius: 9999px; padding: 2px 8px; font-size: 0.75rem; font-weight: 500; background: var(--primary); color: var(--primary-foreground); }"
 		}
 	],
 	"narrative": {
@@ -472,6 +493,11 @@
 				"name": "The Desktop-First, Mobile-Survivable Rule",
 				"body": "The four staff applications are designed for the screen they are used on: a desk, a large display, a considered edit. Density and column count are decided at desktop widths and not compromised for a phone. But narrow is a state they must survive, because the job occasionally follows someone out of the building. On a phone every staff screen must fit the viewport with no horizontal page scroll, keep wide content scrolling inside its own container, keep every primary action reachable without hover, and lose no destination. A cramped table someone can scroll is fine; a form whose Save button sits outside the viewport is not. apps/public is the inverse and is not covered by this rule. Browser zoom counts as narrow and should: a staff screen at 200% zoom has roughly the viewport of a phone, and WCAG 1.4.10 asks it to reflow rather than scroll in two directions, so the rail becoming an overlay at that size is the rule working rather than misfiring.",
 				"section": "layout"
+			},
+			{
+				"name": "The Count Opens Its Queue Rule",
+				"body": "A number on a staff dashboard opens the records it counts, in place. A count that only links somewhere else is a statistic, and a statistic is not the work — see Signal Band.",
+				"section": "components"
 			}
 		],
 		"dos": [

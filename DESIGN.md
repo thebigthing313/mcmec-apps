@@ -123,6 +123,22 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.full}"
     padding: "2px 8px"
+  signal-cell:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    padding: "12px 16px"
+  signal-cell-hover:
+    backgroundColor: "{colors.pale-green}"
+    textColor: "{colors.ink}"
+  signal-cell-selected:
+    backgroundColor: "{colors.commission-green}"
+    textColor: "{colors.commission-green-contrast}"
+    padding: "12px 16px"
+  signal-queue-row:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    padding: "10px 16px"
 ---
 
 # Design System: MCMEC
@@ -328,9 +344,39 @@ The system's signature control, and the subject of ADR 0001. A lifecycle action 
 
 It defaults to the outline variant so it reads as a deliberate act rather than the form's primary submit, and it relabels when the form beneath it is dirty: "Publish" becomes "Save and Publish," and the caller then sends both intents in one atomic request. A refused lifecycle command rolls the field save back with it, so the refusal copy must say the changes were not saved either.
 
+### Signal Band
+
+A band of named signals across the top of a staff screen, each opening its own queue in place. It answers the stat-card grid, where every count was a dead end: the number is not the work, so the count and the queue it counts share one surface and reading that queue costs a keypress rather than a page.
+
+- **Structure:** One `14px` rounded container, one border, both halves inside it. The cells sit on a `1px` gap over a Rule-coloured ground, which draws every divider at once and holds them exact when the cells wrap; the panel sits directly beneath under a top border, opening with its own header row — the queue's name, its condition, and a trailing action slot. Band and panel read as one instrument, not a toolbar above an unrelated list.
+- **Cell:** the count first at `1.5rem` semibold in tabular figures, then the queue's name at `0.875rem` medium, then its condition at `0.75rem` in Muted Ink. A count of zero recedes to muted so the eye lands on the signals holding real work.
+- **Selected:** Commission Green ground with the pale warm-white label — the active-navigation state, the same job the colour does in the staff rail. On the lit cell the two lower lines tint down from the foreground rather than dropping to muted grey, which would fall under `4.5:1` against the green. A small rotated square joins the lit cell to its panel on the single-row band only; once the cells wrap it would point at another cell, and a pointer aimed at the wrong thing is worse than none.
+- **Rest / hover / focus:** Surface ground, Pale Green on hover, and the system's `3px` focus ring with the cell raised above its neighbours so the ring is not clipped by the divider.
+- **Labels:** Sentence case. The Uppercase Is Structural Rule gives uppercase three homes and a control is not one of them.
+- **Urgency:** carried by the caller's left-to-right ordering, by each signal's condition phrase — "open 5+ days," "awaiting triage," "none scheduled" — and by which signal the screen opens on. Never by colour. This is The Status Is A Word Rule applied to a control instead of a badge.
+- **Behavior:** a real WAI-ARIA tablist with roving focus and automatic activation. Left / Right / Home / End move the selection and open the queue as they go. `aria-orientation="horizontal"` is declared and ArrowUp / ArrowDown are deliberately absent: below `lg` the band wraps to a two-dimensional grid where a vertical arrow would move the selection sideways. The panel is itself focusable, because an empty queue offers a keyboard user nothing else to land on.
+- **Responsive:** five columns at `lg`, three at `sm`, two below. Breakpoint-aware filler cells square off the trailing row at each column count for any number of signals, so the grid's own ground never shows through as a dead block. The panel carries a `min-height` floor from `sm` up only — enough that switching to an empty queue on a desktop does not collapse the instrument and drag the page beneath it upward, while narrow widths reflow, which is the point of reflowing.
+- **Motion:** the swap settles rather than cuts — a `200ms` fade and one-step slide keyed to the selected signal, `motion-reduce` honoured. It is the screen's one authored moment; nothing else on it moves.
+- **Copy:** an optional panel label overrides the cell's label in the header, where there is room the cell does not have. A five-across cell fits "Missions tonight"; the header says "Spray Missions tonight," which is the word the rest of the product uses.
+
+It lives in `packages/ui/src/blocks/signal-band.tsx`, so it is available to all four staff frontends, not only the one that uses it today.
+
+### Signal Queue Row
+
+One row vocabulary for every queue a Signal Band opens, whatever domain the record comes from. Left to themselves, five queues across four domains grow five arrangements on one surface, and the eye has to re-learn where the important word sits every time the panel changes.
+
+- **Slots:** four, always in the same places. `primary` — what the record is — leads at `0.875rem` medium and truncates rather than wrapping, so the row stays one line tall. `secondary` — where or who — sits under it at `0.75rem` in Muted Ink. `meta` — when: a date, a time range, an age — is right-aligned in tabular figures so the column holds as the panel changes. `badge` closes the row, carrying the word.
+- **Shape:** a two-column grid (`minmax(0,1fr) auto`), `16px` between the columns, `16px` horizontal and `10px` vertical padding, a Rule bottom border on every row but the last. No radius and no card of its own; the band's container is the only edge.
+- **Row target:** the whole row is a typed route link. Hover takes Pale Green; focus takes the standard `3px` ring and raises the row above its siblings.
+- **Empty:** the queue states its own empty case — an icon, a short title, a line of description — rather than leaving the panel blank. An empty signal is a legitimate answer and should read as one.
+
+It lives in `apps/website-management/src/components/signal-queue.tsx` and is app-local today. If a second staff application grows a queue, promote it to `packages/ui` beside the band rather than copying it.
+
 ### Named Rules
 
 **The Lifecycle Is A Button Rule.** State transitions are performed, not set. If a design shows a record's state as a toggle, a select, or a checkbox, the design is wrong regardless of how it looks — see `docs/adr/0001-lifecycle-actions-are-buttons.md`.
+
+**The Count Opens Its Queue Rule.** A number on a staff dashboard opens the records it counts, in place. A count that only links somewhere else is a statistic, and a statistic is not the work — see Signal Band.
 
 ## Do's and Don'ts
 
