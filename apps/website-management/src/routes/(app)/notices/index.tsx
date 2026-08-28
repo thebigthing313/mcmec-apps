@@ -169,11 +169,11 @@ function RouteComponent() {
 				<Select
 					onValueChange={(value) =>
 						navigate({
-							search: (prev: NoticesSearch) => ({
-								...prev,
+							search: {
+								...search,
 								page: 1,
 								status: value === "all" ? undefined : (value as Status),
-							}),
+							},
 							to: "/notices",
 						})
 					}
@@ -198,17 +198,13 @@ function RouteComponent() {
 			getSearchText={(row) => `${row.title} ${row.noticeType}`}
 			onClearFilters={() =>
 				navigate({
-					search: (prev: NoticesSearch) => ({
-						...prev,
-						page: 1,
-						status: undefined,
-					}),
+					search: { ...search, page: 1, status: undefined },
 					to: "/notices",
 				})
 			}
 			onSearchChange={(next) =>
 				navigate({
-					search: (prev: NoticesSearch) => ({ ...prev, ...next }),
+					search: { ...search, ...next },
 					to: "/notices",
 				})
 			}

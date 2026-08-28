@@ -45,14 +45,11 @@ import type * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import { type QueueItem, SignalQueue } from "@/src/components/signal-queue";
 import {
-	formatTimeRange,
-	statusBadgeVariant,
-} from "@/src/components/spray-schedule-table";
-import {
 	REQUEST_STATUS_LABELS,
 	REQUEST_STATUS_VARIANTS,
 	requestTypeLabel,
 } from "@/src/lib/public-requests";
+import { formatTimeRange, statusBadgeVariant } from "@/src/lib/spray-schedule";
 
 /**
  * How long a Public Request may sit open before the dashboard calls it aging. Five working days is
