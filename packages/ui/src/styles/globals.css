@@ -16,7 +16,15 @@
 	--popover: oklch(0.98 0.005 150);
 	--popover-foreground: oklch(0.2537 0.0035 164.7797);
 	--primary: oklch(0.5364 0.1457 150.5842);
-	--primary-foreground: oklch(0.9556 0.0199 112.9333);
+	/*
+	 * Lightened from oklch(0.9556 ...) on 2026-08-28. Against Commission Green the old value
+	 * measured 4.239:1 — under the 4.5:1 AA floor for normal-size text, and it painted every
+	 * primary button, the skip link, and every filled status badge across five frontends.
+	 * This measures 4.627:1. Commission Green itself is unchanged: it is a brand commitment,
+	 * and the chroma here is preserved too, since removing the warmth entirely moves the ratio
+	 * by 0.02 and so buys nothing worth the loss.
+	 */
+	--primary-foreground: oklch(0.985 0.0199 112.9333);
 	--secondary: oklch(0.92 0.03 150);
 	--secondary-foreground: oklch(0.2537 0.0035 164.7797);
 	--muted: oklch(0.94 0.01 150);

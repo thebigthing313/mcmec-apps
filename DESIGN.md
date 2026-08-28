@@ -3,7 +3,7 @@ name: MCMEC
 description: The shared visual system behind the Middlesex County Mosquito Extermination Commission's public website and its four staff applications.
 colors:
   commission-green: "oklch(0.5364 0.1457 150.5842)"
-  commission-green-contrast: "oklch(0.9556 0.0199 112.9333)"
+  commission-green-contrast: "oklch(0.985 0.0199 112.9333)"
   brackish-teal: "oklch(0.6638 0.0267 183.8599)"
   brackish-teal-contrast: "oklch(0.98 0.005 150)"
   paper: "oklch(0.985 0.002 150)"
@@ -168,7 +168,9 @@ A single institutional green against a family of neutrals that share its hue, so
 
 ### Primary
 
-- **Commission Green** (`oklch(0.5364 0.1457 150.5842)`): The agency's voice. It appears on the primary action in every application, the staff sidebar ground, active navigation, iconography on the public quick-action cards, and the directional scrim over the hero photograph. Its foreground pair is a very pale warm green-white (`oklch(0.9556 0.0199 112.9333)`) rather than pure white — the slight warmth keeps the button from reading as a generic call to action.
+- **Commission Green** (`oklch(0.5364 0.1457 150.5842)`): The agency's voice. It appears on the primary action in every application, the staff sidebar ground, active navigation, iconography on the public quick-action cards, and the directional scrim over the hero photograph. Its foreground pair is a very pale warm green-white (`oklch(0.985 0.0199 112.9333)`) rather than pure white — the slight warmth keeps the button from reading as a generic call to action. **The pair measures 4.63:1**, which clears the 4.5:1 AA floor for normal-size text; it has to, because that foreground lands on 12px status badges as well as on buttons.
+
+  The foreground was lightened from `oklch(0.9556 …)` on 2026-08-28. The old value measured **4.24:1** and had been failing AA on every primary button, the skip link, and every filled status badge in all five frontends. Commission Green itself did not move — it is a brand commitment — and the warmth was kept, because removing the chroma entirely changes the ratio by 0.02 and so buys nothing worth the loss. The lesson is recorded rather than just the number: this pair is the system's most-reused colour relationship, and it went years undocumented and unmeasured.
 
 ### Secondary
 
@@ -338,6 +340,22 @@ Icons are Lucide, at `1rem` inside buttons and badges, `1.5rem` on public quick-
 
 The rail is rendered by the shell, not by each application: `Layout.Sidebar.Nav` takes groups of destinations and owns the three things a hand-rolled rail keeps losing. Every row carries a tooltip, which is the only label a collapsed rail has. The current destination takes Commission Green (`4.57:1` against its own label, `4.33:1` against the rail) and carries `aria-current="page"`, so location is never signalled by colour alone. Matching is by path prefix, so a drill-down keeps its parent lit. Groups run to four items or fewer and are labelled in the Overline; a rail of three or fewer destinations drops the label rather than inventing one.
 
+### Record Index
+
+The one index page, and the answer to eleven of them. Every staff list — Notices, Meetings, Documents, Insecticides, Job Postings, Public Requests, Spray Missions, Employees — is composed from `RecordIndex` in `packages/ui`, which owns the whole screen: heading, search and filter bar, table chrome, sorting, pagination, loading, and empty states.
+
+It is deliberately opinionated, because the unopinionated version was tried and produced nine copies of the sortable header (not one of which emitted `aria-sort`), eight copies of the pagination footer, six spellings of the empty state, three incompatible ways to reach a record, and zero loading states.
+
+- **Structure:** page heading, then an optional search-and-filter row carrying a live result count, then one `14px` rounded bordered container holding the table, then the pagination footer — which appears only when there is more than one page.
+- **The identity column is a link.** `renderRowLink` is required, so an index that cannot be operated by keyboard does not compile. Not a whole-row click target and not a stretched overlay: the first is invisible to assistive technology, and the second takes text selection away from every other cell.
+- **Row actions name their record.** The trigger reads "Actions for <record>, <date>", never a bare "Row actions" repeated down the column.
+- **Sorting is announced.** The sorted column carries `aria-sort`, and the table carries the page title as its accessible name.
+- **Loading and empty are different screens.** `state="loading"` renders skeleton rows; an empty register gets an authored empty state, and a search that matches nothing gets a different one that offers to clear itself. A register must never say "there are no records" while it is still syncing.
+- **State lives in the URL.** Sort, direction, page, size, and the search term round-trip through the route's search params, so returning from a record lands where you left. Search input is debounced and holds its own draft: writing each keystroke to the URL loses focus mid-word and turns the back button into an undo log.
+- **Default page size is 25**, because these screens are read at a desk on a large display.
+
+Per-domain choices stay with the route: the columns and their renderers, the `rowActions` builders, which lifecycle actions a row offers, the filter dimensions, and the default sort. The arrangement belongs to the system; the domain belongs to the screen.
+
 ### Lifecycle Button
 
 The system's signature control, and the subject of ADR 0001. A lifecycle action — Publish, Archive, Cancel, Close, Resolve, Reschedule — is always a button that fires its own named command. It is never a switch, never a checkbox, and never a status field the user edits and saves.
@@ -373,6 +391,8 @@ One row vocabulary for every queue a Signal Band opens, whatever domain the reco
 It lives in `apps/website-management/src/components/signal-queue.tsx` and is app-local today. If a second staff application grows a queue, promote it to `packages/ui` beside the band rather than copying it.
 
 ### Named Rules
+
+**The Confirm Is For The Public Rule.** A row action asks before it fires when its effect is immediately visible to someone outside the building. The test is not "is this destructive" — it is "does a stranger see the result". Unpublishing a Notice takes a statutorily posted legal notice off the public website and now names the record before it acts and again after; `delete*`, which is less publicly consequential, always had a danger zone. Actions whose result the user can watch land on their own screen do not need the ceremony.
 
 **The Lifecycle Is A Button Rule.** State transitions are performed, not set. If a design shows a record's state as a toggle, a select, or a checkbox, the design is wrong regardless of how it looks — see `docs/adr/0001-lifecycle-actions-are-buttons.md`.
 

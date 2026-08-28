@@ -33,16 +33,26 @@ const ROLLED_BACK_TOGETHER =
  *
  * Pass `savedTogether` for a Save-and-X: whatever the server says, the toast then also says the
  * field save went back with it.
+ *
+ * Pass `success` where the *successful* case also owes the user a sentence. Silence is a fine
+ * acknowledgement for a field save the user can watch land in the form, and a poor one for a
+ * command whose whole effect is on a website the user is not looking at: unpublishing a Notice
+ * changed what a resident sees and, before this, said nothing at all.
  */
 export function toastOnError(
 	tx: { isPersisted: { promise: Promise<unknown> } },
 	message = "Something went wrong. Changes have been rolled back.",
-	options?: { savedTogether?: boolean },
+	options?: { savedTogether?: boolean; success?: string },
 ) {
-	tx.isPersisted.promise.catch((error: unknown) => {
-		const reason = findCommandRefusal(error)?.message ?? message;
-		toast.error(
-			options?.savedTogether ? `${reason} ${ROLLED_BACK_TOGETHER}` : reason,
-		);
-	});
+	tx.isPersisted.promise.then(
+		() => {
+			if (options?.success) toast.success(options.success);
+		},
+		(error: unknown) => {
+			const reason = findCommandRefusal(error)?.message ?? message;
+			toast.error(
+				options?.savedTogether ? `${reason} ${ROLLED_BACK_TOGETHER}` : reason,
+			);
+		},
+	);
 }

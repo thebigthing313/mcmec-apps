@@ -46,6 +46,12 @@ export interface LifecycleAction<TDraft> {
 	/** Fallback toast copy. A refusal's own sentence wins over it whenever there is one. */
 	failure: string;
 	/**
+	 * What to say when it works. Name the record and the consequence — "'2026 Public Notice'
+	 * removed from the public site" — not "Saved". Omit where the user can see the result
+	 * themselves; supply it where the effect lands on the public website and is invisible here.
+	 */
+	success?: string;
+	/**
 	 * The field save to carry along, when the form beneath has real changes. Omit on a clean
 	 * form or a read-only detail view — and note "real": pass the output of `changedFields`,
 	 * never a sticky `isDirty`, or a typed-then-reverted form sends `update*Details` an empty
@@ -65,7 +71,7 @@ export interface LifecycleAction<TDraft> {
 export function runLifecycle<TDraft extends object>(
 	collection: UpdatableCollection<TDraft>,
 	id: string,
-	{ command, apply, failure, save }: LifecycleAction<TDraft>,
+	{ command, apply, failure, save, success }: LifecycleAction<TDraft>,
 ) {
 	const changes = save?.changes;
 	const savedTogether =
@@ -83,7 +89,7 @@ export function runLifecycle<TDraft extends object>(
 			apply(draft);
 		},
 	);
-	toastOnError(tx, failure, { savedTogether });
+	toastOnError(tx, failure, { savedTogether, success });
 	return tx;
 }
 
