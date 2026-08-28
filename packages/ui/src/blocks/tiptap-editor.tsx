@@ -63,8 +63,11 @@ export function TiptapEditor({
 		editable,
 		editorProps: {
 			attributes: {
+				// The same measure and size the renderer uses, so what an author lays out is what
+				// a resident reads. An editor that wraps at a different width than the published
+				// page teaches the author the wrong shape.
 				class: cn(
-					"prose prose-sm sm:prose-base max-w-none focus:outline-none min-h-[200px] px-4 py-3",
+					"prose prose-base max-w-[70ch] focus:outline-none min-h-[200px] px-4 py-3",
 					className,
 				),
 				"data-placeholder": placeholder,
