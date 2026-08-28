@@ -19,4 +19,4 @@ Per-domain choices stay with the route — columns, `rowActions` builders, which
 
 **`RowActionsMenu` can now ask first.** A `confirm` on a row action opens an alert dialog naming the record. Unpublishing a Notice removes a statutorily posted legal notice from the public website and previously did it in one click with no confirmation and no acknowledgement, while `delete*` — less publicly consequential — had a whole danger zone. `toastOnError` gained a `success` option for the same reason: a command whose entire effect lands on a website the user is not looking at owes them a sentence when it works.
 
-`/notices` is migrated as the reference implementation and `notices-table.tsx` is deleted. The remaining ten routes are unchanged and still work; they can move over one at a time.
+`/notices` is migrated as the reference implementation and `notices-table.tsx` is deleted. The rest of the record indexes follow in the same release — see the accompanying changeset.

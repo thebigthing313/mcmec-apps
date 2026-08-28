@@ -80,8 +80,11 @@ export interface RecordIndexColumn<TRow> {
 	/** Extra classes for the cell — a `max-w-[36ch] truncate` on a column that can run long. */
 	cellClassName?: string;
 	/**
-	 * Marks the column carrying the record's identity. Its cell becomes the link to the record.
-	 * Exactly one column must set it.
+	 * Marks the column carrying the record's identity — its cell becomes the link to the record.
+	 *
+	 * Exactly one column must set it, and that is enforced rather than documented: falling back to
+	 * "whichever column happens to be first" put the link on an arbitrary cell in a block whose
+	 * whole thesis is that an unreachable index does not compile.
 	 */
 	identity?: boolean;
 }
@@ -136,6 +139,36 @@ export function parseRecordIndexSearch(
 	};
 }
 
+/**
+ * The route's `validateSearch`, written once.
+ *
+ * Nine routes had each copied the same six-line body, which is the duplication this block exists
+ * to end, reintroduced one layer up. Only values that differ from the default are emitted, so a
+ * clean list keeps a clean URL and a link to the route from anywhere else still needs no search
+ * object at all.
+ *
+ * `extra` carries a route's own filter dimensions — a Notice's status, a Public Request's type.
+ */
+export function validateRecordIndexSearch<TExtra extends object = object>(
+	raw: Record<string, unknown>,
+	extra?: (raw: Record<string, unknown>) => TExtra,
+): Partial<RecordIndexSearch> & TExtra {
+	const page = Number(raw.page);
+	const size = Number(raw.size);
+	return {
+		...(typeof raw.q === "string" && raw.q ? { q: raw.q } : {}),
+		...(Number.isFinite(page) && page > 1 ? { page: Math.floor(page) } : {}),
+		...(RECORD_INDEX_PAGE_SIZES.includes(
+			size as (typeof RECORD_INDEX_PAGE_SIZES)[number],
+		)
+			? { size }
+			: {}),
+		...(typeof raw.sort === "string" && raw.sort ? { sort: raw.sort } : {}),
+		...(raw.dir === "asc" || raw.dir === "desc" ? { dir: raw.dir } : {}),
+		...(extra ? extra(raw) : ({} as TExtra)),
+	} as Partial<RecordIndexSearch> & TExtra;
+}
+
 export interface RecordIndexProps<TRow> {
 	/** Page title. Also the table's accessible name, so it is never an unnamed grid. */
 	title: string;
@@ -162,7 +195,17 @@ export interface RecordIndexProps<TRow> {
 		children: ReactNode;
 	}) => ReactNode;
 
-	/** ADR 0001 shortcuts. The route builds them; this block never learns the command vocabulary. */
+	/**
+	 * ADR 0001 shortcuts. The route builds them; this block never learns the command vocabulary.
+	 *
+	 * These stay in a menu even when a row offers exactly one action, which is a deliberate
+	 * departure from the critique that prescribed promoting a lone action to an inline outline
+	 * `LifecycleButton`. Across the nine indexes the action count is not fixed — a Notice offers
+	 * one, a Meeting offers one, an Employee offers one or none, and a row that gains a second
+	 * action later would have to move back into a menu. A control that changes shape with the row
+	 * costs more scanning than the click it saves, so the column stays one width and one
+	 * affordance. `confirm` is what makes a consequential action deliberate here, not prominence.
+	 */
 	rowActions?: (row: TRow) => RowAction[];
 
 	/**
@@ -216,7 +259,16 @@ export function RecordIndex<TRow>({
 	title,
 }: RecordIndexProps<TRow>) {
 	const search = parseRecordIndexSearch(rawSearch, defaultSort);
-	const identityId = columns.find((c) => c.identity)?.id ?? columns[0]?.id;
+	const identityColumns = columns.filter((c) => c.identity);
+	if (identityColumns.length !== 1) {
+		// Loud, and at render rather than in a silent fallback: without exactly one identity column
+		// there is no honest answer to which cell should carry the record's link, and guessing
+		// produces an index whose only route to a record is on an arbitrary column.
+		throw new Error(
+			`RecordIndex "${title}" needs exactly one column with identity: true, found ${identityColumns.length}.`,
+		);
+	}
+	const identityId = identityColumns[0]?.id;
 
 	const filtered = useMemo(() => {
 		if (!getSearchText || !search.q.trim()) return rows;

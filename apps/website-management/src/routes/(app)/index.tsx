@@ -49,7 +49,11 @@ import {
 	REQUEST_STATUS_VARIANTS,
 	requestTypeLabel,
 } from "@/src/lib/public-requests";
-import { formatTimeRange, statusBadgeVariant } from "@/src/lib/spray-schedule";
+import {
+	formatTimeRange,
+	statusBadgeVariant,
+	statusLabel,
+} from "@/src/lib/spray-schedule";
 
 /**
  * How long a Public Request may sit open before the dashboard calls it aging. Five working days is
@@ -285,12 +289,23 @@ function RouteComponent() {
 		}
 	}, [signalsSettled]);
 
+	// One record per signal rather than three parallel maps keyed the same way. The three had to
+	// be kept in step by hand, and each needed its own `?? missions` fallback at the point of use.
 	const queues: Record<
 		string,
-		{ action: React.ReactNode; items: QueueItem[] }
+		{
+			action: React.ReactNode;
+			items: QueueItem[];
+			emptyIcon: typeof SprayCan;
+			emptyTitle: string;
+			emptyDescription: string;
+		}
 	> = {
 		aging: {
 			action: <ViewAll label="All requests" to="/public-requests" />,
+			emptyDescription: `Nothing has been waiting ${AGING_DAYS} days or more.`,
+			emptyIcon: CheckCircle2,
+			emptyTitle: "Nothing is aging",
 			items: agingRequests.map((r) => ({
 				badge: (
 					<Badge variant={REQUEST_STATUS_VARIANTS[r.status]}>
@@ -309,6 +324,9 @@ function RouteComponent() {
 		},
 		meetings: {
 			action: <ViewAll label="All meetings" to="/meetings" />,
+			emptyDescription: "No meeting is on the calendar after today.",
+			emptyIcon: CalendarCheck,
+			emptyTitle: "No upcoming meetings",
 			items: upcomingMeetings.slice(0, 8).map((m) => ({
 				id: m.id,
 				linkProps: { params: { meetingId: m.id }, to: "/meetings/$meetingId" },
@@ -321,10 +339,13 @@ function RouteComponent() {
 		},
 		missions: {
 			action: <ViewAll label="All Spray Missions" to="/spray-schedule" />,
+			emptyDescription: "Nothing is scheduled tonight and nothing is delayed.",
+			emptyIcon: SprayCan,
+			emptyTitle: "No Spray Mission needs you",
 			items: missionQueue.map((m) => ({
 				badge: (
 					<Badge variant={statusBadgeVariant(m.status)}>
-						{m.status.charAt(0).toUpperCase() + m.status.slice(1)}
+						{statusLabel(m.status)}
 					</Badge>
 				),
 				id: m.id,
@@ -341,6 +362,9 @@ function RouteComponent() {
 		},
 		"new-requests": {
 			action: <ViewAll label="All requests" to="/public-requests" />,
+			emptyDescription: "Every request that came in has been picked up.",
+			emptyIcon: Inbox,
+			emptyTitle: "Nothing awaiting triage",
 			items: newRequests.slice(0, 8).map((r) => ({
 				badge: (
 					<Badge variant={REQUEST_STATUS_VARIANTS[r.status]}>
@@ -359,6 +383,9 @@ function RouteComponent() {
 		},
 		notices: {
 			action: <ViewAll label="All notices" to="/notices" />,
+			emptyDescription: "Every Notice is either published or archived.",
+			emptyIcon: FileText,
+			emptyTitle: "Nothing unpublished",
 			items: unpublishedNotices.slice(0, 8).map((n) => ({
 				badge: (
 					<PublicNoticeBadge
@@ -375,39 +402,7 @@ function RouteComponent() {
 		},
 	};
 
-	const emptyCopy: Record<string, { description: string; title: string }> = {
-		aging: {
-			description: `Nothing has been waiting ${AGING_DAYS} days or more.`,
-			title: "Nothing is aging",
-		},
-		meetings: {
-			description: "No meeting is on the calendar after today.",
-			title: "No upcoming meetings",
-		},
-		missions: {
-			description: "Nothing is scheduled tonight and nothing is delayed.",
-			title: "No Spray Mission needs you",
-		},
-		"new-requests": {
-			description: "Every request that came in has been picked up.",
-			title: "Nothing awaiting triage",
-		},
-		notices: {
-			description: "Every Notice is either published or archived.",
-			title: "Nothing unpublished",
-		},
-	};
-
-	const emptyIcons: Record<string, typeof SprayCan> = {
-		aging: CheckCircle2,
-		meetings: CalendarCheck,
-		missions: SprayCan,
-		"new-requests": Inbox,
-		notices: FileText,
-	};
-
 	const open = queues[openSignal] ?? queues.missions;
-	const copy = emptyCopy[openSignal] ?? emptyCopy.missions;
 
 	return (
 		<div>
@@ -423,9 +418,9 @@ function RouteComponent() {
 				value={openSignal}
 			>
 				<SignalQueue
-					emptyDescription={copy?.description ?? ""}
-					emptyIcon={emptyIcons[openSignal] ?? SprayCan}
-					emptyTitle={copy?.title ?? ""}
+					emptyDescription={open?.emptyDescription ?? ""}
+					emptyIcon={open?.emptyIcon ?? SprayCan}
+					emptyTitle={open?.emptyTitle ?? ""}
 					items={open?.items ?? []}
 				/>
 			</SignalBand>

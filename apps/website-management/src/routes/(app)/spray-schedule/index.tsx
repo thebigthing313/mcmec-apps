@@ -2,7 +2,7 @@ import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import {
 	RecordIndex,
 	type RecordIndexColumn,
-	type RecordIndexSearch,
+	validateRecordIndexSearch,
 } from "@mcmec/ui/blocks/record-index";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
@@ -31,15 +31,7 @@ export const Route = createFileRoute("/(app)/spray-schedule/")({
 	loader: () => {
 		return { crumb: "Spray Missions" };
 	},
-	validateSearch: (
-		raw: Partial<Record<keyof RecordIndexSearch, unknown>>,
-	): Partial<RecordIndexSearch> => ({
-		...(typeof raw.q === "string" && raw.q ? { q: raw.q } : {}),
-		...(Number(raw.page) > 1 ? { page: Number(raw.page) } : {}),
-		...(Number(raw.size) ? { size: Number(raw.size) } : {}),
-		...(typeof raw.sort === "string" && raw.sort ? { sort: raw.sort } : {}),
-		...(raw.dir === "asc" || raw.dir === "desc" ? { dir: raw.dir } : {}),
-	}),
+	validateSearch: validateRecordIndexSearch,
 });
 
 function RouteComponent() {

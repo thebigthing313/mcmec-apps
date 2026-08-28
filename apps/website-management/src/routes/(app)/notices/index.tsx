@@ -7,6 +7,7 @@ import {
 	RecordIndex,
 	type RecordIndexColumn,
 	type RecordIndexSearch,
+	validateRecordIndexSearch,
 } from "@mcmec/ui/blocks/record-index";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
@@ -36,9 +37,6 @@ const STATUSES = ["Draft", "Pending", "Published", "Archived"] as const;
 type Status = (typeof STATUSES)[number];
 
 type NoticesSearch = Partial<RecordIndexSearch> & { status?: Status };
-type NoticesSearchInput = Partial<
-	Record<keyof RecordIndexSearch | "status", unknown>
->;
 
 /**
  * A Notice's state, derived rather than stored, and always returned as a word.
@@ -72,19 +70,12 @@ export const Route = createFileRoute("/(app)/notices/")({
 	//
 	// Every input is optional so that `to: "/notices"` from anywhere else still needs no search
 	// object; the validator fills the defaults in.
-	validateSearch: (raw: NoticesSearchInput): NoticesSearch => {
-		const status = STATUSES.includes(raw.status as Status)
-			? (raw.status as Status)
-			: undefined;
-		return {
-			...(typeof raw.q === "string" && raw.q ? { q: raw.q } : {}),
-			...(Number(raw.page) > 1 ? { page: Number(raw.page) } : {}),
-			...(Number(raw.size) ? { size: Number(raw.size) } : {}),
-			...(typeof raw.sort === "string" && raw.sort ? { sort: raw.sort } : {}),
-			...(raw.dir === "asc" || raw.dir === "desc" ? { dir: raw.dir } : {}),
-			...(status ? { status } : {}),
-		};
-	},
+	validateSearch: (raw: Record<string, unknown>): NoticesSearch =>
+		validateRecordIndexSearch(raw, (r) =>
+			STATUSES.includes(r.status as Status)
+				? { status: r.status as Status }
+				: {},
+		),
 });
 
 function RouteComponent() {

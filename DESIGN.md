@@ -396,11 +396,15 @@ It lives in `apps/website-management/src/components/signal-queue.tsx` and is app
 
 ### Named Rules
 
-**The Confirm Is For The Public Rule.** A row action asks before it fires when its effect is immediately visible to someone outside the building. The test is not "is this destructive" — it is "does a stranger see the result". Unpublishing a Notice takes a statutorily posted legal notice off the public website and now names the record before it acts and again after; `delete*`, which is less publicly consequential, always had a danger zone. Actions whose result the user can watch land on their own screen do not need the ceremony.
+**The Confirm Is For The Public Rule.** A row action asks before it fires when it **withdraws or contradicts something the public is already relying on**. Unpublishing a Notice takes a statutorily posted legal notice off the public website; cancelling a Meeting contradicts a calendar entry the Open Public Meetings Act made people plan around. Both name the record before they act and again after. `delete*`, which is less publicly consequential, always had a danger zone.
+
+Publishing is deliberately **not** guarded, and the rule is worded to say so. It is the forward act these screens exist for, performed routinely by a small expert team (PRODUCT.md's operating profile), and it is immediately reversible by the very action that *is* guarded. An earlier wording — "does a stranger see the result" — would have caught publishing too, and a confirmation on the primary workflow is friction rather than care. Actions whose result the user can watch land on their own screen need no ceremony either.
 
 **The Lifecycle Is A Button Rule.** State transitions are performed, not set. If a design shows a record's state as a toggle, a select, or a checkbox, the design is wrong regardless of how it looks — see `docs/adr/0001-lifecycle-actions-are-buttons.md`.
 
-**The Count Opens Its Queue Rule.** A number on a staff dashboard opens the records it counts, in place. A count that only links somewhere else is a statistic, and a statistic is not the work — see Signal Band.
+**The Count Opens Its Queue Rule.** A number on the **work half** of a staff dashboard opens the records it counts, in place. A count that only links somewhere else is a statistic, and a statistic is not the work — see Signal Band.
+
+One deliberate exemption: a **confirming register**, like the dashboard's "What the public sees right now" strip. Its numbers are facts about the published record rather than queues of work — nobody triages "12 Documents published" — so they answer a question instead of starting a task, and a plain link to the index is the honest affordance. The exemption is narrow: it holds only where the register reports the *public's* state and repeats nothing the work half already shows. A count of outstanding work, anywhere on the screen, opens its queue.
 
 ## Do's and Don'ts
 

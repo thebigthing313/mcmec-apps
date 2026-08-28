@@ -31,10 +31,12 @@ for a route rather than the Commission's word for the thing.
 **Closed job postings are no longer Refusal Red.** DESIGN.md reserves that colour for destructive
 commands and validation failures; the end of a hiring round is neither.
 
-Publishing, unpublishing and cancelling now confirm before acting and say so afterwards wherever the
-effect lands on the public website — a cancelled Meeting shows as Cancelled on the public calendar
-under the Open Public Meetings Act, and previously did that in one click with no acknowledgement at
-either end.
+Unpublishing and cancelling now confirm before acting, and every lifecycle command says what it did
+afterwards. The confirmation guards withdrawal, not publication: a cancelled Meeting shows as
+Cancelled on the public calendar under the Open Public Meetings Act and previously did that in one
+click with no acknowledgement at either end, whereas publishing is the forward act these screens
+exist for and is reversible by the guarded action itself. DESIGN.md's Confirm Is For The Public Rule
+is worded to make that distinction explicit rather than incidental.
 
 `notices-table`, `documents-table`, `public-requests-table` and `spray-schedule-table` are deleted.
 `meetings-table` and `insecticides-table` stay, because `apps/public` renders them. The spray-mission

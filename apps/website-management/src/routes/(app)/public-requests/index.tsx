@@ -4,6 +4,7 @@ import {
 	RecordIndex,
 	type RecordIndexColumn,
 	type RecordIndexSearch,
+	validateRecordIndexSearch,
 } from "@mcmec/ui/blocks/record-index";
 import { Badge } from "@mcmec/ui/components/badge";
 import {
@@ -45,23 +46,15 @@ export const Route = createFileRoute("/(app)/public-requests/")({
 	loader: () => {
 		return { crumb: "Public Requests" };
 	},
-	validateSearch: (
-		raw: Partial<Record<keyof RequestsSearch, unknown>>,
-	): RequestsSearch => ({
-		...(typeof raw.q === "string" && raw.q ? { q: raw.q } : {}),
-		...(Number(raw.page) > 1 ? { page: Number(raw.page) } : {}),
-		...(Number(raw.size) ? { size: Number(raw.size) } : {}),
-		...(typeof raw.sort === "string" && raw.sort ? { sort: raw.sort } : {}),
-		...(raw.dir === "asc" || raw.dir === "desc" ? { dir: raw.dir } : {}),
-		...(typeof raw.type === "string" && raw.type !== ALL
-			? { type: raw.type }
-			: {}),
-		...(raw.status === "new" ||
-		raw.status === "in_progress" ||
-		raw.status === "resolved"
-			? { status: raw.status }
-			: {}),
-	}),
+	validateSearch: (raw: Record<string, unknown>): RequestsSearch =>
+		validateRecordIndexSearch(raw, (r) => ({
+			...(typeof r.type === "string" && r.type !== ALL ? { type: r.type } : {}),
+			...(r.status === "new" ||
+			r.status === "in_progress" ||
+			r.status === "resolved"
+				? { status: r.status }
+				: {}),
+		})),
 });
 
 function RouteComponent() {
