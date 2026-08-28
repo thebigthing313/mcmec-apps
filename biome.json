@@ -18,7 +18,11 @@
 			"**",
 			"!!node_modules",
 			"!!packages/ui/src/components/*.tsx",
-			"!!apps/**/src/routeTree.gen.ts"
+			"!!apps/**/src/routeTree.gen.ts",
+			"!!.claude",
+			"!!.github/agents",
+			"!!.github/hooks",
+			"!!.github/skills"
 		]
 	},
 	"formatter": {

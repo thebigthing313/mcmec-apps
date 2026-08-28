@@ -13,3 +13,17 @@ test-results/
 # Ignored as a backstop: the release commit stages with `git add -A`, so a stray copy would
 # otherwise be committed.
 changeset-status.tmp.json
+
+# The GitHub Copilot variant of the impeccable skill. The Claude Code copy under
+# `.claude/skills/` is the one this repo drives the skill through; committing both
+# would vendor ~7MB of near-identical trees that then drift apart independently.
+# Track these too if anyone starts working this repo through Copilot — the install
+# is only functional with all three.
+.github/agents/
+.github/hooks/
+.github/skills/
+
+# Impeccable run artifacts — decision-page payloads and review screenshots are
+# per-run output, not work product.
+.impeccable/questions/
+.impeccable/review/
