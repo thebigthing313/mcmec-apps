@@ -86,7 +86,7 @@ function RouteComponent() {
 						<>Posted {formatDate(posting.published_at)}</>
 					)}
 				</p>
-				<TiptapRenderer content={posting.content} />
+				<TiptapRenderer className="mt-4" content={posting.content} />
 			</article>
 
 			<div className="flex flex-col text-muted text-sm italic">

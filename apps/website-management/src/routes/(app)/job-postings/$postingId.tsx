@@ -191,7 +191,7 @@ function RouteComponent() {
 
 			<div className="rounded-lg border bg-card p-6">
 				<h3 className="mb-4 font-semibold text-lg">Content</h3>
-				<TiptapRenderer content={posting.content} />
+				<TiptapRenderer className="mt-4" content={posting.content} />
 			</div>
 
 			<DangerZoneCard
