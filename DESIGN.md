@@ -59,6 +59,18 @@ typography:
     fontWeight: 700
     lineHeight: 1.25
     letterSpacing: "0.025em"
+  masthead:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 700
+    lineHeight: 1
+    letterSpacing: "0.16em"
+  auth-heading:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "clamp(1.5rem, 2.5vw, 1.875rem)"
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: "-0.025em"
 rounded:
   sm: "6px"
   md: "8px"
@@ -139,6 +151,16 @@ components:
     textColor: "{colors.ink}"
     typography: "{typography.label}"
     padding: "10px 16px"
+  auth-frame:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    borderColor: "{colors.rule}"
+    rounded: "0px"
+    padding: "40px 56px"
+  auth-masthead:
+    backgroundColor: "transparent"
+    textColor: "{colors.muted-ink}"
+    typography: "{typography.masthead}"
 ---
 
 # Design System: MCMEC
@@ -205,6 +227,8 @@ A single institutional green against a family of neutrals that share its hue, so
 
 **The Hue-150 Rule.** Every neutral in the light theme sits on hue 150 at low chroma. A neutral pulled from outside that family will read as a foreign gray against the rest of the page, however close its lightness.
 
+**The Unowned Surfaces Rule.** Selection, the caret, and the focus ring are painted by the browser unless the system paints them, and a stock blue highlight is the loudest foreign colour on a warm hue-150 page. `::selection` takes Pale Green on Ink — the same pair that already means "touched but not chosen" on a sidebar row — and the caret takes Commission Green. These are set once in `globals.css` and apply everywhere; no component re-declares them.
+
 **Known drift.** The dark theme abandons this palette entirely: `.dark` is stock neutral gray at chroma 0, with `--primary` inverted to near-white and only `--sidebar` retaining Commission Green. Light and dark are not currently the same identity. Documented as observed, not endorsed.
 
 ## Typography
@@ -228,11 +252,15 @@ A single institutional green against a family of neutrals that share its hue, so
 - **Label** (500, `0.875rem`, 1.25): Buttons, form labels, table cells, badges, metadata. The workhorse size across all four staff applications.
 - **Overline** (700, tracking `0.025em`, uppercase): The agency's name in the public footer and the footer's column headings at `0.875rem`; the staff sidebar's group labels at `0.75rem`, a step below the destinations they cover. Structural only.
 
+- **Auth heading** (600, `1.5rem`, `1.875rem` from `sm`, 1.25, tracking `-0.025em`): The single heading on a sign-in, password-reset or invite screen. It is the one step between Headline and Display, and it exists because those screens hold one heading and nothing competing with it: the staff Headline is sized for a page title inside a dense shell, and inside a full-viewport frame it reads undersized. It does not travel — no other staff screen may use it, and it never appears twice on a page.
+
 ### Named Rules
 
 **The One Family Rule.** Roboto sets everything. There is no display face, no serif for long reading, and no accent family. A second family is a system change, not a page decision.
 
-**The Uppercase Is Structural Rule.** Uppercase with `0.025em` tracking marks a boundary, never a sentence. It has three homes: the agency's identity block in the public footer, that footer's column headings, and the group labels in the staff sidebar. All three are edges between regions rather than text anyone reads for meaning, which is why caps suit them and why they are set below the size of what they cover. It never appears on a button, never on a heading a visitor reads for content, and never as emphasis inside a sentence.
+**The Uppercase Is Structural Rule.** Uppercase marks a boundary, never a sentence. It has four homes: the agency's identity block in the public footer, that footer's column headings, the group labels in the staff sidebar, and the auth frame's masthead. All four are edges between regions rather than text anyone reads for meaning, which is why caps suit them and why they are set below the size of what they cover. It never appears on a button, never on a heading a visitor reads for content, and never as emphasis inside a sentence.
+
+The masthead is the widest tracking in the system at `0.16em`, against `0.025em` everywhere else, and the exception is load-bearing rather than expressive: that type sits *on* a hairline with the rule running out of both ends of it, so the letters have to read as a ruled band rather than as a word dropped on a line. At `0.025em` it reads as a caption that has collided with a border. Both mastheads are set at `0.75rem`, the same step as the sidebar's group labels.
 
 **Known drift.** `--font-serif: "Lora"` and `--font-mono: "Fira Code"` are declared in `globals.css`, but only Roboto is imported from Google Fonts. Any consumer of those tokens silently falls back to Georgia and Courier New. Treat both as unavailable until they are actually loaded or the tokens are removed.
 
@@ -286,6 +314,18 @@ All shadows are cast in `hsl(150 3% 13%)` — the same green-black as Ink — ne
 **The Flat-By-Default Rule.** A shadow means the element is genuinely above the page and can be dismissed. Cards, tables, inputs, buttons, and panels are held by their border and their tonal step. If a new component wants a shadow to feel separated, it needs a border instead.
 
 **Known drift.** `globals.css` defines a full eight-step shadow scale (`2xs` through `2xl`) of which three steps are ever used. The unused steps are headroom nobody claimed; do not treat their existence as permission to layer.
+
+## Motion
+
+The system is almost entirely still, and that is a position rather than an omission: these are screens people work in every day, and an interface that performs on arrival becomes an interface that wastes a second of every visit.
+
+There is one authored gesture, and it belongs to the auth frame: **a rule is drawn**. The four hairlines scale from the corner each one starts at — the top rule first, the vertical edges at `180ms`, the bottom rule at `360ms` — over `620ms` on `cubic-bezier(0.16, 1, 0.3, 1)`. The easing is exponential ease-out, fast off the mark and long in the settle, so the line reads as ruled rather than as slid into place. Nothing else on the page moves, and no content ever animates: the type is present on the first frame, and only the rules arrive.
+
+The tokens are `--animate-rule-x` and `--animate-rule-y`. `prefers-reduced-motion: reduce` removes the animation entirely, which leaves each rule at its untransformed size — the frame is simply there.
+
+### Named Rules
+
+**The Motion Is A Rule Being Drawn Rule.** If a new surface wants motion, it animates a hairline. Content does not fade, rise, stagger, or scale in. A system whose structure is carried by borders has exactly one thing worth animating, and scattering entrance effects across content is how five applications stop feeling like one instrument.
 
 ## Shapes
 
@@ -343,6 +383,16 @@ Icons are Lucide, at `1rem` inside buttons and badges, `1.5rem` on public quick-
 **Staff.** The `mcmec-layout` sidebar, collapsible to an icon rail, with the MCMEC mark in the header, navigation in the content, and the user menu in the footer. The app switcher lists only the applications the signed-in user's App Roles permit.
 
 The rail is rendered by the shell, not by each application: `Layout.Sidebar.Nav` takes groups of destinations and owns the three things a hand-rolled rail keeps losing. Every row carries a tooltip, which is the only label a collapsed rail has. The current destination takes Commission Green (`4.57:1` against its own label, `4.33:1` against the rail) and carries `aria-current="page"`, so location is never signalled by colour alone. Matching is by path prefix, so a drill-down keeps its parent lit. Groups run to four items or fewer and are labelled in the Overline; a rail of three or fewer destinations drops the label rather than inventing one.
+
+### Auth Frame
+
+- **Character:** The title page of the register. It is the only screen in the system with no shell, no card and no page chrome — the frame *is* the chrome.
+- **Structure:** A hairline in Rule inset from every viewport edge (`0.75rem`, `1.5rem` at `sm`, `2.5rem` at `md`). The top and bottom rules are drawn as flex children rather than borders so type can interrupt them: a short stub turns the corner, a masthead label breaks the line, the remainder runs to the far edge. The Commission's name sits on the top rule at the left and the destination application at the right; the office address and `Established 1914` sit on the bottom rule the same way. Below `sm` the name shortens to `MCMEC` and the address to `Edison, NJ` so neither masthead pushes its rule off-screen.
+- **Interior:** One column capped at `max-w-7xl` and centred, holding the heading, a field block bracketed top and bottom by rules in Rule, a reserved status line, and the action row. The bracketing rules span the whole column; the entries occupy its first `28rem`. The blank to their right is a ledger column left empty, not a layout that ran out.
+- **Frontispiece:** The Commission's building sits above the heading as a *plate* — bordered, square-cornered, at the action row's `42rem` measure — not as a backdrop. Nothing is laid over it, it carries no scrim or gradient, and it never shares pixels with the form. That is the whole licence for a photograph here: the arrangement this system rejects by name is the marketing split-screen, a photo owning half the viewport with the form floating on it. The crop is chosen rather than defaulted (`object-position: center 45%`), because `building.webp` puts its roofline in the top quarter and a third of dull winter lawn at the foot, and a centred wide slice lands on the ramp railing with the roof cut off.
+- **Height budget:** Below `1000px` of viewport height the vertical rhythm tightens and the plate scales with the viewport; below `600px` the plate goes entirely. A 1280x800 laptop is the common staff display, not an edge case, and at full padding the primary action landed on the fold there. The picture yields before the form does.
+- **States:** The status line reserves its height whether or not it has a message, so a failed sign-in never moves the button out from under the cursor about to press it again.
+- **Why no card:** A card here would be a container inside a container. The four staff logins were four copies of exactly that, and the frame replaces all of them.
 
 ### Record Index
 
@@ -418,6 +468,7 @@ One deliberate exemption: a **confirming register**, like the dashboard's "What 
 - **Do** cap reading measure at 65–75ch on the public site and keep `max-w-7xl` as the outer bound everywhere.
 - **Do** preserve the `3px` focus ring at 50% opacity on every interactive element. It is the only focus treatment in the system.
 - **Do** keep uppercase and letterspacing structural — the public footer's identity block and column headings, and the staff rail's group labels, nothing else.
+- **Do** cap a content region at `max-w-7xl` even inside a full-bleed frame. The frame may reach the viewport edge — it is the edge of the page, not content — but a rule drawn 2500px across a wide office display is a different design, not a longer one.
 - **Do** decide staff layouts at desktop widths, then confirm nothing is unreachable or clipped at `375px`. Survivable, not optimised.
 
 ### Don't:
@@ -433,4 +484,6 @@ One deliberate exemption: a **confirming register**, like the dashboard's "What 
 - **Don't** let a staff screen scroll horizontally at the page level, or strand a primary action outside a narrow viewport. Wide content scrolls inside its own container; the rail becomes a sheet rather than losing destinations.
 - **Don't** spend design effort on phone-optimised staff layouts — thumb-zone bars, mobile-only flows. The floor is that narrow works, not that narrow is the target.
 - **Don't** bury, paginate, collapse, or lazily defer a statutorily required posting — a legal Notice within its seven-day Retention Period, a meeting agenda, or a cancelled meeting. Layout may never obstruct the public record.
+- **Don't** put a card on the auth screens. They were four copies of a centered card and are now one frame; a card inside that frame is a container inside a container.
+- **Don't** animate content. Motion belongs to rules being drawn — see The Motion Is A Rule Being Drawn Rule.
 - **Don't** reach for gradient meshes, glassmorphism, or marketing-hero patterns. Equally, don't accept clip-art seals, unstyled link lists, or PDFs standing in for an interface.
