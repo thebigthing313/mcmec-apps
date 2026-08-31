@@ -149,6 +149,36 @@
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
+
+	/*
+	 * Ruling a page.
+	 *
+	 * The system is flat and carries its structure in 1px rules, so the one motion it owns is a
+	 * rule arriving: a hairline drawn from the corner it starts at, never a card fading up. The
+	 * auth frame is the only consumer today and orchestrates four of these into one gesture.
+	 * The easing is exponential ease-out — fast off the mark, long settle — so the line reads as
+	 * drawn rather than as slid into place.
+	 */
+	--animate-rule-x: rule-x 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	--animate-rule-y: rule-y 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+	@keyframes rule-x {
+		from {
+			transform: scaleX(0);
+		}
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	@keyframes rule-y {
+		from {
+			transform: scaleY(0);
+		}
+		to {
+			transform: scaleY(1);
+		}
+	}
 }
 
 @layer base {
@@ -157,6 +187,34 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+
+	/*
+	 * The surfaces nobody draws.
+	 *
+	 * Selection, the caret and tabular numerals ship with browser defaults that belong to no
+	 * design system — a blue highlight on warm hue-150 paper is the loudest unowned colour on
+	 * any of these screens. Selection takes Pale Green, the quiet fill that already marks
+	 * "touched but not chosen" on sidebar rows, and the caret takes the primary.
+	 */
+	::selection {
+		background-color: var(--secondary);
+		color: var(--secondary-foreground);
+	}
+
+	:where(input, textarea, [contenteditable]) {
+		caret-color: var(--primary);
+	}
+
+	/*
+	 * A drawn rule is decoration to anyone who asked not to be moved. Turning the animation off
+	 * leaves the element at its untransformed size, so the frame is simply present.
+	 */
+	@media (prefers-reduced-motion: reduce) {
+		.animate-rule-x,
+		.animate-rule-y {
+			animation: none;
+		}
 	}
 }
 

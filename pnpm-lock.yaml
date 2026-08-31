@@ -710,6 +710,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.69.0(react@19.2.3))
+      '@mcmec/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../lib
