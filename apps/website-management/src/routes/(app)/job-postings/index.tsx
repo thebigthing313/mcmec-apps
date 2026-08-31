@@ -1,8 +1,5 @@
 import { formatDateShort } from "@mcmec/lib/functions/date-fns";
-import {
-	getJobPostingStatus,
-	type JobPostingStatus,
-} from "@mcmec/lib/functions/job-posting-status";
+import { getJobPostingStatus } from "@mcmec/lib/functions/job-posting-status";
 import {
 	RecordIndex,
 	type RecordIndexColumn,
@@ -23,20 +20,7 @@ type JobPostingRow = {
 	title: string;
 };
 
-/**
- * Refusal Red is reserved for destructive commands and validation failures (DESIGN.md), and a
- * Closed posting is neither — it is the ordinary end of a hiring round. It previously rendered
- * `destructive`, which spent the system's one alarm colour on a routine state.
- */
-const statusDisplay: Record<
-	JobPostingStatus,
-	{ label: string; variant: "default" | "outline" | "secondary" }
-> = {
-	closed: { label: "Closed", variant: "secondary" },
-	draft: { label: "Draft", variant: "outline" },
-	pending: { label: "Pending", variant: "secondary" },
-	published: { label: "Published", variant: "default" },
-};
+import { JOB_POSTING_STATUS_DISPLAY } from "@/src/lib/job-postings";
 
 export const Route = createFileRoute("/(app)/job-postings/")({
 	component: JobPostingsPage,
@@ -82,12 +66,13 @@ function JobPostingsPage() {
 		},
 		{
 			cell: (row) => {
-				const status = statusDisplay[getJobPostingStatus(row)];
+				const status = JOB_POSTING_STATUS_DISPLAY[getJobPostingStatus(row)];
 				return <Badge variant={status.variant}>{status.label}</Badge>;
 			},
 			header: "Status",
 			id: "status",
-			sortValue: (row) => statusDisplay[getJobPostingStatus(row)].label,
+			sortValue: (row) =>
+				JOB_POSTING_STATUS_DISPLAY[getJobPostingStatus(row)].label,
 		},
 	];
 
@@ -95,9 +80,9 @@ function JobPostingsPage() {
 		<RecordIndex
 			actions={
 				<Button asChild>
-					<Link to="/job-postings/new">
+					<Link to="/job-postings/create">
 						<Plus />
-						Add Job Posting
+						Create Job Posting
 					</Link>
 				</Button>
 			}
@@ -123,6 +108,7 @@ function JobPostingsPage() {
 				<Link
 					className={className}
 					params={{ postingId: row.id }}
+					search={search}
 					to="/job-postings/$postingId"
 				>
 					{children}

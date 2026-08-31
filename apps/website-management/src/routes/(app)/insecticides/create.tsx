@@ -10,7 +10,7 @@ import { insecticides, intents } from "@/src/lib/db";
 export const Route = createFileRoute("/(app)/insecticides/create")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Create New Insecticide" };
+		return { crumb: "Create" };
 	},
 });
 
@@ -23,7 +23,12 @@ function RouteComponent() {
 			intents("website.createInsecticide"),
 		);
 		toastOnError(tx, "Failed to create insecticide.");
-		navigate({ to: "/insecticides" });
+		// The row carries the id the form was seeded with, and the handler honours it — so the
+		// optimistic row and the committed row share a key, and this can land on the record.
+		navigate({
+			params: { insecticideId: parsedItems.id },
+			to: "/insecticides/$insecticideId",
+		});
 	};
 
 	const defaultValues: InsecticidesRowType = {
@@ -41,7 +46,7 @@ function RouteComponent() {
 	return (
 		<InsecticidesForm
 			defaultValues={defaultValues}
-			formLabel="Create New Insecticide"
+			formLabel="Create Insecticide"
 			onSubmit={handleSubmit}
 			submitLabel="Create"
 		/>

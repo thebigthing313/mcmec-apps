@@ -15,8 +15,11 @@ export function statusBadgeVariant(
 			return "default";
 		case "delayed":
 			return "outline";
+		// Not `destructive`. Refusal Red is reserved for destructive commands and validation
+		// failures (DESIGN.md), and a cancelled mission is neither — it is a mission that was
+		// called off, which is exactly what a cancelled Meeting is, and that badge is muted.
 		case "cancelled":
-			return "destructive";
+			return "secondary";
 		case "completed":
 			return "secondary";
 		default:

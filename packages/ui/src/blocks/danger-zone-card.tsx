@@ -33,6 +33,7 @@ import {
  */
 export function DangerZoneCard({
 	confirmLabel = "Delete",
+	confirmTitle,
 	description,
 	disabled,
 	label,
@@ -55,6 +56,16 @@ export function DangerZoneCard({
 	recordName?: string;
 	/** The card's heading. Defaults to "Danger Zone". */
 	title?: string;
+	/**
+	 * The dialog's own heading. Defaults to a question naming the record.
+	 *
+	 * It used to read "Are you absolutely sure?" — a shadcn default, and the weakest copy in the
+	 * product sitting on its most consequential control. `row-actions-menu.tsx` had already
+	 * written the rule down one file over: say "what will actually happen, naming the record. Not
+	 * 'Are you sure?'". A question that names nothing cannot be answered honestly, because the
+	 * one thing the person needs to check is whether they are on the right record.
+	 */
+	confirmTitle?: string;
 }) {
 	return (
 		<Card className="border-destructive/50">
@@ -74,7 +85,12 @@ export function DangerZoneCard({
 					</AlertDialogTrigger>
 					<AlertDialogContent>
 						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+							<AlertDialogTitle>
+								{confirmTitle ??
+									(recordName
+										? `Delete "${recordName}"?`
+										: "Delete this record?")}
+							</AlertDialogTitle>
 							<AlertDialogDescription>
 								{description ?? (
 									<>

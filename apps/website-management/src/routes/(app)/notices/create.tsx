@@ -10,17 +10,20 @@ import { intents, notices, noticeTypes } from "@/src/lib/db";
 export const Route = createFileRoute("/(app)/notices/create")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Create New Notice" };
+		return { crumb: "Create" };
 	},
 });
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const { data: categories } = useLiveQuery((q) =>
-		q.from({ notice_type: noticeTypes }).select(({ notice_type }) => ({
-			id: notice_type.id,
-			name: notice_type.name,
-		})),
+		q
+			.from({ notice_type: noticeTypes })
+			.orderBy(({ notice_type }) => notice_type.name)
+			.select(({ notice_type }) => ({
+				id: notice_type.id,
+				name: notice_type.name,
+			})),
 	);
 
 	const items = categories.map((category) => ({
@@ -30,21 +33,22 @@ function RouteComponent() {
 
 	const handleSubmit = async (value: NoticeFormValues) => {
 		const now = new Date();
+		// The id we mint here is the id the row will have: the envelope carries it and the
+		// handler honours it, so the optimistic row and the committed row share a key — which
+		// is also what lets this navigate straight to the detail route.
+		const id = crypto.randomUUID();
 		const tx = notices.insert(
 			{
 				...value,
 				created_at: now,
-				// The id we mint here is the id the row will have: the envelope carries it and
-				// the handler honours it. Under the old path it was thrown away server-side, so
-				// the optimistic row and the committed row had different keys on every insert.
-				id: crypto.randomUUID(),
+				id,
 				is_archived: false,
 				updated_at: now,
 			},
 			intents("website.createNotice"),
 		);
 		toastOnError(tx, "Failed to create notice.");
-		navigate({ to: "/notices" });
+		navigate({ params: { noticeId: id }, to: "/notices/$noticeId" });
 	};
 
 	return (
@@ -56,10 +60,10 @@ function RouteComponent() {
 				notice_type_id: "",
 				title: "",
 			}}
-			formLabel="Create New Notice"
+			formLabel="Create Notice"
 			mode="create"
 			onSubmit={handleSubmit}
-			submitLabel="Create"
+			submitLabel="Create as Draft"
 		/>
 	);
 }

@@ -15,7 +15,9 @@ const RootLayout = () => (
 	<>
 		<Outlet />
 		<Toaster />
-		<TanStackRouterDevtools />
+		{/* Dev only. It shipped unconditionally, so the floating devtools button sat on every
+		    production staff screen — including over the dashboard's signal band. */}
+		{import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
 	</>
 );
 

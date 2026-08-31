@@ -1,5 +1,6 @@
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
@@ -88,15 +89,9 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
-				<Button asChild size="sm" variant="outline">
-					<Link to="/documents">
-						<ArrowLeft />
-						Back to Documents
-					</Link>
-				</Button>
-				<div className="flex items-center gap-2">
+		<RecordDetail
+			actions={
+				<>
 					<Button asChild size="sm" variant="outline">
 						<Link params={{ documentId: id }} to="/documents/$documentId/edit">
 							<Edit />
@@ -109,38 +104,45 @@ function RouteComponent() {
 						onAct={publish.onAct}
 						size="sm"
 					/>
-				</div>
-			</nav>
-
-			<article className="prose">
-				<div className="flex flex-row items-baseline gap-2">
-					<h1 className="font-semibold text-foreground text-xl leading-tight">
-						{fiscal_year} {type}
-					</h1>
-					{is_published ? (
-						<Badge variant="default">Published</Badge>
-					) : (
-						<Badge variant="outline">Draft</Badge>
-					)}
-				</div>
-				<div>
-					<a
-						className="inline-flex items-center gap-1"
-						href={url}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						<ExternalLink className="h-4 w-4" />
-						View Document
-					</a>
-				</div>
-			</article>
-
-			<DangerZoneCard
-				label="Delete Document"
-				onConfirm={handleDelete}
-				recordName={`${fiscal_year} ${type ?? "Document"}`}
-			/>
-		</div>
+				</>
+			}
+			backLink={
+				<Button asChild size="sm" variant="outline">
+					<Link search={true} to="/documents">
+						<ArrowLeft />
+						Back to Documents
+					</Link>
+				</Button>
+			}
+			badge={
+				is_published ? (
+					<Badge variant="default">Published</Badge>
+				) : (
+					<Badge variant="outline">Draft</Badge>
+				)
+			}
+			danger={
+				<DangerZoneCard
+					label="Delete Document"
+					onConfirm={handleDelete}
+					recordName={`${fiscal_year} ${type ?? "Document"}`}
+				/>
+			}
+			// No `fields`: the title is already `${fiscal_year} ${type}`, so listing Category and
+			// Fiscal year beneath it restated the heading twice — the same "Closed: Yes beside a
+			// badge reading Closed" pattern this pass removed from Job Postings. A Document's
+			// content is the link, and that is what the body carries.
+			title={`${fiscal_year} ${type}`}
+		>
+			<a
+				className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
+				href={url}
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				<ExternalLink className="h-4 w-4" />
+				Open document
+			</a>
+		</RecordDetail>
 	);
 }

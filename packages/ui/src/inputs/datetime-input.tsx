@@ -20,6 +20,16 @@ interface DateTimeInputProps {
 	className?: string;
 	disabled?: boolean;
 	showTimeInput?: boolean;
+	/**
+	 * Lands on the popover trigger, which is the control a label points at.
+	 *
+	 * The date half of this input is a button, not an `<input>`, so a `<label htmlFor>` beside it
+	 * named nothing until this existed — the field read as "button, Select date" with no clue
+	 * what date it was asking for.
+	 */
+	id?: string;
+	/** Lands on the same trigger, for a hint rendered beneath the field. */
+	"aria-describedby"?: string;
 }
 
 export function DateTimeInput({
@@ -29,6 +39,8 @@ export function DateTimeInput({
 	className,
 	disabled = false,
 	showTimeInput = false,
+	id,
+	"aria-describedby": describedBy,
 }: DateTimeInputProps) {
 	const [open, setOpen] = React.useState(false);
 	const [month, setMonth] = React.useState<Date | undefined>(value);
@@ -65,12 +77,14 @@ export function DateTimeInput({
 			<Popover onOpenChange={setOpen} open={open}>
 				<PopoverTrigger asChild>
 					<Button
+						aria-describedby={describedBy}
 						className={cn(
 							"justify-between font-normal",
 							showTimeInput ? "flex-1" : "w-full",
 							!value && "text-muted-foreground",
 						)}
 						disabled={disabled}
+						id={id}
 						variant="outline"
 					>
 						{value ? formatDate(value) : placeholder}

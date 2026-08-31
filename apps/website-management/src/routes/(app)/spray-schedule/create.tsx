@@ -26,7 +26,7 @@ function RouteComponent() {
 	const { data: insecticideData } = useLiveQuery((q) =>
 		q
 			.from({ insecticide: insecticides })
-			.orderBy(({ insecticide }) => insecticide.trade_name, "asc")
+			.orderBy(({ insecticide }) => insecticide.trade_name)
 			.select(({ insecticide }) => ({
 				label: insecticide.trade_name,
 				value: insecticide.id,
@@ -36,7 +36,7 @@ function RouteComponent() {
 	const { data: municipalityData } = useLiveQuery((q) =>
 		q
 			.from({ municipality: municipalities })
-			.orderBy(({ municipality }) => municipality.name, "asc")
+			.orderBy(({ municipality }) => municipality.name)
 			.select(({ municipality }) => ({
 				label: municipality.name,
 				value: municipality.id,
@@ -50,6 +50,7 @@ function RouteComponent() {
 		// separate PUT of the junction set, with an `await tx.isPersisted.promise` between them
 		// so the schedule existed before the second write could reference it — and nothing to
 		// undo the first if the second failed.
+		const id = crypto.randomUUID();
 		const tx = spraySchedules.insert(
 			{
 				...details,
@@ -57,7 +58,7 @@ function RouteComponent() {
 				// The id we mint here is the id the row will have: the envelope carries it, the
 				// handler honours it, and the junction rows written in the same transaction
 				// point at it. Under the old path it was thrown away server-side.
-				id: crypto.randomUUID(),
+				id,
 				// Not on the form and not in `createSprayMission`'s payload: a mission is born
 				// scheduled. The old status dropdown was offered here too, so a mission could be
 				// created already cancelled. The optimistic row still needs the column, because
@@ -70,7 +71,10 @@ function RouteComponent() {
 			}),
 		);
 		toastOnError(tx, "Failed to create spray mission.");
-		navigate({ to: "/spray-schedule" });
+		navigate({
+			params: { sprayScheduleId: id },
+			to: "/spray-schedule/$sprayScheduleId",
+		});
 	};
 
 	return (
@@ -85,7 +89,7 @@ function RouteComponent() {
 				rain_date: null,
 				start_time: "19:00",
 			}}
-			formLabel="Create New Spray Mission"
+			formLabel="Create Spray Mission"
 			insecticideOptions={insecticideData}
 			municipalityOptions={municipalityData}
 			onSubmit={handleSubmit}

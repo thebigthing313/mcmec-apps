@@ -1,6 +1,7 @@
 import { formatDateTime } from "@mcmec/lib/functions/date-fns";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
@@ -20,6 +21,8 @@ import {
 } from "lucide-react";
 import { intents, meetings } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
+
+import { meetingStatus } from "@/src/lib/meetings";
 
 export const Route = createFileRoute("/(app)/meetings/$meetingId")({
 	component: RouteComponent,
@@ -70,6 +73,11 @@ function RouteComponent() {
 	// No form under this, so no `isDirty` and no relabel: a detail-view lifecycle button always
 	// sends exactly one intent. The page stays put afterwards — the badge below is live, so the
 	// result of the click is visible where the click was.
+	const status = meetingStatus({
+		isCancelled: is_cancelled,
+		meetingAt: new Date(meeting_at),
+	});
+
 	const cancel = is_cancelled
 		? {
 				icon: <CalendarPlus />,
@@ -105,15 +113,9 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
-				<Button asChild size="sm" variant="outline">
-					<Link to="/meetings">
-						<ArrowLeft />
-						Back to Meetings
-					</Link>
-				</Button>
-				<div className="flex items-center gap-2">
+		<RecordDetail
+			actions={
+				<>
 					<Button asChild size="sm" variant="outline">
 						<Link params={{ meetingId: id }} to="/meetings/$meetingId/edit">
 							<Edit />
@@ -126,49 +128,50 @@ function RouteComponent() {
 						onAct={cancel.onAct}
 						size="sm"
 					/>
+				</>
+			}
+			backLink={
+				<Button asChild size="sm" variant="outline">
+					<Link search={true} to="/meetings">
+						<ArrowLeft />
+						Back to Meetings
+					</Link>
+				</Button>
+			}
+			badge={<Badge variant={status.variant}>{status.label}</Badge>}
+			danger={
+				<DangerZoneCard
+					label="Delete Meeting"
+					onConfirm={handleDelete}
+					recordName={name}
+				/>
+			}
+			fields={[
+				{ label: "When", value: formatDateTime(meeting_at) },
+				{ label: "Location", value: location },
+			]}
+			title={name}
+		>
+			{/* A cancelled meeting stays on the public meetings page carrying its notes —
+			    `shapes.ts` gives `meetings` no predicate at all, so cancelling changes what
+			    the page says about the meeting, never whether it appears. */}
+			{notes ? <p className="text-foreground">{notes}</p> : null}
+			{links.length > 0 ? (
+				<div className="flex flex-wrap gap-4">
+					{links.map((link) => (
+						<a
+							className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
+							href={link.url as string}
+							key={link.label}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
+							<ExternalLink className="h-4 w-4" />
+							{link.label}
+						</a>
+					))}
 				</div>
-			</nav>
-
-			<article className="prose">
-				<div className="flex flex-row items-baseline gap-2">
-					<h1 className="font-semibold text-foreground text-xl leading-tight">
-						{name}
-					</h1>
-					{is_cancelled ? (
-						<Badge variant="secondary">Cancelled</Badge>
-					) : (
-						<Badge variant="default">Scheduled</Badge>
-					)}
-				</div>
-				<h4>{formatDateTime(meeting_at)}</h4>
-				<h4>{location}</h4>
-				{/* A cancelled meeting stays on the public meetings page carrying its notes —
-				    `shapes.ts` gives `meetings` no predicate at all, so cancelling changes what
-				    the page says about the meeting, never whether it appears. */}
-				{notes ? <p>{notes}</p> : null}
-				{links.length > 0 ? (
-					<div className="flex flex-wrap gap-4">
-						{links.map((link) => (
-							<a
-								className="inline-flex items-center gap-1"
-								href={link.url as string}
-								key={link.label}
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								<ExternalLink className="h-4 w-4" />
-								{link.label}
-							</a>
-						))}
-					</div>
-				) : null}
-			</article>
-
-			<DangerZoneCard
-				label="Delete Meeting"
-				onConfirm={handleDelete}
-				recordName={name}
-			/>
-		</div>
+			) : null}
+		</RecordDetail>
 	);
 }

@@ -6,7 +6,7 @@ import {
 import { Button } from "@mcmec/ui/components/button";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, SprayCan } from "lucide-react";
+import { Edit, Plus, SprayCan } from "lucide-react";
 import { insecticides } from "@/src/lib/db";
 
 type InsecticideRow = {
@@ -109,7 +109,7 @@ function RouteComponent() {
 			actions={
 				<Button onClick={() => navigate({ to: "/insecticides/create" })}>
 					<Plus />
-					Add Insecticide
+					Create Insecticide
 				</Button>
 			}
 			columns={columns}
@@ -136,11 +136,26 @@ function RouteComponent() {
 				<Link
 					className={className}
 					params={{ insecticideId: row.id }}
+					search={search}
 					to="/insecticides/$insecticideId"
 				>
 					{children}
 				</Link>
 			)}
+			// An Insecticide is edited far more often than it is read — a label PDF moves, a trade
+			// name changes — and without a row action that edit was three navigations for what is
+			// a URL change. Every other register in this app offers Edit from the row.
+			rowActions={(row) => [
+				{
+					icon: <Edit />,
+					label: "Edit",
+					onAct: () =>
+						navigate({
+							params: { insecticideId: row.id },
+							to: "/insecticides/$insecticideId/edit",
+						}),
+				},
+			]}
 			rows={rows}
 			search={search}
 			searchPlaceholder="Search insecticides"

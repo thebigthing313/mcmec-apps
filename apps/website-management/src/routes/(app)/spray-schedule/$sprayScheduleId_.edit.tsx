@@ -65,7 +65,7 @@ function RouteComponent() {
 	const { data: insecticideData } = useLiveQuery((q) =>
 		q
 			.from({ insecticide: insecticides })
-			.orderBy(({ insecticide }) => insecticide.trade_name, "asc")
+			.orderBy(({ insecticide }) => insecticide.trade_name)
 			.select(({ insecticide }) => ({
 				label: insecticide.trade_name,
 				value: insecticide.id,
@@ -75,7 +75,7 @@ function RouteComponent() {
 	const { data: municipalityData } = useLiveQuery((q) =>
 		q
 			.from({ municipality: municipalities })
-			.orderBy(({ municipality }) => municipality.name, "asc")
+			.orderBy(({ municipality }) => municipality.name)
 			.select(({ municipality }) => ({
 				label: municipality.name,
 				value: municipality.id,

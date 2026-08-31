@@ -74,7 +74,7 @@ function RouteComponent() {
 					rel="noopener noreferrer"
 					target="_blank"
 				>
-					Open file
+					Open document
 				</a>
 			),
 			header: "File",
@@ -87,7 +87,7 @@ function RouteComponent() {
 			actions={
 				<Button onClick={() => navigate({ to: "/documents/create" })}>
 					<Plus />
-					Create New Document
+					Create Document
 				</Button>
 			}
 			columns={columns}
@@ -112,6 +112,7 @@ function RouteComponent() {
 				<Link
 					className={className}
 					params={{ documentId: row.id }}
+					search={search}
 					to="/documents/$documentId"
 				>
 					{children}

@@ -1,4 +1,5 @@
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { Button } from "@mcmec/ui/components/button";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -50,7 +51,7 @@ function RouteComponent() {
 
 	const links = [
 		{ label: "Label", url: label_url },
-		{ label: "MSDS", url: msds_url },
+		{ label: "SDS", url: msds_url },
 	].filter((link) => link.url);
 
 	// No LifecycleButton: insecticides have no lifecycle columns. This page exists to hold the
@@ -67,14 +68,8 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
-				<Button asChild size="sm" variant="outline">
-					<Link to="/insecticides">
-						<ArrowLeft />
-						Back to Insecticides
-					</Link>
-				</Button>
+		<RecordDetail
+			actions={
 				<Button asChild size="sm" variant="outline">
 					<Link
 						params={{ insecticideId: id }}
@@ -84,48 +79,57 @@ function RouteComponent() {
 						Edit
 					</Link>
 				</Button>
-			</nav>
-
-			<article className="prose">
-				<h1 className="font-semibold text-foreground text-xl leading-tight">
-					{trade_name}
-				</h1>
-				{/* A subtitle, not a section heading: an h4 beneath the h1 skipped two levels. */}
-				<p className="text-muted-foreground">{type_name}</p>
-				<p>
-					<a
-						className="inline-flex items-center gap-1"
-						href={active_ingredient_url}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						<ExternalLink className="h-4 w-4" />
-						{active_ingredient}
-					</a>
-				</p>
-				{links.length > 0 ? (
-					<div className="flex flex-wrap gap-4">
-						{links.map((link) => (
-							<a
-								className="inline-flex items-center gap-1"
-								href={link.url}
-								key={link.label}
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								<ExternalLink className="h-4 w-4" />
-								{link.label}
-							</a>
-						))}
-					</div>
-				) : null}
-			</article>
-
-			<DangerZoneCard
-				label="Delete Insecticide"
-				onConfirm={handleDelete}
-				recordName={trade_name}
-			/>
-		</div>
+			}
+			backLink={
+				<Button asChild size="sm" variant="outline">
+					<Link search={true} to="/insecticides">
+						<ArrowLeft />
+						Back to Insecticides
+					</Link>
+				</Button>
+			}
+			danger={
+				<DangerZoneCard
+					label="Delete Insecticide"
+					onConfirm={handleDelete}
+					recordName={trade_name}
+				/>
+			}
+			fields={[
+				{
+					label: "Active ingredient",
+					value: (
+						<a
+							className="inline-flex items-center gap-1 text-primary hover:underline"
+							href={active_ingredient_url}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
+							<ExternalLink className="h-4 w-4" />
+							{active_ingredient}
+						</a>
+					),
+				},
+			]}
+			subtitle={type_name}
+			title={trade_name}
+		>
+			{links.length > 0 ? (
+				<div className="flex flex-wrap gap-4">
+					{links.map((link) => (
+						<a
+							className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
+							href={link.url}
+							key={link.label}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
+							<ExternalLink className="h-4 w-4" />
+							{link.label}
+						</a>
+					))}
+				</div>
+			) : null}
+		</RecordDetail>
 	);
 }

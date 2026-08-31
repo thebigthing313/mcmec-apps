@@ -6,6 +6,7 @@ import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import {
+	type NoticeDetailValues,
 	NoticeForm,
 	type NoticeFormValues,
 } from "@/src/components/notice-form";
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/(app)/notices/$noticeId_/edit")({
 type NoticeDraft = Draft<typeof notices>;
 
 /** Exactly the fields `website.updateNoticeDetails` accepts — the Save half of a Save-and-X. */
-function detailValues(value: NoticeFormValues) {
+function detailValues(value: NoticeDetailValues) {
 	return {
 		content: value.content,
 		notice_date: value.notice_date,

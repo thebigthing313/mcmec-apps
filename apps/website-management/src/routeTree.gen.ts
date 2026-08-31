@@ -12,8 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as appIndexRouteImport } from './routes/(app)/index'
-import { Route as appDocumentCategoriesRouteImport } from './routes/(app)/document-categories'
-import { Route as appCategoriesRouteImport } from './routes/(app)/categories'
 import { Route as appSprayScheduleRouteRouteImport } from './routes/(app)/spray-schedule/route'
 import { Route as appPublicRequestsRouteRouteImport } from './routes/(app)/public-requests/route'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
@@ -21,6 +19,8 @@ import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/ro
 import { Route as appJobPostingsRouteRouteImport } from './routes/(app)/job-postings/route'
 import { Route as appInsecticidesRouteRouteImport } from './routes/(app)/insecticides/route'
 import { Route as appDocumentsRouteRouteImport } from './routes/(app)/documents/route'
+import { Route as appDocumentCategoriesRouteRouteImport } from './routes/(app)/document-categories/route'
+import { Route as appCategoriesRouteRouteImport } from './routes/(app)/categories/route'
 import { Route as appWeeklyActivityIndexRouteImport } from './routes/(app)/weekly-activity/index'
 import { Route as appSprayScheduleIndexRouteImport } from './routes/(app)/spray-schedule/index'
 import { Route as appPublicRequestsIndexRouteImport } from './routes/(app)/public-requests/index'
@@ -29,6 +29,8 @@ import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/in
 import { Route as appJobPostingsIndexRouteImport } from './routes/(app)/job-postings/index'
 import { Route as appInsecticidesIndexRouteImport } from './routes/(app)/insecticides/index'
 import { Route as appDocumentsIndexRouteImport } from './routes/(app)/documents/index'
+import { Route as appDocumentCategoriesIndexRouteImport } from './routes/(app)/document-categories/index'
+import { Route as appCategoriesIndexRouteImport } from './routes/(app)/categories/index'
 import { Route as appSprayScheduleCreateRouteImport } from './routes/(app)/spray-schedule/create'
 import { Route as appSprayScheduleSprayScheduleIdRouteImport } from './routes/(app)/spray-schedule/$sprayScheduleId'
 import { Route as appPublicRequestsRequestIdRouteImport } from './routes/(app)/public-requests/$requestId'
@@ -36,18 +38,24 @@ import { Route as appNoticesCreateRouteImport } from './routes/(app)/notices/cre
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
 import { Route as appMeetingsCreateRouteImport } from './routes/(app)/meetings/create'
 import { Route as appMeetingsMeetingIdRouteImport } from './routes/(app)/meetings/$meetingId'
-import { Route as appJobPostingsNewRouteImport } from './routes/(app)/job-postings/new'
+import { Route as appJobPostingsCreateRouteImport } from './routes/(app)/job-postings/create'
 import { Route as appJobPostingsPostingIdRouteImport } from './routes/(app)/job-postings/$postingId'
 import { Route as appInsecticidesCreateRouteImport } from './routes/(app)/insecticides/create'
 import { Route as appInsecticidesInsecticideIdRouteImport } from './routes/(app)/insecticides/$insecticideId'
 import { Route as appDocumentsCreateRouteImport } from './routes/(app)/documents/create'
 import { Route as appDocumentsDocumentIdRouteImport } from './routes/(app)/documents/$documentId'
+import { Route as appDocumentCategoriesCreateRouteImport } from './routes/(app)/document-categories/create'
+import { Route as appDocumentCategoriesCategoryIdRouteImport } from './routes/(app)/document-categories/$categoryId'
+import { Route as appCategoriesCreateRouteImport } from './routes/(app)/categories/create'
+import { Route as appCategoriesCategoryIdRouteImport } from './routes/(app)/categories/$categoryId'
 import { Route as appSprayScheduleSprayScheduleIdEditRouteImport } from './routes/(app)/spray-schedule/$sprayScheduleId_.edit'
 import { Route as appNoticesNoticeIdEditRouteImport } from './routes/(app)/notices/$noticeId_.edit'
 import { Route as appMeetingsMeetingIdEditRouteImport } from './routes/(app)/meetings/$meetingId_.edit'
 import { Route as appJobPostingsPostingIdEditRouteImport } from './routes/(app)/job-postings/$postingId_.edit'
 import { Route as appInsecticidesInsecticideIdEditRouteImport } from './routes/(app)/insecticides/$insecticideId_.edit'
 import { Route as appDocumentsDocumentIdEditRouteImport } from './routes/(app)/documents/$documentId_.edit'
+import { Route as appDocumentCategoriesCategoryIdEditRouteImport } from './routes/(app)/document-categories/$categoryId_.edit'
+import { Route as appCategoriesCategoryIdEditRouteImport } from './routes/(app)/categories/$categoryId_.edit'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -61,16 +69,6 @@ const appRouteRoute = appRouteRouteImport.update({
 const appIndexRoute = appIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => appRouteRoute,
-} as any)
-const appDocumentCategoriesRoute = appDocumentCategoriesRouteImport.update({
-  id: '/document-categories',
-  path: '/document-categories',
-  getParentRoute: () => appRouteRoute,
-} as any)
-const appCategoriesRoute = appCategoriesRouteImport.update({
-  id: '/categories',
-  path: '/categories',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appSprayScheduleRouteRoute = appSprayScheduleRouteRouteImport.update({
@@ -106,6 +104,17 @@ const appInsecticidesRouteRoute = appInsecticidesRouteRouteImport.update({
 const appDocumentsRouteRoute = appDocumentsRouteRouteImport.update({
   id: '/documents',
   path: '/documents',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appDocumentCategoriesRouteRoute =
+  appDocumentCategoriesRouteRouteImport.update({
+    id: '/document-categories',
+    path: '/document-categories',
+    getParentRoute: () => appRouteRoute,
+  } as any)
+const appCategoriesRouteRoute = appCategoriesRouteRouteImport.update({
+  id: '/categories',
+  path: '/categories',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appWeeklyActivityIndexRoute = appWeeklyActivityIndexRouteImport.update({
@@ -148,6 +157,17 @@ const appDocumentsIndexRoute = appDocumentsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appDocumentsRouteRoute,
 } as any)
+const appDocumentCategoriesIndexRoute =
+  appDocumentCategoriesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appDocumentCategoriesRouteRoute,
+  } as any)
+const appCategoriesIndexRoute = appCategoriesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appCategoriesRouteRoute,
+} as any)
 const appSprayScheduleCreateRoute = appSprayScheduleCreateRouteImport.update({
   id: '/create',
   path: '/create',
@@ -185,9 +205,9 @@ const appMeetingsMeetingIdRoute = appMeetingsMeetingIdRouteImport.update({
   path: '/$meetingId',
   getParentRoute: () => appMeetingsRouteRoute,
 } as any)
-const appJobPostingsNewRoute = appJobPostingsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
+const appJobPostingsCreateRoute = appJobPostingsCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
   getParentRoute: () => appJobPostingsRouteRoute,
 } as any)
 const appJobPostingsPostingIdRoute = appJobPostingsPostingIdRouteImport.update({
@@ -215,6 +235,28 @@ const appDocumentsDocumentIdRoute = appDocumentsDocumentIdRouteImport.update({
   id: '/$documentId',
   path: '/$documentId',
   getParentRoute: () => appDocumentsRouteRoute,
+} as any)
+const appDocumentCategoriesCreateRoute =
+  appDocumentCategoriesCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appDocumentCategoriesRouteRoute,
+  } as any)
+const appDocumentCategoriesCategoryIdRoute =
+  appDocumentCategoriesCategoryIdRouteImport.update({
+    id: '/$categoryId',
+    path: '/$categoryId',
+    getParentRoute: () => appDocumentCategoriesRouteRoute,
+  } as any)
+const appCategoriesCreateRoute = appCategoriesCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => appCategoriesRouteRoute,
+} as any)
+const appCategoriesCategoryIdRoute = appCategoriesCategoryIdRouteImport.update({
+  id: '/$categoryId',
+  path: '/$categoryId',
+  getParentRoute: () => appCategoriesRouteRoute,
 } as any)
 const appSprayScheduleSprayScheduleIdEditRoute =
   appSprayScheduleSprayScheduleIdEditRouteImport.update({
@@ -251,9 +293,23 @@ const appDocumentsDocumentIdEditRoute =
     path: '/$documentId/edit',
     getParentRoute: () => appDocumentsRouteRoute,
   } as any)
+const appDocumentCategoriesCategoryIdEditRoute =
+  appDocumentCategoriesCategoryIdEditRouteImport.update({
+    id: '/$categoryId_/edit',
+    path: '/$categoryId/edit',
+    getParentRoute: () => appDocumentCategoriesRouteRoute,
+  } as any)
+const appCategoriesCategoryIdEditRoute =
+  appCategoriesCategoryIdEditRouteImport.update({
+    id: '/$categoryId_/edit',
+    path: '/$categoryId/edit',
+    getParentRoute: () => appCategoriesRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/categories': typeof appCategoriesRouteRouteWithChildren
+  '/document-categories': typeof appDocumentCategoriesRouteRouteWithChildren
   '/documents': typeof appDocumentsRouteRouteWithChildren
   '/insecticides': typeof appInsecticidesRouteRouteWithChildren
   '/job-postings': typeof appJobPostingsRouteRouteWithChildren
@@ -261,15 +317,17 @@ export interface FileRoutesByFullPath {
   '/notices': typeof appNoticesRouteRouteWithChildren
   '/public-requests': typeof appPublicRequestsRouteRouteWithChildren
   '/spray-schedule': typeof appSprayScheduleRouteRouteWithChildren
-  '/categories': typeof appCategoriesRoute
-  '/document-categories': typeof appDocumentCategoriesRoute
   '/': typeof appIndexRoute
+  '/categories/$categoryId': typeof appCategoriesCategoryIdRoute
+  '/categories/create': typeof appCategoriesCreateRoute
+  '/document-categories/$categoryId': typeof appDocumentCategoriesCategoryIdRoute
+  '/document-categories/create': typeof appDocumentCategoriesCreateRoute
   '/documents/$documentId': typeof appDocumentsDocumentIdRoute
   '/documents/create': typeof appDocumentsCreateRoute
   '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/insecticides/create': typeof appInsecticidesCreateRoute
   '/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
-  '/job-postings/new': typeof appJobPostingsNewRoute
+  '/job-postings/create': typeof appJobPostingsCreateRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
@@ -277,6 +335,8 @@ export interface FileRoutesByFullPath {
   '/public-requests/$requestId': typeof appPublicRequestsRequestIdRoute
   '/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
   '/spray-schedule/create': typeof appSprayScheduleCreateRoute
+  '/categories/': typeof appCategoriesIndexRoute
+  '/document-categories/': typeof appDocumentCategoriesIndexRoute
   '/documents/': typeof appDocumentsIndexRoute
   '/insecticides/': typeof appInsecticidesIndexRoute
   '/job-postings/': typeof appJobPostingsIndexRoute
@@ -285,6 +345,8 @@ export interface FileRoutesByFullPath {
   '/public-requests/': typeof appPublicRequestsIndexRoute
   '/spray-schedule/': typeof appSprayScheduleIndexRoute
   '/weekly-activity/': typeof appWeeklyActivityIndexRoute
+  '/categories/$categoryId/edit': typeof appCategoriesCategoryIdEditRoute
+  '/document-categories/$categoryId/edit': typeof appDocumentCategoriesCategoryIdEditRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/insecticides/$insecticideId/edit': typeof appInsecticidesInsecticideIdEditRoute
   '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
@@ -294,15 +356,17 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/categories': typeof appCategoriesRoute
-  '/document-categories': typeof appDocumentCategoriesRoute
   '/': typeof appIndexRoute
+  '/categories/$categoryId': typeof appCategoriesCategoryIdRoute
+  '/categories/create': typeof appCategoriesCreateRoute
+  '/document-categories/$categoryId': typeof appDocumentCategoriesCategoryIdRoute
+  '/document-categories/create': typeof appDocumentCategoriesCreateRoute
   '/documents/$documentId': typeof appDocumentsDocumentIdRoute
   '/documents/create': typeof appDocumentsCreateRoute
   '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/insecticides/create': typeof appInsecticidesCreateRoute
   '/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
-  '/job-postings/new': typeof appJobPostingsNewRoute
+  '/job-postings/create': typeof appJobPostingsCreateRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
@@ -310,6 +374,8 @@ export interface FileRoutesByTo {
   '/public-requests/$requestId': typeof appPublicRequestsRequestIdRoute
   '/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
   '/spray-schedule/create': typeof appSprayScheduleCreateRoute
+  '/categories': typeof appCategoriesIndexRoute
+  '/document-categories': typeof appDocumentCategoriesIndexRoute
   '/documents': typeof appDocumentsIndexRoute
   '/insecticides': typeof appInsecticidesIndexRoute
   '/job-postings': typeof appJobPostingsIndexRoute
@@ -318,6 +384,8 @@ export interface FileRoutesByTo {
   '/public-requests': typeof appPublicRequestsIndexRoute
   '/spray-schedule': typeof appSprayScheduleIndexRoute
   '/weekly-activity': typeof appWeeklyActivityIndexRoute
+  '/categories/$categoryId/edit': typeof appCategoriesCategoryIdEditRoute
+  '/document-categories/$categoryId/edit': typeof appDocumentCategoriesCategoryIdEditRoute
   '/documents/$documentId/edit': typeof appDocumentsDocumentIdEditRoute
   '/insecticides/$insecticideId/edit': typeof appInsecticidesInsecticideIdEditRoute
   '/job-postings/$postingId/edit': typeof appJobPostingsPostingIdEditRoute
@@ -329,6 +397,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/(app)/categories': typeof appCategoriesRouteRouteWithChildren
+  '/(app)/document-categories': typeof appDocumentCategoriesRouteRouteWithChildren
   '/(app)/documents': typeof appDocumentsRouteRouteWithChildren
   '/(app)/insecticides': typeof appInsecticidesRouteRouteWithChildren
   '/(app)/job-postings': typeof appJobPostingsRouteRouteWithChildren
@@ -336,15 +406,17 @@ export interface FileRoutesById {
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/(app)/public-requests': typeof appPublicRequestsRouteRouteWithChildren
   '/(app)/spray-schedule': typeof appSprayScheduleRouteRouteWithChildren
-  '/(app)/categories': typeof appCategoriesRoute
-  '/(app)/document-categories': typeof appDocumentCategoriesRoute
   '/(app)/': typeof appIndexRoute
+  '/(app)/categories/$categoryId': typeof appCategoriesCategoryIdRoute
+  '/(app)/categories/create': typeof appCategoriesCreateRoute
+  '/(app)/document-categories/$categoryId': typeof appDocumentCategoriesCategoryIdRoute
+  '/(app)/document-categories/create': typeof appDocumentCategoriesCreateRoute
   '/(app)/documents/$documentId': typeof appDocumentsDocumentIdRoute
   '/(app)/documents/create': typeof appDocumentsCreateRoute
   '/(app)/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/(app)/insecticides/create': typeof appInsecticidesCreateRoute
   '/(app)/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
-  '/(app)/job-postings/new': typeof appJobPostingsNewRoute
+  '/(app)/job-postings/create': typeof appJobPostingsCreateRoute
   '/(app)/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/(app)/meetings/create': typeof appMeetingsCreateRoute
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
@@ -352,6 +424,8 @@ export interface FileRoutesById {
   '/(app)/public-requests/$requestId': typeof appPublicRequestsRequestIdRoute
   '/(app)/spray-schedule/$sprayScheduleId': typeof appSprayScheduleSprayScheduleIdRoute
   '/(app)/spray-schedule/create': typeof appSprayScheduleCreateRoute
+  '/(app)/categories/': typeof appCategoriesIndexRoute
+  '/(app)/document-categories/': typeof appDocumentCategoriesIndexRoute
   '/(app)/documents/': typeof appDocumentsIndexRoute
   '/(app)/insecticides/': typeof appInsecticidesIndexRoute
   '/(app)/job-postings/': typeof appJobPostingsIndexRoute
@@ -360,6 +434,8 @@ export interface FileRoutesById {
   '/(app)/public-requests/': typeof appPublicRequestsIndexRoute
   '/(app)/spray-schedule/': typeof appSprayScheduleIndexRoute
   '/(app)/weekly-activity/': typeof appWeeklyActivityIndexRoute
+  '/(app)/categories/$categoryId_/edit': typeof appCategoriesCategoryIdEditRoute
+  '/(app)/document-categories/$categoryId_/edit': typeof appDocumentCategoriesCategoryIdEditRoute
   '/(app)/documents/$documentId_/edit': typeof appDocumentsDocumentIdEditRoute
   '/(app)/insecticides/$insecticideId_/edit': typeof appInsecticidesInsecticideIdEditRoute
   '/(app)/job-postings/$postingId_/edit': typeof appJobPostingsPostingIdEditRoute
@@ -371,6 +447,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
+    | '/categories'
+    | '/document-categories'
     | '/documents'
     | '/insecticides'
     | '/job-postings'
@@ -378,15 +456,17 @@ export interface FileRouteTypes {
     | '/notices'
     | '/public-requests'
     | '/spray-schedule'
-    | '/categories'
-    | '/document-categories'
     | '/'
+    | '/categories/$categoryId'
+    | '/categories/create'
+    | '/document-categories/$categoryId'
+    | '/document-categories/create'
     | '/documents/$documentId'
     | '/documents/create'
     | '/insecticides/$insecticideId'
     | '/insecticides/create'
     | '/job-postings/$postingId'
-    | '/job-postings/new'
+    | '/job-postings/create'
     | '/meetings/$meetingId'
     | '/meetings/create'
     | '/notices/$noticeId'
@@ -394,6 +474,8 @@ export interface FileRouteTypes {
     | '/public-requests/$requestId'
     | '/spray-schedule/$sprayScheduleId'
     | '/spray-schedule/create'
+    | '/categories/'
+    | '/document-categories/'
     | '/documents/'
     | '/insecticides/'
     | '/job-postings/'
@@ -402,6 +484,8 @@ export interface FileRouteTypes {
     | '/public-requests/'
     | '/spray-schedule/'
     | '/weekly-activity/'
+    | '/categories/$categoryId/edit'
+    | '/document-categories/$categoryId/edit'
     | '/documents/$documentId/edit'
     | '/insecticides/$insecticideId/edit'
     | '/job-postings/$postingId/edit'
@@ -411,15 +495,17 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
-    | '/categories'
-    | '/document-categories'
     | '/'
+    | '/categories/$categoryId'
+    | '/categories/create'
+    | '/document-categories/$categoryId'
+    | '/document-categories/create'
     | '/documents/$documentId'
     | '/documents/create'
     | '/insecticides/$insecticideId'
     | '/insecticides/create'
     | '/job-postings/$postingId'
-    | '/job-postings/new'
+    | '/job-postings/create'
     | '/meetings/$meetingId'
     | '/meetings/create'
     | '/notices/$noticeId'
@@ -427,6 +513,8 @@ export interface FileRouteTypes {
     | '/public-requests/$requestId'
     | '/spray-schedule/$sprayScheduleId'
     | '/spray-schedule/create'
+    | '/categories'
+    | '/document-categories'
     | '/documents'
     | '/insecticides'
     | '/job-postings'
@@ -435,6 +523,8 @@ export interface FileRouteTypes {
     | '/public-requests'
     | '/spray-schedule'
     | '/weekly-activity'
+    | '/categories/$categoryId/edit'
+    | '/document-categories/$categoryId/edit'
     | '/documents/$documentId/edit'
     | '/insecticides/$insecticideId/edit'
     | '/job-postings/$postingId/edit'
@@ -445,6 +535,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/(app)'
     | '/login'
+    | '/(app)/categories'
+    | '/(app)/document-categories'
     | '/(app)/documents'
     | '/(app)/insecticides'
     | '/(app)/job-postings'
@@ -452,15 +544,17 @@ export interface FileRouteTypes {
     | '/(app)/notices'
     | '/(app)/public-requests'
     | '/(app)/spray-schedule'
-    | '/(app)/categories'
-    | '/(app)/document-categories'
     | '/(app)/'
+    | '/(app)/categories/$categoryId'
+    | '/(app)/categories/create'
+    | '/(app)/document-categories/$categoryId'
+    | '/(app)/document-categories/create'
     | '/(app)/documents/$documentId'
     | '/(app)/documents/create'
     | '/(app)/insecticides/$insecticideId'
     | '/(app)/insecticides/create'
     | '/(app)/job-postings/$postingId'
-    | '/(app)/job-postings/new'
+    | '/(app)/job-postings/create'
     | '/(app)/meetings/$meetingId'
     | '/(app)/meetings/create'
     | '/(app)/notices/$noticeId'
@@ -468,6 +562,8 @@ export interface FileRouteTypes {
     | '/(app)/public-requests/$requestId'
     | '/(app)/spray-schedule/$sprayScheduleId'
     | '/(app)/spray-schedule/create'
+    | '/(app)/categories/'
+    | '/(app)/document-categories/'
     | '/(app)/documents/'
     | '/(app)/insecticides/'
     | '/(app)/job-postings/'
@@ -476,6 +572,8 @@ export interface FileRouteTypes {
     | '/(app)/public-requests/'
     | '/(app)/spray-schedule/'
     | '/(app)/weekly-activity/'
+    | '/(app)/categories/$categoryId_/edit'
+    | '/(app)/document-categories/$categoryId_/edit'
     | '/(app)/documents/$documentId_/edit'
     | '/(app)/insecticides/$insecticideId_/edit'
     | '/(app)/job-postings/$postingId_/edit'
@@ -510,20 +608,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof appIndexRouteImport
-      parentRoute: typeof appRouteRoute
-    }
-    '/(app)/document-categories': {
-      id: '/(app)/document-categories'
-      path: '/document-categories'
-      fullPath: '/document-categories'
-      preLoaderRoute: typeof appDocumentCategoriesRouteImport
-      parentRoute: typeof appRouteRoute
-    }
-    '/(app)/categories': {
-      id: '/(app)/categories'
-      path: '/categories'
-      fullPath: '/categories'
-      preLoaderRoute: typeof appCategoriesRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/spray-schedule': {
@@ -573,6 +657,20 @@ declare module '@tanstack/react-router' {
       path: '/documents'
       fullPath: '/documents'
       preLoaderRoute: typeof appDocumentsRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/document-categories': {
+      id: '/(app)/document-categories'
+      path: '/document-categories'
+      fullPath: '/document-categories'
+      preLoaderRoute: typeof appDocumentCategoriesRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/categories': {
+      id: '/(app)/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof appCategoriesRouteRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/weekly-activity/': {
@@ -631,6 +729,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDocumentsIndexRouteImport
       parentRoute: typeof appDocumentsRouteRoute
     }
+    '/(app)/document-categories/': {
+      id: '/(app)/document-categories/'
+      path: '/'
+      fullPath: '/document-categories/'
+      preLoaderRoute: typeof appDocumentCategoriesIndexRouteImport
+      parentRoute: typeof appDocumentCategoriesRouteRoute
+    }
+    '/(app)/categories/': {
+      id: '/(app)/categories/'
+      path: '/'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof appCategoriesIndexRouteImport
+      parentRoute: typeof appCategoriesRouteRoute
+    }
     '/(app)/spray-schedule/create': {
       id: '/(app)/spray-schedule/create'
       path: '/create'
@@ -680,11 +792,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appMeetingsMeetingIdRouteImport
       parentRoute: typeof appMeetingsRouteRoute
     }
-    '/(app)/job-postings/new': {
-      id: '/(app)/job-postings/new'
-      path: '/new'
-      fullPath: '/job-postings/new'
-      preLoaderRoute: typeof appJobPostingsNewRouteImport
+    '/(app)/job-postings/create': {
+      id: '/(app)/job-postings/create'
+      path: '/create'
+      fullPath: '/job-postings/create'
+      preLoaderRoute: typeof appJobPostingsCreateRouteImport
       parentRoute: typeof appJobPostingsRouteRoute
     }
     '/(app)/job-postings/$postingId': {
@@ -721,6 +833,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/documents/$documentId'
       preLoaderRoute: typeof appDocumentsDocumentIdRouteImport
       parentRoute: typeof appDocumentsRouteRoute
+    }
+    '/(app)/document-categories/create': {
+      id: '/(app)/document-categories/create'
+      path: '/create'
+      fullPath: '/document-categories/create'
+      preLoaderRoute: typeof appDocumentCategoriesCreateRouteImport
+      parentRoute: typeof appDocumentCategoriesRouteRoute
+    }
+    '/(app)/document-categories/$categoryId': {
+      id: '/(app)/document-categories/$categoryId'
+      path: '/$categoryId'
+      fullPath: '/document-categories/$categoryId'
+      preLoaderRoute: typeof appDocumentCategoriesCategoryIdRouteImport
+      parentRoute: typeof appDocumentCategoriesRouteRoute
+    }
+    '/(app)/categories/create': {
+      id: '/(app)/categories/create'
+      path: '/create'
+      fullPath: '/categories/create'
+      preLoaderRoute: typeof appCategoriesCreateRouteImport
+      parentRoute: typeof appCategoriesRouteRoute
+    }
+    '/(app)/categories/$categoryId': {
+      id: '/(app)/categories/$categoryId'
+      path: '/$categoryId'
+      fullPath: '/categories/$categoryId'
+      preLoaderRoute: typeof appCategoriesCategoryIdRouteImport
+      parentRoute: typeof appCategoriesRouteRoute
     }
     '/(app)/spray-schedule/$sprayScheduleId_/edit': {
       id: '/(app)/spray-schedule/$sprayScheduleId_/edit'
@@ -764,8 +904,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDocumentsDocumentIdEditRouteImport
       parentRoute: typeof appDocumentsRouteRoute
     }
+    '/(app)/document-categories/$categoryId_/edit': {
+      id: '/(app)/document-categories/$categoryId_/edit'
+      path: '/$categoryId/edit'
+      fullPath: '/document-categories/$categoryId/edit'
+      preLoaderRoute: typeof appDocumentCategoriesCategoryIdEditRouteImport
+      parentRoute: typeof appDocumentCategoriesRouteRoute
+    }
+    '/(app)/categories/$categoryId_/edit': {
+      id: '/(app)/categories/$categoryId_/edit'
+      path: '/$categoryId/edit'
+      fullPath: '/categories/$categoryId/edit'
+      preLoaderRoute: typeof appCategoriesCategoryIdEditRouteImport
+      parentRoute: typeof appCategoriesRouteRoute
+    }
   }
 }
+
+interface appCategoriesRouteRouteChildren {
+  appCategoriesCategoryIdRoute: typeof appCategoriesCategoryIdRoute
+  appCategoriesCreateRoute: typeof appCategoriesCreateRoute
+  appCategoriesIndexRoute: typeof appCategoriesIndexRoute
+  appCategoriesCategoryIdEditRoute: typeof appCategoriesCategoryIdEditRoute
+}
+
+const appCategoriesRouteRouteChildren: appCategoriesRouteRouteChildren = {
+  appCategoriesCategoryIdRoute: appCategoriesCategoryIdRoute,
+  appCategoriesCreateRoute: appCategoriesCreateRoute,
+  appCategoriesIndexRoute: appCategoriesIndexRoute,
+  appCategoriesCategoryIdEditRoute: appCategoriesCategoryIdEditRoute,
+}
+
+const appCategoriesRouteRouteWithChildren =
+  appCategoriesRouteRoute._addFileChildren(appCategoriesRouteRouteChildren)
+
+interface appDocumentCategoriesRouteRouteChildren {
+  appDocumentCategoriesCategoryIdRoute: typeof appDocumentCategoriesCategoryIdRoute
+  appDocumentCategoriesCreateRoute: typeof appDocumentCategoriesCreateRoute
+  appDocumentCategoriesIndexRoute: typeof appDocumentCategoriesIndexRoute
+  appDocumentCategoriesCategoryIdEditRoute: typeof appDocumentCategoriesCategoryIdEditRoute
+}
+
+const appDocumentCategoriesRouteRouteChildren: appDocumentCategoriesRouteRouteChildren =
+  {
+    appDocumentCategoriesCategoryIdRoute: appDocumentCategoriesCategoryIdRoute,
+    appDocumentCategoriesCreateRoute: appDocumentCategoriesCreateRoute,
+    appDocumentCategoriesIndexRoute: appDocumentCategoriesIndexRoute,
+    appDocumentCategoriesCategoryIdEditRoute:
+      appDocumentCategoriesCategoryIdEditRoute,
+  }
+
+const appDocumentCategoriesRouteRouteWithChildren =
+  appDocumentCategoriesRouteRoute._addFileChildren(
+    appDocumentCategoriesRouteRouteChildren,
+  )
 
 interface appDocumentsRouteRouteChildren {
   appDocumentsDocumentIdRoute: typeof appDocumentsDocumentIdRoute
@@ -803,14 +995,14 @@ const appInsecticidesRouteRouteWithChildren =
 
 interface appJobPostingsRouteRouteChildren {
   appJobPostingsPostingIdRoute: typeof appJobPostingsPostingIdRoute
-  appJobPostingsNewRoute: typeof appJobPostingsNewRoute
+  appJobPostingsCreateRoute: typeof appJobPostingsCreateRoute
   appJobPostingsIndexRoute: typeof appJobPostingsIndexRoute
   appJobPostingsPostingIdEditRoute: typeof appJobPostingsPostingIdEditRoute
 }
 
 const appJobPostingsRouteRouteChildren: appJobPostingsRouteRouteChildren = {
   appJobPostingsPostingIdRoute: appJobPostingsPostingIdRoute,
-  appJobPostingsNewRoute: appJobPostingsNewRoute,
+  appJobPostingsCreateRoute: appJobPostingsCreateRoute,
   appJobPostingsIndexRoute: appJobPostingsIndexRoute,
   appJobPostingsPostingIdEditRoute: appJobPostingsPostingIdEditRoute,
 }
@@ -890,6 +1082,8 @@ const appSprayScheduleRouteRouteWithChildren =
   )
 
 interface appRouteRouteChildren {
+  appCategoriesRouteRoute: typeof appCategoriesRouteRouteWithChildren
+  appDocumentCategoriesRouteRoute: typeof appDocumentCategoriesRouteRouteWithChildren
   appDocumentsRouteRoute: typeof appDocumentsRouteRouteWithChildren
   appInsecticidesRouteRoute: typeof appInsecticidesRouteRouteWithChildren
   appJobPostingsRouteRoute: typeof appJobPostingsRouteRouteWithChildren
@@ -897,13 +1091,13 @@ interface appRouteRouteChildren {
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appPublicRequestsRouteRoute: typeof appPublicRequestsRouteRouteWithChildren
   appSprayScheduleRouteRoute: typeof appSprayScheduleRouteRouteWithChildren
-  appCategoriesRoute: typeof appCategoriesRoute
-  appDocumentCategoriesRoute: typeof appDocumentCategoriesRoute
   appIndexRoute: typeof appIndexRoute
   appWeeklyActivityIndexRoute: typeof appWeeklyActivityIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
+  appCategoriesRouteRoute: appCategoriesRouteRouteWithChildren,
+  appDocumentCategoriesRouteRoute: appDocumentCategoriesRouteRouteWithChildren,
   appDocumentsRouteRoute: appDocumentsRouteRouteWithChildren,
   appInsecticidesRouteRoute: appInsecticidesRouteRouteWithChildren,
   appJobPostingsRouteRoute: appJobPostingsRouteRouteWithChildren,
@@ -911,8 +1105,6 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appPublicRequestsRouteRoute: appPublicRequestsRouteRouteWithChildren,
   appSprayScheduleRouteRoute: appSprayScheduleRouteRouteWithChildren,
-  appCategoriesRoute: appCategoriesRoute,
-  appDocumentCategoriesRoute: appDocumentCategoriesRoute,
   appIndexRoute: appIndexRoute,
   appWeeklyActivityIndexRoute: appWeeklyActivityIndexRoute,
 }

@@ -32,9 +32,39 @@ export interface MissionTransition {
 	/** The status the mission lands in — the optimistic half of the write. */
 	to: SprayScheduleStatus;
 	failure: string;
+	/**
+	 * Ask first, per DESIGN.md's Confirm Is For The Public rule.
+	 *
+	 * A Spray Mission is on the public spray schedule, and residents close windows and move pets
+	 * because of it — so withdrawing one or declaring it over is exactly the case the rule is
+	 * about. Cancelling a Meeting had asked since #161; cancelling a Mission, the record with the
+	 * more immediate physical consequence, did not, because the rule was swept through the
+	 * domains that were cut over first and never reached this one.
+	 *
+	 * Reschedule is deliberately unguarded. It puts a mission back on the public schedule rather
+	 * than taking one off it — the forward act, and the one that undoes the guarded ones.
+	 */
+	confirm?: {
+		title: string;
+		/** Names the record. `mission` is its date and area — never "this record". */
+		describe: (mission: string) => string;
+		/** The button that performs it — the verb, never "OK". */
+		actionLabel: string;
+	};
+	/**
+	 * Collect a rain date before firing, as a Save-and-Delay.
+	 *
+	 * `CONTEXT.md`: "A Delayed mission carries a rain date." The button set the status and never
+	 * asked for one, so the mission landed in a state the glossary calls incomplete and nothing
+	 * said so. `delaySprayMission` takes no payload by design — the domain module already spells
+	 * out the answer: `updateSprayMissionDetails` then `delaySprayMission`, one request, one
+	 * transaction.
+	 */
+	collectsRainDate?: boolean;
 }
 
 const DELAY: MissionTransition = {
+	collectsRainDate: true,
 	command: "website.delaySprayMission",
 	failure: "Failed to delay the mission.",
 	icon: <CalendarClock />,
@@ -44,6 +74,12 @@ const DELAY: MissionTransition = {
 
 const CANCEL: MissionTransition = {
 	command: "website.cancelSprayMission",
+	confirm: {
+		actionLabel: "Cancel Mission",
+		describe: (mission) =>
+			`${mission} will show as Cancelled on the public spray schedule immediately. The mission stays on the record and can be rescheduled.`,
+		title: "Cancel this mission on the public schedule?",
+	},
 	failure: "Failed to cancel the mission.",
 	icon: <CalendarOff />,
 	label: "Cancel Mission",
@@ -52,6 +88,12 @@ const CANCEL: MissionTransition = {
 
 const COMPLETE: MissionTransition = {
 	command: "website.completeSprayMission",
+	confirm: {
+		actionLabel: "Mark Complete",
+		describe: (mission) =>
+			`${mission} will show as Completed on the public spray schedule. Completed is the one status with no way back — it offers no further transition.`,
+		title: "Mark this mission complete?",
+	},
 	failure: "Failed to complete the mission.",
 	icon: <CalendarCheck />,
 	label: "Mark Complete",

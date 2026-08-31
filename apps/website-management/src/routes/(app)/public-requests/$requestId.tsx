@@ -2,6 +2,7 @@ import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import type { RequestStatus } from "@mcmec/schemas/db/public-requests";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
@@ -11,6 +12,7 @@ import { ArrowLeft, CheckCircle2, RotateCcw } from "lucide-react";
 import { intents } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
 import {
+	displayStatus,
 	humanizeDetailKey,
 	REQUEST_STATUS_LABELS,
 	REQUEST_STATUS_VARIANTS,
@@ -140,78 +142,68 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
-				<Button asChild size="sm" variant="outline">
-					<Link to="/public-requests">
-						<ArrowLeft />
-						Back to Requests
-					</Link>
-				</Button>
+		<RecordDetail
+			actions={
 				<LifecycleButton
 					icon={triage.icon}
 					label={triage.label}
 					onAct={triage.onAct}
 					size="sm"
 				/>
-			</nav>
-
-			<article className="space-y-4">
-				<div className="flex items-baseline gap-2">
-					<h1 className="font-semibold text-foreground text-xl leading-tight">
-						{requestTypeLabel(request.request_type)}
-					</h1>
-					<Badge variant={REQUEST_STATUS_VARIANTS[status]}>
-						{REQUEST_STATUS_LABELS[status]}
-					</Badge>
-				</div>
-
-				<div className="grid grid-cols-2 gap-4 rounded-lg border p-4">
-					<div>
-						<p className="text-muted-foreground text-sm">Name</p>
-						<p className="font-medium">{request.name}</p>
-					</div>
-					<div>
-						<p className="text-muted-foreground text-sm">Phone</p>
-						<p className="font-medium">{request.phone || "—"}</p>
-					</div>
-					<div>
-						<p className="text-muted-foreground text-sm">Email</p>
-						<p className="font-medium">{request.email || "—"}</p>
-					</div>
-					<div>
-						<p className="text-muted-foreground text-sm">Submitted</p>
-						<p className="font-medium">{formatDateShort(request.created_at)}</p>
-					</div>
-					{request.address_line_1 && (
-						<div className="col-span-2">
-							<p className="text-muted-foreground text-sm">Address</p>
-							<p className="font-medium">
-								{request.address_line_1}
-								{request.address_line_2 && <>, {request.address_line_2}</>}
-							</p>
-						</div>
-					)}
-					{request.zip_code_id && (
-						<div>
-							<p className="text-muted-foreground text-sm">Zip Code</p>
-							<p className="font-medium">
-								{zipCode
+			}
+			backLink={
+				<Button asChild size="sm" variant="outline">
+					<Link search={true} to="/public-requests">
+						<ArrowLeft />
+						Back to Public Requests
+					</Link>
+				</Button>
+			}
+			badge={
+				<Badge variant={REQUEST_STATUS_VARIANTS[displayStatus(status)]}>
+					{REQUEST_STATUS_LABELS[displayStatus(status)]}
+				</Badge>
+			}
+			danger={
+				<DangerZoneCard
+					description={`This permanently removes ${request.name}'s ${requestTypeLabel(request.request_type).toLowerCase()} request, including their contact details. This cannot be undone.`}
+					label="Delete Request"
+					onConfirm={handleDelete}
+					recordName={request.name}
+				/>
+			}
+			fields={[
+				{ label: "Phone", value: request.phone || "Not given" },
+				{ label: "Email", value: request.email || "Not given" },
+				{ label: "Submitted", value: formatDateShort(request.created_at) },
+				...(request.address_line_1
+					? [
+							{
+								label: "Address",
+								value: [request.address_line_1, request.address_line_2]
+									.filter(Boolean)
+									.join(", "),
+							},
+						]
+					: []),
+				...(request.zip_code_id
+					? [
+							{
+								label: "Zip code",
+								value: zipCode
 									? `${zipCode.code} — ${zipCode.city}, ${zipCode.state}`
-									: "—"}
-							</p>
-						</div>
-					)}
-				</div>
-
-				<DetailsPanel details={request.details} />
-			</article>
-
-			<DangerZoneCard
-				description="This permanently removes the submission, including the submitter's contact details. This cannot be undone."
-				label="Delete Request"
-				onConfirm={handleDelete}
-			/>
-		</div>
+									: "Unknown",
+							},
+						]
+					: []),
+			]}
+			// The person leads, not the category. The dashboard's aging queue already names the
+			// resident and puts their address beneath — and then the page it links to titled itself
+			// "Water Management" and demoted the person to a grey sub-label.
+			subtitle={requestTypeLabel(request.request_type)}
+			title={request.name}
+		>
+			<DetailsPanel details={request.details} />
+		</RecordDetail>
 	);
 }

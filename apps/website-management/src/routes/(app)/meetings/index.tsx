@@ -23,6 +23,8 @@ type MeetingRow = {
 	noticeUrl: string | null;
 };
 
+import { meetingStatus } from "@/src/lib/meetings";
+
 export const Route = createFileRoute("/(app)/meetings/")({
 	component: RouteComponent,
 	loader: () => {
@@ -32,21 +34,6 @@ export const Route = createFileRoute("/(app)/meetings/")({
 	},
 	validateSearch: validateRecordIndexSearch,
 });
-
-/**
- * Cancelled, Past, or Pending — derived, and always a word.
- *
- * A Cancelled Meeting stays on this list and on the public site: the record is the product, and
- * the public has to be able to see that a meeting was called and then called off.
- */
-function meetingStatus(row: MeetingRow): {
-	label: string;
-	variant: "default" | "secondary" | "outline";
-} {
-	if (row.isCancelled) return { label: "Cancelled", variant: "secondary" };
-	if (row.meetingAt < new Date()) return { label: "Past", variant: "outline" };
-	return { label: "Pending", variant: "default" };
-}
 
 function RouteComponent() {
 	const navigate = useNavigate();
@@ -176,7 +163,7 @@ function RouteComponent() {
 			actions={
 				<Button onClick={() => navigate({ to: "/meetings/create" })}>
 					<Plus />
-					Create New Meeting
+					Create Meeting
 				</Button>
 			}
 			columns={columns}
@@ -201,6 +188,7 @@ function RouteComponent() {
 				<Link
 					className={className}
 					params={{ meetingId: row.id }}
+					search={search}
 					to="/meetings/$meetingId"
 				>
 					{children}

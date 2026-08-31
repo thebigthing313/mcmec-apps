@@ -33,7 +33,7 @@ export function InsecticidesForm({
 		<form.AppForm>
 			<form.FormWrapper
 				className="max-w-2xl"
-				formDescription="This insecticides list are only used in the website's page dedicated to mosquito control products that the Commission uses and are not linked to actual activities."
+				formDescription="These products appear in the public insecticide catalogue. Listing one here does not record that it was applied — that is a Spray Mission."
 				formLabel={formLabel}
 			>
 				<form.AppField
@@ -66,7 +66,7 @@ export function InsecticidesForm({
 					{(field) => <field.TextField label="Label URL" showPaste={true} />}
 				</form.AppField>
 				<form.AppField name="msds_url" validators={{ onBlur: ValidURLSchema }}>
-					{(field) => <field.TextField label="MSDS URL" showPaste={true} />}
+					{(field) => <field.TextField label="SDS URL" showPaste={true} />}
 				</form.AppField>
 
 				<form.SubmitFormButton className="w-full" label={submitLabel} />

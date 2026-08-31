@@ -144,7 +144,7 @@ function RouteComponent() {
 			actions={
 				<Button onClick={() => navigate({ to: "/notices/create" })}>
 					<Plus />
-					Create New Notice
+					Create Notice
 				</Button>
 			}
 			columns={columns}
@@ -203,6 +203,11 @@ function RouteComponent() {
 				<Link
 					className={className}
 					params={{ noticeId: row.id }}
+					// The index's sort, page, search and filter ride along to the record, so the
+					// detail page's own Back link can hand them straight back. Working a register
+					// one record at a time is exactly the workflow RecordIndex round-trips state
+					// for, and the most obvious control on the record was discarding it.
+					search={search}
 					to="/notices/$noticeId"
 				>
 					{children}

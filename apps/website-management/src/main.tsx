@@ -19,6 +19,7 @@ import {
 } from "@mcmec/ui/blocks/access-notice";
 import { ErrorDisplay } from "@mcmec/ui/blocks/error";
 import { NotFound } from "@mcmec/ui/blocks/not-found";
+import { Spinner } from "@mcmec/ui/components/spinner";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { getDb } from "./lib/db";
@@ -45,6 +46,7 @@ const router = createRouter({
 	},
 	defaultErrorComponent: (error) => <ErrorComponent {...error} />,
 	defaultNotFoundComponent: () => <NotFoundComponent />,
+	defaultPendingComponent: () => <PendingComponent />,
 	routeTree,
 });
 
@@ -62,9 +64,31 @@ if (!rootElement.innerHTML) {
 		<StrictMode>
 			<QueryClientProvider client={queryClient}>
 				<RouterProvider router={router} />
-				<ReactQueryDevtools initialIsOpen={false} />
+				{import.meta.env.DEV ? (
+					<ReactQueryDevtools initialIsOpen={false} />
+				) : null}
 			</QueryClientProvider>
 		</StrictMode>,
+	);
+}
+
+/**
+ * What the screen shows while a route is still resolving.
+ *
+ * The `(app)` shell verifies the session and preloads the employee row before it renders
+ * anything, so without this the whole application is a blank page for as long as that takes —
+ * and a blank page is indistinguishable from a broken one. The router only swaps this in after
+ * `defaultPendingMs`, so a fast load still goes straight to content rather than flashing.
+ */
+function PendingComponent() {
+	return (
+		<div
+			aria-busy="true"
+			className="flex min-h-100 flex-col items-center justify-center gap-3 p-6"
+		>
+			<Spinner className="size-6 text-muted-foreground" />
+			<p className="text-muted-foreground text-sm">Loading…</p>
+		</div>
 	);
 }
 
