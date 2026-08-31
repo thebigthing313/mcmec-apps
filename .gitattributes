@@ -1,0 +1,10 @@
+# Normalise every text file to LF in the repository and on checkout.
+#
+# Without this, `core.autocrlf=true` (the Git for Windows default) checks these
+# files out with CRLF while the committed blobs stay LF. Biome's default
+# `lineEnding` is `lf`, so `biome format` then reports ~96 files as unformatted
+# on Windows even though nothing has actually drifted — and any `--write` looks
+# like it is about to produce a huge diff that git would silently discard.
+#
+# `text=auto` still lets Git detect and leave binaries alone.
+* text=auto eol=lf
