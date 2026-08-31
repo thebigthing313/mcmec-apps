@@ -69,7 +69,13 @@ export function RequestPasswordResetForm({
 
 			<AuthFieldset>
 				<form.AppField name="email" validators={{ onBlur: ValidEmailSchema }}>
-					{(field) => <field.TextField autoComplete="username" label="Email" />}
+					{(field) => (
+						<field.TextField
+							autoComplete="username"
+							label="Email"
+							type="email"
+						/>
+					)}
 				</form.AppField>
 			</AuthFieldset>
 
@@ -198,9 +204,7 @@ export function ChoosePasswordForm({
 				</form.AppField>
 			</AuthFieldset>
 
-			<div className="mt-4">
-				<AuthStatus>{errorMessage}</AuthStatus>
-			</div>
+			<AuthStatus>{errorMessage}</AuthStatus>
 
 			<AuthActions aside={backLink}>
 				<form.AppForm>

@@ -205,16 +205,21 @@
 	:where(input, textarea, [contenteditable]) {
 		caret-color: var(--primary);
 	}
+}
 
-	/*
-	 * A drawn rule is decoration to anyone who asked not to be moved. Turning the animation off
-	 * leaves the element at its untransformed size, so the frame is simply present.
-	 */
-	@media (prefers-reduced-motion: reduce) {
-		.animate-rule-x,
-		.animate-rule-y {
-			animation: none;
-		}
+/*
+ * A drawn rule is decoration to anyone who asked not to be moved. Turning the animation off
+ * leaves the element at its untransformed size, so the frame is simply present.
+ *
+ * DELIBERATELY UNLAYERED, for the same reason the `.prose` block below is. `.animate-rule-x` is
+ * generated from the `--animate-rule-x` theme token into Tailwind's `utilities` layer, and layer
+ * order beats specificity — written inside `@layer base`, as this was, the override lost to the
+ * utility every time and the animation played for people who had asked it not to.
+ */
+@media (prefers-reduced-motion: reduce) {
+	.animate-rule-x,
+	.animate-rule-y {
+		animation: none;
 	}
 }
 

@@ -1,16 +1,14 @@
+import { safeRedirect } from "@mcmec/lib/functions/safe-redirect";
 import { authLinkClassName } from "@mcmec/ui/blocks/auth-shell";
 import { SignInForm } from "@mcmec/ui/blocks/sign-in-form";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import z from "zod";
 
 const searchSchema = z.object({
-	// Same-origin paths only — an absolute URL here would bounce a freshly
-	// authenticated user off-site. Sibling apps have their own /login now.
-	redirect: z
-		.string()
-		.refine((v) => v.startsWith("/") && !v.startsWith("//"))
-		.optional()
-		.catch(undefined),
+	// Same-origin paths only — an absolute URL here would bounce a freshly authenticated user
+	// off-site. This was Central's own inline copy of the guard the other three apps each wrote
+	// out separately; `safeRedirect` is now the single one.
+	redirect: z.unknown().transform(safeRedirect).optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/_auth/login")({

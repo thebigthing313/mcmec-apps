@@ -39,7 +39,14 @@ function MastheadRule({
 }) {
 	return (
 		<div className="flex shrink-0 items-center gap-3 sm:gap-4">
-			<span aria-hidden className="h-px w-4 origin-left bg-border sm:w-8" />
+			{/* All three spans draw, so the rule arrives as one line rather than as a middle
+			    section growing between two stubs that were already there. The stubs carried
+			    `origin-*` and no animation, which is the shape of an intention half-applied. */}
+			<span
+				aria-hidden
+				className="h-px w-4 origin-left animate-rule-x bg-border sm:w-8"
+				style={{ animationDelay: delay }}
+			/>
 			{start}
 			<span
 				aria-hidden
@@ -47,7 +54,11 @@ function MastheadRule({
 				style={{ animationDelay: delay }}
 			/>
 			{end}
-			<span aria-hidden className="h-px w-4 origin-right bg-border sm:w-8" />
+			<span
+				aria-hidden
+				className="h-px w-4 origin-right animate-rule-x bg-border sm:w-8"
+				style={{ animationDelay: delay }}
+			/>
 		</div>
 	);
 }
@@ -275,20 +286,11 @@ export function AuthFieldset({
  * button down the page under the cursor that was about to press it again. Errors are announced;
  * a confirmation is not, because it always follows an action the user just took.
  */
-export function AuthStatus({
-	tone = "error",
-	children,
-}: {
-	tone?: "error" | "notice";
-	children?: React.ReactNode;
-}) {
+export function AuthStatus({ children }: { children?: React.ReactNode }) {
 	return (
 		<p
-			className={cn(
-				"min-h-5 max-w-md text-sm leading-5",
-				tone === "error" ? "text-destructive" : "text-muted-foreground",
-			)}
-			role={tone === "error" ? "alert" : undefined}
+			className="mt-4 min-h-5 max-w-md text-destructive text-sm leading-5"
+			role="alert"
 		>
 			{children}
 		</p>

@@ -1,21 +1,11 @@
 import { CENTRAL_FORGOT_PASSWORD_URL } from "@mcmec/lib/constants/apps";
+import { safeRedirect } from "@mcmec/lib/functions/safe-redirect";
 import { AuthShell, authLinkClassName } from "@mcmec/ui/blocks/auth-shell";
 import { SignInForm } from "@mcmec/ui/blocks/sign-in-form";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/src/lib/queryClient";
 
 type LoginSearch = { redirect?: string };
-
-/**
- * Only same-origin paths may be redirected to after sign-in. Anything else
- * (absolute URLs, protocol-relative `//evil.example`) is discarded so the
- * search param can't bounce a freshly authenticated user off-site.
- */
-function safeRedirect(value: unknown): string | undefined {
-	if (typeof value !== "string") return undefined;
-	if (!value.startsWith("/") || value.startsWith("//")) return undefined;
-	return value;
-}
 
 export const Route = createFileRoute("/login")({
 	validateSearch: (search: Record<string, unknown>): LoginSearch => ({

@@ -75,7 +75,13 @@ export function SignInForm({
 
 			<AuthFieldset>
 				<form.AppField name="email" validators={{ onBlur: ValidEmailSchema }}>
-					{(field) => <field.TextField autoComplete="username" label="Email" />}
+					{(field) => (
+						<field.TextField
+							autoComplete="username"
+							label="Email"
+							type="email"
+						/>
+					)}
 				</form.AppField>
 
 				<form.AppField name="password" validators={{ onBlur: PasswordSchema }}>
@@ -88,9 +94,7 @@ export function SignInForm({
 				</form.AppField>
 			</AuthFieldset>
 
-			<div className="mt-4">
-				<AuthStatus>{error}</AuthStatus>
-			</div>
+			<AuthStatus>{error}</AuthStatus>
 
 			<AuthActions aside={forgotPassword}>
 				<form.AppForm>
