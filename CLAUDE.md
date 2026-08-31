@@ -173,6 +173,16 @@ bypass; without it, PR the version commit into `develop` first, then re-run.
 ### Preview deployments
 Vercel preview deploys are **off by default** on all branches (including `develop`). To trigger one, include `[deploy-preview]` in a commit message.
 
+### Staging deploys (Railway)
+
+Railway's **staging** environment does *not* rebuild on every merge to `develop`. Each
+`railway.json` has an `environments.staging` block watching one file, `deploy/staging-release.txt`,
+so pushes to `develop` build nothing. When you are ready to browser-test, run `pnpm stage` on a
+clean, up-to-date `develop` — it stamps that file, commits and pushes, and all six staging
+services rebuild from the latest `develop`. `pnpm stage --dry-run` prints the plan.
+
+Production is unaffected: `main` still deploys on every merge. See `docs/railway-deployment.md`.
+
 ### Database changes
 - The schema lives in `apps/api/src/db/schema.ts`; migrations are generated into `apps/api/drizzle/`
 - After changing the schema, generate a migration: `pnpm --filter api db:generate`
