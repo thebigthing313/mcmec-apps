@@ -80,7 +80,7 @@ function JobPostingsPage() {
 		<RecordIndex
 			actions={
 				<Button asChild>
-					<Link to="/job-postings/new">
+					<Link to="/job-postings/create">
 						<Plus />
 						Create Job Posting
 					</Link>

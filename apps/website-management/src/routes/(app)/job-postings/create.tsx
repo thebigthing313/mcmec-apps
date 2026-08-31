@@ -6,7 +6,7 @@ import {
 } from "@/src/components/job-posting-form";
 import { intents, jobPostings } from "@/src/lib/db";
 
-export const Route = createFileRoute("/(app)/job-postings/new")({
+export const Route = createFileRoute("/(app)/job-postings/create")({
 	component: RouteComponent,
 	loader: () => ({ crumb: "Create" }),
 });

@@ -128,10 +128,10 @@ function RouteComponent() {
 					recordName={`${fiscal_year} ${type ?? "Document"}`}
 				/>
 			}
-			fields={[
-				{ label: "Category", value: type },
-				{ label: "Fiscal year", value: fiscal_year },
-			]}
+			// No `fields`: the title is already `${fiscal_year} ${type}`, so listing Category and
+			// Fiscal year beneath it restated the heading twice — the same "Closed: Yes beside a
+			// badge reading Closed" pattern this pass removed from Job Postings. A Document's
+			// content is the link, and that is what the body carries.
 			title={`${fiscal_year} ${type}`}
 		>
 			<a

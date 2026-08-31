@@ -135,11 +135,19 @@ export function DocumentForm({
 				</form.AppField>
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
 				{mode === "create" ? (
-					<LifecycleButton
-						className="w-full"
-						label="Create and Publish"
-						onAct={() => form.handleSubmit({ publish: true })}
-					/>
+					// Disabled on the same condition as the draft button, and that matters more
+					// here than there: this is the irreversible half of the pair. Leaving the
+					// public act clickable while the safe one is greyed out inverts the guard.
+					<form.Subscribe selector={(state) => state.canSubmit}>
+						{(canSubmit) => (
+							<LifecycleButton
+								className="w-full"
+								disabled={!canSubmit}
+								label="Create and Publish"
+								onAct={() => form.handleSubmit({ publish: true })}
+							/>
+						)}
+					</form.Subscribe>
 				) : null}
 				{actions ? (
 					<form.Subscribe selector={(state) => state.values}>

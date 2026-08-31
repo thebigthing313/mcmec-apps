@@ -1,4 +1,4 @@
-import { formatDateShort } from "@mcmec/lib/functions/date-fns";
+import { formatTimestampDateShort } from "@mcmec/lib/functions/date-fns";
 import { getJobPostingStatus } from "@mcmec/lib/functions/job-posting-status";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
@@ -166,7 +166,7 @@ function RouteComponent() {
 				{
 					label: "Published",
 					value: posting.published_at
-						? formatDateShort(posting.published_at)
+						? formatTimestampDateShort(posting.published_at)
 						: "Not published",
 				},
 			]}

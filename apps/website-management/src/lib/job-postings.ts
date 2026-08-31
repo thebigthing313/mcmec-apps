@@ -18,6 +18,8 @@ export const JOB_POSTING_STATUS_DISPLAY: Record<
 > = {
 	closed: { label: "Closed", variant: "secondary" },
 	draft: { label: "Draft", variant: "outline" },
-	pending: { label: "Pending", variant: "secondary" },
+	// DESIGN.md, Badges: "Published and Pending take the filled Commission Green." Pending is a
+	// posting waiting to open, not a finished one, so it does not take the muted variant.
+	pending: { label: "Pending", variant: "default" },
 	published: { label: "Published", variant: "default" },
 };

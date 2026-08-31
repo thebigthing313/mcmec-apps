@@ -1,4 +1,8 @@
-import { formatDateShort } from "@mcmec/lib/functions/date-fns";
+import {
+	formatDateShort,
+	toDateOnlyString,
+	toLocalDateOnly,
+} from "@mcmec/lib/functions/date-fns";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import {
 	AlertDialog,
@@ -67,8 +71,12 @@ export function MissionTransitionButton({
 }) {
 	const [confirming, setConfirming] = useState(false);
 	const [delaying, setDelaying] = useState(false);
+	// `toLocalDateOnly`, not `new Date`, and that is the whole of it: a `date` column reads back
+	// as UTC midnight, and `<Calendar selected>` compares against the local day, so the picker
+	// opened one day before the date printed on the button beside it. An operator who trusted
+	// the highlight and "corrected" it wrote the wrong rain date to the public schedule.
 	const [draftRainDate, setDraftRainDate] = useState<Date | undefined>(
-		rainDate ? new Date(rainDate) : undefined,
+		toLocalDateOnly(rainDate),
 	);
 	const rainDateId = useId();
 	const rainHintId = useId();
@@ -79,7 +87,7 @@ export function MissionTransitionButton({
 			label={transition.label}
 			onAct={() => {
 				if (transition.collectsRainDate) {
-					setDraftRainDate(rainDate ? new Date(rainDate) : undefined);
+					setDraftRainDate(toLocalDateOnly(rainDate));
 					setDelaying(true);
 					return;
 				}
@@ -153,11 +161,7 @@ export function MissionTransitionButton({
 							<Button
 								onClick={() => {
 									setDelaying(false);
-									onAct({
-										rainDate: draftRainDate
-											? draftRainDate.toISOString().slice(0, 10)
-											: null,
-									});
+									onAct({ rainDate: toDateOnlyString(draftRainDate) });
 								}}
 							>
 								Delay Mission

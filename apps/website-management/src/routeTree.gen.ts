@@ -38,7 +38,7 @@ import { Route as appNoticesCreateRouteImport } from './routes/(app)/notices/cre
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
 import { Route as appMeetingsCreateRouteImport } from './routes/(app)/meetings/create'
 import { Route as appMeetingsMeetingIdRouteImport } from './routes/(app)/meetings/$meetingId'
-import { Route as appJobPostingsNewRouteImport } from './routes/(app)/job-postings/new'
+import { Route as appJobPostingsCreateRouteImport } from './routes/(app)/job-postings/create'
 import { Route as appJobPostingsPostingIdRouteImport } from './routes/(app)/job-postings/$postingId'
 import { Route as appInsecticidesCreateRouteImport } from './routes/(app)/insecticides/create'
 import { Route as appInsecticidesInsecticideIdRouteImport } from './routes/(app)/insecticides/$insecticideId'
@@ -205,9 +205,9 @@ const appMeetingsMeetingIdRoute = appMeetingsMeetingIdRouteImport.update({
   path: '/$meetingId',
   getParentRoute: () => appMeetingsRouteRoute,
 } as any)
-const appJobPostingsNewRoute = appJobPostingsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
+const appJobPostingsCreateRoute = appJobPostingsCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
   getParentRoute: () => appJobPostingsRouteRoute,
 } as any)
 const appJobPostingsPostingIdRoute = appJobPostingsPostingIdRouteImport.update({
@@ -327,7 +327,7 @@ export interface FileRoutesByFullPath {
   '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/insecticides/create': typeof appInsecticidesCreateRoute
   '/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
-  '/job-postings/new': typeof appJobPostingsNewRoute
+  '/job-postings/create': typeof appJobPostingsCreateRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
@@ -366,7 +366,7 @@ export interface FileRoutesByTo {
   '/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/insecticides/create': typeof appInsecticidesCreateRoute
   '/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
-  '/job-postings/new': typeof appJobPostingsNewRoute
+  '/job-postings/create': typeof appJobPostingsCreateRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/meetings/create': typeof appMeetingsCreateRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
@@ -416,7 +416,7 @@ export interface FileRoutesById {
   '/(app)/insecticides/$insecticideId': typeof appInsecticidesInsecticideIdRoute
   '/(app)/insecticides/create': typeof appInsecticidesCreateRoute
   '/(app)/job-postings/$postingId': typeof appJobPostingsPostingIdRoute
-  '/(app)/job-postings/new': typeof appJobPostingsNewRoute
+  '/(app)/job-postings/create': typeof appJobPostingsCreateRoute
   '/(app)/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/(app)/meetings/create': typeof appMeetingsCreateRoute
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
@@ -466,7 +466,7 @@ export interface FileRouteTypes {
     | '/insecticides/$insecticideId'
     | '/insecticides/create'
     | '/job-postings/$postingId'
-    | '/job-postings/new'
+    | '/job-postings/create'
     | '/meetings/$meetingId'
     | '/meetings/create'
     | '/notices/$noticeId'
@@ -505,7 +505,7 @@ export interface FileRouteTypes {
     | '/insecticides/$insecticideId'
     | '/insecticides/create'
     | '/job-postings/$postingId'
-    | '/job-postings/new'
+    | '/job-postings/create'
     | '/meetings/$meetingId'
     | '/meetings/create'
     | '/notices/$noticeId'
@@ -554,7 +554,7 @@ export interface FileRouteTypes {
     | '/(app)/insecticides/$insecticideId'
     | '/(app)/insecticides/create'
     | '/(app)/job-postings/$postingId'
-    | '/(app)/job-postings/new'
+    | '/(app)/job-postings/create'
     | '/(app)/meetings/$meetingId'
     | '/(app)/meetings/create'
     | '/(app)/notices/$noticeId'
@@ -792,11 +792,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appMeetingsMeetingIdRouteImport
       parentRoute: typeof appMeetingsRouteRoute
     }
-    '/(app)/job-postings/new': {
-      id: '/(app)/job-postings/new'
-      path: '/new'
-      fullPath: '/job-postings/new'
-      preLoaderRoute: typeof appJobPostingsNewRouteImport
+    '/(app)/job-postings/create': {
+      id: '/(app)/job-postings/create'
+      path: '/create'
+      fullPath: '/job-postings/create'
+      preLoaderRoute: typeof appJobPostingsCreateRouteImport
       parentRoute: typeof appJobPostingsRouteRoute
     }
     '/(app)/job-postings/$postingId': {
@@ -995,14 +995,14 @@ const appInsecticidesRouteRouteWithChildren =
 
 interface appJobPostingsRouteRouteChildren {
   appJobPostingsPostingIdRoute: typeof appJobPostingsPostingIdRoute
-  appJobPostingsNewRoute: typeof appJobPostingsNewRoute
+  appJobPostingsCreateRoute: typeof appJobPostingsCreateRoute
   appJobPostingsIndexRoute: typeof appJobPostingsIndexRoute
   appJobPostingsPostingIdEditRoute: typeof appJobPostingsPostingIdEditRoute
 }
 
 const appJobPostingsRouteRouteChildren: appJobPostingsRouteRouteChildren = {
   appJobPostingsPostingIdRoute: appJobPostingsPostingIdRoute,
-  appJobPostingsNewRoute: appJobPostingsNewRoute,
+  appJobPostingsCreateRoute: appJobPostingsCreateRoute,
   appJobPostingsIndexRoute: appJobPostingsIndexRoute,
   appJobPostingsPostingIdEditRoute: appJobPostingsPostingIdEditRoute,
 }

@@ -316,3 +316,77 @@ export function formatDateTime(
 
 	return `${dateStr} ${timeStr} (${timeZoneStr})`;
 }
+
+/**
+ * Read a date-only value into a Date positioned at **local** midnight.
+ *
+ * The rest of this module treats a date-only value as UTC midnight, which is right for reading
+ * it — `formatDateShort` pins `timeZone: "UTC"` so the day never shifts. A calendar picker is
+ * the one consumer that cannot use that convention: `<Calendar selected>` compares against the
+ * user's local day, so handing it UTC midnight highlights the *previous* day anywhere west of
+ * Greenwich. New Jersey is four or five hours west of it every day of the year.
+ *
+ * @example
+ * // in America/New_York, with a `date` column read as 2026-09-05T00:00:00Z
+ * toLocalDateOnly(row.rain_date) // Sat Sep 05 2026 00:00:00 GMT-0400
+ */
+export function toLocalDateOnly(
+	date: Date | string | null | undefined,
+): Date | undefined {
+	if (!date) {
+		return undefined;
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return undefined;
+	}
+
+	return new Date(
+		dateObj.getUTCFullYear(),
+		dateObj.getUTCMonth(),
+		dateObj.getUTCDate(),
+	);
+}
+
+/**
+ * Write a locally-positioned Date back out as the `YYYY-MM-DD` a `date` column takes.
+ *
+ * The mirror of {@link toLocalDateOnly}, and the reason it exists: `toISOString().slice(0, 10)`
+ * reads the *UTC* day, so a date the user picked in the evening of their own timezone can be
+ * stored as the next one.
+ */
+export function toDateOnlyString(date: Date | null | undefined): string | null {
+	if (!date || Number.isNaN(date.getTime())) {
+		return null;
+	}
+
+	const month = `${date.getMonth() + 1}`.padStart(2, "0");
+	const day = `${date.getDate()}`.padStart(2, "0");
+	return `${date.getFullYear()}-${month}-${day}`;
+}
+
+/**
+ * Format a **timestamp** as a short local date.
+ *
+ * `formatDateShort` is for date-only columns and pins UTC deliberately. A `timestamptz` is a real
+ * instant, so pinning UTC renders an evening in New Jersey as the following day. Use this one
+ * wherever the underlying column carries a time.
+ */
+export function formatTimestampDateShort(
+	date: Date | string | null | undefined,
+	locale = "en-US",
+): string {
+	if (!date) {
+		return "";
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return "";
+	}
+
+	return dateObj.toLocaleDateString(locale);
+}
