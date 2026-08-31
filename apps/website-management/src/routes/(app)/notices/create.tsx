@@ -59,7 +59,7 @@ function RouteComponent() {
 			formLabel="Create New Notice"
 			mode="create"
 			onSubmit={handleSubmit}
-			submitLabel="Create"
+			submitLabel="Create as Draft"
 		/>
 	);
 }

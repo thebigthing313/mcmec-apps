@@ -7,6 +7,7 @@ import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
 import { Undo2, Upload } from "lucide-react";
 import {
+	type DocumentDetailValues,
 	DocumentForm,
 	type DocumentFormValues,
 } from "@/src/components/document-form";
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/(app)/documents/$documentId_/edit")({
 type DocumentDraft = Draft<typeof documents>;
 
 /** Exactly the fields `website.updateDocumentDetails` accepts — the Save half of a Save-and-X. */
-function detailValues(value: DocumentFormValues) {
+function detailValues(value: DocumentDetailValues) {
 	return {
 		document_type_id: value.document_type_id,
 		fiscal_year: value.fiscal_year,

@@ -3,6 +3,7 @@ import {
 	NonEmptyStringSchema,
 	NonEmptyUUID,
 } from "@mcmec/lib/constants/validators";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 
 /**
@@ -20,7 +21,14 @@ export interface NoticeDetailValues {
 	content: string;
 }
 
-/** What the form submits. Creating a notice is the one place the publish state is a choice. */
+/**
+ * What the form submits: the details plus the state the notice is being created in.
+ *
+ * `is_published` is not a field the author sets — it is decided by *which button was pressed*,
+ * and the form fills it in from the submit's meta. Create offers two acts, "Create as Draft"
+ * and "Create and Publish", so publishing a legal notice is always something someone chose to
+ * do rather than a switch that happened to be left on.
+ */
 export type NoticeFormValues = NoticeDetailValues & { is_published: boolean };
 
 interface NoticeFormProps {
@@ -30,9 +38,10 @@ interface NoticeFormProps {
 	formLabel: string;
 	submitLabel: string;
 	/**
-	 * Create offers the initial publish state; edit moves it to a Publish/Unpublish action, and
-	 * the field is then neither rendered nor read — `updateNoticeDetails` has no such field to
-	 * send it to.
+	 * Create renders its own "Create and Publish" beneath the primary submit; edit leaves the
+	 * lifecycle to `actions`, where the row already exists and Publish/Unpublish is a command
+	 * against it. Either way `is_published` is never a field — `updateNoticeDetails` has no such
+	 * field to send it to, and ADR 0001 gives create no exemption.
 	 */
 	mode: "create" | "edit";
 	/**
@@ -43,7 +52,7 @@ interface NoticeFormProps {
 	 * "Publish" or "Save and Publish", and to fill the `updateNoticeDetails` half of the
 	 * envelope. The form keeps owning its state; the caller borrows a read of it.
 	 */
-	actions?: (state: { values: NoticeFormValues }) => React.ReactNode;
+	actions?: (state: { values: NoticeDetailValues }) => React.ReactNode;
 }
 
 export function NoticeForm({
@@ -56,10 +65,13 @@ export function NoticeForm({
 	actions,
 }: NoticeFormProps) {
 	const form = useAppForm({
-		defaultValues: { ...defaultValues, is_published: true },
-		onSubmit: async ({ value }) => {
-			await onSubmit(value);
+		defaultValues,
+		// The publish decision travels with the submit rather than living in the values, so both
+		// create buttons run the same validation and the form has no publish state to leave on.
+		onSubmit: async ({ value, meta }) => {
+			await onSubmit({ ...value, is_published: meta.publish });
 		},
+		onSubmitMeta: { publish: false },
 	});
 
 	return (
@@ -101,20 +113,14 @@ export function NoticeForm({
 				<form.AppField name="content">
 					{(field) => <field.ContentField label="Content" />}
 				</form.AppField>
-				{mode === "create" ? (
-					<form.AppField name="is_published">
-						{(field) => (
-							<field.SwitchField
-								description="Mark notice as ready to publish or as a draft"
-								label="Publish Status"
-								labelWhenFalse="This notice is a draft and will never display in the legal notices pages."
-								labelWhenTrue="This notice is published and will display in the legal notices pages once the publish date is reached."
-								orientation="vertical"
-							/>
-						)}
-					</form.AppField>
-				) : null}
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
+				{mode === "create" ? (
+					<LifecycleButton
+						className="w-full"
+						label="Create and Publish"
+						onAct={() => form.handleSubmit({ publish: true })}
+					/>
+				) : null}
 				{actions ? (
 					<form.Subscribe selector={(state) => state.values}>
 						{(values) => actions({ values })}

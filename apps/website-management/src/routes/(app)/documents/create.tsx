@@ -57,7 +57,7 @@ function RouteComponent() {
 			formLabel="Create New Document"
 			mode="create"
 			onSubmit={handleSubmit}
-			submitLabel="Create"
+			submitLabel="Create as Draft"
 		/>
 	);
 }
