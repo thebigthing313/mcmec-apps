@@ -1,6 +1,5 @@
 import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
-import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
@@ -12,6 +11,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { ArrowLeft, Edit, ExternalLink } from "lucide-react";
+import { MissionTransitionButton } from "@/src/components/mission-transition-button";
 import {
 	insecticides,
 	intents,
@@ -21,7 +21,11 @@ import {
 } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
 import { transitionsFrom } from "@/src/lib/spray-mission-transitions";
-import { formatTimeRange, statusBadgeVariant } from "@/src/lib/spray-schedule";
+import {
+	formatTimeRange,
+	statusBadgeVariant,
+	statusLabel,
+} from "@/src/lib/spray-schedule";
 
 export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
 	component: RouteComponent,
@@ -66,11 +70,47 @@ function RouteComponent() {
 	const insecticideName =
 		insecticides.get(schedule.insecticide_id)?.trade_name ?? "";
 
-	// One button per legal transition, never a dropdown of states. No form under this, so no
-	// `isDirty` and no relabel: a detail-view lifecycle button always sends exactly one intent.
-	// The page stays put afterwards — the badge below is live, so the result of the click is
-	// visible where the click was.
+	// One button per legal transition, never a dropdown of states. The page stays put afterwards
+	// — the badge below is live, so the result of the click is visible where the click was.
+	//
+	// Each button carries its own guard: Cancel and Mark Complete ask first, because a mission is
+	// on the public spray schedule and residents plan an evening around it, and Delay asks for
+	// the rain date `CONTEXT.md` says a delayed mission carries. `MissionTransitionButton` owns
+	// which is which, so no screen can guard the same command differently.
 	const transitions = transitionsFrom(schedule.status);
+
+	// The mission's own name, for the dialogs. The index leads with the area and this page leads
+	// with the date, so the dialogs name both rather than picking a side.
+	const missionName = `${schedule.area_description} on ${formatDateShort(schedule.mission_date)}`;
+
+	// A rain date collected while delaying is a Save-and-Delay — `updateSprayMissionDetails` then
+	// `delaySprayMission`, one request, one transaction, exactly as the domain module prescribes.
+	// It only counts as a save when it actually changed, or an unchanged date earns a 400 from
+	// `updateSprayMissionDetails`'s own non-empty refinement.
+	const runTransition = (
+		transition: (typeof transitions)[number],
+		extra?: { rainDate: string | null },
+	) => {
+		const storedRainDate = schedule.rain_date
+			? new Date(schedule.rain_date).toISOString().slice(0, 10)
+			: null;
+		const rainDateChanged =
+			extra !== undefined && (extra.rainDate ?? null) !== storedRainDate;
+		runLifecycle(spraySchedules, sprayScheduleId, {
+			apply: (draft) => {
+				draft.status = transition.to;
+			},
+			command: transition.command,
+			failure: transition.failure,
+			save: rainDateChanged
+				? {
+						changes: { rain_date: extra?.rainDate ?? null },
+						command: "website.updateSprayMissionDetails",
+					}
+				: undefined,
+			success: `${missionName} now shows as ${statusLabel(transition.to)} on the public spray schedule.`,
+		});
+	};
 
 	// Delete is the one action whose placement is not free — detail page only, danger zone,
 	// behind a confirm (ADR 0001). It leaves the page because the record it was showing is gone.
@@ -103,20 +143,13 @@ function RouteComponent() {
 						</Link>
 					</Button>
 					{transitions.map((transition) => (
-						<LifecycleButton
-							icon={transition.icon}
+						<MissionTransitionButton
 							key={transition.command}
-							label={transition.label}
-							onAct={() =>
-								runLifecycle(spraySchedules, sprayScheduleId, {
-									apply: (draft) => {
-										draft.status = transition.to;
-									},
-									command: transition.command,
-									failure: transition.failure,
-								})
-							}
+							missionName={missionName}
+							onAct={(extra) => runTransition(transition, extra)}
+							rainDate={schedule.rain_date}
 							size="sm"
+							transition={transition}
 						/>
 					))}
 				</div>
@@ -128,7 +161,7 @@ function RouteComponent() {
 						{formatDateShort(schedule.mission_date)}
 					</h1>
 					<Badge variant={statusBadgeVariant(schedule.status)}>
-						{schedule.status.charAt(0).toUpperCase() + schedule.status.slice(1)}
+						{statusLabel(schedule.status)}
 					</Badge>
 				</div>
 				<h4>{formatTimeRange(schedule.start_time, schedule.end_time)}</h4>
