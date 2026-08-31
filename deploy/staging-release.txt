@@ -1,0 +1,10 @@
+# Staging release marker
+#
+# Railway's staging environment watches this file and nothing else (see the
+# `environments.staging` block in each railway.json). Pushing app code to
+# `develop` therefore builds nothing; changing this file rebuilds every staging
+# service from the latest `develop`.
+#
+# Do not edit by hand — run `pnpm stage`.
+
+released: never

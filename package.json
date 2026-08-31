@@ -35,6 +35,7 @@
 		"preinstall": "node scripts/check-node-version.mjs",
 		"prepare": "husky",
 		"release": "node scripts/release.mjs",
+		"stage": "node scripts/stage.mjs",
 		"version-pkgs": "changeset version"
 	},
 	"pnpm": {
