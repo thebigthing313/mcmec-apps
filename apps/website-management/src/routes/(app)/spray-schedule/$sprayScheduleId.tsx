@@ -1,5 +1,6 @@
 import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
@@ -124,15 +125,9 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card p-4">
-				<Button asChild size="sm" variant="outline">
-					<Link to="/spray-schedule">
-						<ArrowLeft />
-						Back to Spray Missions
-					</Link>
-				</Button>
-				<div className="flex flex-wrap items-center gap-2">
+		<RecordDetail
+			actions={
+				<>
 					<Button asChild size="sm" variant="outline">
 						<Link
 							params={{ sprayScheduleId }}
@@ -152,52 +147,66 @@ function RouteComponent() {
 							transition={transition}
 						/>
 					))}
-				</div>
-			</nav>
-
-			<article className="prose">
-				<div className="flex flex-row items-baseline gap-2">
-					<h1 className="font-semibold text-foreground text-xl leading-tight">
-						{formatDateShort(schedule.mission_date)}
-					</h1>
-					<Badge variant={statusBadgeVariant(schedule.status)}>
-						{statusLabel(schedule.status)}
-					</Badge>
-				</div>
-				<h4>{formatTimeRange(schedule.start_time, schedule.end_time)}</h4>
-				{schedule.rain_date ? (
-					<p>Rain date: {formatDateShort(schedule.rain_date)}</p>
-				) : null}
-				<p>{schedule.area_description}</p>
-				<dl>
-					<dt>Insecticide</dt>
-					<dd>{insecticideName}</dd>
-					<dt>Municipalities</dt>
-					<dd>
-						{municipalityNames.length > 0
+				</>
+			}
+			backLink={
+				<Button asChild size="sm" variant="outline">
+					<Link to="/spray-schedule">
+						<ArrowLeft />
+						Back to Spray Missions
+					</Link>
+				</Button>
+			}
+			badge={
+				<Badge variant={statusBadgeVariant(schedule.status)}>
+					{statusLabel(schedule.status)}
+				</Badge>
+			}
+			danger={
+				<DangerZoneCard
+					description={`This permanently deletes ${missionName} and the municipalities linked to it. This cannot be undone.`}
+					label="Delete Spray Mission"
+					onConfirm={handleDelete}
+					recordName={missionName}
+				/>
+			}
+			fields={[
+				{
+					label: "Window",
+					value: formatTimeRange(schedule.start_time, schedule.end_time),
+				},
+				{
+					label: "Rain date",
+					value: schedule.rain_date
+						? formatDateShort(schedule.rain_date)
+						: "None set",
+				},
+				{ label: "Insecticide", value: insecticideName },
+				{
+					label: "Municipalities",
+					value:
+						municipalityNames.length > 0
 							? municipalityNames.join(", ")
-							: "None selected"}
-					</dd>
-				</dl>
-				{schedule.map_url ? (
-					<a
-						className="inline-flex items-center gap-1"
-						href={schedule.map_url}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						<ExternalLink className="h-4 w-4" />
-						Spray area map
-					</a>
-				) : null}
-			</article>
-
-			<DangerZoneCard
-				description={`This permanently deletes ${missionName} and the municipalities linked to it. This cannot be undone.`}
-				label="Delete Spray Mission"
-				onConfirm={handleDelete}
-				recordName={missionName}
-			/>
-		</div>
+							: "None selected",
+				},
+			]}
+			// The index leads with the area and this page led with the date, so a search for a
+			// truncated area string landed on a page titled "Aug 14". The area is what a mission is
+			// to the people running it; the date is its subtitle.
+			subtitle={formatDateShort(schedule.mission_date)}
+			title={schedule.area_description}
+		>
+			{schedule.map_url ? (
+				<a
+					className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
+					href={schedule.map_url}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					<ExternalLink className="h-4 w-4" />
+					Spray area map
+				</a>
+			) : null}
+		</RecordDetail>
 	);
 }

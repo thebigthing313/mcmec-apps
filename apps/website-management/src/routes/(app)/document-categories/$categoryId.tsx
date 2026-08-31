@@ -1,4 +1,5 @@
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { Button } from "@mcmec/ui/components/button";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -61,14 +62,8 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
-				<Button asChild size="sm" variant="outline">
-					<Link to="/document-categories">
-						<ArrowLeft />
-						Back to Document Categories
-					</Link>
-				</Button>
+		<RecordDetail
+			actions={
 				<Button asChild size="sm" variant="outline">
 					<Link
 						params={{ categoryId }}
@@ -78,34 +73,37 @@ function RouteComponent() {
 						Edit
 					</Link>
 				</Button>
-			</nav>
-
-			<article className="prose">
-				<h1 className="font-semibold text-foreground text-xl leading-tight">
-					{category.name}
-				</h1>
-				{/* A subtitle, not a section heading: an h4 beneath the h1 skips two levels. */}
-				<p className="text-muted-foreground">
-					{category.description ?? "No description."}
-				</p>
-				{/* The reason Delete is unavailable is stated here, in the page's own text, rather
-				    than in a tooltip on the disabled button or in the dialog behind it. A disabled
-				    button takes no focus, so anything hung off it is unreachable by keyboard and
-				    invisible to a screen reader — which is how the previous screen explained this
-				    rule, and it explained it to nobody. */}
-				<p>
-					{documentCount === 0
-						? "No Documents are filed under this category, so it can be deleted."
-						: `${documentCount} ${documentCount === 1 ? "Document is" : "Documents are"} filed under this category, so it cannot be deleted. Move them to another category first.`}
-				</p>
-			</article>
-
-			<DangerZoneCard
-				disabled={documentCount > 0}
-				label="Delete Category"
-				onConfirm={handleDelete}
-				recordName={category.name}
-			/>
-		</div>
+			}
+			backLink={
+				<Button asChild size="sm" variant="outline">
+					<Link to="/document-categories">
+						<ArrowLeft />
+						Back to Document Categories
+					</Link>
+				</Button>
+			}
+			danger={
+				<DangerZoneCard
+					disabled={documentCount > 0}
+					label="Delete Category"
+					onConfirm={handleDelete}
+					recordName={category.name}
+				/>
+			}
+			fields={[{ label: "Documents", value: documentCount }]}
+			subtitle={category.description ?? "No description."}
+			title={category.name}
+		>
+			{/* The reason Delete is unavailable is stated here, in the page's own text, rather
+			    than in a tooltip on the disabled button or in the dialog behind it. A disabled
+			    button takes no focus, so anything hung off it is unreachable by keyboard and
+			    invisible to a screen reader — which is how the previous screen explained this
+			    rule, and it explained it to nobody. */}
+			<p className="text-foreground">
+				{documentCount === 0
+					? "No Documents are filed under this category, so it can be deleted."
+					: `${documentCount} ${documentCount === 1 ? "Document is" : "Documents are"} filed under this category, so it cannot be deleted. Move them to another category first.`}
+			</p>
+		</RecordDetail>
 	);
 }

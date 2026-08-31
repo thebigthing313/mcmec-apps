@@ -1,9 +1,8 @@
-import {
-	getJobPostingStatus,
-	type JobPostingStatus,
-} from "@mcmec/lib/functions/job-posting-status";
+import { formatDateShort } from "@mcmec/lib/functions/date-fns";
+import { getJobPostingStatus } from "@mcmec/lib/functions/job-posting-status";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
@@ -123,15 +122,9 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
-				<Button asChild size="sm" variant="outline">
-					<Link to="/job-postings">
-						<ArrowLeft />
-						Back to Job Postings
-					</Link>
-				</Button>
-				<div className="flex items-center gap-2">
+		<RecordDetail
+			actions={
+				<>
 					<Button asChild size="sm" variant="outline">
 						<Link params={{ postingId }} to="/job-postings/$postingId/edit">
 							<Edit />
@@ -147,46 +140,39 @@ function RouteComponent() {
 							size="sm"
 						/>
 					))}
-				</div>
-			</nav>
-
-			<div className="space-y-4 rounded-lg border bg-card p-6">
-				<div className="flex items-center gap-3">
-					<h1 className="font-semibold text-foreground text-xl leading-tight">
-						{posting.title}
-					</h1>
-					<Badge variant={status.variant}>{status.label}</Badge>
-				</div>
-
-				<dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-sm">
-					<dt className="font-medium text-muted-foreground">Published At</dt>
-					<dd>
-						{posting.published_at
-							? new Date(posting.published_at).toLocaleDateString()
-							: "—"}
-					</dd>
-
-					<dt className="font-medium text-muted-foreground">Closed</dt>
-					<dd>{posting.is_closed ? "Yes" : "No"}</dd>
-
-					<dt className="font-medium text-muted-foreground">Created</dt>
-					<dd>{new Date(posting.created_at).toLocaleDateString()}</dd>
-
-					<dt className="font-medium text-muted-foreground">Updated</dt>
-					<dd>{new Date(posting.updated_at).toLocaleDateString()}</dd>
-				</dl>
-			</div>
-
-			<div className="rounded-lg border bg-card p-6">
-				<h3 className="mb-4 font-semibold text-lg">Content</h3>
-				<TiptapRenderer className="mt-4" content={posting.content} />
-			</div>
-
-			<DangerZoneCard
-				label="Delete Job Posting"
-				onConfirm={handleDelete}
-				recordName={posting.title}
-			/>
-		</div>
+				</>
+			}
+			backLink={
+				<Button asChild size="sm" variant="outline">
+					<Link to="/job-postings">
+						<ArrowLeft />
+						Back to Job Postings
+					</Link>
+				</Button>
+			}
+			badge={<Badge variant={status.variant}>{status.label}</Badge>}
+			danger={
+				<DangerZoneCard
+					label="Delete Job Posting"
+					onConfirm={handleDelete}
+					recordName={posting.title}
+				/>
+			}
+			// "Closed: Yes" sat beside a badge already reading Closed, and Created/Updated were
+			// row bookkeeping no other detail page shows. What is left is the one date a reader
+			// cannot get from the badge — and it is formatted like every other date in the product
+			// rather than by a raw toLocaleDateString this page alone was calling.
+			fields={[
+				{
+					label: "Published",
+					value: posting.published_at
+						? formatDateShort(posting.published_at)
+						: "Not published",
+				},
+			]}
+			title={posting.title}
+		>
+			<TiptapRenderer className="prose" content={posting.content} />
+		</RecordDetail>
 	);
 }

@@ -2,6 +2,7 @@ import { formatDate } from "@mcmec/lib/functions/date-fns";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { PublicNoticeBadge } from "@mcmec/ui/blocks/public-notice-badge";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { TiptapRenderer } from "@mcmec/ui/blocks/tiptap-renderer";
 import { Button } from "@mcmec/ui/components/button";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
@@ -128,15 +129,9 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
-				<Button asChild size="sm" variant="outline">
-					<Link to="/notices">
-						<ArrowLeft />
-						Back to Notices
-					</Link>
-				</Button>
-				<div className="flex items-center gap-2">
+		<RecordDetail
+			actions={
+				<>
 					<Button asChild size="sm" variant="outline">
 						<Link params={{ noticeId: id }} to="/notices/$noticeId/edit">
 							<Edit />
@@ -152,30 +147,37 @@ function RouteComponent() {
 							size="sm"
 						/>
 					))}
-				</div>
-			</nav>
-
-			<article className="prose">
-				<div className="flex flex-row items-baseline gap-2">
-					<h1 className="font-semibold text-foreground text-xl leading-tight">
-						{title}
-					</h1>
-					<PublicNoticeBadge
-						isArchived={is_archived}
-						isPublished={is_published}
-						noticeDate={notice_date}
-					/>
-				</div>
-				<h4>Type: {type}</h4>
-				<h4>Notice date: {formatDate(notice_date)}</h4>
-				<TiptapRenderer className="mt-4" content={content} />
-			</article>
-
-			<DangerZoneCard
-				label="Delete Notice"
-				onConfirm={handleDelete}
-				recordName={title}
-			/>
-		</div>
+				</>
+			}
+			backLink={
+				<Button asChild size="sm" variant="outline">
+					<Link to="/notices">
+						<ArrowLeft />
+						Back to Notices
+					</Link>
+				</Button>
+			}
+			badge={
+				<PublicNoticeBadge
+					isArchived={is_archived}
+					isPublished={is_published}
+					noticeDate={notice_date}
+				/>
+			}
+			danger={
+				<DangerZoneCard
+					label="Delete Notice"
+					onConfirm={handleDelete}
+					recordName={title}
+				/>
+			}
+			fields={[
+				{ label: "Type", value: type },
+				{ label: "Notice date", value: formatDate(notice_date) },
+			]}
+			title={title}
+		>
+			<TiptapRenderer className="prose" content={content} />
+		</RecordDetail>
 	);
 }

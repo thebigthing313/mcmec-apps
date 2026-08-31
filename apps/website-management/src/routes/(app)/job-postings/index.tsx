@@ -1,8 +1,5 @@
 import { formatDateShort } from "@mcmec/lib/functions/date-fns";
-import {
-	getJobPostingStatus,
-	type JobPostingStatus,
-} from "@mcmec/lib/functions/job-posting-status";
+import { getJobPostingStatus } from "@mcmec/lib/functions/job-posting-status";
 import {
 	RecordIndex,
 	type RecordIndexColumn,
