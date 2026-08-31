@@ -18,20 +18,21 @@ function RouteComponent() {
 
 	const handleSubmit = (value: CategoryFormValues) => {
 		const now = new Date();
+		const id = crypto.randomUUID();
 		const tx = noticeTypes.insert(
 			{
 				created_at: now,
 				description: value.description.trim() || null,
 				// The id minted here is the id the row will have — the envelope carries it and
 				// the handler honours it, so the optimistic row and the committed row share a key.
-				id: crypto.randomUUID(),
+				id,
 				name: value.name,
 				updated_at: now,
 			},
 			intents("website.createNoticeCategory"),
 		);
 		toastOnError(tx, "Failed to create category.");
-		navigate({ to: "/categories" });
+		navigate({ params: { categoryId: id }, to: "/categories/$categoryId" });
 	};
 
 	return (

@@ -112,6 +112,7 @@ function RouteComponent() {
 				<Link
 					className={className}
 					params={{ documentId: row.id }}
+					search={search}
 					to="/documents/$documentId"
 				>
 					{children}

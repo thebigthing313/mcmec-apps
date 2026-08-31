@@ -49,7 +49,7 @@ export function ErrorDisplay({
 					{showDetails && details && (
 						<div className="rounded-md bg-muted p-4">
 							<h4 className="mb-2 font-medium text-sm">Details:</h4>
-							<pre className="overflow-x-auto whitespace-pre-wrap font-mono text-xs">
+							<pre className="overflow-x-auto whitespace-pre-wrap text-xs">
 								{details}
 							</pre>
 						</div>

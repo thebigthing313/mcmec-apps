@@ -82,7 +82,7 @@ function RouteComponent() {
 			}
 			backLink={
 				<Button asChild size="sm" variant="outline">
-					<Link to="/insecticides">
+					<Link search={true} to="/insecticides">
 						<ArrowLeft />
 						Back to Insecticides
 					</Link>

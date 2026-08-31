@@ -151,7 +151,7 @@ function RouteComponent() {
 			}
 			backLink={
 				<Button asChild size="sm" variant="outline">
-					<Link to="/notices">
+					<Link search={true} to="/notices">
 						<ArrowLeft />
 						Back to Notices
 					</Link>

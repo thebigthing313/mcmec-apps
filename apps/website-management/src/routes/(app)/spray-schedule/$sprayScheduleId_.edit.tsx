@@ -63,17 +63,23 @@ function RouteComponent() {
 	const schedule = liveSchedules[0] ?? loadedSchedule;
 
 	const { data: insecticideData } = useLiveQuery((q) =>
-		q.from({ insecticide: insecticides }).select(({ insecticide }) => ({
-			label: insecticide.trade_name,
-			value: insecticide.id,
-		})),
+		q
+			.from({ insecticide: insecticides })
+			.orderBy(({ insecticide }) => insecticide.trade_name)
+			.select(({ insecticide }) => ({
+				label: insecticide.trade_name,
+				value: insecticide.id,
+			})),
 	);
 
 	const { data: municipalityData } = useLiveQuery((q) =>
-		q.from({ municipality: municipalities }).select(({ municipality }) => ({
-			label: municipality.name,
-			value: municipality.id,
-		})),
+		q
+			.from({ municipality: municipalities })
+			.orderBy(({ municipality }) => municipality.name)
+			.select(({ municipality }) => ({
+				label: municipality.name,
+				value: municipality.id,
+			})),
 	);
 
 	const { data: currentLinks } = useLiveQuery(

@@ -108,6 +108,7 @@ function JobPostingsPage() {
 				<Link
 					className={className}
 					params={{ postingId: row.id }}
+					search={search}
 					to="/job-postings/$postingId"
 				>
 					{children}

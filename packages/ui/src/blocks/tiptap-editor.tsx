@@ -67,7 +67,7 @@ export function TiptapEditor({
 				// a resident reads. An editor that wraps at a different width than the published
 				// page teaches the author the wrong shape.
 				class: cn(
-					"prose prose-base max-w-[70ch] focus:outline-none min-h-[200px] px-4 py-3",
+					"prose prose-base max-w-[70ch] min-h-[200px] px-4 py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
 					className,
 				),
 				"data-placeholder": placeholder,

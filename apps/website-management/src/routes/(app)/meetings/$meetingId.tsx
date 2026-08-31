@@ -132,7 +132,7 @@ function RouteComponent() {
 			}
 			backLink={
 				<Button asChild size="sm" variant="outline">
-					<Link to="/meetings">
+					<Link search={true} to="/meetings">
 						<ArrowLeft />
 						Back to Meetings
 					</Link>

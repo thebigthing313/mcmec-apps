@@ -73,7 +73,7 @@ function RouteComponent() {
 			}
 			backLink={
 				<Button asChild size="sm" variant="outline">
-					<Link to="/categories">
+					<Link search={true} to="/categories">
 						<ArrowLeft />
 						Back to Notice Categories
 					</Link>

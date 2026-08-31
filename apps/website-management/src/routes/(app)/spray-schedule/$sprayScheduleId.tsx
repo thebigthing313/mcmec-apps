@@ -151,7 +151,7 @@ function RouteComponent() {
 			}
 			backLink={
 				<Button asChild size="sm" variant="outline">
-					<Link to="/spray-schedule">
+					<Link search={true} to="/spray-schedule">
 						<ArrowLeft />
 						Back to Spray Missions
 					</Link>

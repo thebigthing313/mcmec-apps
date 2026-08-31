@@ -17,10 +17,13 @@ export const Route = createFileRoute("/(app)/documents/create")({
 function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const { data: categories } = useLiveQuery((q) =>
-		q.from({ document_type: documentTypes }).select(({ document_type }) => ({
-			id: document_type.id,
-			name: document_type.name,
-		})),
+		q
+			.from({ document_type: documentTypes })
+			.orderBy(({ document_type }) => document_type.name)
+			.select(({ document_type }) => ({
+				id: document_type.id,
+				name: document_type.name,
+			})),
 	);
 
 	const items = categories.map((category) => ({
@@ -30,20 +33,21 @@ function RouteComponent() {
 
 	const handleSubmit = async (value: DocumentFormValues) => {
 		const now = new Date();
+		// The id we mint here is the id the row will have: the envelope carries it and the
+		// handler honours it, so the optimistic row and the committed row share a key — which
+		// is also what lets this navigate straight to the detail route.
+		const id = crypto.randomUUID();
 		const tx = documents.insert(
 			{
 				...value,
 				created_at: now,
-				// The id we mint here is the id the row will have: the envelope carries it and
-				// the handler honours it. Under the old path it was thrown away server-side, so
-				// the optimistic row and the committed row had different keys on every insert.
-				id: crypto.randomUUID(),
+				id,
 				updated_at: now,
 			},
 			intents("website.createDocument"),
 		);
 		toastOnError(tx, "Failed to create document.");
-		navigate({ to: "/documents" });
+		navigate({ params: { documentId: id }, to: "/documents/$documentId" });
 	};
 
 	return (

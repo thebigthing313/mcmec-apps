@@ -16,7 +16,8 @@ import {
 } from "@mcmec/ui/components/select";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Inbox } from "lucide-react";
+import { CheckCircle2, Inbox, RotateCcw } from "lucide-react";
+import { runLifecycle } from "@/src/lib/lifecycle";
 import {
 	type DisplayRequestStatus,
 	displayStatus,
@@ -218,11 +219,47 @@ function RouteComponent() {
 				<Link
 					className={className}
 					params={{ requestId: row.id }}
+					search={search}
 					to="/public-requests/$requestId"
 				>
 					{children}
 				</Link>
 			)}
+			// The one register whose whole purpose is triage had no triage shortcut: resolving a
+			// request meant opening it, clicking, and coming back. Both directions are here,
+			// because a request reopened by mistake is as likely as one resolved by mistake.
+			rowActions={(row) =>
+				displayStatus(row.status) === "resolved"
+					? [
+							{
+								icon: <RotateCcw />,
+								label: "Reopen Request",
+								onAct: () =>
+									runLifecycle(db.publicRequests, row.id, {
+										apply: (draft) => {
+											draft.status = "new";
+										},
+										command: "website.reopenRequest",
+										failure: "Failed to reopen the request.",
+									}),
+							},
+						]
+					: [
+							{
+								icon: <CheckCircle2 />,
+								label: "Resolve Request",
+								onAct: () =>
+									runLifecycle(db.publicRequests, row.id, {
+										apply: (draft) => {
+											draft.status = "resolved";
+										},
+										command: "website.resolveRequest",
+										failure: "Failed to resolve the request.",
+										success: `${row.name}'s request is marked Resolved.`,
+									}),
+							},
+						]
+			}
 			rows={visible}
 			search={search}
 			searchPlaceholder="Search requests"

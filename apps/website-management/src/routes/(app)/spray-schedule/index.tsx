@@ -217,6 +217,7 @@ function RouteComponent() {
 				<Link
 					className={className}
 					params={{ sprayScheduleId: row.id }}
+					search={search}
 					to="/spray-schedule/$sprayScheduleId"
 				>
 					{children}

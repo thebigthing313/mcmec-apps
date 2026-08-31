@@ -136,6 +136,7 @@ function RouteComponent() {
 				<Link
 					className={className}
 					params={{ insecticideId: row.id }}
+					search={search}
 					to="/insecticides/$insecticideId"
 				>
 					{children}

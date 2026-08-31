@@ -153,7 +153,7 @@ function RouteComponent() {
 			}
 			backLink={
 				<Button asChild size="sm" variant="outline">
-					<Link to="/public-requests">
+					<Link search={true} to="/public-requests">
 						<ArrowLeft />
 						Back to Public Requests
 					</Link>
