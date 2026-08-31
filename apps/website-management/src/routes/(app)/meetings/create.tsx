@@ -10,7 +10,7 @@ import { intents, meetings } from "@/src/lib/db";
 export const Route = createFileRoute("/(app)/meetings/create")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Create New Meeting" };
+		return { crumb: "Create" };
 	},
 });
 
@@ -53,7 +53,7 @@ function RouteComponent() {
 				notes: null,
 				notice_url: null,
 			}}
-			formLabel="Create New Meeting"
+			formLabel="Create Meeting"
 			onSubmit={handleSubmit}
 			submitLabel="Create"
 		/>

@@ -8,7 +8,7 @@ import { intents, jobPostings } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/job-postings/new")({
 	component: RouteComponent,
-	loader: () => ({ crumb: "New" }),
+	loader: () => ({ crumb: "Create" }),
 });
 
 function RouteComponent() {
@@ -40,7 +40,7 @@ function RouteComponent() {
 	return (
 		<JobPostingForm
 			defaultValues={{ content: {}, title: "" }}
-			formLabel="New Job Posting"
+			formLabel="Create Job Posting"
 			onSubmit={handleSubmit}
 			submitLabel="Create"
 		/>

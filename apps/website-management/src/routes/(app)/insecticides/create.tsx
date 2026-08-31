@@ -10,7 +10,7 @@ import { insecticides, intents } from "@/src/lib/db";
 export const Route = createFileRoute("/(app)/insecticides/create")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Create New Insecticide" };
+		return { crumb: "Create" };
 	},
 });
 
@@ -41,7 +41,7 @@ function RouteComponent() {
 	return (
 		<InsecticidesForm
 			defaultValues={defaultValues}
-			formLabel="Create New Insecticide"
+			formLabel="Create Insecticide"
 			onSubmit={handleSubmit}
 			submitLabel="Create"
 		/>

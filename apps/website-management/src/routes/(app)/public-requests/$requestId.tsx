@@ -11,6 +11,7 @@ import { ArrowLeft, CheckCircle2, RotateCcw } from "lucide-react";
 import { intents } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
 import {
+	displayStatus,
 	humanizeDetailKey,
 	REQUEST_STATUS_LABELS,
 	REQUEST_STATUS_VARIANTS,
@@ -161,8 +162,8 @@ function RouteComponent() {
 					<h1 className="font-semibold text-foreground text-xl leading-tight">
 						{requestTypeLabel(request.request_type)}
 					</h1>
-					<Badge variant={REQUEST_STATUS_VARIANTS[status]}>
-						{REQUEST_STATUS_LABELS[status]}
+					<Badge variant={REQUEST_STATUS_VARIANTS[displayStatus(status)]}>
+						{REQUEST_STATUS_LABELS[displayStatus(status)]}
 					</Badge>
 				</div>
 
@@ -208,9 +209,10 @@ function RouteComponent() {
 			</article>
 
 			<DangerZoneCard
-				description="This permanently removes the submission, including the submitter's contact details. This cannot be undone."
+				description={`This permanently removes ${request.name}'s ${requestTypeLabel(request.request_type).toLowerCase()} request, including their contact details. This cannot be undone.`}
 				label="Delete Request"
 				onConfirm={handleDelete}
+				recordName={request.name}
 			/>
 		</div>
 	);

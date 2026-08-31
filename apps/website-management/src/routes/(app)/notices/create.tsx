@@ -10,7 +10,7 @@ import { intents, notices, noticeTypes } from "@/src/lib/db";
 export const Route = createFileRoute("/(app)/notices/create")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Create New Notice" };
+		return { crumb: "Create" };
 	},
 });
 
@@ -56,7 +56,7 @@ function RouteComponent() {
 				notice_type_id: "",
 				title: "",
 			}}
-			formLabel="Create New Notice"
+			formLabel="Create Notice"
 			mode="create"
 			onSubmit={handleSubmit}
 			submitLabel="Create as Draft"

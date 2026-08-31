@@ -18,6 +18,8 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Inbox } from "lucide-react";
 import {
+	type DisplayRequestStatus,
+	displayStatus,
 	REQUEST_STATUS_LABELS,
 	REQUEST_STATUS_VARIANTS,
 	REQUEST_TYPE_LABELS,
@@ -38,7 +40,7 @@ const ALL = "all";
 
 type RequestsSearch = Partial<RecordIndexSearch> & {
 	type?: string;
-	status?: RequestStatus;
+	status?: DisplayRequestStatus;
 };
 
 export const Route = createFileRoute("/(app)/public-requests/")({
@@ -49,9 +51,7 @@ export const Route = createFileRoute("/(app)/public-requests/")({
 	validateSearch: (raw: Record<string, unknown>): RequestsSearch =>
 		validateRecordIndexSearch(raw, (r) => ({
 			...(typeof r.type === "string" && r.type !== ALL ? { type: r.type } : {}),
-			...(r.status === "new" ||
-			r.status === "in_progress" ||
-			r.status === "resolved"
+			...(r.status === "new" || r.status === "resolved"
 				? { status: r.status }
 				: {}),
 		})),
@@ -83,7 +83,9 @@ function RouteComponent() {
 	const visible = rows.filter(
 		(row) =>
 			(!search.type || row.requestType === search.type) &&
-			(!search.status || row.status === search.status),
+			// Compared on the displayed status, so filtering for New also returns a legacy row
+			// still holding `in_progress` — which is what the badge beside it now says.
+			(!search.status || displayStatus(row.status) === search.status),
 	);
 
 	const columns: RecordIndexColumn<RequestRow>[] = [
@@ -127,13 +129,13 @@ function RouteComponent() {
 		},
 		{
 			cell: (row) => (
-				<Badge variant={REQUEST_STATUS_VARIANTS[row.status]}>
-					{REQUEST_STATUS_LABELS[row.status]}
+				<Badge variant={REQUEST_STATUS_VARIANTS[displayStatus(row.status)]}>
+					{REQUEST_STATUS_LABELS[displayStatus(row.status)]}
 				</Badge>
 			),
 			header: "Status",
 			id: "status",
-			sortValue: (row) => REQUEST_STATUS_LABELS[row.status],
+			sortValue: (row) => REQUEST_STATUS_LABELS[displayStatus(row.status)],
 		},
 	];
 
@@ -177,7 +179,8 @@ function RouteComponent() {
 					<Select
 						onValueChange={(value) =>
 							patch({
-								status: value === ALL ? undefined : (value as RequestStatus),
+								status:
+									value === ALL ? undefined : (value as DisplayRequestStatus),
 							})
 						}
 						value={search.status ?? ALL}

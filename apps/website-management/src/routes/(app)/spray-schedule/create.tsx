@@ -79,7 +79,7 @@ function RouteComponent() {
 				rain_date: null,
 				start_time: "19:00",
 			}}
-			formLabel="Create New Spray Mission"
+			formLabel="Create Spray Mission"
 			insecticideOptions={insecticideData}
 			municipalityOptions={municipalityData}
 			onSubmit={handleSubmit}

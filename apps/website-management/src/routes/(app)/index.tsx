@@ -45,6 +45,7 @@ import type * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import { type QueueItem, SignalQueue } from "@/src/components/signal-queue";
 import {
+	displayStatus,
 	REQUEST_STATUS_LABELS,
 	REQUEST_STATUS_VARIANTS,
 	requestTypeLabel,
@@ -308,8 +309,8 @@ function RouteComponent() {
 			emptyTitle: "Nothing is aging",
 			items: agingRequests.map((r) => ({
 				badge: (
-					<Badge variant={REQUEST_STATUS_VARIANTS[r.status]}>
-						{REQUEST_STATUS_LABELS[r.status]}
+					<Badge variant={REQUEST_STATUS_VARIANTS[displayStatus(r.status)]}>
+						{REQUEST_STATUS_LABELS[displayStatus(r.status)]}
 					</Badge>
 				),
 				id: r.id,
@@ -367,8 +368,8 @@ function RouteComponent() {
 			emptyTitle: "Nothing awaiting triage",
 			items: newRequests.slice(0, 8).map((r) => ({
 				badge: (
-					<Badge variant={REQUEST_STATUS_VARIANTS[r.status]}>
-						{REQUEST_STATUS_LABELS[r.status]}
+					<Badge variant={REQUEST_STATUS_VARIANTS[displayStatus(r.status)]}>
+						{REQUEST_STATUS_LABELS[displayStatus(r.status)]}
 					</Badge>
 				),
 				id: r.id,

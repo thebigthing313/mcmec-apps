@@ -144,7 +144,7 @@ function RouteComponent() {
 			actions={
 				<Button onClick={() => navigate({ to: "/notices/create" })}>
 					<Plus />
-					Create New Notice
+					Create Notice
 				</Button>
 			}
 			columns={columns}

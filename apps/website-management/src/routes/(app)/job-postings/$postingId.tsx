@@ -24,6 +24,7 @@ import {
 	Upload,
 } from "lucide-react";
 import { intents, jobPostings } from "@/src/lib/db";
+import { JOB_POSTING_STATUS_DISPLAY } from "@/src/lib/job-postings";
 import { runLifecycle } from "@/src/lib/lifecycle";
 
 export const Route = createFileRoute("/(app)/job-postings/$postingId")({
@@ -37,19 +38,6 @@ export const Route = createFileRoute("/(app)/job-postings/$postingId")({
 		return { crumb: posting.title };
 	},
 });
-
-const statusDisplay: Record<
-	JobPostingStatus,
-	{
-		label: string;
-		variant: "default" | "destructive" | "outline" | "secondary";
-	}
-> = {
-	closed: { label: "Closed", variant: "destructive" },
-	draft: { label: "Draft", variant: "outline" },
-	pending: { label: "Pending", variant: "secondary" },
-	published: { label: "Published", variant: "default" },
-};
 
 function RouteComponent() {
 	const { postingId } = Route.useParams();
@@ -66,7 +54,7 @@ function RouteComponent() {
 
 	if (!posting) return null;
 
-	const status = statusDisplay[getJobPostingStatus(posting)];
+	const status = JOB_POSTING_STATUS_DISPLAY[getJobPostingStatus(posting)];
 
 	// This is the table that motivated ADR 0001: publishing and closing were reachable only
 	// from inside the edit form, where they were indistinguishable from editing. No form under

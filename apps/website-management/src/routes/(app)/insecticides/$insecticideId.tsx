@@ -50,7 +50,7 @@ function RouteComponent() {
 
 	const links = [
 		{ label: "Label", url: label_url },
-		{ label: "MSDS", url: msds_url },
+		{ label: "SDS", url: msds_url },
 	].filter((link) => link.url);
 
 	// No LifecycleButton: insecticides have no lifecycle columns. This page exists to hold the

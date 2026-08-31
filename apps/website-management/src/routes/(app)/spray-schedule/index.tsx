@@ -153,7 +153,7 @@ function RouteComponent() {
 			actions={
 				<Button onClick={() => navigate({ to: "/spray-schedule/create" })}>
 					<Plus />
-					Create New Mission
+					Create Spray Mission
 				</Button>
 			}
 			columns={columns}

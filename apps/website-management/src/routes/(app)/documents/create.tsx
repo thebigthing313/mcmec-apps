@@ -10,7 +10,7 @@ import { documents, documentTypes, intents } from "@/src/lib/db";
 export const Route = createFileRoute("/(app)/documents/create")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Create New Document" };
+		return { crumb: "Create" };
 	},
 });
 
@@ -54,7 +54,7 @@ function RouteComponent() {
 				fiscal_year: new Date().getFullYear(),
 				url: "",
 			}}
-			formLabel="Create New Document"
+			formLabel="Create Document"
 			mode="create"
 			onSubmit={handleSubmit}
 			submitLabel="Create as Draft"

@@ -109,7 +109,7 @@ function RouteComponent() {
 			actions={
 				<Button onClick={() => navigate({ to: "/insecticides/create" })}>
 					<Plus />
-					Add Insecticide
+					Create Insecticide
 				</Button>
 			}
 			columns={columns}

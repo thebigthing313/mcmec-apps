@@ -21,6 +21,8 @@ import {
 import { intents, meetings } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
 
+import { meetingStatus } from "@/src/lib/meetings";
+
 export const Route = createFileRoute("/(app)/meetings/$meetingId")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
@@ -70,6 +72,11 @@ function RouteComponent() {
 	// No form under this, so no `isDirty` and no relabel: a detail-view lifecycle button always
 	// sends exactly one intent. The page stays put afterwards — the badge below is live, so the
 	// result of the click is visible where the click was.
+	const status = meetingStatus({
+		isCancelled: is_cancelled,
+		meetingAt: new Date(meeting_at),
+	});
+
 	const cancel = is_cancelled
 		? {
 				icon: <CalendarPlus />,
@@ -134,11 +141,7 @@ function RouteComponent() {
 					<h1 className="font-semibold text-foreground text-xl leading-tight">
 						{name}
 					</h1>
-					{is_cancelled ? (
-						<Badge variant="secondary">Cancelled</Badge>
-					) : (
-						<Badge variant="default">Scheduled</Badge>
-					)}
+					<Badge variant={status.variant}>{status.label}</Badge>
 				</div>
 				<h4>{formatDateTime(meeting_at)}</h4>
 				<h4>{location}</h4>

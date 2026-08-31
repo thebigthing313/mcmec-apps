@@ -193,9 +193,10 @@ function RouteComponent() {
 			</article>
 
 			<DangerZoneCard
-				description="This action cannot be undone. This will permanently delete this spray mission and the municipalities linked to it."
+				description={`This permanently deletes ${missionName} and the municipalities linked to it. This cannot be undone.`}
 				label="Delete Spray Mission"
 				onConfirm={handleDelete}
+				recordName={missionName}
 			/>
 		</div>
 	);

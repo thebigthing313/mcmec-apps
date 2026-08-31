@@ -23,20 +23,7 @@ type JobPostingRow = {
 	title: string;
 };
 
-/**
- * Refusal Red is reserved for destructive commands and validation failures (DESIGN.md), and a
- * Closed posting is neither — it is the ordinary end of a hiring round. It previously rendered
- * `destructive`, which spent the system's one alarm colour on a routine state.
- */
-const statusDisplay: Record<
-	JobPostingStatus,
-	{ label: string; variant: "default" | "outline" | "secondary" }
-> = {
-	closed: { label: "Closed", variant: "secondary" },
-	draft: { label: "Draft", variant: "outline" },
-	pending: { label: "Pending", variant: "secondary" },
-	published: { label: "Published", variant: "default" },
-};
+import { JOB_POSTING_STATUS_DISPLAY } from "@/src/lib/job-postings";
 
 export const Route = createFileRoute("/(app)/job-postings/")({
 	component: JobPostingsPage,
@@ -82,12 +69,13 @@ function JobPostingsPage() {
 		},
 		{
 			cell: (row) => {
-				const status = statusDisplay[getJobPostingStatus(row)];
+				const status = JOB_POSTING_STATUS_DISPLAY[getJobPostingStatus(row)];
 				return <Badge variant={status.variant}>{status.label}</Badge>;
 			},
 			header: "Status",
 			id: "status",
-			sortValue: (row) => statusDisplay[getJobPostingStatus(row)].label,
+			sortValue: (row) =>
+				JOB_POSTING_STATUS_DISPLAY[getJobPostingStatus(row)].label,
 		},
 	];
 
@@ -97,7 +85,7 @@ function JobPostingsPage() {
 				<Button asChild>
 					<Link to="/job-postings/new">
 						<Plus />
-						Add Job Posting
+						Create Job Posting
 					</Link>
 				</Button>
 			}
