@@ -63,10 +63,13 @@ function RouteComponent() {
 	const schedule = liveSchedules[0] ?? loadedSchedule;
 
 	const { data: insecticideData } = useLiveQuery((q) =>
-		q.from({ insecticide: insecticides }).select(({ insecticide }) => ({
-			label: insecticide.trade_name,
-			value: insecticide.id,
-		})),
+		q
+			.from({ insecticide: insecticides })
+			.orderBy(({ insecticide }) => insecticide.trade_name, "asc")
+			.select(({ insecticide }) => ({
+				label: insecticide.trade_name,
+				value: insecticide.id,
+			})),
 	);
 
 	const { data: municipalityData } = useLiveQuery((q) =>
