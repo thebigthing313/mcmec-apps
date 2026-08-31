@@ -7,6 +7,10 @@ export function TextField({
 	showClear,
 	showPaste,
 	autoComplete,
+	// Forwarded, not fixed. The four hand-rolled logins this field replaced set `type="email"`
+	// themselves, and hardcoding `text` here would have quietly taken the email keyboard off
+	// every phone and the browser's own address validation off every one of them.
+	type = "text",
 	...formFieldProps
 }: Omit<
 	React.ComponentPropsWithRef<typeof FormField>,
@@ -14,7 +18,7 @@ export function TextField({
 > &
 	Pick<
 		React.ComponentPropsWithRef<typeof TextInput>,
-		"showPaste" | "showClear" | "showValid" | "autoComplete"
+		"showPaste" | "showClear" | "showValid" | "autoComplete" | "type"
 	>) {
 	const field = useFieldContext<string>();
 	return (
@@ -35,7 +39,7 @@ export function TextField({
 				showPaste={showPaste}
 				showSpinner={field.state.meta.isValidating}
 				showValid={showValid}
-				type="text"
+				type={type}
 				value={field.state.value ?? ""}
 			/>
 		</FormField>

@@ -74,6 +74,16 @@ export function getCentralLoginUrl(redirect?: string): string {
 	return base;
 }
 
+/**
+ * Password recovery lives in Central only, and deliberately.
+ *
+ * Central is the one application every signed-in employee has, so it is the only front door that
+ * cannot be a dead end. Reset mail also lands on whichever origin asked for it, so hosting the
+ * request in four places would scatter the same flow across four hostnames for no gain — HR,
+ * Admin and Website Management link here instead.
+ */
+export const CENTRAL_FORGOT_PASSWORD_URL = `${CENTRAL_URL}/forgot-password`;
+
 export const AVAILABLE_APPS: App[] = [
 	{
 		description: "Employee self-service portal.",
