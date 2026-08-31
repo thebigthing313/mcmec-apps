@@ -31,10 +31,13 @@ function RouteComponent() {
 	);
 
 	const { data: municipalityData } = useLiveQuery((q) =>
-		q.from({ municipality: municipalities }).select(({ municipality }) => ({
-			label: municipality.name,
-			value: municipality.id,
-		})),
+		q
+			.from({ municipality: municipalities })
+			.orderBy(({ municipality }) => municipality.name, "asc")
+			.select(({ municipality }) => ({
+				label: municipality.name,
+				value: municipality.id,
+			})),
 	);
 
 	const handleSubmit = async (value: SprayMissionFormValues) => {
