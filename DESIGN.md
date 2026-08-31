@@ -3,7 +3,7 @@ name: MCMEC
 description: The shared visual system behind the Middlesex County Mosquito Extermination Commission's public website and its four staff applications.
 colors:
   commission-green: "oklch(0.5364 0.1457 150.5842)"
-  commission-green-contrast: "oklch(0.9556 0.0199 112.9333)"
+  commission-green-contrast: "oklch(0.985 0.0199 112.9333)"
   brackish-teal: "oklch(0.6638 0.0267 183.8599)"
   brackish-teal-contrast: "oklch(0.98 0.005 150)"
   paper: "oklch(0.985 0.002 150)"
@@ -123,6 +123,22 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.full}"
     padding: "2px 8px"
+  signal-cell:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    padding: "12px 16px"
+  signal-cell-hover:
+    backgroundColor: "{colors.pale-green}"
+    textColor: "{colors.ink}"
+  signal-cell-selected:
+    backgroundColor: "{colors.commission-green}"
+    textColor: "{colors.commission-green-contrast}"
+    padding: "12px 16px"
+  signal-queue-row:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    padding: "10px 16px"
 ---
 
 # Design System: MCMEC
@@ -152,7 +168,9 @@ A single institutional green against a family of neutrals that share its hue, so
 
 ### Primary
 
-- **Commission Green** (`oklch(0.5364 0.1457 150.5842)`): The agency's voice. It appears on the primary action in every application, the staff sidebar ground, active navigation, iconography on the public quick-action cards, and the directional scrim over the hero photograph. Its foreground pair is a very pale warm green-white (`oklch(0.9556 0.0199 112.9333)`) rather than pure white — the slight warmth keeps the button from reading as a generic call to action.
+- **Commission Green** (`oklch(0.5364 0.1457 150.5842)`): The agency's voice. It appears on the primary action in every application, the staff sidebar ground, active navigation, iconography on the public quick-action cards, and the directional scrim over the hero photograph. Its foreground pair is a very pale warm green-white (`oklch(0.985 0.0199 112.9333)`) rather than pure white — the slight warmth keeps the button from reading as a generic call to action. **The pair measures 4.63:1**, which clears the 4.5:1 AA floor for normal-size text; it has to, because that foreground lands on 12px status badges as well as on buttons.
+
+  The foreground was lightened from `oklch(0.9556 …)` on 2026-08-28. The old value measured **4.24:1** and had been failing AA on every primary button, the skip link, and every filled status badge in all five frontends. Commission Green itself did not move — it is a brand commitment — and the warmth was kept, because removing the chroma entirely changes the ratio by 0.02 and so buys nothing worth the loss. The lesson is recorded rather than just the number: this pair is the system's most-reused colour relationship, and it went years undocumented and unmeasured.
 
 ### Secondary
 
@@ -202,7 +220,11 @@ A single institutional green against a family of neutrals that share its hue, so
 - **Display** (700, `clamp(1.5rem, 4vw, 2.25rem)`, 1.25, tracking `-0.025em`): The hero headline on the public home page, set in white over the green scrim. One per page, and only where a photograph backs it.
 - **Headline** (600, `clamp(1.125rem, 2vw, 1.25rem)`, 1.4): Section headings on public pages — "How Can We Help You Today?" Also the page title in staff applications.
 - **Title** (600, `1.25rem`, 1.0): Card titles, including notice titles in the public feed. The 1.0 line-height is deliberate: titles are one or two lines and should sit tight against their date line.
-- **Body** (400, `1rem`, 1.5): All reading text, including Tiptap-rendered notice bodies. Cap the measure at 65–75ch. Prose paragraphs take a `0.5rem` vertical margin and normal leading so a rendered notice stays dense enough to scan.
+- **Body** (400, `1rem`, 1.5): All reading text, including Tiptap-rendered notice bodies. Cap the measure at 65–75ch — `TiptapRenderer` and `TiptapEditor` both set `max-w-[70ch]`, and the editor matches the renderer so an author lays out the line breaks a reader will actually get. Prose paragraphs take a `0.5rem` vertical margin and normal leading so a rendered notice stays dense enough to scan.
+
+  **The `.prose` overrides must stay unlayered.** `@tailwindcss/typography` emits into the `utilities` layer, and layer order beats specificity, so the same rules written inside `@layer base` lose to the plugin no matter how specific they are. They were written that way once and silently did nothing for as long as they existed: paragraphs shipped at the plugin's `1.25em` while this line claimed `0.5rem`. The rules now sit unlayered at the end of `globals.css`, which outranks every layer.
+
+  **A list item's paragraph is the item.** TipTap's StarterKit wraps each `<li>`'s content in its own `<p>`, so a paragraph rule fires inside every bullet: a 26px item occupied 46px of pitch and a thirteen-item list ran 600px. `.prose li > p` therefore takes no margin at all, and only a *second* paragraph inside one item is treated as a paragraph.
 - **Label** (500, `0.875rem`, 1.25): Buttons, form labels, table cells, badges, metadata. The workhorse size across all four staff applications.
 - **Overline** (700, tracking `0.025em`, uppercase): The agency's name in the public footer and the footer's column headings at `0.875rem`; the staff sidebar's group labels at `0.75rem`, a step below the destinations they cover. Structural only.
 
@@ -322,15 +344,67 @@ Icons are Lucide, at `1rem` inside buttons and badges, `1.5rem` on public quick-
 
 The rail is rendered by the shell, not by each application: `Layout.Sidebar.Nav` takes groups of destinations and owns the three things a hand-rolled rail keeps losing. Every row carries a tooltip, which is the only label a collapsed rail has. The current destination takes Commission Green (`4.57:1` against its own label, `4.33:1` against the rail) and carries `aria-current="page"`, so location is never signalled by colour alone. Matching is by path prefix, so a drill-down keeps its parent lit. Groups run to four items or fewer and are labelled in the Overline; a rail of three or fewer destinations drops the label rather than inventing one.
 
+### Record Index
+
+The one index page, and the answer to eleven of them. Every staff list — Notices, Meetings, Documents, Insecticides, Job Postings, Public Requests, Spray Missions, Employees — is composed from `RecordIndex` in `packages/ui`, which owns the whole screen: heading, search and filter bar, table chrome, sorting, pagination, loading, and empty states.
+
+It is deliberately opinionated, because the unopinionated version was tried and produced nine copies of the sortable header (not one of which emitted `aria-sort`), eight copies of the pagination footer, six spellings of the empty state, three incompatible ways to reach a record, and zero loading states.
+
+- **Structure:** page heading, then an optional search-and-filter row carrying a live result count, then one `14px` rounded bordered container holding the table, then the pagination footer — which appears only when there is more than one page.
+- **The identity column is a link.** `renderRowLink` is required, so an index that cannot be operated by keyboard does not compile. Not a whole-row click target and not a stretched overlay: the first is invisible to assistive technology, and the second takes text selection away from every other cell.
+- **Row actions name their record.** The trigger reads "Actions for <record>, <date>", never a bare "Row actions" repeated down the column.
+- **Sorting is announced.** The sorted column carries `aria-sort`, and the table carries the page title as its accessible name.
+- **Loading and empty are different screens.** `state="loading"` renders skeleton rows; an empty register gets an authored empty state, and a search that matches nothing gets a different one that offers to clear itself. A register must never say "there are no records" while it is still syncing.
+- **State lives in the URL.** Sort, direction, page, size, and the search term round-trip through the route's search params, so returning from a record lands where you left. Search input is debounced and holds its own draft: writing each keystroke to the URL loses focus mid-word and turns the back button into an undo log.
+- **Default page size is 25**, because these screens are read at a desk on a large display.
+
+Per-domain choices stay with the route: the columns and their renderers, the `rowActions` builders, which lifecycle actions a row offers, the filter dimensions, and the default sort. The arrangement belongs to the system; the domain belongs to the screen.
+
 ### Lifecycle Button
 
 The system's signature control, and the subject of ADR 0001. A lifecycle action — Publish, Archive, Cancel, Close, Resolve, Reschedule — is always a button that fires its own named command. It is never a switch, never a checkbox, and never a status field the user edits and saves.
 
 It defaults to the outline variant so it reads as a deliberate act rather than the form's primary submit, and it relabels when the form beneath it is dirty: "Publish" becomes "Save and Publish," and the caller then sends both intents in one atomic request. A refused lifecycle command rolls the field save back with it, so the refusal copy must say the changes were not saved either.
 
+### Signal Band
+
+A band of named signals across the top of a staff screen, each opening its own queue in place. It answers the stat-card grid, where every count was a dead end: the number is not the work, so the count and the queue it counts share one surface and reading that queue costs a keypress rather than a page.
+
+- **Structure:** One `14px` rounded container, one border, both halves inside it. The cells sit on a `1px` gap over a Rule-coloured ground, which draws every divider at once and holds them exact when the cells wrap; the panel sits directly beneath under a top border, opening with its own header row — the queue's name, its condition, and a trailing action slot. Band and panel read as one instrument, not a toolbar above an unrelated list.
+- **Cell:** the count first at `1.5rem` semibold in tabular figures, then the queue's name at `0.875rem` medium, then its condition at `0.75rem` in Muted Ink. A count of zero recedes to muted so the eye lands on the signals holding real work.
+- **Selected:** Commission Green ground with the pale warm-white label — the active-navigation state, the same job the colour does in the staff rail. On the lit cell the two lower lines tint down from the foreground rather than dropping to muted grey, which would fall under `4.5:1` against the green. A small rotated square joins the lit cell to its panel on the single-row band only; once the cells wrap it would point at another cell, and a pointer aimed at the wrong thing is worse than none.
+- **Rest / hover / focus:** Surface ground, Pale Green on hover, and the system's `3px` focus ring with the cell raised above its neighbours so the ring is not clipped by the divider.
+- **Labels:** Sentence case. The Uppercase Is Structural Rule gives uppercase three homes and a control is not one of them.
+- **Urgency:** carried by the caller's left-to-right ordering, by each signal's condition phrase — "open 5+ days," "awaiting triage," "none scheduled" — and by which signal the screen opens on. Never by colour. This is The Status Is A Word Rule applied to a control instead of a badge.
+- **Behavior:** a real WAI-ARIA tablist with roving focus and automatic activation. Left / Right / Home / End move the selection and open the queue as they go. `aria-orientation="horizontal"` is declared and ArrowUp / ArrowDown are deliberately absent: below `lg` the band wraps to a two-dimensional grid where a vertical arrow would move the selection sideways. The panel is itself focusable, because an empty queue offers a keyboard user nothing else to land on.
+- **Responsive:** five columns at `lg`, three at `sm`, two below. Breakpoint-aware filler cells square off the trailing row at each column count for any number of signals, so the grid's own ground never shows through as a dead block. The panel carries a `min-height` floor from `sm` up only — enough that switching to an empty queue on a desktop does not collapse the instrument and drag the page beneath it upward, while narrow widths reflow, which is the point of reflowing.
+- **Motion:** the swap settles rather than cuts — a `200ms` fade and one-step slide keyed to the selected signal, `motion-reduce` honoured. It is the screen's one authored moment; nothing else on it moves.
+- **Copy:** an optional panel label overrides the cell's label in the header, where there is room the cell does not have. A five-across cell fits "Missions tonight"; the header says "Spray Missions tonight," which is the word the rest of the product uses.
+
+It lives in `packages/ui/src/blocks/signal-band.tsx`, so it is available to all four staff frontends, not only the one that uses it today.
+
+### Signal Queue Row
+
+One row vocabulary for every queue a Signal Band opens, whatever domain the record comes from. Left to themselves, five queues across four domains grow five arrangements on one surface, and the eye has to re-learn where the important word sits every time the panel changes.
+
+- **Slots:** four, always in the same places. `primary` — what the record is — leads at `0.875rem` medium and truncates rather than wrapping, so the row stays one line tall. `secondary` — where or who — sits under it at `0.75rem` in Muted Ink. `meta` — when: a date, a time range, an age — is right-aligned in tabular figures so the column holds as the panel changes. `badge` closes the row, carrying the word.
+- **Shape:** a two-column grid (`minmax(0,1fr) auto`), `16px` between the columns, `16px` horizontal and `10px` vertical padding, a Rule bottom border on every row but the last. No radius and no card of its own; the band's container is the only edge.
+- **Row target:** the whole row is a typed route link. Hover takes Pale Green; focus takes the standard `3px` ring and raises the row above its siblings.
+- **Empty:** the queue states its own empty case — an icon, a short title, a line of description — rather than leaving the panel blank. An empty signal is a legitimate answer and should read as one.
+
+It lives in `apps/website-management/src/components/signal-queue.tsx` and is app-local today. If a second staff application grows a queue, promote it to `packages/ui` beside the band rather than copying it.
+
 ### Named Rules
 
+**The Confirm Is For The Public Rule.** A row action asks before it fires when it **withdraws or contradicts something the public is already relying on**. Unpublishing a Notice takes a statutorily posted legal notice off the public website; cancelling a Meeting contradicts a calendar entry the Open Public Meetings Act made people plan around. Both name the record before they act and again after. `delete*`, which is less publicly consequential, always had a danger zone.
+
+Publishing is deliberately **not** guarded, and the rule is worded to say so. It is the forward act these screens exist for, performed routinely by a small expert team (PRODUCT.md's operating profile), and it is immediately reversible by the very action that *is* guarded. An earlier wording — "does a stranger see the result" — would have caught publishing too, and a confirmation on the primary workflow is friction rather than care. Actions whose result the user can watch land on their own screen need no ceremony either.
+
 **The Lifecycle Is A Button Rule.** State transitions are performed, not set. If a design shows a record's state as a toggle, a select, or a checkbox, the design is wrong regardless of how it looks — see `docs/adr/0001-lifecycle-actions-are-buttons.md`.
+
+**The Count Opens Its Queue Rule.** A number on the **work half** of a staff dashboard opens the records it counts, in place. A count that only links somewhere else is a statistic, and a statistic is not the work — see Signal Band.
+
+One deliberate exemption: a **confirming register**, like the dashboard's "What the public sees right now" strip. Its numbers are facts about the published record rather than queues of work — nobody triages "12 Documents published" — so they answer a question instead of starting a task, and a plain link to the index is the honest affordance. The exemption is narrow: it holds only where the register reports the *public's* state and repeats nothing the work half already shows. A count of outstanding work, anywhere on the screen, opens its queue.
 
 ## Do's and Don'ts
 

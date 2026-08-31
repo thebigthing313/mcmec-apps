@@ -1,4 +1,15 @@
 import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "../components/alert-dialog";
 import { Button } from "../components/button";
 import {
 	DropdownMenu,
@@ -13,6 +24,21 @@ export interface RowAction {
 	icon?: React.ReactNode;
 	disabled?: boolean;
 	onAct: () => void;
+	/**
+	 * Ask first, for an action whose consequence is public and immediate.
+	 *
+	 * Unpublishing a Notice takes a statutorily posted legal notice off the public website, and
+	 * before this existed it was one click inside a menu with no confirmation and no undo —
+	 * while `delete*`, which is *less* publicly consequential, had a whole danger zone. The test
+	 * is not "is it destructive" but "does a stranger see the result immediately".
+	 */
+	confirm?: {
+		title: string;
+		/** What will actually happen, naming the record. Not "Are you sure?". */
+		description: string;
+		/** The button that performs it — the verb, never "OK". */
+		actionLabel: string;
+	};
 }
 
 /**
@@ -31,9 +57,15 @@ export function RowActionsMenu({
 	label = "Row actions",
 }: {
 	actions: RowAction[];
-	/** Accessible name for the trigger — override when one page has more than one menu kind. */
+	/**
+	 * Accessible name for the trigger. Name the record, not the control: a table of ten rows whose
+	 * triggers are all called "Row actions" tells a screen reader nothing about which record is
+	 * about to change. `RecordIndex` passes "Actions for <row label>" for exactly this reason.
+	 */
 	label?: string;
 }) {
+	const [pending, setPending] = useState<RowAction | null>(null);
+
 	if (actions.length === 0) return null;
 
 	return (
@@ -59,7 +91,10 @@ export function RowActionsMenu({
 						<DropdownMenuItem
 							disabled={action.disabled}
 							key={action.label}
-							onSelect={() => action.onAct()}
+							onSelect={() => {
+								if (action.confirm) setPending(action);
+								else action.onAct();
+							}}
 						>
 							{action.icon}
 							{action.label}
@@ -67,6 +102,33 @@ export function RowActionsMenu({
 					))}
 				</DropdownMenuContent>
 			</DropdownMenu>
+
+			<AlertDialog
+				onOpenChange={(open) => {
+					if (!open) setPending(null);
+				}}
+				open={pending !== null}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>{pending?.confirm?.title}</AlertDialogTitle>
+						<AlertDialogDescription>
+							{pending?.confirm?.description}
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={() => {
+								pending?.onAct();
+								setPending(null);
+							}}
+						>
+							{pending?.confirm?.actionLabel}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

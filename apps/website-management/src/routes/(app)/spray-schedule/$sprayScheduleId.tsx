@@ -13,10 +13,6 @@ import {
 } from "@tanstack/react-router";
 import { ArrowLeft, Edit, ExternalLink } from "lucide-react";
 import {
-	formatTimeRange,
-	statusBadgeVariant,
-} from "@/src/components/spray-schedule-table";
-import {
 	insecticides,
 	intents,
 	municipalities,
@@ -25,6 +21,7 @@ import {
 } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
 import { transitionsFrom } from "@/src/lib/spray-mission-transitions";
+import { formatTimeRange, statusBadgeVariant } from "@/src/lib/spray-schedule";
 
 export const Route = createFileRoute("/(app)/spray-schedule/$sprayScheduleId")({
 	component: RouteComponent,

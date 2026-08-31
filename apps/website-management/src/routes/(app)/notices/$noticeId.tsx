@@ -168,7 +168,7 @@ function RouteComponent() {
 				</div>
 				<h4>Type: {type}</h4>
 				<h4>Published on: {formatDate(notice_date)}</h4>
-				<TiptapRenderer content={content} />
+				<TiptapRenderer className="mt-4" content={content} />
 			</article>
 
 			<DangerZoneCard
