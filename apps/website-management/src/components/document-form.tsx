@@ -37,7 +37,7 @@ interface DocumentFormProps {
 	defaultValues: DocumentDetailValues;
 	onSubmit: (value: DocumentFormValues) => void | Promise<void>;
 	categories: Array<{ label: string; value: string }>;
-	formLabel: string;
+	formLabel?: string;
 	submitLabel: string;
 	/**
 	 * Create renders its own "Create and Publish" beneath the primary submit; edit leaves the

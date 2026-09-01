@@ -1,5 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import type { InsecticidesRowType } from "@mcmec/schemas/db/insecticides";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -55,9 +56,9 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-4" {...latchProps}>
+			<PageHeader title="Edit Insecticide" />
 			<InsecticidesForm
 				defaultValues={defaultValues}
-				formLabel="Edit Insecticide"
 				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"

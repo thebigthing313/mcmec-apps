@@ -33,7 +33,7 @@ export interface MeetingFormValues {
 interface MeetingsFormProps {
 	defaultValues: MeetingFormValues;
 	onSubmit: (value: MeetingFormValues) => void | Promise<void>;
-	formLabel: string;
+	formLabel?: string;
 	submitLabel: string;
 	/**
 	 * Lifecycle actions rendered beneath the fields — ADR 0001's buttons, never fields.

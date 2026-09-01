@@ -1,4 +1,5 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -59,13 +60,13 @@ function RouteComponent() {
 	// behind a confirm — and nowhere else.
 	return (
 		<div className="space-y-4" {...latchProps}>
+			<PageHeader title="Edit Employee" />
 			<EmployeeForm
 				defaultValues={{
 					display_name: employee.display_name,
 					display_title: employee.display_title ?? "",
 					email: employee.email,
 				}}
-				formLabel="Edit Employee"
 				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"
