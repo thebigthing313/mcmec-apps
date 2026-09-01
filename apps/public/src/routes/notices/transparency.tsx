@@ -53,9 +53,8 @@ function RouteComponent() {
 		docs.sort((a, b) => b.fiscal_year - a.fiscal_year);
 	}
 
-	// Show recent history only, windowed per group: a category that has not been filed in
+	// Windowed per group, not once for the page, so a category that has not been filed in
 	// for years still shows its own three most recent fiscal years rather than vanishing.
-	// A display filter — nothing is unpublished, and the staff apps still show everything.
 	const windowedGroups = Array.from(grouped.entries()).map(
 		([typeName, docs]) =>
 			[typeName, keepRecentYears(docs, (doc) => doc.fiscal_year)] as const,

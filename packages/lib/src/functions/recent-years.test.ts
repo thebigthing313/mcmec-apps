@@ -89,17 +89,7 @@ describe("keepRecentYears", () => {
 		]);
 	});
 
-	it("accepts an explicit window size", () => {
-		const rows: Row[] = [
-			{ id: "a", year: 2026 },
-			{ id: "b", year: 2025 },
-			{ id: "c", year: 2024 },
-		];
-
-		expect(keepRecentYears(rows, year, 1).map((row) => row.id)).toEqual(["a"]);
-	});
-
-	it("shows three years by default", () => {
+	it("shows three years", () => {
 		expect(RECENT_YEARS_SHOWN).toBe(3);
 	});
 });

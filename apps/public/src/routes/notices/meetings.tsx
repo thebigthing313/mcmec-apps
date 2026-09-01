@@ -30,10 +30,8 @@ function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { data: meetings } = useSuspenseQuery(meetingsQueryOptions());
 
-	// Show recent history only: every upcoming meeting, whatever year it falls in, plus the
-	// past meetings of the three most recent calendar years that have one. The window is on
-	// the meeting's own date, not on whether its minutes are posted — a meeting still to be
-	// minuted carries its notice. A display filter; the staff apps still show everything.
+	// Windowed on the meeting's own date, never on whether its minutes are posted — a
+	// meeting still to be minuted is on the page for its notice.
 	const visibleMeetings = keepUpcomingAndRecentYears(
 		meetings,
 		(meeting) => meeting.meeting_at,

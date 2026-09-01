@@ -82,9 +82,10 @@ pnpm check-types
 # Lint (Biome)
 pnpm lint
 
-# Run tests (the auth, lib and schemas packages have suites)
+# Run tests — @mcmec/auth, @mcmec/lib and @mcmec/schemas each have a suite
 pnpm --filter @mcmec/schemas test        # watch mode
 pnpm --filter @mcmec/schemas test:run     # single run
+pnpm --filter @mcmec/lib test:run         # any of the three, same scripts
 
 # Changesets (versioning)
 pnpm changeset

@@ -28,6 +28,10 @@ different year field, an integer fiscal year on documents and the calendar year 
 on meetings — with `keepUpcomingAndRecentYears` layering the "upcoming always shows" half on top,
 and `RECENT_YEARS_SHOWN` as the one place the window size is written down.
 
+The meetings table and mobile list are unchanged: they still take shaped rows and still pick one
+year at a time from their own Year selector. The window narrows what that selector offers, and
+nothing else about how the page reads.
+
 This is a display filter and nothing else. No row is unpublished, archived or deleted, the staff
 apps still show full history, and anything that has dropped off a public page comes back by
 changing this filter alone. Neither page's intro copy changed: telling the reader that older
