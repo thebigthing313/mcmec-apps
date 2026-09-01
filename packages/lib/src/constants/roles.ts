@@ -28,6 +28,18 @@ export const APP_ROLES = [
 
 export type AppRole = (typeof APP_ROLES)[number];
 
+/**
+ * The role that grants administrative access — including the permissions screen that hands
+ * roles out.
+ *
+ * Named because it is the one role a revocation can lock its own sender out with, so
+ * `users.revokeAppRole` refuses when the target is the caller (#141). The handler reads the name
+ * from here rather than spelling it inline, so a rename of this list moves the guard with it
+ * instead of leaving it matching a role that no longer exists. Other sites still compare against
+ * the literal; this covers the one where a stale spelling would silently stop refusing.
+ */
+export const MANAGE_USERS = "manage_users" satisfies AppRole;
+
 /** Short, user-facing label for each role (used in permission tables). */
 export const APP_ROLE_LABELS: Record<AppRole, string> = {
 	manage_employees: "Employees",

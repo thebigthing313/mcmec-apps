@@ -19,7 +19,8 @@
 		"@mcmec/typescript-config": "workspace:*",
 		"@types/node": "25.0.9",
 		"@types/pg": "^8.20.0",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vitest": "^2.1.5"
 	},
 	"keywords": [],
 	"license": "ISC",
@@ -33,7 +34,9 @@
 		"dev": "tsx watch --env-file-if-exists=.env src/index.ts",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
-		"start": "tsx src/index.ts"
+		"start": "tsx src/index.ts",
+		"test": "vitest",
+		"test:run": "vitest run"
 	},
 	"type": "module",
 	"version": "0.1.0"
