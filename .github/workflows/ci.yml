@@ -58,4 +58,5 @@ jobs:
       - name: Run tests
         run: |
           pnpm --filter @mcmec/auth test:run
+          pnpm --filter @mcmec/lib test:run
           pnpm --filter @mcmec/schemas test:run

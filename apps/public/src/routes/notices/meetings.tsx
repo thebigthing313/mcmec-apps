@@ -1,3 +1,4 @@
+import { keepUpcomingAndRecentYears } from "@mcmec/lib/functions/recent-years";
 import { MeetingsMobileList } from "@mcmec/ui/blocks/meetings-mobile-list";
 import {
 	MeetingsTable,
@@ -29,7 +30,16 @@ function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { data: meetings } = useSuspenseQuery(meetingsQueryOptions());
 
-	const mappedData: MeetingTableRowType[] = meetings.map((meeting) => ({
+	// Show recent history only: every upcoming meeting, whatever year it falls in, plus the
+	// past meetings of the three most recent calendar years that have one. The window is on
+	// the meeting's own date, not on whether its minutes are posted — a meeting still to be
+	// minuted carries its notice. A display filter; the staff apps still show everything.
+	const visibleMeetings = keepUpcomingAndRecentYears(
+		meetings,
+		(meeting) => meeting.meeting_at,
+	);
+
+	const mappedData: MeetingTableRowType[] = visibleMeetings.map((meeting) => ({
 		id: meeting.id,
 		isCancelled: meeting.is_cancelled,
 		meetingAt: meeting.meeting_at,

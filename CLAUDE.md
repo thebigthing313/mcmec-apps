@@ -82,7 +82,7 @@ pnpm check-types
 # Lint (Biome)
 pnpm lint
 
-# Run tests (schemas package)
+# Run tests (the auth, lib and schemas packages have suites)
 pnpm --filter @mcmec/schemas test        # watch mode
 pnpm --filter @mcmec/schemas test:run     # single run
 
@@ -191,7 +191,7 @@ Production is unaffected: `main` still deploys on every merge. See `docs/railway
 
 ### CI checks on every PR
 - **Lint, Types & Build** — `pnpm biome lint`, `pnpm turbo run check-types`, `pnpm turbo run build`
-- **Tests** — `pnpm --filter @mcmec/schemas test:run`
+- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib` and `@mcmec/schemas`
 - **Changeset check** — warns (non-blocking) if no changeset is included
 - CI runs on PRs to both `develop` and `main`
 
