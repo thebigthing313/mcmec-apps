@@ -89,9 +89,6 @@
 	"name": "@mcmec/ui",
 	"packageManager": "pnpm@10.19.0",
 	"private": true,
-	"scripts": {
-		"lint": "biome check --write ."
-	},
 	"type": "module",
 	"version": "1.6.1"
 }

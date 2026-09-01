@@ -28,6 +28,10 @@ and shouldn't be opened directly.
 Caddy's admin endpoint is on 2020. Start it with `caddy trust` (once) then `caddy run` from
 the repo root.
 
+Caddy is a **separate process from `pnpm dev`** — `pnpm dev` only starts the Vite/API upstreams
+in the right-hand column. Without `caddy run` in its own terminal, the https browse ports do not
+exist at all.
+
 Everything is https for two reasons, and doing half of it is worse than neither:
 
 - **HTTP/2.** Each ElectricSQL shape holds a long-poll against the API origin, and HTTP/1.1
@@ -62,7 +66,8 @@ origin ambiguous rather than erroring). Our Caddy sets `admin localhost:2020` an
 # Install dependencies
 pnpm install
 
-# Run all dev servers
+# Run all dev servers (Vite/API upstreams only — run `caddy run` separately
+# in another terminal for the https browse ports; see "Dev ports" above)
 pnpm dev
 
 # Run a single app dev server
@@ -117,6 +122,9 @@ pnpm version-pkgs
 ## Code Style & Formatting
 
 - **Biome** is the sole linter/formatter — configured at repo root `biome.json`
+- Lint from the repo root with `pnpm lint`, which is what CI runs. There is no per-package
+  `lint` script and no turbo `lint` task: Biome walks the whole workspace in one pass, so a
+  second path would only be a way for the two to disagree
 - Tab indentation, double quotes for JS/TS
 - Tailwind CSS class sorting enforced (error severity)
 - Import organization enforced automatically

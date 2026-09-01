@@ -46,8 +46,6 @@
 		"build": "vite build",
 		"check-types": "tsc --noEmit",
 		"dev": "vite dev",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
 		"start": "node .output/server/index.mjs"
 	},
 	"type": "module",

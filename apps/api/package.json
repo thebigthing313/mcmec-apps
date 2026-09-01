@@ -32,8 +32,6 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
 		"dev": "tsx watch --env-file-if-exists=.env src/index.ts",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
 		"start": "tsx src/index.ts",
 		"test": "vitest",
 		"test:run": "vitest run"
