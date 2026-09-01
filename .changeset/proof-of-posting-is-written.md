@@ -13,8 +13,9 @@ Every unpublished→published transition now appends exactly one row inside the 
 as the write that caused it, with `posted_by` set to the acting user. Two commands can cause
 that transition and only those two write:
 
-- `publishNotice` reads the stored `is_published` first and appends only on a genuine
-  transition, so publishing an already-published notice sets the column and forges nothing.
+- `publishNotice` reads the stored `is_published` first — with the row locked, because the
+  read decides whether to write and the ledger cannot be corrected by DELETE — and appends only
+  on a genuine transition, so publishing an already-published notice forges nothing.
 - `createNotice` with `is_published: true` appends, because creating an already-published
   notice is the transition.
 
