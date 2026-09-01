@@ -87,10 +87,10 @@ pnpm check-types
 # Lint (Biome)
 pnpm lint
 
-# Run tests — @mcmec/auth, @mcmec/lib and @mcmec/schemas each have a suite
+# Run tests — @mcmec/auth, @mcmec/lib, @mcmec/schemas and api each have a suite
 pnpm --filter @mcmec/schemas test        # watch mode
 pnpm --filter @mcmec/schemas test:run     # single run
-pnpm --filter @mcmec/lib test:run         # any of the three, same scripts
+pnpm --filter api test:run                # any of the four, same scripts
 
 # Changesets (versioning)
 pnpm changeset
@@ -122,9 +122,12 @@ pnpm version-pkgs
 ## Code Style & Formatting
 
 - **Biome** is the sole linter/formatter — configured at repo root `biome.json`
-- Lint from the repo root with `pnpm lint`, which is what CI runs. There is no per-package
-  `lint` script and no turbo `lint` task: Biome walks the whole workspace in one pass, so a
-  second path would only be a way for the two to disagree
+- Lint from the repo root with `pnpm lint` — the same command CI runs. Biome walks the whole
+  workspace in one pass, so there is deliberately no per-package `lint` script and no turbo
+  `lint` task; a second path would only be a way for the two to disagree
+- `pnpm lint:fix` (`biome check --write .`) is the root fix-up pass — it also applies formatting
+  and the assist actions (import organization, attribute sorting) that `biome lint` only reads
+  past. The pre-commit hook runs the same command over staged files
 - Tab indentation, double quotes for JS/TS
 - Tailwind CSS class sorting enforced (error severity)
 - Import organization enforced automatically
@@ -199,8 +202,9 @@ Production is unaffected: `main` still deploys on every merge. See `docs/railway
 - Always apply and test a migration against staging before promoting to `main`
 
 ### CI checks on every PR
-- **Lint, Types & Build** — `pnpm biome lint`, `pnpm turbo run check-types`, `pnpm turbo run build`
-- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib` and `@mcmec/schemas`
+- **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build` — the same root scripts
+  you run locally, so a deleted or broken root script fails CI instead of drifting silently
+- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas` and `api`
 - **Changeset check** — warns (non-blocking) if no changeset is included
 - CI runs on PRs to both `develop` and `main`
 
