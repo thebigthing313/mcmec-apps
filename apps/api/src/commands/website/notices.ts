@@ -4,10 +4,14 @@
  * Each runs inside the request's shared transaction and refuses by throwing `CommandError`.
  * Note what a lifecycle handler is: a named row-scoped `set`, with the precondition (if any)
  * checked against stored state rather than against what the client sent.
+ *
+ * Two of them also append to the `notice_postings` proof-of-posting ledger, because two of them
+ * can move a notice from unpublished to published — see `appendPosting`.
  */
 import type { notices as noticeCommands } from "@mcmec/domain";
 import { eq } from "drizzle-orm";
-import { notices } from "../../db/schema";
+import type { Tx } from "../../actor";
+import { noticePostings, notices, noticeTypes } from "../../db/schema";
 import { toColumnValues } from "../columns";
 import {
 	deleteRow,
@@ -20,9 +24,65 @@ import { CommandError, type CommandHandler } from "../types";
 /** Days a legal notice must stay on the current-notices page before it may be archived. */
 const RETENTION_DAYS = 7;
 
+/**
+ * Appends the proof-of-posting row for one unpublished→published transition.
+ *
+ * P.L. 2025 c.72 makes the website MCMEC's primary method of publishing legal notices, so what
+ * was published and when is evidence. `notice_postings` is append-only for that reason — the
+ * `app_rw` role has INSERT and SELECT but no UPDATE or DELETE — and is excluded from the
+ * seven-year audit purge. This is the only thing that writes it.
+ *
+ * Three things it deliberately does not do:
+ *
+ * - It does not read the command payload. The canonical save-and-publish is a two-intent
+ *   envelope (`updateNoticeDetails` then `publishNotice`), `publishNotice`'s payload is empty
+ *   by definition, and intents run in the order the client sent them — so the only source that
+ *   is correct under every ordering is the notice row as it stands in this transaction.
+ * - It does not look for an existing row. Unpublish-then-republish is two distinct periods of
+ *   public availability and both are evidence, which is what the `(notice_id, posted_at)`
+ *   index is for.
+ * - It does not defer to an `AfterCommit` thunk. The ledger entry belongs to the write that
+ *   caused it, so a failed notice write must leave no posting behind.
+ *
+ * The notice type's resolved name is frozen beside its id: the name keeps the record readable
+ * if the type is later renamed, the id keeps it machine-linkable either way.
+ */
+async function appendPosting(
+	tx: Tx,
+	noticeId: string,
+	postedBy: string,
+): Promise<void> {
+	// An inner join, not a second query: `notice_type_id` is NOT NULL behind a restricting
+	// foreign key, so the type row is there by construction.
+	const [row] = await tx
+		.select({
+			content: notices.content,
+			noticeDate: notices.noticeDate,
+			noticeType: noticeTypes.name,
+			noticeTypeId: notices.noticeTypeId,
+			title: notices.title,
+		})
+		.from(notices)
+		.innerJoin(noticeTypes, eq(noticeTypes.id, notices.noticeTypeId))
+		.where(eq(notices.id, noticeId));
+	if (!row) throw NOT_FOUND;
+
+	await tx.insert(noticePostings).values({
+		noticeId,
+		postedBy,
+		snapshot: {
+			content: row.content,
+			notice_date: row.noticeDate,
+			notice_type: row.noticeType,
+			notice_type_id: row.noticeTypeId,
+			title: row.title,
+		},
+	});
+}
+
 export const createNotice: CommandHandler<
 	typeof noticeCommands.createNotice
-> = async ({ payload, id, tx }) => {
+> = async ({ payload, id, session, tx }) => {
 	// The envelope id is honoured, so the optimistic row's key IS the committed row's id —
 	// which is the divergence `data.ts` had by stripping it, and what makes a retried
 	// create idempotent against the primary key instead of duplicating.
@@ -31,18 +91,41 @@ export const createNotice: CommandHandler<
 		isArchived: false,
 		...toColumnValues(notices, payload),
 	} as typeof notices.$inferInsert);
+
+	// Creating a notice already published IS the transition — there is no earlier moment at
+	// which it could have been recorded.
+	if (payload.is_published) await appendPosting(tx, id, session.userId);
 };
 
+/**
+ * No ledger row, and no transition check to decide that: the domain omits the lifecycle
+ * columns from this payload schema, so `is_published` cannot move through here at all.
+ */
 export const updateNoticeDetails: CommandHandler<
 	typeof noticeCommands.updateNoticeDetails
 > = async ({ payload, id, tx }) => {
 	await setFields(tx, notices, id, toColumnValues(notices, payload));
 };
 
+/**
+ * Sets the column, and appends a ledger row only on a genuine transition.
+ *
+ * The stored `is_published` is read first because `setFields` has no state check by design, so
+ * a hand-written envelope can publish an already-published notice. That is a no-op as far as
+ * the public site is concerned, but appending for it would forge a second proof-of-posting for
+ * a period of availability that never ended.
+ */
 export const publishNotice: CommandHandler<
 	typeof noticeCommands.publishNotice
-> = async ({ id, tx }) => {
+> = async ({ id, session, tx }) => {
+	const [row] = await tx
+		.select({ isPublished: notices.isPublished })
+		.from(notices)
+		.where(eq(notices.id, id));
+	if (!row) throw NOT_FOUND;
+
 	await setFields(tx, notices, id, { isPublished: true });
+	if (!row.isPublished) await appendPosting(tx, id, session.userId);
 };
 
 export const unpublishNotice: CommandHandler<
