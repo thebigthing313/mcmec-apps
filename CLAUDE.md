@@ -28,6 +28,10 @@ and shouldn't be opened directly.
 Caddy's admin endpoint is on 2020. Start it with `caddy trust` (once) then `caddy run` from
 the repo root.
 
+Caddy is a **separate process from `pnpm dev`** — `pnpm dev` only starts the Vite/API upstreams
+in the right-hand column. Without `caddy run` in its own terminal, the https browse ports do not
+exist at all.
+
 Everything is https for two reasons, and doing half of it is worse than neither:
 
 - **HTTP/2.** Each ElectricSQL shape holds a long-poll against the API origin, and HTTP/1.1
@@ -62,7 +66,8 @@ origin ambiguous rather than erroring). Our Caddy sets `admin localhost:2020` an
 # Install dependencies
 pnpm install
 
-# Run all dev servers
+# Run all dev servers (Vite/API upstreams only — run `caddy run` separately
+# in another terminal for the https browse ports; see "Dev ports" above)
 pnpm dev
 
 # Run a single app dev server
@@ -82,10 +87,10 @@ pnpm check-types
 # Lint (Biome)
 pnpm lint
 
-# Run tests — @mcmec/auth, @mcmec/lib and @mcmec/schemas each have a suite
+# Run tests — @mcmec/auth, @mcmec/lib, @mcmec/schemas and api each have a suite
 pnpm --filter @mcmec/schemas test        # watch mode
 pnpm --filter @mcmec/schemas test:run     # single run
-pnpm --filter @mcmec/lib test:run         # any of the three, same scripts
+pnpm --filter api test:run                # any of the four, same scripts
 
 # Changesets (versioning)
 pnpm changeset
@@ -117,6 +122,12 @@ pnpm version-pkgs
 ## Code Style & Formatting
 
 - **Biome** is the sole linter/formatter — configured at repo root `biome.json`
+- Lint from the repo root with `pnpm lint` — the same command CI runs. Biome walks the whole
+  workspace in one pass, so there is deliberately no per-package `lint` script and no turbo
+  `lint` task; a second path would only be a way for the two to disagree
+- `pnpm lint:fix` (`biome check --write .`) is the root fix-up pass — it also applies formatting
+  and the assist actions (import organization, attribute sorting) that `biome lint` only reads
+  past. The pre-commit hook runs the same command over staged files
 - Tab indentation, double quotes for JS/TS
 - Tailwind CSS class sorting enforced (error severity)
 - Import organization enforced automatically
@@ -191,8 +202,9 @@ Production is unaffected: `main` still deploys on every merge. See `docs/railway
 - Always apply and test a migration against staging before promoting to `main`
 
 ### CI checks on every PR
-- **Lint, Types & Build** — `pnpm biome lint`, `pnpm turbo run check-types`, `pnpm turbo run build`
-- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib` and `@mcmec/schemas`
+- **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build` — the same root scripts
+  you run locally, so a deleted or broken root script fails CI instead of drifting silently
+- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas` and `api`
 - **Changeset check** — warns (non-blocking) if no changeset is included
 - CI runs on PRs to both `develop` and `main`
 

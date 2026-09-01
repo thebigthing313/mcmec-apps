@@ -27,7 +27,6 @@
 	},
 	"private": true,
 	"scripts": {
-		"lint": "biome check --write .",
 		"test": "vitest",
 		"test:run": "vitest run"
 	},

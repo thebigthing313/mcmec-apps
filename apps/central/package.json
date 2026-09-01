@@ -41,8 +41,6 @@
 		"build": "vite build",
 		"check-types": "tsc --noEmit",
 		"dev": "vite",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
 		"start": "sirv dist --single --etag --host 0.0.0.0"
 	},
 	"type": "module",
