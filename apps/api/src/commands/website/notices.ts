@@ -114,6 +114,10 @@ export const updateNoticeDetails: CommandHandler<
  * a hand-written envelope can publish an already-published notice. That is a no-op as far as
  * the public site is concerned, but appending for it would forge a second proof-of-posting for
  * a period of availability that never ended.
+ *
+ * `for update` because the read decides whether to write: without the row lock two concurrent
+ * publishes both read `false` and both append, and the ledger is append-only, so a duplicated
+ * legal record cannot be tidied away afterwards.
  */
 export const publishNotice: CommandHandler<
 	typeof noticeCommands.publishNotice
@@ -121,7 +125,8 @@ export const publishNotice: CommandHandler<
 	const [row] = await tx
 		.select({ isPublished: notices.isPublished })
 		.from(notices)
-		.where(eq(notices.id, id));
+		.where(eq(notices.id, id))
+		.for("update");
 	if (!row) throw NOT_FOUND;
 
 	await setFields(tx, notices, id, { isPublished: true });
