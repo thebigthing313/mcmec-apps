@@ -25,6 +25,22 @@ import { CommandError, type CommandHandler } from "../types";
 const RETENTION_DAYS = 7;
 
 /**
+ * The frozen record, named so a mistyped key is a build error rather than evidence with a
+ * field missing. Snake_case because it is stored as jsonb and read back as data, not as a
+ * Drizzle row — the column names are the record.
+ *
+ * Deliberately local rather than a `@mcmec/schemas/db/*` row schema: nothing reads the ledger
+ * yet, and the shape a reader would want to parse is a question for whoever builds the viewer.
+ */
+type PostingSnapshot = {
+	content: unknown;
+	notice_date: string;
+	notice_type: string;
+	notice_type_id: string;
+	title: string;
+};
+
+/**
  * Appends the proof-of-posting row for one unpublished→published transition.
  *
  * P.L. 2025 c.72 makes the website MCMEC's primary method of publishing legal notices, so what
@@ -67,17 +83,14 @@ async function appendPosting(
 		.where(eq(notices.id, noticeId));
 	if (!row) throw NOT_FOUND;
 
-	await tx.insert(noticePostings).values({
-		noticeId,
-		postedBy,
-		snapshot: {
-			content: row.content,
-			notice_date: row.noticeDate,
-			notice_type: row.noticeType,
-			notice_type_id: row.noticeTypeId,
-			title: row.title,
-		},
-	});
+	const snapshot: PostingSnapshot = {
+		content: row.content,
+		notice_date: row.noticeDate,
+		notice_type: row.noticeType,
+		notice_type_id: row.noticeTypeId,
+		title: row.title,
+	};
+	await tx.insert(noticePostings).values({ noticeId, postedBy, snapshot });
 }
 
 export const createNotice: CommandHandler<
