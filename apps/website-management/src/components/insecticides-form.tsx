@@ -11,7 +11,7 @@ import { useAppForm } from "@mcmec/ui/forms/form-context";
 interface InsecticidesFormProps {
 	defaultValues: InsecticidesRowType;
 	onSubmit: (value: InsecticidesRowType) => void | Promise<void>;
-	formLabel: string;
+	formLabel?: string;
 	submitLabel: string;
 }
 

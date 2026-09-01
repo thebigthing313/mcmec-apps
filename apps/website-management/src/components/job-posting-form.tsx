@@ -17,7 +17,7 @@ export interface JobPostingFormValues {
 
 interface JobPostingFormProps {
 	defaultValues: JobPostingFormValues;
-	formLabel: string;
+	formLabel?: string;
 	onSubmit: (value: JobPostingFormValues) => void | Promise<void>;
 	submitLabel: string;
 	/**

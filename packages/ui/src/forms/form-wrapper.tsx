@@ -2,6 +2,10 @@ import { FieldDescription, FieldLegend, FieldSet } from "../components/field";
 import { useFormContext } from "./form-context";
 
 interface FormWrapperProps {
+	/**
+	 * The fieldset's legend. Omit it when the screen already names the form in its `PageHeader`
+	 * `h1` — the edit routes do — so the same words are not rendered, and announced, twice.
+	 */
 	formLabel?: string;
 	formDescription?: string;
 	className?: string;

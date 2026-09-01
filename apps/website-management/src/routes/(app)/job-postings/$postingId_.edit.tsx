@@ -1,6 +1,7 @@
 import type { CommandName } from "@mcmec/domain";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -62,6 +63,7 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-4" {...latchProps}>
+			<PageHeader title="Edit Job Posting" />
 			<JobPostingForm
 				actions={({ values }) => {
 					// Diffed against the LIVE row, so the label and the payload cannot disagree:
@@ -151,7 +153,6 @@ function RouteComponent() {
 					);
 				}}
 				defaultValues={{ content: posting.content, title: posting.title }}
-				formLabel="Edit Job Posting"
 				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"

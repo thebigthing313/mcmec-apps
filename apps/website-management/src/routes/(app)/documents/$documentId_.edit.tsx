@@ -1,6 +1,7 @@
 import type { CommandName } from "@mcmec/domain";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -78,6 +79,7 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-4" {...latchProps}>
+			<PageHeader title="Edit Document" />
 			<DocumentForm
 				actions={({ values }) => {
 					// Diffed against the LIVE row, so the label and the payload cannot disagree: if
@@ -145,7 +147,6 @@ function RouteComponent() {
 					fiscal_year: document.fiscal_year,
 					url: document.url,
 				}}
-				formLabel="Edit Document"
 				key={seedKey}
 				mode="edit"
 				onSubmit={handleSubmit}

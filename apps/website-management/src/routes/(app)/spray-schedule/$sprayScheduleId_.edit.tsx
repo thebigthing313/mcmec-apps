@@ -1,5 +1,6 @@
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
@@ -134,6 +135,7 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-4" {...latchProps}>
+			<PageHeader title="Edit Spray Mission" />
 			<SprayScheduleForm
 				actions={({ values }) => {
 					const { changes, isDirty, municipalityIds } = pendingSave(values);
@@ -181,7 +183,6 @@ function RouteComponent() {
 					rain_date: schedule.rain_date,
 					start_time: schedule.start_time,
 				}}
-				formLabel="Edit Spray Mission"
 				insecticideOptions={insecticideData}
 				key={seedKey}
 				municipalityOptions={municipalityData}

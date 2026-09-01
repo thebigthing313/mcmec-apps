@@ -42,7 +42,7 @@ interface SprayScheduleFormProps {
 	onSubmit: (value: SprayMissionFormValues) => void | Promise<void>;
 	insecticideOptions: ComboboxOption[];
 	municipalityOptions: MultiComboboxOption[];
-	formLabel: string;
+	formLabel?: string;
 	submitLabel: string;
 	/**
 	 * Lifecycle actions rendered beneath the fields — ADR 0001's buttons, never fields.
