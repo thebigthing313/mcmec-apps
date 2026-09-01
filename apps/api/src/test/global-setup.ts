@@ -7,9 +7,8 @@
  *
  * `triggers.sql` is applied afterwards. The migrations do not carry it — `set_updated_at` and
  * the two audit triggers have no automated apply path in this repo — and without it the test
- * database would be missing behaviour the boundary tests are allowed to observe. Everything in
- * that file is `create or replace`, and its grants section is commentary, so re-running it
- * against a database that already has it is a no-op.
+ * database would be missing behaviour the tests are allowed to observe. Everything in that file
+ * is `create or replace` and its grants section is commentary, so re-running it is a no-op.
  */
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -28,11 +27,8 @@ export default async function setup(): Promise<void> {
 	} catch (cause) {
 		await pool.end().catch(() => {});
 		throw new Error(
-			`Could not reach the test database at ${TEST_DATABASE_URL}.\n` +
-				"Start one with:\n\n" +
-				"  docker run --rm -d --name mcmec-api-test-db -p 54329:5432 \\\n" +
-				"    -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=mcmec_api_test postgres:17-alpine\n\n" +
-				"See apps/api/README.md.",
+			`Could not reach the test database at ${TEST_DATABASE_URL}. ` +
+				"apps/api/README.md has the one docker line that starts one.",
 			{ cause },
 		);
 	}

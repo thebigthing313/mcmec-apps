@@ -22,28 +22,28 @@ import {
 	notices as noticeCommands,
 	publicRequests as publicRequestCommands,
 } from "@mcmec/domain";
-import { eq, sql } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { db } from "../db";
-import { notices } from "../db/schema";
+import { noticePostings, notices } from "../db/schema";
 import {
+	MINIMAL_TIPTAP_DOC,
 	postCommand,
 	resetDatabase,
-	SOME_CONTENT,
 	seedNotice,
 	seedNoticeType,
 	sessionWithRoles,
 	type TestSession,
 } from "../test/helpers";
 
-const WEBSITE = noticeCommands.publishNotice.permission;
-const EMPLOYEES = employeeCommands.updateEmployeeDetails.permission;
+const MANAGE_WEBSITE = "manage_website";
+const MANAGE_EMPLOYEES = "manage_employees";
 
 let website: TestSession;
 let noticeTypeId: string;
 
 beforeEach(async () => {
-	website = await sessionWithRoles([WEBSITE]);
+	website = await sessionWithRoles([MANAGE_WEBSITE]);
 	noticeTypeId = await seedNoticeType();
 });
 
@@ -52,7 +52,7 @@ afterEach(resetDatabase);
 /** A well-formed `createNotice` envelope, so a test can vary one thing about it. */
 function createNoticeEnvelope(extra: Record<string, unknown> = {}) {
 	return {
-		content: SOME_CONTENT,
+		content: MINIMAL_TIPTAP_DOC,
 		id: randomUUID(),
 		intents: [noticeCommands.createNotice.name],
 		is_published: false,
@@ -68,10 +68,40 @@ async function storedNotice(id: string) {
 	return row;
 }
 
+async function postingsFor(noticeId: string) {
+	return db
+		.select()
+		.from(noticePostings)
+		.where(eq(noticePostings.noticeId, noticeId))
+		.orderBy(asc(noticePostings.postedAt));
+}
+
 describe("unknown commands", () => {
 	it("refuses an intent the vocabulary does not have", async () => {
 		const res = await postCommand(
 			{ id: randomUUID(), intents: ["website.burnItAllDown"] },
+			website,
+		);
+
+		expect(res.status).toBe(400);
+		expect(res.body.error).toBe("unknown_command");
+		expect(res.body.reason).toBe("no such command: website.burnItAllDown");
+	});
+
+	/**
+	 * "Before any builder runs" is only observable when a builder would also have refused. This
+	 * envelope has no `id` and no fields for `updateNoticeDetails`, so it would fail the target
+	 * check and the payload refinement too — and the caller must still be told the thing that
+	 * matters, which is that one of their commands does not exist.
+	 */
+	it("refuses the unknown name ahead of the envelope and payload checks", async () => {
+		const res = await postCommand(
+			{
+				intents: [
+					"website.burnItAllDown",
+					noticeCommands.updateNoticeDetails.name,
+				],
+			},
 			website,
 		);
 
@@ -150,6 +180,11 @@ describe("envelope shape", () => {
 });
 
 describe("payload refinements", () => {
+	/**
+	 * The one refusal with no `reason`: a Zod failure carries `issues`, which is what names the
+	 * refinement that fired. Asserting the sentence rather than merely the 422 keeps this
+	 * pinned to the refinement and not to any other way the payload could fail.
+	 */
 	it("refuses an update that asks for nothing", async () => {
 		const id = await seedNotice({ daysAgo: 30, noticeTypeId });
 
@@ -208,11 +243,13 @@ describe("permission", () => {
 		expect(websiteOnly.status).toBe(403);
 		expect(websiteOnly.body.error).toBe("forbidden");
 
-		// Holding both gets past the gate — the 404 is the employees handler failing to find
-		// the row, which is proof the gate let it through rather than a second refusal.
-		const both = await sessionWithRoles([WEBSITE, EMPLOYEES]);
+		// Holding both gets past the gate. The refusal that follows is the employees handler
+		// failing to find its row — a different refusal, from past the gate, rather than a
+		// second 403.
+		const both = await sessionWithRoles([MANAGE_WEBSITE, MANAGE_EMPLOYEES]);
 		const withBoth = await postCommand(envelope, both);
 		expect(withBoth.status).toBe(404);
+		expect(withBoth.body.error).toBe("not found");
 	});
 });
 
@@ -335,8 +372,9 @@ describe("two-intent atomicity", () => {
 
 		expect(res.status).toBe(409);
 		expect(res.body.reason).toBe("retention_period");
-		expect((await storedNotice(id))?.title).toBe("The original title");
-		expect((await storedNotice(id))?.isArchived).toBe(false);
+		const row = await storedNotice(id);
+		expect(row?.title).toBe("The original title");
+		expect(row?.isArchived).toBe(false);
 	});
 
 	it("commits both effects when neither refuses", async () => {
@@ -365,6 +403,93 @@ describe("two-intent atomicity", () => {
 	});
 });
 
+/**
+ * The proof-of-posting ledger (#111).
+ *
+ * `notice_postings` is append-only and excluded from the audit purge, because under
+ * P.L. 2025 c.72 what was published and when is legal evidence. It is written inside the
+ * command's transaction rather than after it, which is what these tests are really about: a
+ * refused envelope must leave no posting behind.
+ */
+describe("the proof-of-posting ledger", () => {
+	async function publish(id: string, session = website) {
+		return postCommand(
+			{ id, intents: [noticeCommands.publishNotice.name] },
+			session,
+		);
+	}
+
+	it("appends one row on a publish transition, attributed to the caller", async () => {
+		const id = await seedNotice({ daysAgo: 30, noticeTypeId, title: "Notice" });
+
+		expect((await publish(id)).status).toBe(200);
+
+		const postings = await postingsFor(id);
+		expect(postings).toHaveLength(1);
+		expect(postings[0]?.postedBy).toBe(website.userId);
+		expect(postings[0]?.snapshot).toMatchObject({ title: "Notice" });
+	});
+
+	it("appends nothing when the notice was already published", async () => {
+		const id = await seedNotice({ daysAgo: 30, noticeTypeId });
+		await publish(id);
+
+		expect((await publish(id)).status).toBe(200);
+
+		expect(await postingsFor(id)).toHaveLength(1);
+	});
+
+	it("appends a second row when a notice is unpublished and republished", async () => {
+		const id = await seedNotice({ daysAgo: 30, noticeTypeId });
+		await publish(id);
+		await postCommand(
+			{ id, intents: [noticeCommands.unpublishNotice.name] },
+			website,
+		);
+
+		await publish(id);
+
+		// Two distinct periods of public availability, and both are evidence.
+		expect(await postingsFor(id)).toHaveLength(2);
+	});
+
+	/**
+	 * The ledger belongs to the write that caused it. `publishNotice` appends before
+	 * `archiveNotice` refuses, and the refusal has to take the posting with it — otherwise the
+	 * append-only table holds a record of a publication that never happened, and nothing can
+	 * remove it.
+	 */
+	it("rolls the posting back when a later intent refuses", async () => {
+		const id = await seedNotice({ daysAgo: 1, noticeTypeId });
+
+		const res = await postCommand(
+			{
+				id,
+				intents: [
+					noticeCommands.publishNotice.name,
+					noticeCommands.archiveNotice.name,
+				],
+			},
+			website,
+		);
+
+		expect(res.status).toBe(409);
+		expect(res.body.reason).toBe("retention_period");
+		expect(await postingsFor(id)).toHaveLength(0);
+		expect((await storedNotice(id))?.isPublished).toBe(false);
+	});
+
+	/**
+	 * Not covered: the `for update` row lock on the transition check.
+	 *
+	 * Two `publishNotice` requests fired with `Promise.all` do not actually overlap here — they
+	 * complete in sequence against the pool, so the test passes with the lock removed and would
+	 * only ever be false confidence. Making them overlap needs the two transactions held open
+	 * and stepped past each other, which the real request path gives no way to do; #184 asked
+	 * for that to be said out loud rather than papered over with a test-only seam.
+	 */
+});
+
 describe("the response contract", () => {
 	it("returns a txid and nothing else", async () => {
 		const id = await seedNotice({ daysAgo: 30, noticeTypeId });
@@ -388,11 +513,43 @@ describe("the response contract", () => {
 });
 
 describe("server-owned values", () => {
-	it("ignores columns the client has no command for", async () => {
+	/**
+	 * The strong form: the stored value is one the server chose and is *not* the column
+	 * default, so the assertion cannot pass merely because nothing was written.
+	 *
+	 * `is_published` is off `updateNoticeDetails`' payload schema on purpose — a lifecycle
+	 * column may only move through its own named command — so sending it here must change
+	 * nothing, even though the envelope's other field is accepted.
+	 */
+	it("will not move a lifecycle column through an update payload", async () => {
+		const id = await seedNotice({
+			daysAgo: 30,
+			isPublished: true,
+			noticeTypeId,
+		});
+
+		const res = await postCommand(
+			{
+				id,
+				intents: [noticeCommands.updateNoticeDetails.name],
+				is_published: false,
+				title: "An edited title",
+			},
+			website,
+		);
+
+		expect(res.status).toBe(200);
+		const row = await storedNotice(id);
+		expect(row?.title).toBe("An edited title");
+		expect(row?.isPublished).toBe(true);
+		// And no ledger row: nothing transitioned, so nothing was published.
+		expect(await postingsFor(id)).toHaveLength(0);
+	});
+
+	it("ignores timestamps and lifecycle columns a create tries to set", async () => {
 		const envelope = createNoticeEnvelope({
 			created_at: "1999-01-01T00:00:00.000Z",
-			// `is_archived` is off every notices payload on purpose: a notice is born active
-			// and only `archiveNotice` may move it.
+			// A notice is born active; `is_archived` is on no payload in the vocabulary.
 			is_archived: true,
 		});
 

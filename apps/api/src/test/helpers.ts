@@ -3,10 +3,11 @@
  *
  * The suite drives the real Hono app over `app.request`, so routing, envelope parsing, the
  * permission gate, the dispatcher and every handler run exactly as they do in production.
- * Nothing here reaches past that door — there is no way to call a handler directly, on
- * purpose (#184).
+ * Nothing here reaches past that door, on purpose (#184). How to run it, and why isolation
+ * works the way it does, is in `apps/api/README.md`.
  */
 import { randomUUID } from "node:crypto";
+import type { AppRole } from "@mcmec/lib/constants/roles";
 import { COMMAND_PATH } from "@mcmec/sync/routes";
 import { getCookies } from "better-auth/cookies";
 import { makeSignature } from "better-auth/crypto";
@@ -16,46 +17,34 @@ import { db } from "../db";
 import { notices, noticeTypes, sessions, users } from "../db/schema";
 
 /** A minimal Tiptap document — `content` is NOT NULL and the payload schema wants an object. */
-export const SOME_CONTENT = {
+export const MINIMAL_TIPTAP_DOC = {
 	content: [{ content: [{ text: "Hello", type: "text" }], type: "paragraph" }],
 	type: "doc",
 };
 
-/**
- * A signed-in caller: the request headers, plus who they are.
- *
- * Minted straight into the database rather than by signing in, because signing in over HTTP is
- * the part of the old end-to-end suite that was fragile — cookie domains, schemeful same-site,
- * a real password hash — and none of it is what these tests are about.
- */
+/** A signed-in caller: the request headers, and the user id the audit and ledger rows carry. */
 export type TestSession = {
-	email: string;
 	headers: Record<string, string>;
 	userId: string;
 };
 
 /**
- * The tables this suite writes, in the order a truncation may name them.
+ * The tables this suite writes.
  *
- * `cascade` covers what a test did not write directly (an `audit_log` row the trigger added,
- * a `notice_postings` entry), so a test never has to remember the ledger it caused.
+ * `cascade` covers what a test did not write directly — the `notice_postings` entry a publish
+ * appends, an `audit_log` row a trigger added — so a test never has to remember the ledger it
+ * caused.
  */
 const WRITTEN_TABLES = [
 	"notices",
 	"notice_types",
-	"meetings",
 	"mosquito_activity_data",
 	"audit_log",
 	"sessions",
 	"users",
 ] as const;
 
-/**
- * Isolation between tests.
- *
- * Truncation, not a transaction the test opens: the request under test runs `db.transaction`
- * on the app's own pool, on a different connection, so a `BEGIN` here could never enclose it.
- */
+/** Isolation between tests. See `apps/api/README.md` for why it is truncation and not rollback. */
 export async function resetDatabase(): Promise<void> {
 	await db.execute(
 		sql.raw(
@@ -82,19 +71,21 @@ async function cookieHeaderFor(token: string): Promise<string> {
 /**
  * A caller holding exactly the roles named — which is to say, exactly those permissions.
  *
- * Roles are what the `users.role` column holds and what `customSession` splits into
- * `permissions`, so "give me a caller who may not do this" is one argument.
+ * Roles are what the `users.role` column holds and what `customSession` splits back into
+ * `permissions`, so "give me a caller who may not do this" is one argument. Typed `AppRole` so
+ * a role that no longer exists fails the build rather than quietly granting nothing.
  */
 export async function sessionWithRoles(
-	roles: readonly string[],
+	roles: readonly AppRole[],
 ): Promise<TestSession> {
 	const userId = randomUUID();
-	const email = `${userId}@example.test`;
 	await db.insert(users).values({
-		email,
+		email: `${userId}@example.test`,
 		emailVerified: true,
 		id: userId,
 		name: "Test Caller",
+		// The empty string is how "no app access" is spelled — `customSession` filters it back
+		// to an empty permission list.
 		role: roles.join(","),
 	});
 
@@ -106,7 +97,7 @@ export async function sessionWithRoles(
 		userId,
 	});
 
-	return { email, headers: { cookie: await cookieHeaderFor(token) }, userId };
+	return { headers: { cookie: await cookieHeaderFor(token) }, userId };
 }
 
 export type CommandResponse = {
@@ -141,16 +132,17 @@ export async function seedNoticeType(): Promise<string> {
 /** A stored notice, dated `daysAgo` days back so retention rules have something to read. */
 export async function seedNotice(fields: {
 	daysAgo: number;
+	isPublished?: boolean;
 	noticeTypeId: string;
 	title?: string;
 }): Promise<string> {
 	const id = randomUUID();
 	const date = new Date(Date.now() - fields.daysAgo * 86_400_000);
 	await db.insert(notices).values({
-		content: SOME_CONTENT,
+		content: MINIMAL_TIPTAP_DOC,
 		id,
 		isArchived: false,
-		isPublished: false,
+		isPublished: fields.isPublished ?? false,
 		noticeDate: date.toISOString().slice(0, 10),
 		noticeTypeId: fields.noticeTypeId,
 		title: fields.title ?? "A stored notice",
