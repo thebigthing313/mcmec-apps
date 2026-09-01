@@ -16,9 +16,10 @@
  * `user_id` is not in the payload either: #134 drafted it that way before the envelope existed,
  * and the envelope's `id` is what names the row a command is about.
  *
- * These do NOT close the `manage_users` self-lockout hole — an admin can still revoke their own
- * `manage_users` role, guarded only by a `disabled` prop on the client. That is #141, ruled out
- * of scope on the map.
+ * The `manage_users` self-lockout rule lives on the handler, not here (#141): `revokeAppRole`
+ * refuses when the envelope target is the caller's own id and the role is `manage_users`. This
+ * package defines what a write is called and what it takes; a rule checked against the acting
+ * session is `apps/api`'s to enforce, and there is no shape of payload that could express it.
  */
 import { APP_ROLES } from "@mcmec/lib/constants/roles";
 import z from "zod";
