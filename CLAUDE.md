@@ -90,7 +90,8 @@ pnpm lint
 # Run tests — @mcmec/auth, @mcmec/lib, @mcmec/schemas and api each have a suite
 pnpm --filter @mcmec/schemas test        # watch mode
 pnpm --filter @mcmec/schemas test:run     # single run
-pnpm --filter api test:run                # any of the four, same scripts
+pnpm --filter api test:run                # any of the four, same scripts —
+                                          # api needs a Postgres, see apps/api/README.md
 
 # Changesets (versioning)
 pnpm changeset
@@ -204,7 +205,8 @@ Production is unaffected: `main` still deploys on every merge. See `docs/railway
 ### CI checks on every PR
 - **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build` — the same root scripts
   you run locally, so a deleted or broken root script fails CI instead of drifting silently
-- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas` and `api`
+- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas` and `api` (the last
+  against a Postgres service container)
 - **Changeset check** — warns (non-blocking) if no changeset is included
 - CI runs on PRs to both `develop` and `main`
 
