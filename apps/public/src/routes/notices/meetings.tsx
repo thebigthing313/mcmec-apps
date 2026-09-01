@@ -1,3 +1,4 @@
+import { keepUpcomingAndRecentYears } from "@mcmec/lib/functions/recent-years";
 import { MeetingsMobileList } from "@mcmec/ui/blocks/meetings-mobile-list";
 import {
 	MeetingsTable,
@@ -29,7 +30,14 @@ function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { data: meetings } = useSuspenseQuery(meetingsQueryOptions());
 
-	const mappedData: MeetingTableRowType[] = meetings.map((meeting) => ({
+	// Windowed on the meeting's own date, never on whether its minutes are posted — a
+	// meeting still to be minuted is on the page for its notice.
+	const visibleMeetings = keepUpcomingAndRecentYears(
+		meetings,
+		(meeting) => meeting.meeting_at,
+	);
+
+	const mappedData: MeetingTableRowType[] = visibleMeetings.map((meeting) => ({
 		id: meeting.id,
 		isCancelled: meeting.is_cancelled,
 		meetingAt: meeting.meeting_at,
