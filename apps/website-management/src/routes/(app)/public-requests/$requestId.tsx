@@ -1,5 +1,6 @@
 import { formatDateShort } from "@mcmec/lib/functions/date-fns";
 import type { RequestStatus } from "@mcmec/schemas/db/public-requests";
+import { CopyButton } from "@mcmec/ui/blocks/copy-button";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
@@ -40,11 +41,22 @@ function DetailsPanel({ details }: { details: unknown }) {
 		([, v]) => typeof v !== "boolean" && v !== null && v !== "",
 	);
 
+	// The whole group is one destination field, the way a message body is — a form on the other
+	// system asks "what was reported," not one checkbox per flag. So the group gets one button
+	// and the badges get none; a button per badge would be eight clicks to fill one box.
+	const reported = flags
+		.filter(([, value]) => value)
+		.map(([key]) => humanizeDetailKey(key))
+		.join(", ");
+
 	return (
 		<div className="space-y-4">
 			{flags.length > 0 && (
 				<div className="rounded-lg border p-4">
-					<h3 className="mb-2 font-semibold">Reported</h3>
+					<div className="mb-2 flex items-center gap-1">
+						<h3 className="font-semibold">Reported</h3>
+						<CopyButton label="reported details" text={reported} />
+					</div>
 					<div className="flex flex-wrap gap-2">
 						{flags.map(([key, value]) => (
 							<Badge key={key} variant={value ? "default" : "outline"}>
@@ -58,7 +70,13 @@ function DetailsPanel({ details }: { details: unknown }) {
 
 			{values.map(([key, value]) => (
 				<div className="rounded-lg border p-4" key={key}>
-					<h3 className="mb-2 font-semibold">{humanizeDetailKey(key)}</h3>
+					<div className="mb-2 flex items-center gap-1">
+						<h3 className="font-semibold">{humanizeDetailKey(key)}</h3>
+						<CopyButton
+							label={humanizeDetailKey(key).toLowerCase()}
+							text={String(value)}
+						/>
+					</div>
 					<p className="whitespace-pre-wrap">{String(value)}</p>
 				</div>
 			))}
@@ -172,27 +190,54 @@ function RouteComponent() {
 					recordName={request.name}
 				/>
 			}
+			// One row is one copyable value. The address used to join its two lines with ", " and
+			// the zip code read "<code> — <city>, <state>"; both are composed for reading and wrong
+			// for a clipboard, and a button that quietly copied something other than the words
+			// beside it would be worse than no button. Splitting them means what is displayed and
+			// what is copied are the same string. "Submitted" carries no button — a formatted date
+			// is not re-keyed into anything.
 			fields={[
-				{ label: "Phone", value: request.phone || "Not given" },
-				{ label: "Email", value: request.email || "Not given" },
+				{
+					copyText: request.phone ?? "",
+					label: "Phone",
+					value: request.phone || "Not given",
+				},
+				{
+					copyText: request.email ?? "",
+					label: "Email",
+					value: request.email || "Not given",
+				},
 				{ label: "Submitted", value: formatDateShort(request.created_at) },
 				...(request.address_line_1
 					? [
 							{
-								label: "Address",
-								value: [request.address_line_1, request.address_line_2]
-									.filter(Boolean)
-									.join(", "),
+								copyText: request.address_line_1,
+								label: "Address line 1",
+								value: request.address_line_1,
+							},
+							{
+								copyText: request.address_line_2 ?? "",
+								label: "Address line 2",
+								value: request.address_line_2 || "Not given",
 							},
 						]
 					: []),
 				...(request.zip_code_id
 					? [
 							{
+								copyText: zipCode?.code ?? "",
 								label: "Zip code",
-								value: zipCode
-									? `${zipCode.code} — ${zipCode.city}, ${zipCode.state}`
-									: "Unknown",
+								value: zipCode?.code ?? "Unknown",
+							},
+							{
+								copyText: zipCode?.city ?? "",
+								label: "City",
+								value: zipCode?.city ?? "Unknown",
+							},
+							{
+								copyText: zipCode?.state ?? "",
+								label: "State",
+								value: zipCode?.state ?? "Unknown",
 							},
 						]
 					: []),
@@ -202,6 +247,7 @@ function RouteComponent() {
 			// "Water Management" and demoted the person to a grey sub-label.
 			subtitle={requestTypeLabel(request.request_type)}
 			title={request.name}
+			titleCopyText={request.name}
 		>
 			<DetailsPanel details={request.details} />
 		</RecordDetail>

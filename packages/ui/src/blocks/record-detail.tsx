@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "../lib/utils";
+import { CopyButton } from "./copy-button";
 
 /**
  * The one detail page, and the answer to seven of them.
@@ -28,6 +29,16 @@ export interface RecordDetailField {
 	label: string;
 	/** Rendered as-is. A missing value should read as a word, not an empty cell. */
 	value: ReactNode;
+	/**
+	 * Opt-in: the exact string this row's copy button places on the clipboard. Omit and the row
+	 * renders exactly as it always has — eight of the nine detail screens pass nothing.
+	 *
+	 * Pass an empty string where the value is genuinely absent: the button still appears, but
+	 * disabled, per DESIGN.md's rule that an unavailable action stays visible. Because the row's
+	 * `value` and this string are set side by side, what is read and what is copied stay the same
+	 * — a copy never silently corrects what the reader saw.
+	 */
+	copyText?: string;
 }
 
 export function RecordDetail({
@@ -40,6 +51,7 @@ export function RecordDetail({
 	fields,
 	subtitle,
 	title,
+	titleCopyText,
 }: {
 	/** Edit and the lifecycle buttons. Not navigation — see the note above. */
 	actions?: ReactNode;
@@ -59,6 +71,12 @@ export function RecordDetail({
 	/** One line under the title — a type, a time range, a person. Never a heading. */
 	subtitle?: ReactNode;
 	title: string;
+	/**
+	 * Opt-in: the string a copy button beside the `<h1>` places on the clipboard — usually the
+	 * title itself, where the title is a value someone re-keys (a resident's name). `title` stays
+	 * a plain string; a `ReactNode` title would let any caller put anything in the page heading.
+	 */
+	titleCopyText?: string;
 }) {
 	return (
 		<div className={cn("max-w-2xl space-y-6", className)}>
@@ -76,6 +94,16 @@ export function RecordDetail({
 							{title}
 						</h1>
 						{badge}
+						{titleCopyText === undefined ? null : (
+							// `items-baseline` on the row has no baseline to find in an icon-only
+							// button and would synthesize one from its bottom edge, hanging it above
+							// the title's cap height.
+							<CopyButton
+								className="self-center"
+								label="name"
+								text={titleCopyText}
+							/>
+						)}
 					</div>
 					{subtitle ? (
 						<p className="text-muted-foreground">{subtitle}</p>
@@ -89,8 +117,25 @@ export function RecordDetail({
 					<dl className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 text-sm">
 						{fields.map((field) => (
 							<div className="contents" key={field.label}>
-								<dt className="text-muted-foreground">{field.label}</dt>
-								<dd className="text-foreground">{field.value}</dd>
+								{/* The row is `display: contents`, so the term and its value are grid
+								siblings: a copyable value is as tall as its button, and a top-aligned
+								label would sit above the words it names. */}
+								<dt className="flex items-center text-muted-foreground">
+									{field.label}
+								</dt>
+								<dd className="text-foreground">
+									{field.copyText === undefined ? (
+										field.value
+									) : (
+										<span className="flex items-center gap-1">
+											{field.value}
+											<CopyButton
+												label={field.label.toLowerCase()}
+												text={field.copyText}
+											/>
+										</span>
+									)}
+								</dd>
 							</div>
 						))}
 					</dl>
