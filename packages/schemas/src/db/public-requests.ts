@@ -152,7 +152,17 @@ const ServiceRequestContactFormSchema = z.object({
 	phone: z.string().min(1, "Phone is required").max(50),
 	address_line_1: shortText,
 	address_line_2: z.string().max(300).nullable(),
-	zip_code_id: z.uuid("Select a zip code"),
+	/**
+	 * What the resident types, not the row it resolves to.
+	 *
+	 * This was a combobox over the serviced zip codes, holding `zip_code_id` directly. In a
+	 * form the browser is already autofilling — name, street, city — a combobox in the
+	 * postal-code slot fights that autofill instead of accepting it, so the field is a plain
+	 * `autocomplete="postal-code"` input and the route resolves the code to its id on submit.
+	 * Format is checked here; whether the Commission services the code is checked against the
+	 * live list (see `servicedZipCodeValidator` in the public app).
+	 */
+	zip_code: z.string().regex(/^\d{5}$/, "Enter a 5-digit ZIP code"),
 });
 
 export const AdultMosquitoFormSchema = ServiceRequestContactFormSchema.extend({
@@ -186,21 +196,29 @@ export type AdultMosquitoFormType = z.infer<typeof AdultMosquitoFormSchema>;
 export type WaterManagementFormType = z.infer<typeof WaterManagementFormSchema>;
 export type MosquitoFishFormType = z.infer<typeof MosquitoFishFormSchema>;
 
-/** Shared mapping from a flat contact block to the payload's camelCase fields. */
-export function toContactPayload(value: {
-	full_name: string;
-	email: string | null;
-	phone: string;
-	address_line_1: string;
-	address_line_2: string | null;
-	zip_code_id: string;
-}) {
+/**
+ * Shared mapping from a flat contact block to the payload's camelCase fields.
+ *
+ * `zipCodeId` is passed in rather than read off the form: the form holds the five digits the
+ * resident typed, and only the caller — which has the serviced zip list — can turn those into
+ * a row id.
+ */
+export function toContactPayload(
+	value: {
+		full_name: string;
+		email: string | null;
+		phone: string;
+		address_line_1: string;
+		address_line_2: string | null;
+	},
+	zipCodeId: string,
+) {
 	return {
 		name: value.full_name,
 		email: value.email || undefined,
 		phone: value.phone,
 		addressLine1: value.address_line_1,
 		addressLine2: value.address_line_2 || undefined,
-		zipCodeId: value.zip_code_id,
+		zipCodeId,
 	};
 }
