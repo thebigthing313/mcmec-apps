@@ -18,10 +18,10 @@ colors:
   focus-ring: "oklch(0.5353 0.1357 153.5529)"
   refusal-red: "oklch(0.5046 0.2053 29.0423)"
   chart-1: "oklch(0.6104 0.0767 299.7335)"
-  chart-2: "oklch(0.7889 0.0802 359.9375)"
-  chart-3: "oklch(0.7321 0.0749 169.867)"
-  chart-4: "oklch(0.854 0.0882 76.8292)"
-  chart-5: "oklch(0.7857 0.0645 258.0839)"
+  chart-2: "oklch(0.6 0.13 359.9375)"
+  chart-3: "oklch(0.58 0.095 169.867)"
+  chart-4: "oklch(0.61 0.12 76.8292)"
+  chart-5: "oklch(0.62 0.12 258.0839)"
 typography:
   display:
     fontFamily: "Roboto, system-ui, sans-serif"
@@ -217,7 +217,11 @@ A single institutional green against a family of neutrals that share its hue, so
 
 ### Series
 
-`chart-1` through `chart-5` are a deliberately separate species: light, desaturated pastels (violet, rose, mint, sand, periwinkle) used only by the Weekly Mosquito Activity chart to distinguish mosquito species across a season. They are tuned for adjacency in a dense multi-series plot, not for the interface, and must never leak into UI chrome.
+`chart-1` through `chart-5` are a deliberately separate species: violet, rose, mint, sand and periwinkle, used only by the Weekly Mosquito Activity chart. They are tuned for adjacency in a dense multi-series plot, not for the interface, and must never leak into UI chrome.
+
+They were pastels until they had to carry data. Measured against the card ground, `chart-2` came out at 1.90:1, `chart-3` at 2.17:1, `chart-4` at 1.49:1 and `chart-5` at 1.85:1, all under the 3:1 that WCAG 1.4.11 requires of a graphical object carrying meaning: a pastel works as a large filled area and fails as a plotted line. Each hue is kept and its lightness pulled down until it clears 3:1, with chroma raised to stay vivid. `chart-1` already passed and is unchanged. Ratios against the card ground are now 3.68, 4.00, 3.86, 3.65 and 3.46.
+
+The current-year series on that chart is the one exception to the separation, and it runs the other way: it is drawn in Commission Green because it is the series the page exists to show. The five-year average takes `chart-1` and stays dashed, so the two are told apart by stroke pattern and not by colour alone; rainfall takes `chart-5`.
 
 ### Named Rules
 
@@ -483,7 +487,8 @@ One deliberate exemption: a **confirming register**, like the dashboard's "What 
 - **Don't** consume `--font-serif` or `--font-mono` while Lora and Fira Code remain unloaded.
 - **Don't** put a shadow on a resting surface. Cards, tables, panels, and inputs are flat.
 - **Don't** use Commission Green decoratively. It marks the agency, the primary action, and the active state — nothing else.
-- **Don't** let the `chart-1`–`chart-5` pastels out of the Weekly Mosquito Activity chart. They are a species series, not a UI palette.
+- **Don't** let `chart-1`–`chart-5` out of the Weekly Mosquito Activity chart. They are a series palette, not a UI palette.
+- **Don't** plot a series in a colour that has not been measured against the ground it sits on. A chart line is a graphical object under WCAG 1.4.11 and needs 3:1, which is why the series palette is no longer pastel.
 - **Don't** use a pill radius for anything that isn't a status badge.
 - **Don't** render a lifecycle action as a switch, checkbox, or status dropdown.
 - **Don't** hide a disabled action. Show it disabled so staff can see the action exists.
