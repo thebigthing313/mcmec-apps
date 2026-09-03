@@ -86,7 +86,13 @@ export function NoticeFeed({ notices, paginate = true }: NoticeFeedProps) {
 		const years = new Set<string>();
 
 		notices?.forEach((notice) => {
-			types.add(notice.type);
+			// A notice whose category did not resolve carries an empty type. It must not
+			// reach the select: Radix throws on a SelectItem with an empty value, which
+			// would take the whole register down in exactly the case the empty string
+			// exists to handle. An unresolved category is not a filterable kind.
+			if (notice.type) {
+				types.add(notice.type);
+			}
 			const year = notice.noticeDate.getFullYear().toString();
 			years.add(year);
 		});

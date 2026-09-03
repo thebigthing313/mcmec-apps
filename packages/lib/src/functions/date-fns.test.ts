@@ -30,7 +30,7 @@ describe("formatDateTime", () => {
 	});
 
 	it("does not roll an evening meeting into the following day", () => {
-		// 00:30Z on the 15th is 7:30pm on the 14th in Edison. Unpinned, this rendered as
+		// 00:30Z on the 15th is 8:30pm on the 14th in Edison. Unpinned, this rendered as
 		// the 15th on the server and the 14th in the browser.
 		expect(formatDateTime(new Date("2026-05-15T00:30:00Z"))).toBe(
 			"Thursday, May 14, 2026 8:30 PM (EDT)",

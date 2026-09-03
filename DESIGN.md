@@ -228,7 +228,7 @@ The current-year series on that chart is the one exception to the separation, an
 
 **The One Green Rule.** Commission Green is the only color on a resting screen that carries meaning by itself. Reserve it for the agency's mark, the primary action, and the active navigation state. It is never a background for decoration, never a highlight, and never used twice in the same visual group.
 
-**The Status Is A Word Rule.** A record's state — Draft, Published, Pending, Archived, Cancelled, Closed, Resolved, New — is always spelled out in the badge. Color may reinforce it; color may never be the only thing carrying it. This is a WCAG requirement on the public site and a legibility requirement everywhere else.
+**The Status Is A Word Rule.** A record's state — Draft, Published, Pending, Archived, Scheduled, Delayed, Completed, Cancelled, Closed, Resolved, New — is always spelled out in the badge. Color may reinforce it; color may never be the only thing carrying it. This is a WCAG requirement on the public site and a legibility requirement everywhere else.
 
 **The Hue-150 Rule.** Every neutral in the light theme sits on hue 150 at low chroma. A neutral pulled from outside that family will read as a foreign gray against the rest of the page, however close its lightness.
 
@@ -379,7 +379,8 @@ Icons are Lucide, at `1rem` inside buttons and badges, `1.5rem` on public quick-
 ### Badges
 
 - **Style:** Fully rounded, `2px 8px`, `0.75rem` medium weight, transparent border on filled variants.
-- **State mapping:** Published and Pending take the filled Commission Green; Archived takes Pale Green; Draft takes the outline variant. The word is always present.
+- **State mapping:** Published and Pending take the filled Commission Green; Archived takes Pale Green; Draft takes the outline variant. On a Spray Mission, Scheduled takes the filled green, Completed takes Pale Green, and Delayed and Cancelled both take outline. The word is always present.
+- **Cancelled is not red.** Refusal Red belongs to destructive commands and validation failures and to nothing else, so no status badge takes it — a cancelled record has not failed, and on the public site a cancelled spray is neutral or welcome to most of the people reading it. Urgency is carried by the word, never by the colour.
 
 ### Navigation
 

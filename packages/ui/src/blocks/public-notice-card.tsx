@@ -85,7 +85,7 @@ export function PublicNoticeCard({
 				<CardTitle className="text-xl">
 					{onNoticeClick ? (
 						<button
-							className="cursor-pointer text-left hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+							className="cursor-pointer rounded-sm text-left outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
 							onClick={onNoticeClick}
 							type="button"
 						>

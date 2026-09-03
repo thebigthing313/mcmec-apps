@@ -18,7 +18,7 @@ The rest, briefly:
 
 - **The footer's phone number is a link.** It was plain text, so the one fallback channel a resident has required copying digits off a phone screen by hand. The fax stays text — nothing dials it. Both icons are now `aria-hidden` with a screen-reader label, since a bare icon beside a number does not say which number it is.
 - **Notice cards said "Published on"** over a value that comes from `notice_date`, the notice's own legal date, which is not the day it went up. It reads "Notice date" now. The old fallback printed a literal `[unknown]` to the public; an undated notice shows nothing instead.
-- **A notice whose category did not resolve was published as type "Unknown".** That is a gap in our lookup, not a notice of unknown kind. The row is omitted instead.
+- **A notice whose category did not resolve was published as type "Unknown".** That is a gap in our lookup, not a notice of unknown kind. The row is omitted instead, and the unresolved type is kept out of the filter list — a `SelectItem` with an empty value is a thing Radix throws on, which would have taken both notices routes down in exactly the case this fix is about.
 - **Notice search matched titles only**, so a resident looking for their own street — named in the body of a spray notice and nowhere in its heading — got nothing back. It searches the body text too now.
 - **The Type and Year filters had no way back.** Neither select offered an "All" item, so once you picked one the only route to unfiltered was the Clear button, which only appears once something is already filtered.
 - **An empty register and an over-tight filter now say different things.** The page used to blame filters that were not set.
