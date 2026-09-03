@@ -5,7 +5,6 @@ colors:
   commission-green: "oklch(0.5364 0.1457 150.5842)"
   commission-green-contrast: "oklch(0.985 0.0199 112.9333)"
   brackish-teal: "oklch(0.6638 0.0267 183.8599)"
-  brackish-teal-contrast: "oklch(0.98 0.005 150)"
   paper: "oklch(0.985 0.002 150)"
   surface: "oklch(0.98 0.005 150)"
   sidebar-ground: "oklch(0.96 0.01 150)"
@@ -18,10 +17,10 @@ colors:
   focus-ring: "oklch(0.5353 0.1357 153.5529)"
   refusal-red: "oklch(0.5046 0.2053 29.0423)"
   chart-1: "oklch(0.6104 0.0767 299.7335)"
-  chart-2: "oklch(0.7889 0.0802 359.9375)"
-  chart-3: "oklch(0.7321 0.0749 169.867)"
-  chart-4: "oklch(0.854 0.0882 76.8292)"
-  chart-5: "oklch(0.7857 0.0645 258.0839)"
+  chart-2: "oklch(0.6 0.13 359.9375)"
+  chart-3: "oklch(0.58 0.095 169.867)"
+  chart-4: "oklch(0.61 0.12 76.8292)"
+  chart-5: "oklch(0.62 0.12 258.0839)"
 typography:
   display:
     fontFamily: "Roboto, system-ui, sans-serif"
@@ -104,7 +103,7 @@ components:
     height: "36px"
   button-outline-hover:
     backgroundColor: "{colors.brackish-teal}"
-    textColor: "{colors.brackish-teal-contrast}"
+    textColor: "{colors.ink}"
   button-destructive:
     backgroundColor: "{colors.refusal-red}"
     textColor: "#ffffff"
@@ -200,7 +199,9 @@ A single institutional green against a family of neutrals that share its hue, so
 
 ### Tertiary
 
-- **Brackish Teal** (`oklch(0.6638 0.0267 183.8599)`): Desaturated gray-teal — the color of standing water. It grounds the public footer as a full-bleed band and supplies the hover ground for outline and ghost buttons. It is a *surface* color and a hover state; it never carries an action.
+- **Brackish Teal** (`oklch(0.6638 0.0267 183.8599)`): Desaturated gray-teal — the color of standing water. It grounds the public footer as a full-bleed band and supplies the hover ground for outline and ghost buttons. It is a *surface* color and a hover state; it never carries an action. **Its foreground is Ink, and the pair measures 5.22:1.**
+
+  Brackish Teal has no pale contrast colour of its own. It used to: a near-white (`oklch(0.98 0.005 150)`) carrying the name *Brackish Teal Contrast* while measuring **2.86:1** against the teal, which is how it survived undetected — the token was named for a property it did not have. It was replaced by Ink on 2026-09-03. Because this is shadcn's `accent` pair, that ratio was every hovered dropdown item, menubar entry, context-menu row, command item, calendar cell and outline button in all five frontends, plus the public footer, which compounded it with a `/70` alpha and reached 2.17:1. The teal itself did not move: darkening the ground far enough to rescue a near-white would have made every hover tint in the product visibly heavier, and the foreground was the thing at fault. Light mode only — in dark mode `accent` is a near-black whose near-white foreground already measures 14.48:1, where Ink would be 1.05:1.
 
 ### Neutral
 
@@ -217,7 +218,11 @@ A single institutional green against a family of neutrals that share its hue, so
 
 ### Series
 
-`chart-1` through `chart-5` are a deliberately separate species: light, desaturated pastels (violet, rose, mint, sand, periwinkle) used only by the Weekly Mosquito Activity chart to distinguish mosquito species across a season. They are tuned for adjacency in a dense multi-series plot, not for the interface, and must never leak into UI chrome.
+`chart-1` through `chart-5` are a deliberately separate species: violet, rose, mint, sand and periwinkle, used only by the Weekly Mosquito Activity chart. They are tuned for adjacency in a dense multi-series plot, not for the interface, and must never leak into UI chrome.
+
+They were pastels until they had to carry data. Measured against the card ground, `chart-2` came out at 1.90:1, `chart-3` at 2.17:1, `chart-4` at 1.49:1 and `chart-5` at 1.85:1, all under the 3:1 that WCAG 1.4.11 requires of a graphical object carrying meaning: a pastel works as a large filled area and fails as a plotted line. Each hue is kept and its lightness pulled down until it clears 3:1, with chroma raised to stay vivid. `chart-1` already passed and is unchanged. Ratios against the card ground are now 3.68, 4.00, 3.86, 3.65 and 3.46.
+
+The current-year series on that chart is the one exception to the separation, and it runs the other way: it is drawn in Commission Green because it is the series the page exists to show. The five-year average takes `chart-1` and stays dashed, so the two are told apart by stroke pattern and not by colour alone; rainfall takes `chart-5`.
 
 ### Named Rules
 
@@ -380,6 +385,8 @@ Icons are Lucide, at `1rem` inside buttons and badges, `1.5rem` on public quick-
 
 **Public.** A horizontal bar of five top-level groups — Home, About, Contact, Public Notices, Mosquito Control (plus surveillance and careers) — each opening a popover of titled links with one-line descriptions. Those descriptions are load-bearing: they are how a resident who does not know the difference between a legal notice and an archived one picks correctly. Below `md` the whole bar collapses into a sheet with the same groups as collapsibles. A skip link targets `#main-content`.
 
+  The top-level links are the one stated exception to the Brackish Teal hover. They sit on Commission Green, so a teal tint *lightens* their ground and pulls the white label down — the old `accent/40` took it from 4.62:1 at rest to **3.96:1**, making hover and keyboard focus the only interaction on the page that fell under AA. They darken instead, at `foreground/15`, for **5.56:1**. The rule generalises: a hover tint on a mid-tone or darker ground must move away from the label, not toward it.
+
 **Staff.** The `mcmec-layout` sidebar, collapsible to an icon rail, with the MCMEC mark in the header, navigation in the content, and the user menu in the footer. The app switcher lists only the applications the signed-in user's App Roles permit.
 
 The rail is rendered by the shell, not by each application: `Layout.Sidebar.Nav` takes groups of destinations and owns the three things a hand-rolled rail keeps losing. Every row carries a tooltip, which is the only label a collapsed rail has. The current destination takes Commission Green (`4.57:1` against its own label, `4.33:1` against the rail) and carries `aria-current="page"`, so location is never signalled by colour alone. Matching is by path prefix, so a drill-down keeps its parent lit. Groups run to four items or fewer and are labelled in the Overline; a rail of three or fewer destinations drops the label rather than inventing one.
@@ -483,7 +490,8 @@ One deliberate exemption: a **confirming register**, like the dashboard's "What 
 - **Don't** consume `--font-serif` or `--font-mono` while Lora and Fira Code remain unloaded.
 - **Don't** put a shadow on a resting surface. Cards, tables, panels, and inputs are flat.
 - **Don't** use Commission Green decoratively. It marks the agency, the primary action, and the active state — nothing else.
-- **Don't** let the `chart-1`–`chart-5` pastels out of the Weekly Mosquito Activity chart. They are a species series, not a UI palette.
+- **Don't** let `chart-1`–`chart-5` out of the Weekly Mosquito Activity chart. They are a series palette, not a UI palette.
+- **Don't** plot a series in a colour that has not been measured against the ground it sits on. A chart line is a graphical object under WCAG 1.4.11 and needs 3:1, which is why the series palette is no longer pastel.
 - **Don't** use a pill radius for anything that isn't a status badge.
 - **Don't** render a lifecycle action as a switch, checkbox, or status dropdown.
 - **Don't** hide a disabled action. Show it disabled so staff can see the action exists.

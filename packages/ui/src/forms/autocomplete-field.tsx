@@ -28,7 +28,9 @@ export function AutocompleteField({
 			{...formFieldProps}
 		>
 			<AutoComplete
+				aria-required={formFieldProps.required}
 				emptyMessage={emptyMessage}
+				id={field.name}
 				isLoading={isLoading}
 				items={items}
 				onSearchValueChange={setSearchValue}
