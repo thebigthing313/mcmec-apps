@@ -67,7 +67,12 @@ function RouteComponent() {
 					permitted by New Jersey law.
 				</p>
 			</article>
-			<NoticeFeed notices={noticesToShow} />
+			{/*
+				The statutory register: every current notice in full, on one page. See
+				NoticeFeed's `paginate` prop for why this one page does not paginate or
+				clip while /notices/archive still does.
+			*/}
+			<NoticeFeed notices={noticesToShow} paginate={false} />
 		</div>
 	);
 }

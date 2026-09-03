@@ -32,9 +32,19 @@ interface NoticeData {
 
 interface NoticeFeedProps {
 	notices: NoticeData[];
+	/**
+	 * Split the register across pages and clip each notice behind a fade.
+	 *
+	 * True on the archive, which is a browse surface that grows without bound. False on
+	 * the current notices register: P.L. 2025 c.72 designates that page as the
+	 * Commission's primary publication method, and a required posting may not be put
+	 * behind a pagination control or cut off mid-sentence while its Retention Period
+	 * runs. The page states that obligation in its own opening paragraph.
+	 */
+	paginate?: boolean;
 }
 
-export function NoticeFeed({ notices }: NoticeFeedProps) {
+export function NoticeFeed({ notices, paginate = true }: NoticeFeedProps) {
 	const navigate = useNavigate();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [searchQuery, setSearchQuery] = useState<string>("");
@@ -77,12 +87,13 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 	}, [notices, searchQuery, selectedType, selectedYear]);
 
 	// Calculate pagination
-	const totalPages = Math.ceil(filteredNotices.length / itemsPerPage);
+	const totalPages = paginate
+		? Math.ceil(filteredNotices.length / itemsPerPage)
+		: 1;
 	const startIndex = (currentPage - 1) * itemsPerPage;
-	const paginatedNotices = filteredNotices.slice(
-		startIndex,
-		startIndex + itemsPerPage,
-	);
+	const paginatedNotices = paginate
+		? filteredNotices.slice(startIndex, startIndex + itemsPerPage)
+		: filteredNotices;
 
 	// Reset to first page when filters change
 	const handleSearchChange = (value: string) => {
@@ -182,11 +193,15 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 			{/* Notices */}
 			<div className="flex flex-col gap-2">
 				{paginatedNotices.map((notice) => {
-					const shareUrl = `${window.location.origin}/notices/${notice.id}`;
+					// Read the origin when the reader asks to share, not while rendering:
+					// `window` does not exist during SSR, and touching it here threw inside
+					// the route's Suspense boundary (React #419) and forced a client re-render.
+					const getShareUrl = () =>
+						`${typeof window === "undefined" ? "" : window.location.origin}/notices/${notice.id}`;
 					return (
 						<PublicNoticeCard
 							content={notice.content}
-							getShareUrl={() => shareUrl}
+							getShareUrl={getShareUrl}
 							isArchived={notice.isArchived}
 							isPublished={notice.isPublished}
 							key={notice.id}
@@ -198,6 +213,7 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 								})
 							}
 							title={notice.title}
+							truncate={paginate}
 							type={notice.type}
 						/>
 					);
