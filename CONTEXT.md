@@ -121,11 +121,14 @@ website. Four kinds: general inquiry, adult mosquito nuisance, water management,
 mosquitofish. Not anonymous — the intake forms require a name and a phone number so an
 inspector can make contact, and the site says so.
 _Avoid_: ticket, complaint, submission
-_Public label_: **Service Request** — "Request Service" on the home-page button, and
-**General Inquiries** for the general-inquiry kind. Public Request is the internal name for
-the concept and belongs in code, schemas, staff apps and these docs; it is deliberately not
-what a resident reads. The mismatch is a decision, not drift: do not "correct" the public
-site to match this entry.
+_Public label_: **Service Request** — pluralised where it names a destination in navigation
+("Service Requests" in the nav group and the contact sidebar), phrased as the action where it
+is a call to action ("Request Service" on the home-page button and the footer quick link), and
+spelled out in running prose where a sentence needs it ("Request for Service form"). The
+general-inquiry kind is **General Inquiries**. Public Request is the internal name for the
+concept and belongs in code, schemas, staff apps and these docs; it is deliberately not what a
+resident reads. The mismatch is a decision, not drift: do not "correct" the public site to
+match this entry.
 
 **Resolved**:
 Of a Public Request: dealt with. A Public Request is either New or Resolved — the Commission

@@ -149,9 +149,9 @@ function RouteComponent() {
 				<h1>Adult Mosquito Nuisance Request</h1>
 				<p>
 					Use this form to report a high number of adult mosquitoes on your
-					property or in your immediate area. Our team will review your
-					submission and respond as soon as possible. Please provide as much
-					detail as possible to help us address your concern effectively.
+					property or in your immediate area. Our team will review your request
+					and respond as soon as possible. Please provide as much detail as
+					possible to help us address your concern effectively.
 				</p>
 			</article>
 			<form.AppForm>
