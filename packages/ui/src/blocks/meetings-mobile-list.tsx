@@ -1,4 +1,9 @@
 import { formatDateTime } from "@mcmec/lib/functions/date-fns";
+import {
+	emptyMeetingPeriodLabel,
+	meetingPeriodCountLabel,
+	meetingPeriodLabel,
+} from "@mcmec/lib/functions/meeting-periods";
 import { Badge } from "@mcmec/ui/components/badge";
 import {
 	Item,
@@ -17,7 +22,11 @@ import {
 	SelectValue,
 } from "@mcmec/ui/components/select";
 import * as React from "react";
-import { Label } from "../components/label";
+import {
+	meetingPeriodValue,
+	parseMeetingPeriodValue,
+	useMeetingPeriod,
+} from "../hooks/use-meeting-period";
 import type { MeetingTableRowType } from "./meetings-table";
 import { type RowAction, RowActionsMenu } from "./row-actions-menu";
 
@@ -51,55 +60,53 @@ export function MeetingsMobileList({
 		return { status: "Pending", variant: "default" };
 	};
 
-	const years = React.useMemo(() => {
-		const yearSet = new Set(
-			data.map((meeting) => new Date(meeting.meetingAt).getFullYear()),
-		);
-		return Array.from(yearSet).sort((a, b) => b - a);
-	}, [data]);
+	const labelId = React.useId();
+	const { meetings, period, periods, setPeriod } = useMeetingPeriod(data);
 
-	const currentYear = new Date().getFullYear();
-	const [selectedYear, setSelectedYear] = React.useState<number>(currentYear);
-
-	const sortedFilteredData = React.useMemo(() => {
-		return data
-			.filter(
-				(meeting) => new Date(meeting.meetingAt).getFullYear() === selectedYear,
-			)
-			.sort((a, b) => a.meetingAt.getTime() - b.meetingAt.getTime());
-	}, [data, selectedYear]);
+	const sortedFilteredData = React.useMemo(
+		() =>
+			[...meetings].sort(
+				(a, b) => a.meetingAt.getTime() - b.meetingAt.getTime(),
+			),
+		[meetings],
+	);
 
 	return (
 		<div className="space-y-4">
-			<div className="flex items-center justify-between px-4">
-				<div className="flex items-center space-x-2">
-					<Label>Year</Label>
-					<Select
-						onValueChange={(value) => setSelectedYear(Number(value))}
-						value={`${selectedYear}`}
-					>
-						<SelectTrigger className="h-8 w-20">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent side="bottom">
-							{years.map((year) => (
-								<SelectItem key={year} value={`${year}`}>
-									{year}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+			{periods.length > 0 ? (
+				<div className="flex items-center justify-between px-4">
+					<div className="flex items-center space-x-2">
+						<p className="text-muted-foreground text-sm" id={labelId}>
+							Show
+						</p>
+						<Select
+							onValueChange={(value) =>
+								setPeriod(parseMeetingPeriodValue(value))
+							}
+							value={meetingPeriodValue(period)}
+						>
+							<SelectTrigger aria-labelledby={labelId} className="h-8 w-32">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent side="bottom">
+								{periods.map((option) => (
+									<SelectItem key={option} value={meetingPeriodValue(option)}>
+										{meetingPeriodLabel(option)}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+					<div className="font-medium text-sm">
+						{meetingPeriodCountLabel(sortedFilteredData.length, period)}
+					</div>
 				</div>
-				<div className="font-medium text-sm">
-					{sortedFilteredData.length} meeting
-					{sortedFilteredData.length !== 1 ? "s" : ""}
-				</div>
-			</div>
+			) : null}
 
 			{sortedFilteredData.length === 0 ? (
 				<div className="rounded-md border border-border p-8">
 					<p className="text-center text-muted-foreground">
-						No meetings found for {selectedYear}.
+						{emptyMeetingPeriodLabel(period)}
 					</p>
 				</div>
 			) : (
