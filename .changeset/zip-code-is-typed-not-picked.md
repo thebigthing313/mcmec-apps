@@ -1,5 +1,5 @@
 ---
-"@mcmec/schemas": minor
+"@mcmec/schemas": major
 "@mcmec/ui": patch
 "public": patch
 ---
@@ -21,3 +21,9 @@ as confirmation that the right one was typed.
 
 `TextField` forwards `inputMode` and `maxLength` so the field brings up a numeric keypad and
 stops at five digits.
+
+Breaking, for `@mcmec/schemas` only: the shared contact form schema holds `zip_code` (five
+digits) where it held `zip_code_id` (uuid), so `AdultMosquitoFormType`, `WaterManagementFormType`
+and `MosquitoFishFormType` all change shape, and `toContactPayload` takes the resolved row id as
+a required second argument. Every consumer is in this repo and moves with it. The submission
+payload the api parses is untouched, so nothing on the api or website-management side changes.
