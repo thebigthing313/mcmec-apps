@@ -28,7 +28,15 @@ export function CheckboxField({
 				name={field.name}
 				onChange={(checked) => field.handleChange(checked)}
 			/>
-			<Label className="text-md">{label}</Label>
+			{/*
+			 * htmlFor is the whole point of this label. Without it the Radix checkbox is a
+			 * button with no accessible name at all, and the visible text beside it does not
+			 * toggle the box when clicked. `label` is deliberately not handed to FormField
+			 * above — a horizontal field puts its label after the control, not before it.
+			 */}
+			<Label className="text-md" htmlFor={field.name}>
+				{label}
+			</Label>
 		</FormField>
 	);
 }

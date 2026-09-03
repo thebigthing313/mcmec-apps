@@ -154,11 +154,15 @@ function RouteComponent() {
 						</FieldDescription>
 						<form.AppField name="full_name">
 							{(field) => (
-								<field.TextField autoComplete="name" label="Full Name *" />
+								<field.TextField
+									autoComplete="name"
+									label="Full Name"
+									required
+								/>
 							)}
 						</form.AppField>
 						<form.AppField name="phone">
-							{(field) => <field.PhoneField label="Phone *" />}
+							{(field) => <field.PhoneField label="Phone" required />}
 						</form.AppField>
 
 						<form.AppField name="email">
@@ -178,7 +182,8 @@ function RouteComponent() {
 							{(field) => (
 								<field.TextField
 									autoComplete="street-address"
-									label="Address Line 1 *"
+									label="Address Line 1"
+									required
 								/>
 							)}
 						</form.AppField>
@@ -205,14 +210,26 @@ function RouteComponent() {
 											className="w-42"
 											emptyMessage="No zip code found."
 											items={zipCodeOptions}
-											label="Zip Code *"
+											label="Zip Code"
 											placeholder="Enter zip code..."
+											required
 										/>
 
+										{/*
+										 * Derived from the chosen zip code, not typed. It still needs a
+										 * real label association: without htmlFor/id this read-only input
+										 * reached assistive technology unnamed, like the zip combobox
+										 * beside it did.
+										 */}
 										<Field className="flex-1">
-											<FieldLabel>City</FieldLabel>
+											<FieldLabel htmlFor="city-display">City</FieldLabel>
 											<FieldContent>
-												<Input readOnly value={cityDisplay} />
+												<Input
+													id="city-display"
+													readOnly
+													tabIndex={-1}
+													value={cityDisplay}
+												/>
 											</FieldContent>
 										</Field>
 									</div>
