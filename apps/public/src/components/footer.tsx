@@ -12,9 +12,11 @@ export function Footer() {
 		COMPANY_INFO.fax,
 	).formatNational();
 	/*
-	 * No alpha on the foreground. The /70 that used to be here took Ink on Brackish Teal from
-	 * 5.22:1 down to 2.16:1 — the worst measured contrast on the public site, on the band that
-	 * carries the office address, phone number and the Transparency link, on every page.
+	 * No alpha on the foreground. The `/70` that used to be here thinned the old near-white
+	 * `--accent-foreground` to 2.17:1 on Brackish Teal — the worst measured contrast on the
+	 * public site, on the band that carries the office address, phone number and the
+	 * Transparency link, on every page. `--accent-foreground` is Ink now and the band reads
+	 * 5.22:1; re-adding an alpha here would drop it to 3.19:1 and fail AA again.
 	 */
 	return (
 		<footer className="w-full border-t bg-accent text-accent-foreground">
