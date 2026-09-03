@@ -36,11 +36,23 @@
 	--border: oklch(0.8 0.02 150);
 	--input: oklch(0.92 0.01 150);
 	--ring: oklch(0.5353 0.1357 153.5529);
+	/*
+	 * Series colours, dark enough to be data.
+	 *
+	 * These were pastels: measured against the card ground, chart-2 came out at 1.90:1,
+	 * chart-3 at 2.17:1, chart-4 at 1.49:1 and chart-5 at 1.85:1, all under the 3:1 that
+	 * WCAG 1.4.11 requires of a graphical object carrying meaning. A pastel works as a
+	 * large filled area and fails as a plotted line, which is what a chart palette is for.
+	 *
+	 * Each hue is kept and its lightness pulled down until it clears 3:1, with chroma
+	 * raised to stay vivid at the lower lightness. chart-1 already passed and is unchanged.
+	 * Ratios against the card ground: 3.68, 4.00, 3.86, 3.65, 3.46.
+	 */
 	--chart-1: oklch(0.6104 0.0767 299.7335);
-	--chart-2: oklch(0.7889 0.0802 359.9375);
-	--chart-3: oklch(0.7321 0.0749 169.867);
-	--chart-4: oklch(0.854 0.0882 76.8292);
-	--chart-5: oklch(0.7857 0.0645 258.0839);
+	--chart-2: oklch(0.6 0.13 359.9375);
+	--chart-3: oklch(0.58 0.095 169.867);
+	--chart-4: oklch(0.61 0.12 76.8292);
+	--chart-5: oklch(0.62 0.12 258.0839);
 	--sidebar: oklch(0.96 0.01 150);
 	--sidebar-foreground: oklch(0.2713 0.0023 145.5111);
 	--sidebar-primary: oklch(0.5353 0.1357 153.5529);
