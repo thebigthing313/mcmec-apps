@@ -38,11 +38,24 @@ export function Footer() {
 							</span>
 							<span>{COMPANY_INFO.addressLine1}</span>
 							<span>{COMPANY_INFO.addressLine2}</span>
-							<span className="mt-1 flex items-center justify-center gap-2 sm:justify-start">
-								<Phone size={14} /> {phoneNumber}
-							</span>
+							{/*
+							 * A tappable number. This was plain text, so the one fallback channel a
+							 * resident has when the site cannot answer their question required
+							 * copying digits off a phone screen by hand. The fax stays text — it is
+							 * on the record for the people who need it and nothing dials it.
+							 */}
+							<a
+								className="mt-1 flex items-center justify-center gap-2 hover:underline sm:justify-start"
+								href={`tel:${COMPANY_INFO.phone}`}
+							>
+								<Phone aria-hidden="true" size={14} />
+								<span className="sr-only">Telephone</span>
+								{phoneNumber}
+							</a>
 							<span className="flex items-center justify-center gap-2 sm:justify-start">
-								<Printer size={14} /> {faxNumber}
+								<Printer aria-hidden="true" size={14} />
+								<span className="sr-only">Fax</span>
+								{faxNumber}
 							</span>
 						</div>
 					</div>

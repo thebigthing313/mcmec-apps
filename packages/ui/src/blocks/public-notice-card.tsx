@@ -66,11 +66,24 @@ export function PublicNoticeCard({
 	return (
 		<Card className={className}>
 			<CardHeader className="border-b">
-				<CardTitle
-					className={`text-xl ${onNoticeClick ? "cursor-pointer hover:underline" : ""}`}
-					onClick={onNoticeClick}
-				>
-					{title}
+				{/*
+				 * The title looked clickable and was not reachable. It carried `cursor-pointer`,
+				 * a hover underline and an onClick on a plain div — no focus, no Enter, nothing
+				 * for a screen reader to announce as an action. A button gets all of that for
+				 * free and keeps the styling; where there is nothing to click it stays text.
+				 */}
+				<CardTitle className="text-xl">
+					{onNoticeClick ? (
+						<button
+							className="cursor-pointer text-left hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+							onClick={onNoticeClick}
+							type="button"
+						>
+							{title}
+						</button>
+					) : (
+						title
+					)}
 				</CardTitle>
 				{showShare && (
 					<CardAction>
@@ -83,9 +96,18 @@ export function PublicNoticeCard({
 						/>
 					</CardAction>
 				)}
-				<CardDescription className="text-sm">
-					Published on: {noticeDate ? formatDateShort(noticeDate) : "[unknown]"}
-				</CardDescription>
+				{/*
+				 * "Notice date", not "Published on". The value is the notice's own legal date
+				 * from `notice_date`, which is not the day it went up on the site, and
+				 * labelling it as a publication date misstates the record. The old fallback
+				 * printed a literal "[unknown]" to the public; a notice with no date now shows
+				 * nothing rather than a placeholder.
+				 */}
+				{noticeDate && (
+					<CardDescription className="text-sm">
+						Notice date: {formatDateShort(noticeDate)}
+					</CardDescription>
+				)}
 			</CardHeader>
 			<CardContent>
 				<div className="relative max-h-48 overflow-hidden">
@@ -106,7 +128,11 @@ export function PublicNoticeCard({
 			</CardContent>
 			<CardFooter className="flex items-center justify-between border-t pt-4">
 				<div className="text-muted-foreground text-sm">
-					<span className="font-medium">Type:</span> {type}
+					{type && (
+						<>
+							<span className="font-medium">Type:</span> {type}
+						</>
+					)}
 				</div>
 				<PublicNoticeBadge
 					isArchived={isArchived}
