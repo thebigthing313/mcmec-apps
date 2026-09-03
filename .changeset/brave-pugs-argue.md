@@ -19,4 +19,4 @@ The page rendered eight charts and nothing else. To assistive technology it was 
 
 The rainfall bars were also drawn at `opacity={0.3}`, putting them at **1.41:1** — the one element on the chart with a filled area was the hardest thing on it to see. They render at full opacity now.
 
-Note for whoever refreshes the design system: `DESIGN.md` still records the old `chart-2` through `chart-5` values.
+`DESIGN.md` is updated to match: the new values, why they moved, and the note that the current-year series is drawn in Commission Green rather than from the series palette.
