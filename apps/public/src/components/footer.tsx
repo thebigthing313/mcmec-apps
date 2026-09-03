@@ -74,7 +74,7 @@ export function Footer() {
 						</h3>
 						<nav className="flex flex-col gap-1 text-sm">
 							<Link className="hover:underline" to="/contact/service-request">
-								Public Requests
+								Request Service
 							</Link>
 							<Link
 								className="hover:underline"
@@ -128,7 +128,7 @@ export function Footer() {
 								E-mail Us
 							</a>
 							<Link className="hover:underline" to="/contact/contact-us">
-								Contact Form
+								General Inquiries
 							</Link>
 						</nav>
 					</div>

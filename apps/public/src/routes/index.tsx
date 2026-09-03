@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
 		meta: seo({
 			title: "MCMEC - Middlesex County Mosquito Extermination Commission",
 			description:
-				"Protecting Middlesex County, NJ from mosquitoes and mosquito-borne diseases since 1914. Submit a Public Request, view spray schedules, and access public notices.",
+				"Protecting Middlesex County, NJ from mosquitoes and mosquito-borne diseases since 1914. Submit a service request, view spray schedules, and access public notices.",
 			url: "/",
 		}),
 		links: [canonical("/")],
@@ -89,7 +89,7 @@ function RouteComponent() {
 							description="Report a mosquito problem or request mosquitofish."
 							href="/contact/service-request"
 							icon={<ConciergeBell className="size-6 text-primary" />}
-							title="Public Requests"
+							title="Request Service"
 						/>
 						<ActionCard
 							description="View current legal notices and announcements."

@@ -116,10 +116,19 @@ season replaces every record for the years in it.
 _Avoid_: mosquito data, surveillance data, trap data
 
 **Public Request**:
-Something a member of the public asks the Commission to do or answer, submitted anonymously
-from the public website. Four kinds: general inquiry, adult mosquito nuisance, water
-management, and mosquitofish.
-_Avoid_: service request, ticket, complaint, submission
+Something a member of the public asks the Commission to do or answer, made from the public
+website. Four kinds: general inquiry, adult mosquito nuisance, water management, and
+mosquitofish. Not anonymous — the intake forms require a name and a phone number so an
+inspector can make contact, and the site says so.
+_Avoid_: ticket, complaint, submission
+_Public label_: **Service Request** — pluralised where it names a destination in navigation
+("Service Requests" in the nav group and the contact sidebar), phrased as the action where it
+is a call to action ("Request Service" on the home-page button and the footer quick link), and
+spelled out in running prose where a sentence needs it ("Request for Service form"). The
+general-inquiry kind is **General Inquiries**. Public Request is the internal name for the
+concept and belongs in code, schemas, staff apps and these docs; it is deliberately not what a
+resident reads. The mismatch is a decision, not drift: do not "correct" the public site to
+match this entry.
 
 **Resolved**:
 Of a Public Request: dealt with. A Public Request is either New or Resolved — the Commission

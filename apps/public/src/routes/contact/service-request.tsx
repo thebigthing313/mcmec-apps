@@ -7,9 +7,9 @@ export const Route = createFileRoute("/contact/service-request")({
 	component: RouteComponent,
 	head: () => ({
 		meta: seo({
-			title: "Make a Public Request - MCMEC",
+			title: "Service Request - MCMEC",
 			description:
-				"Ask the Middlesex County Mosquito Extermination Commission to look at a mosquito problem, standing water, or a pond that could take mosquitofish.",
+				"Request mosquito control service from MCMEC. Report nuisance mosquitoes, standing water, or request mosquitofish.",
 			url: "/contact/service-request",
 		}),
 		links: [canonical("/contact/service-request")],
@@ -42,19 +42,19 @@ const options: Array<PublicRequestOption> = [
 			"Select this if you have a contained body of water on your property (e.g., an ornamental pond) and are interested in receiving mosquitofish. These fish are a natural and effective way to control mosquito larvae.",
 
 		link: "/contact/mosquitofish-requests",
-		title: "Mosquitofish",
+		title: "Interested in Mosquitofish",
 	},
 ];
 function RouteComponent() {
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4">
 			<article className="prose lg:prose-base max-w-none">
-				<h1>Make a Public Request</h1>
+				<h1>Service Request</h1>
 				<p>
-					Ask the Commission to look at something, and it goes straight to
-					staff. There is no account to create and no password to remember — we
-					ask for your name and phone number so an inspector can reach you if
-					they cannot find the problem. Choose what you need:
+					Residents can submit an official service request through this page.
+					The Commission will review and respond to your request as soon as
+					possible. Please note that we do not accept anonymous requests. You
+					can request the following services:
 				</p>
 				<div className="mt-8 flex flex-col gap-4">
 					{options.map((option) => (
