@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
@@ -51,17 +52,19 @@ function RouteComponent() {
 	};
 
 	return (
-		<DocumentForm
-			categories={items}
-			defaultValues={{
-				document_type_id: "",
-				fiscal_year: new Date().getFullYear(),
-				url: "",
-			}}
-			formLabel="Create Document"
-			mode="create"
-			onSubmit={handleSubmit}
-			submitLabel="Create as Draft"
-		/>
+		<div>
+			<PageHeader title="Create Document" />
+			<DocumentForm
+				categories={items}
+				defaultValues={{
+					document_type_id: "",
+					fiscal_year: new Date().getFullYear(),
+					url: "",
+				}}
+				mode="create"
+				onSubmit={handleSubmit}
+				submitLabel="Create as Draft"
+			/>
+		</div>
 	);
 }

@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -36,12 +37,14 @@ function RouteComponent() {
 	};
 
 	return (
-		<CategoryForm
-			classifies="a Notice"
-			defaultValues={{ description: "", name: "" }}
-			formLabel="Create Notice Category"
-			onSubmit={handleSubmit}
-			submitLabel="Create"
-		/>
+		<div>
+			<PageHeader title="Create Notice Category" />
+			<CategoryForm
+				classifies="a Notice"
+				defaultValues={{ description: "", name: "" }}
+				onSubmit={handleSubmit}
+				submitLabel="Create"
+			/>
+		</div>
 	);
 }

@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -38,11 +39,13 @@ function RouteComponent() {
 	};
 
 	return (
-		<JobPostingForm
-			defaultValues={{ content: {}, title: "" }}
-			formLabel="Create Job Posting"
-			onSubmit={handleSubmit}
-			submitLabel="Create"
-		/>
+		<div>
+			<PageHeader title="Create Job Posting" />
+			<JobPostingForm
+				defaultValues={{ content: {}, title: "" }}
+				onSubmit={handleSubmit}
+				submitLabel="Create"
+			/>
+		</div>
 	);
 }

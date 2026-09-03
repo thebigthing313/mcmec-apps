@@ -1,4 +1,5 @@
 import { COMPANY_INFO } from "@mcmec/lib/constants/company";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -45,18 +46,20 @@ function RouteComponent() {
 	defaultMeetingAt.setHours(12, 0, 0, 0);
 
 	return (
-		<MeetingsForm
-			defaultValues={{
-				location: COMPANY_INFO.address,
-				meeting_at: defaultMeetingAt,
-				minutes_url: null,
-				name: "",
-				notes: null,
-				notice_url: null,
-			}}
-			formLabel="Create Meeting"
-			onSubmit={handleSubmit}
-			submitLabel="Create"
-		/>
+		<div>
+			<PageHeader title="Create Meeting" />
+			<MeetingsForm
+				defaultValues={{
+					location: COMPANY_INFO.address,
+					meeting_at: defaultMeetingAt,
+					minutes_url: null,
+					name: "",
+					notes: null,
+					notice_url: null,
+				}}
+				onSubmit={handleSubmit}
+				submitLabel="Create"
+			/>
+		</div>
 	);
 }

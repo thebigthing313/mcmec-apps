@@ -2,6 +2,7 @@ import {
 	InsecticidesRowSchema,
 	type InsecticidesRowType,
 } from "@mcmec/schemas/db/insecticides";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { createFileRoute } from "@tanstack/react-router";
 import { InsecticidesForm } from "@/src/components/insecticides-form";
@@ -44,11 +45,13 @@ function RouteComponent() {
 	};
 
 	return (
-		<InsecticidesForm
-			defaultValues={defaultValues}
-			formLabel="Create Insecticide"
-			onSubmit={handleSubmit}
-			submitLabel="Create"
-		/>
+		<div>
+			<PageHeader title="Create Insecticide" />
+			<InsecticidesForm
+				defaultValues={defaultValues}
+				onSubmit={handleSubmit}
+				submitLabel="Create"
+			/>
+		</div>
 	);
 }

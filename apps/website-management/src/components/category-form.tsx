@@ -17,7 +17,11 @@ export interface CategoryFormValues {
 interface CategoryFormProps {
 	defaultValues: CategoryFormValues;
 	onSubmit: (value: CategoryFormValues) => void | Promise<void>;
-	formLabel: string;
+	/**
+	 * The fieldset's legend. Omit it when the screen already names the form in its `PageHeader`
+	 * `h1` — every category route does — so the same words are not announced twice.
+	 */
+	formLabel?: string;
 	submitLabel: string;
 	/** What this category classifies, for the description field's helper text. */
 	classifies: string;

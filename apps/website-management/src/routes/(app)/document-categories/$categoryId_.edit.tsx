@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { rowVersion, useFormSeed } from "@mcmec/ui/hooks/use-form-seed";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -56,13 +57,13 @@ function RouteComponent() {
 
 	return (
 		<div {...latchProps}>
+			<PageHeader title="Edit Document Category" />
 			<CategoryForm
 				classifies="a Document"
 				defaultValues={{
 					description: category.description ?? "",
 					name: category.name,
 				}}
-				formLabel="Edit Document Category"
 				key={seedKey}
 				onSubmit={handleSubmit}
 				submitLabel="Update"

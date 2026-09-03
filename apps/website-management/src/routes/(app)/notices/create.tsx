@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
@@ -52,18 +53,20 @@ function RouteComponent() {
 	};
 
 	return (
-		<NoticeForm
-			categories={items}
-			defaultValues={{
-				content: "",
-				notice_date: new Date(),
-				notice_type_id: "",
-				title: "",
-			}}
-			formLabel="Create Notice"
-			mode="create"
-			onSubmit={handleSubmit}
-			submitLabel="Create as Draft"
-		/>
+		<div>
+			<PageHeader title="Create Notice" />
+			<NoticeForm
+				categories={items}
+				defaultValues={{
+					content: "",
+					notice_date: new Date(),
+					notice_type_id: "",
+					title: "",
+				}}
+				mode="create"
+				onSubmit={handleSubmit}
+				submitLabel="Create as Draft"
+			/>
+		</div>
 	);
 }
