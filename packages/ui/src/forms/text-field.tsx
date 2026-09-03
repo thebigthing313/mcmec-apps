@@ -7,6 +7,8 @@ export function TextField({
 	showClear,
 	showPaste,
 	autoComplete,
+	inputMode,
+	maxLength,
 	// Forwarded, not fixed. The four hand-rolled logins this field replaced set `type="email"`
 	// themselves, and hardcoding `text` here would have quietly taken the email keyboard off
 	// every phone and the browser's own address validation off every one of them.
@@ -18,7 +20,13 @@ export function TextField({
 > &
 	Pick<
 		React.ComponentPropsWithRef<typeof TextInput>,
-		"showPaste" | "showClear" | "showValid" | "autoComplete" | "type"
+		| "showPaste"
+		| "showClear"
+		| "showValid"
+		| "autoComplete"
+		| "type"
+		| "inputMode"
+		| "maxLength"
 	>) {
 	const field = useFieldContext<string>();
 	return (
@@ -33,6 +41,8 @@ export function TextField({
 				aria-required={formFieldProps.required}
 				autoComplete={autoComplete}
 				id={field.name}
+				inputMode={inputMode}
+				maxLength={maxLength}
 				name={field.name}
 				onBlur={field.handleBlur}
 				onChange={(e) => field.handleChange(e.target.value)}
