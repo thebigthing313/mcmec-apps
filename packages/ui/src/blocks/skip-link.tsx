@@ -14,6 +14,13 @@
  * Hidden until focused, then drawn as a real control rather than a ghost: someone who tabs
  * into it needs to see where the focus went. The destination needs `tabIndex={-1}` for the
  * jump to land, since a container is not focusable on its own.
+ *
+ * It sits above `z-50` deliberately. Every sticky app header here is `z-50`, and the link is
+ * `absolute` at the top of the same document — equal z-index, so paint order falls to DOM
+ * order and the header, coming later, covers the link completely. The link still worked:
+ * focus reached it and Enter jumped to the target, so nothing was detectably broken except
+ * the one thing it exists to do, which is be seen. Keep this above whatever the tallest
+ * header is.
  */
 export function SkipLink({
 	targetId = "main-content",
@@ -24,7 +31,7 @@ export function SkipLink({
 }) {
 	return (
 		<a
-			className="absolute top-0 left-0 z-50 -translate-y-full rounded-b-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-transform focus:translate-y-0"
+			className="absolute top-0 left-0 z-[60] -translate-y-full rounded-b-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-transform focus:translate-y-0"
 			href={`#${targetId}`}
 		>
 			{children}
