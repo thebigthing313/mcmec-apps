@@ -14,6 +14,11 @@
  * A Cancelled Meeting keeps its badge and its place on both this list and the public site: the
  * record is the product, and the public has to be able to see that a meeting was called and then
  * called off.
+ *
+ * It sits in `@mcmec/lib` rather than in one application because Central's read-only Public
+ * Meetings register spells the same three states, and the drift this comment was written about
+ * is exactly what a second copy would reintroduce — one app away instead of one screen away.
+ * `job-posting-status.ts` is the precedent.
  */
 export function meetingStatus(meeting: {
 	isCancelled: boolean;

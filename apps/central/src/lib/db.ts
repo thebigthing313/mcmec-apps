@@ -25,4 +25,4 @@ export type Db = CentralCollections;
 
 // Re-export individual collections for direct import
 const db = getDb();
-export const { employees } = db;
+export const { employees, meetings, noticeTypes, notices } = db;

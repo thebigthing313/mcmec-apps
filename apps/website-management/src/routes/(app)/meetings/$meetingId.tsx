@@ -1,4 +1,5 @@
 import { formatDateTime } from "@mcmec/lib/functions/date-fns";
+import { meetingStatus } from "@mcmec/lib/functions/meeting-status";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
@@ -21,8 +22,6 @@ import {
 } from "lucide-react";
 import { intents, meetings } from "@/src/lib/db";
 import { runLifecycle } from "@/src/lib/lifecycle";
-
-import { meetingStatus } from "@/src/lib/meetings";
 
 export const Route = createFileRoute("/(app)/meetings/$meetingId")({
 	component: RouteComponent,

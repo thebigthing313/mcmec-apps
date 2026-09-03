@@ -66,6 +66,19 @@ function appUrl(subdomain: string, devPort: number): string {
 
 export const CENTRAL_URL = appUrl("central", 3444);
 
+/**
+ * The public website's origin.
+ *
+ * Not `appUrl`: the public site is the apex in production and `staging.` in staging, so it is
+ * the one origin whose host is not `<name><suffix>.` — the same reason `environmentSuffix`
+ * treats a bare `staging` label as the staging suffix. Staff screens that show what the public
+ * sees link out to the page itself with it, and a link into the wrong environment's public
+ * record is exactly the mistake `IS_DEPLOYED`/`SUFFIX` exist to prevent.
+ */
+export const PUBLIC_SITE_URL = IS_DEPLOYED
+	? `https://${SUFFIX ? "staging." : ""}${ROOT_DOMAIN}`
+	: "https://localhost:3448";
+
 export function getCentralLoginUrl(redirect?: string): string {
 	const base = `${CENTRAL_URL}/login`;
 	if (redirect) {
