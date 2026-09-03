@@ -4,7 +4,6 @@ import {
 	MeetingsTable,
 	type MeetingTableRowType,
 } from "@mcmec/ui/blocks/meetings-table";
-import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { meetingsQueryOptions } from "../../lib/queries";
@@ -27,7 +26,6 @@ export const Route = createFileRoute("/notices/meetings")({
 });
 
 function RouteComponent() {
-	const isMobile = useIsMobile();
 	const { data: meetings } = useSuspenseQuery(meetingsQueryOptions());
 
 	// Windowed on the meeting's own date, never on whether its minutes are posted — a
@@ -66,11 +64,19 @@ function RouteComponent() {
 				</p>
 			</article>
 
-			{isMobile ? (
+			{/*
+			 * Chosen by CSS, not by a hook. `useIsMobile` returns false on the server and
+			 * during the first client render, then flips after an effect — so on a phone the
+			 * server sent the table and the browser swapped in the list, which is a hydration
+			 * mismatch and a visible jump on the page carrying the OPMA notice. The navbar
+			 * already picks its two layouts this way; both render, one is shown.
+			 */}
+			<div className="md:hidden">
 				<MeetingsMobileList data={mappedData} linkToDetail={false} />
-			) : (
+			</div>
+			<div className="hidden md:block">
 				<MeetingsTable data={mappedData} linkToDetail={false} />
-			)}
+			</div>
 		</div>
 	);
 }

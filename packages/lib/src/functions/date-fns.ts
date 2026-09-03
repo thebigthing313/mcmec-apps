@@ -1,4 +1,12 @@
 /**
+ * Where the Commission sits, and therefore when its meetings happen.
+ *
+ * Named rather than inlined because it is a fact about the agency, not a formatting option:
+ * every meeting on the public record is called in Edison, New Jersey.
+ */
+export const COMMISSION_TIME_ZONE = "America/New_York";
+
+/**
  * Timezone-safe date utility functions
  *
  * These functions help avoid common timezone-related bugs when working with dates.
@@ -272,6 +280,19 @@ export function isOnOrAfterDay(
  * Format a date with time as a localized date and time string with timezone.
  * Displays full date, time, and timezone abbreviation.
  *
+ * Pinned to the Commission's own timezone, for two reasons.
+ *
+ * It used to pin none, which meant it rendered in whatever zone the runtime happened to be
+ * in. On `apps/public` that is a real defect rather than a cosmetic one: the SSR server runs
+ * in UTC, so the server-rendered HTML showed a 12:00 PM meeting as 4:00 PM (UTC) and the
+ * browser then re-rendered it as 12:00 PM (EDT) — a React #418 hydration mismatch, and, for
+ * a crawler or a reader before hydration, a meeting time wrong by four or five hours on the
+ * page that discharges the Commission's 48-hour OPMA notice.
+ *
+ * And a meeting happens where it happens. A resident reading this page from another state
+ * needs the time the doors actually open in Edison, not that instant translated into their
+ * own zone, which is what an unpinned formatter would give them.
+ *
  * @param date - The date to format (can be Date, string, or null/undefined)
  * @param locale - The locale to use for formatting (defaults to 'en-US')
  * @returns Formatted date-time string or empty string if date is invalid
@@ -297,6 +318,7 @@ export function formatDateTime(
 	const dateStr = dateObj.toLocaleDateString(locale, {
 		day: "numeric",
 		month: "long",
+		timeZone: COMMISSION_TIME_ZONE,
 		weekday: "long",
 		year: "numeric",
 	});
@@ -305,10 +327,12 @@ export function formatDateTime(
 		hour: "numeric",
 		hour12: true,
 		minute: "2-digit",
+		timeZone: COMMISSION_TIME_ZONE,
 	});
 
 	const timeZoneStr = dateObj
 		.toLocaleTimeString(locale, {
+			timeZone: COMMISSION_TIME_ZONE,
 			timeZoneName: "short",
 		})
 		.split(" ")

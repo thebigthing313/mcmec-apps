@@ -51,7 +51,10 @@ function RouteComponent() {
 			isPublished: notice.is_published,
 			noticeDate: notice.notice_date,
 			title: notice.title,
-			type: noticeTypesMap.get(notice.notice_type_id) || "Unknown",
+			// Empty, not "Unknown". A legal notice whose category has not resolved is a
+			// gap in our lookup, not a notice of unknown kind, and the card omits the row
+			// rather than publishing that word about a statutory posting.
+			type: noticeTypesMap.get(notice.notice_type_id) ?? "",
 		}));
 
 	return (

@@ -23,16 +23,22 @@ interface SprayScheduleCardProps {
 	mapUrl: string | null;
 }
 
+/*
+ * The status is the word, not the colour.
+ *
+ * Cancelled used to take the destructive red. Red is the system's refusal colour and it was
+ * being asked to carry urgency here, which the design system rules out — and it read as bad
+ * news, when a cancelled spray is neutral or welcome for most of the people looking at it.
+ * Cancelled and delayed both take the quiet outline variant now, and every status is told
+ * apart by what it says. Scheduled keeps the filled green — it is the one the page exists
+ * to announce.
+ */
 function getStatusBadgeVariant(
 	status: string,
-): "default" | "secondary" | "outline" | "destructive" {
+): "default" | "secondary" | "outline" {
 	switch (status) {
 		case "scheduled":
 			return "default";
-		case "delayed":
-			return "outline";
-		case "cancelled":
-			return "destructive";
 		case "completed":
 			return "secondary";
 		default:
