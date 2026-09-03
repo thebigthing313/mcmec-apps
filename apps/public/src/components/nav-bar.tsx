@@ -57,7 +57,7 @@ const menuItems: MenuItem[] = [
 				description:
 					"Report a mosquito problem, water management issue, or request mosquitofish here.",
 				linkProps: { to: "/contact/service-request" },
-				title: "Service Requests",
+				title: "Public Requests",
 			},
 			{
 				description: "For general inquiries and support.",

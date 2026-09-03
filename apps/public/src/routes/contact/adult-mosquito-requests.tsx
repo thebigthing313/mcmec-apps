@@ -157,9 +157,9 @@ function RouteComponent() {
 					<FieldSet>
 						<FieldLegend>Contact Information</FieldLegend>
 						<FieldDescription>
-							Please provide your contact details so we can reach you if needed.
-							Please note that the Commission does not accept anonymous
-							requests.
+							We ask for your name and phone number so an inspector can reach
+							you if they cannot find the problem. There is no account to create
+							and no password to remember.
 						</FieldDescription>
 						<form.AppField name="full_name">
 							{(field) => (

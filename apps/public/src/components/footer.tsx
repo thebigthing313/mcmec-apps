@@ -54,7 +54,7 @@ export function Footer() {
 						</h3>
 						<nav className="flex flex-col gap-1 text-sm">
 							<Link className="hover:underline" to="/contact/service-request">
-								Request Service
+								Public Requests
 							</Link>
 							<Link
 								className="hover:underline"
