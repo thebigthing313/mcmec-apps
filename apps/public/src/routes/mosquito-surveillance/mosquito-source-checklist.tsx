@@ -159,7 +159,7 @@ function RouteComponent() {
 			</p>
 			<p>
 				Still have a mosquito problem? You can make a{" "}
-				<Link to="/contact/service-request">Public Request</Link>.
+				<Link to="/contact/service-request">service request</Link>.
 			</p>
 		</article>
 	);
