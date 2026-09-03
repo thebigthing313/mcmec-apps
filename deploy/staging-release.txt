@@ -7,5 +7,6 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-03T16:50:44.352Z
-commit: 9b0ea3c feat(central): a Commission group for reading the public record (#207)
+released: 2026-09-03T16:52:42.272Z
+commit: 104f3f8 chore: stage 9b0ea3c
+note: wake-then-stage: the four sleeping services skipped the first marker
