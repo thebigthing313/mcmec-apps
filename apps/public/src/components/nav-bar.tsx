@@ -165,8 +165,13 @@ export function Navbar() {
 	);
 }
 
+// Hover and focus darken the green rather than lightening it. The tint here used to be
+// `accent/40`, a pale teal laid over Commission Green, which lifted the ground and took the
+// white label from 4.62:1 at rest to 3.96:1 — so pointing at a nav link, or tabbing to it,
+// was the one interaction on the page that pushed it under AA. Ink at 15% moves the same
+// distance visually in the other direction and reads 5.56:1.
 const navLinkClass =
-	"inline-flex h-10 items-center justify-center rounded-md px-3 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-accent/40 focus:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50";
+	"inline-flex h-10 items-center justify-center rounded-md px-3 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-foreground/15 focus:bg-foreground/15 focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 function WebNavBar() {
 	return (
