@@ -1,17 +1,23 @@
 import { formatDateTime } from "@mcmec/lib/functions/date-fns";
+import { meetingStatus } from "@mcmec/lib/functions/meeting-status";
 import {
 	RecordIndex,
 	type RecordIndexColumn,
+	type RecordIndexSearch,
 	validateRecordIndexSearch,
 } from "@mcmec/ui/blocks/record-index";
-import type { RowAction } from "@mcmec/ui/blocks/row-actions-menu";
 import { Badge } from "@mcmec/ui/components/badge";
-import { Button } from "@mcmec/ui/components/button";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@mcmec/ui/components/select";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CalendarOff, CalendarPlus, Plus, Users } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { meetings } from "@/src/lib/db";
-import { runLifecycle } from "@/src/lib/lifecycle";
 
 type MeetingRow = {
 	id: string;
@@ -23,16 +29,21 @@ type MeetingRow = {
 	noticeUrl: string | null;
 };
 
-import { meetingStatus } from "@mcmec/lib/functions/meeting-status";
+const ALL_YEARS = "all";
+
+type MeetingsSearch = Partial<RecordIndexSearch> & { year?: string };
 
 export const Route = createFileRoute("/(app)/meetings/")({
 	component: RouteComponent,
 	loader: () => {
-		// "Meetings", matching the rail. The crumb used to read "Meetings Index", which is a
-		// developer's word for a route, not the Commission's word for the thing.
-		return { crumb: "Meetings" };
+		return { crumb: "Public Meetings" };
 	},
-	validateSearch: validateRecordIndexSearch,
+	validateSearch: (raw: Record<string, unknown>): MeetingsSearch =>
+		validateRecordIndexSearch(raw, (r) =>
+			typeof r.year === "string" && /^(all|\d{4})$/.test(r.year)
+				? { year: r.year }
+				: {},
+		),
 });
 
 function RouteComponent() {
@@ -51,6 +62,31 @@ function RouteComponent() {
 		name: meeting.name,
 		noticeUrl: meeting.notice_url,
 	}));
+
+	const years = [
+		...new Set(rows.map((row) => row.meetingAt.getFullYear())),
+	].sort((a, b) => b - a);
+
+	// The register holds the whole record — the public page's own windowing is a presentation
+	// choice made for residents, not a limit on what staff may look up — so a year is how it is
+	// read, one season at a time.
+	//
+	// The default is the most recent year that HAS meetings rather than the current calendar
+	// year. In practice they are the same value; the difference is January, when a fixed
+	// `getFullYear()` would open this screen on an empty table and make a full record look like
+	// a missing one.
+	const defaultYear = years[0] ? `${years[0]}` : ALL_YEARS;
+	const year = search.year ?? defaultYear;
+	const visible =
+		year === ALL_YEARS
+			? rows
+			: rows.filter((row) => `${row.meetingAt.getFullYear()}` === year);
+
+	const setYear = (next: string) =>
+		navigate({
+			search: { ...search, page: 1, year: next },
+			to: "/meetings",
+		});
 
 	const columns: RecordIndexColumn<MeetingRow>[] = [
 		{
@@ -87,6 +123,9 @@ function RouteComponent() {
 			sortValue: (row) => meetingStatus(row).label,
 		},
 		{
+			// The two documents the Open Public Meetings Act is actually about. They are the
+			// reason an employee opens this screen at all, so they are on the row rather than
+			// one click further in — and they are the same files the public downloads.
 			cell: (row) => {
 				const links = [
 					{ label: "Minutes", url: row.minutesUrl },
@@ -99,7 +138,7 @@ function RouteComponent() {
 					<div className="flex flex-wrap gap-2">
 						{links.map((link) => (
 							<a
-								className="text-primary text-sm hover:underline"
+								className="rounded-sm text-primary text-sm hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 								href={link.url as string}
 								key={link.label}
 								rel="noopener noreferrer"
@@ -116,68 +155,38 @@ function RouteComponent() {
 		},
 	];
 
-	// A shortcut, never the only way in: cancelling is also on the detail view and in the edit
-	// form (ADR 0001). Delete is not here and never can be — it lives in the danger zone on the
-	// detail page. A cancel from a row carries no notes with it, so a meeting that has none is
-	// refused here with the handler's own sentence, which is the same answer the detail view
-	// gives.
-	const rowActions = (meeting: MeetingRow): RowAction[] => [
-		meeting.isCancelled
-			? {
-					icon: <CalendarPlus />,
-					label: "Reinstate Meeting",
-					onAct: () =>
-						runLifecycle(meetings, meeting.id, {
-							apply: (draft) => {
-								draft.is_cancelled = false;
-							},
-							command: "website.uncancelMeeting",
-							failure: "Failed to reinstate meeting.",
-							success: `"${meeting.name}" is back on the public calendar.`,
-						}),
-				}
-			: {
-					// A cancellation is published to the public calendar the moment it lands, and
-					// the Open Public Meetings Act is what makes that visible record matter.
-					confirm: {
-						actionLabel: "Cancel Meeting",
-						description: `"${meeting.name}" will show as Cancelled on the public website. The meeting stays on the record — it is not removed.`,
-						title: "Cancel this meeting publicly?",
-					},
-					icon: <CalendarOff />,
-					label: "Cancel Meeting",
-					onAct: () =>
-						runLifecycle(meetings, meeting.id, {
-							apply: (draft) => {
-								draft.is_cancelled = true;
-							},
-							command: "website.cancelMeeting",
-							failure: "Failed to cancel meeting.",
-							success: `"${meeting.name}" now shows as Cancelled on the public site.`,
-						}),
-				},
-	];
-
 	return (
 		<RecordIndex
-			actions={
-				<Button onClick={() => navigate({ to: "/meetings/create" })}>
-					<Plus />
-					Create Meeting
-				</Button>
-			}
 			columns={columns}
 			defaultSort={{ dir: "desc", id: "meetingAt" }}
-			description="Commission meetings, their agendas and minutes, and any that were cancelled."
+			description="The Commission's public meeting calendar, with each meeting's 48-hour notice and minutes."
 			emptyState={{
-				description:
-					"Meetings published here appear on the public calendar with their agendas and minutes.",
-				icon: Users,
-				title: "No meetings yet",
+				description: "The Commission's public calendar has no meetings on it.",
+				icon: CalendarDays,
+				title: "No meetings on the calendar",
 			}}
+			filters={
+				<Select onValueChange={setYear} value={year}>
+					<SelectTrigger aria-label="Filter by year" className="w-36">
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value={ALL_YEARS}>All years</SelectItem>
+						{years.map((value) => (
+							<SelectItem key={value} value={`${value}`}>
+								{value}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			}
+			filtersActive={year !== ALL_YEARS}
 			getRowKey={(row) => row.id}
 			getRowLabel={(row) => `${row.name}, ${formatDateTime(row.meetingAt)}`}
 			getSearchText={(row) => `${row.name} ${row.location}`}
+			// Clearing widens to the whole record rather than back to the default year: "Clear"
+			// that re-narrows would be the one control on the screen that does not do what it says.
+			onClearFilters={() => setYear(ALL_YEARS)}
 			onSearchChange={(next) =>
 				navigate({
 					search: { ...search, ...next },
@@ -194,12 +203,16 @@ function RouteComponent() {
 					{children}
 				</Link>
 			)}
-			rowActions={rowActions}
-			rows={rows}
+			rows={visible}
 			search={search}
 			searchPlaceholder="Search meetings"
+			// Loading and empty are different screens. This register is a legal record, and
+			// "there are no meetings" must never be said by a table that is still syncing.
 			state={collection.isReady() ? "ready" : "loading"}
-			title="Meetings"
+			title="Public Meetings"
+			// The whole calendar, so the year filter's count reads "13 of 137" rather than
+			// "13 of 13" — the rows above have already been narrowed to the selected year.
+			totalRows={rows.length}
 		/>
 	);
 }

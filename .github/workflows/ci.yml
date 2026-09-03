@@ -36,8 +36,8 @@ jobs:
         run: pnpm build
         env:
           # Placeholders — the apps only need these to be present at build time.
-          VITE_API_URL: http://localhost:3005
-          API_URL: http://localhost:3005
+          VITE_API_URL: http://localhost:3543
+          API_URL: http://localhost:3543
           VITE_CLOUDFLARE_TURNSTILE_SITEKEY: placeholder
 
   test:

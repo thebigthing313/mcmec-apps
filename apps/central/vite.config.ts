@@ -13,7 +13,7 @@ export default defineConfig({
 		viteReact(),
 	],
 	server: {
-		port: 3001,
+		port: 3544,
 		strictPort: true,
 		// Browse via https://localhost:3444 (Caddy) — see the repo-root Caddyfile.
 		hmr: { clientPort: 3444, protocol: "wss" },

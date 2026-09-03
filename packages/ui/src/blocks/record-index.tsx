@@ -228,6 +228,17 @@ export interface RecordIndexProps<TRow> {
 	filtersActive?: boolean;
 	/** Clears the caller's own filters. Required whenever `filtersActive` can be true. */
 	onClearFilters?: () => void;
+	/**
+	 * The size of the register BEFORE the caller's own filters narrowed it — the denominator in
+	 * "13 of 137".
+	 *
+	 * Needed because a `filters` control is applied by the route, not here: the caller hands over
+	 * rows it has already narrowed, so `rows.length` is the numerator a second time and the count
+	 * reads "13 of 13", which looks like an off-by-one rather than a filtered list. Optional, and
+	 * defaulting to `rows.length`, so a screen whose only narrowing is the search field — where
+	 * the block does own both numbers — passes nothing.
+	 */
+	totalRows?: number;
 
 	emptyState: {
 		icon: ComponentType<{ className?: string }>;
@@ -257,6 +268,7 @@ export function RecordIndex<TRow>({
 	searchPlaceholder = "Search",
 	state,
 	title,
+	totalRows,
 }: RecordIndexProps<TRow>) {
 	const search = parseRecordIndexSearch(rawSearch, defaultSort);
 	const identityColumns = columns.filter((c) => c.identity);
@@ -344,7 +356,7 @@ export function RecordIndex<TRow>({
 							className="ml-auto text-muted-foreground text-sm"
 						>
 							{sorted.length}
-							{narrowing ? ` of ${rows.length}` : ""}
+							{narrowing ? ` of ${totalRows ?? rows.length}` : ""}
 						</p>
 					) : null}
 				</div>

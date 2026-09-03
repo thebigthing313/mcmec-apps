@@ -13,7 +13,7 @@ export default defineConfig({
 		viteReact(),
 	],
 	server: {
-		port: 3006,
+		port: 3547,
 		strictPort: true,
 		// Browse via https://localhost:3447 (Caddy). The HMR socket has to point at that
 		// origin, not this port, or the client tries ws:// from an https page and is blocked

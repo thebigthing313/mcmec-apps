@@ -7,9 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 MCMEC (Middlesex County Mosquito Extermination Commission) monorepo with three web apps and six shared packages, managed with **pnpm workspaces** and **Turborepo**.
 
 ### Apps
-- **central** (`apps/central`) — Admin management interface (Vite SPA, port 3001)
-- **website-management** (`apps/website-management`) — Public-website content management: notices, meetings, insecticides, documents, spray schedules, service requests (Vite SPA, port 3006)
-- **public** (`apps/public`) — Public-facing website with SSR (TanStack Start + Nitro, port 3007)
+- **central** (`apps/central`) — Admin management interface (Vite SPA, port 3544)
+- **website-management** (`apps/website-management`) — Public-website content management: notices, meetings, insecticides, documents, spray schedules, service requests (Vite SPA, port 3547)
+- **public** (`apps/public`) — Public-facing website with SSR (TanStack Start + Nitro, port 3548)
 
 ### Dev ports
 
@@ -18,12 +18,16 @@ and shouldn't be opened directly.
 
 | Browse (https) | Upstream (http) | App |
 | -------------- | --------------- | --- |
-| 3443 | 3005 | api (Hono) |
-| 3444 | 3001 | central |
-| 3445 | 3003 | hr |
-| 3446 | 3004 | admin |
-| 3447 | 3006 | website-management |
-| 3448 | 3007 | public |
+| 3443 | 3543 | api (Hono) |
+| 3444 | 3544 | central |
+| 3445 | 3545 | hr |
+| 3446 | 3546 | admin |
+| 3447 | 3547 | website-management |
+| 3448 | 3548 | public |
+
+**Upstream = browse port + 100.** Every MCMEC port is one of these twelve plus 2020, and the
+two columns carry the same last two digits, so a URL in the address bar names the port behind
+it without a lookup.
 
 Caddy's admin endpoint is on 2020. Start it with `caddy trust` (once) then `caddy run` from
 the repo root.
@@ -44,12 +48,25 @@ Each app's `server.hmr.clientPort` points at its https port so the HMR socket is
 as mixed content. `apps/public`'s server-side `API_URL` stays on plain http — that's Node
 calling localhost, not the browser.
 
-**Do not use these ports** — another project runs concurrently on this machine and binds
-them: **3000, 3002, 5173, 5174, 5175, 5176, 80, 2019**. Every Vite config here sets
-`strictPort: true`, so a collision fails loudly instead of silently landing on a neighbouring
-port (Windows will happily let two processes both "listen" on the same port, which makes the
-origin ambiguous rather than erroring). Our Caddy sets `admin localhost:2020` and
-`auto_https disable_redirects` for the same reason — the defaults would take 2019 and 80.
+**Do not use these ports** — a concurrent project on this machine (`F:/simmer-mosquito`) binds
+them: **3000** (its Hono server), **3001** (Docker → ElectricSQL), **3002** (its Caddy),
+**4173** (`vite preview`), **5173–5176** (its Vite servers and their Caddy fronts), **55432**
+(Docker → Postgres), and **80** / **2019** (Caddy defaults). Two of those — 3001 and 55432 —
+come up with `docker compose up` and stay up, so they are held even when nobody is running that
+project's dev servers.
+
+That list is why our upstreams are in the 35xx block and not, as they were until recently, in
+3001–3007. When that project mapped Electric to host 3001 it took `central`'s port, and the
+symptom was not a bind error: Docker's relay accepts the connection, so `pnpm dev` reported
+nothing and Caddy served a bare `Not found` on `https://localhost:3444`. **The lesson is about
+adjacency, not about 3001** — pick blocks that are ours end to end rather than ports that merely
+happen to be free today.
+
+Every Vite config here sets `strictPort: true`, so a collision we *can* detect fails loudly
+instead of silently landing on a neighbouring port (Windows will happily let two processes both
+"listen" on the same port, which makes the origin ambiguous rather than erroring). Our Caddy
+sets `admin localhost:2020` and `auto_https disable_redirects` for the same reason — the
+defaults would take 2019 and 80.
 
 ### Packages
 - **ui** (`packages/ui`) — Shared component library (Radix UI + Tailwind CSS v4 + shadcn pattern)
