@@ -11,8 +11,13 @@ export function Footer() {
 	const faxNumber = parsePhoneNumberWithError(
 		COMPANY_INFO.fax,
 	).formatNational();
+	/*
+	 * No alpha on the foreground. The /70 that used to be here took Ink on Brackish Teal from
+	 * 5.22:1 down to 2.16:1 — the worst measured contrast on the public site, on the band that
+	 * carries the office address, phone number and the Transparency link, on every page.
+	 */
 	return (
-		<footer className="w-full border-t bg-accent text-accent-foreground/70">
+		<footer className="w-full border-t bg-accent text-accent-foreground">
 			<div className="mx-auto max-w-7xl px-6 py-10 md:px-12">
 				<div className="grid grid-cols-1 gap-8 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-4">
 					{/* Agency Info */}
