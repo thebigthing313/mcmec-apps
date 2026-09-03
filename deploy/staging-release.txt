@@ -7,6 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-03T16:52:42.272Z
-commit: 104f3f8 chore: stage 9b0ea3c
-note: wake-then-stage: the four sleeping services skipped the first marker
+released: 2026-09-03T20:29:51.417Z
+commit: 4515e79 fix(public): sweep the small defects, one of which was not small (#213)
