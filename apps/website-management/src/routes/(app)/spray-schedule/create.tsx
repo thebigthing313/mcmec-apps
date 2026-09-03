@@ -1,3 +1,4 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
@@ -78,22 +79,24 @@ function RouteComponent() {
 	};
 
 	return (
-		<SprayScheduleForm
-			defaultValues={{
-				area_description: "",
-				end_time: "23:00",
-				insecticide_id: "",
-				map_url: null,
-				mission_date: new Date(),
-				municipality_ids: [],
-				rain_date: null,
-				start_time: "19:00",
-			}}
-			formLabel="Create Spray Mission"
-			insecticideOptions={insecticideData}
-			municipalityOptions={municipalityData}
-			onSubmit={handleSubmit}
-			submitLabel="Create"
-		/>
+		<div>
+			<PageHeader title="Create Spray Mission" />
+			<SprayScheduleForm
+				defaultValues={{
+					area_description: "",
+					end_time: "23:00",
+					insecticide_id: "",
+					map_url: null,
+					mission_date: new Date(),
+					municipality_ids: [],
+					rain_date: null,
+					start_time: "19:00",
+				}}
+				insecticideOptions={insecticideData}
+				municipalityOptions={municipalityData}
+				onSubmit={handleSubmit}
+				submitLabel="Create"
+			/>
+		</div>
 	);
 }
