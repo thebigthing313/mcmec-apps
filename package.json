@@ -20,7 +20,7 @@
 	"keywords": [],
 	"license": "ISC",
 	"lint-staged": {
-		"*.{js,ts,jsx,tsx,json,css}": [
+		"*.{js,mjs,cjs,ts,jsx,tsx,json,css}": [
 			"biome check --write --no-errors-on-unmatched"
 		]
 	},

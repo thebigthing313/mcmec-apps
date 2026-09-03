@@ -102,8 +102,14 @@ writeFileSync(
 );
 
 git("add", MARKER);
-git("commit", "-m", note ? `chore: stage ${sha} — ${note}` : `chore: stage ${sha}`);
+git(
+	"commit",
+	"-m",
+	note ? `chore: stage ${sha} — ${note}` : `chore: stage ${sha}`,
+);
 git("push", "origin", BRANCH);
 
 console.log(`\n✓ Pushed. Staging is rebuilding from ${sha}.`);
-console.log("  https://railway.com/project/67759d5d-6819-4544-ae68-c24b9ca73973");
+console.log(
+	"  https://railway.com/project/67759d5d-6819-4544-ae68-c24b9ca73973",
+);
