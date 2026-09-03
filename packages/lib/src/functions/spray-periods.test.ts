@@ -9,8 +9,9 @@ import {
 	sprayPeriodOf,
 } from "./spray-periods";
 
-// Local, not UTC: the implementation places missions on the reader's own clock, and a
-// UTC literal would put these tests in a different day than the code under test.
+// A mission date is a calendar day, and the module places it on the reader's own clock,
+// so these read as local midnight. The real column arrives as UTC midnight instead —
+// that shape has its own case below, and both must land on the same calendar day.
 const day = (year: number, month: number, date: number) =>
 	new Date(year, month - 1, date);
 
@@ -56,6 +57,20 @@ describe("missionEndsAt", () => {
 		expect(missionEndsAt(mission(day(2026, 9, 3), "19:00", ""))).toEqual(
 			new Date(2026, 8, 3, 23, 59, 59, 999),
 		);
+	});
+
+	it("keeps the calendar day a UTC-midnight date column carries", () => {
+		// The shape the query layer actually hands us: `mission_date` is a date-only
+		// column, so `2026-09-04` arrives as UTC midnight. Read with local getters that
+		// is the evening of the 3rd anywhere west of Greenwich, which would file a
+		// mission under Past all through the day its own card names.
+		const end = missionEndsAt({
+			endTime: "23:00:00",
+			missionDate: new Date("2026-09-04T00:00:00.000Z"),
+			startTime: "19:00:00",
+		});
+
+		expect(end).toEqual(new Date(2026, 8, 4, 23, 0, 0, 0));
 	});
 });
 

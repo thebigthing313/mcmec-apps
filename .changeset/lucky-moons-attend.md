@@ -18,4 +18,4 @@ Mission `status` is not consulted. It is an authored lifecycle value staff advan
 
 **Current legal notices were paginated and clipped.** The register showed five notices per page and cut each one behind a fade at 192px, on the page whose own opening paragraph designates it the Commission's primary method of publication under P.L. 2025 c.72. Current notices now render in full on one page. `/notices/archive` keeps pagination and clipping — it is a browse surface that grows without bound, not the statutory register — via new `paginate` and `truncate` props.
 
-Also fixes the React #419 error on `/notices`: the share URL read `window.location.origin` during render, which does not exist during SSR and bailed the route's Suspense boundary out to a client re-render. The origin is now read when the reader asks to share.
+Also fixes the React #419 error on `/notices`: the share URL read `window.location.origin` unguarded, which does not exist during SSR and bailed the route's Suspense boundary out to a client re-render. The origin is now read only where there is one.

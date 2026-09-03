@@ -106,7 +106,7 @@ export function PublicNoticeCard({
 				) : (
 					<TiptapRenderer content={content} />
 				)}
-				{onNoticeClick && truncate && (
+				{onNoticeClick && (
 					<div className="flex w-full justify-center">
 						<Button
 							className="mt-2 h-auto p-0 font-normal"

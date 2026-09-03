@@ -21,6 +21,8 @@
  * a deliberate act into a computed field.
  */
 
+import { toLocalDateOnly } from "./date-fns";
+
 /** The clock facts a mission needs to be placed in time. `HH:MM` or `HH:MM:SS`. */
 export interface SprayMissionTimes {
 	missionDate: Date;
@@ -45,6 +47,20 @@ function minutesSinceMidnight(time: string): number | null {
 }
 
 /**
+ * The mission's own calendar day, positioned on the reader's clock.
+ *
+ * `mission_date` is a date-only column, read as UTC midnight and displayed with
+ * `timeZone: "UTC"` (see `formatDateShort`). Applying local hours to that instant lands
+ * a mission on the previous day everywhere west of Greenwich — New Jersey every day of
+ * the year — so a mission dated the 4th would sit under Past all through the 3rd while
+ * its own card read September 04. `toLocalDateOnly` is the convention for crossing that
+ * boundary: same calendar day, local midnight, ready for a wall-clock time.
+ */
+function missionDay(missionDate: Date): Date {
+	return toLocalDateOnly(missionDate) ?? new Date(missionDate);
+}
+
+/**
  * The moment a mission finishes.
  *
  * An end earlier in the clock than its start means the mission crossed midnight, so it
@@ -60,7 +76,7 @@ export function missionEndsAt({
 	startTime,
 	endTime,
 }: SprayMissionTimes): Date {
-	const end = new Date(missionDate);
+	const end = missionDay(missionDate);
 	const endMinutes = minutesSinceMidnight(endTime);
 
 	if (endMinutes === null) {
@@ -96,7 +112,8 @@ export function sprayPeriodOf(
  *
  * Upcoming runs soonest first, because the next mission is the one being asked about.
  * Past runs most recent first, because a reader looking back starts from what just
- * happened. Ties break on start time so two missions on one date keep a stable order.
+ * happened. The key is the mission's start, so two missions sharing a date order by the
+ * hour the trucks roll rather than by whichever the server listed first.
  */
 export function partitionSprayMissions<T>(
 	items: readonly T[],
@@ -116,7 +133,7 @@ export function partitionSprayMissions<T>(
 
 	const startsAt = (item: T) => {
 		const times = getTimes(item);
-		const date = new Date(times.missionDate);
+		const date = missionDay(times.missionDate);
 		const minutes = minutesSinceMidnight(times.startTime) ?? 0;
 		date.setHours(Math.floor(minutes / 60), minutes % 60, 0, 0);
 		return date.getTime();

@@ -193,9 +193,10 @@ export function NoticeFeed({ notices, paginate = true }: NoticeFeedProps) {
 			{/* Notices */}
 			<div className="flex flex-col gap-2">
 				{paginatedNotices.map((notice) => {
-					// Read the origin when the reader asks to share, not while rendering:
-					// `window` does not exist during SSR, and touching it here threw inside
-					// the route's Suspense boundary (React #419) and forced a client re-render.
+					// `window` does not exist during SSR, and reading it unguarded threw
+					// inside the route's Suspense boundary (React #419), bailing the whole
+					// route out to a client re-render. The share dialog only mounts on the
+					// client, so the empty origin here never reaches server HTML.
 					const getShareUrl = () =>
 						`${typeof window === "undefined" ? "" : window.location.origin}/notices/${notice.id}`;
 					return (

@@ -102,7 +102,10 @@ function RouteComponent() {
 
 			<SprayMissionGroup
 				emptyLabel={
-					isFiltered
+					// "No matches" only when the filters really did match nothing. With
+					// past missions showing below, that line would be contradicted by the
+					// cards under it; what is true then is that none of them is still to come.
+					isFiltered && past.length === 0
 						? NO_MISSIONS_MATCHING_FILTERS
 						: emptySprayPeriodLabel("upcoming")
 				}
@@ -110,9 +113,7 @@ function RouteComponent() {
 				schedules={upcoming}
 			/>
 
-			{past.length > 0 && (
-				<SprayMissionGroup emptyLabel="" period="past" schedules={past} />
-			)}
+			{past.length > 0 && <SprayMissionGroup period="past" schedules={past} />}
 		</div>
 	);
 }
@@ -136,7 +137,7 @@ function SprayMissionGroup({
 	period,
 	schedules,
 }: {
-	emptyLabel: string;
+	emptyLabel?: string;
 	period: SprayPeriod;
 	schedules: SprayMission[];
 }) {
@@ -174,7 +175,9 @@ function SprayMissionGroup({
 					/>
 				))
 			) : (
-				<p className="py-8 text-center text-muted-foreground">{emptyLabel}</p>
+				<p className="py-8 text-center text-muted-foreground">
+					{emptyLabel ?? emptySprayPeriodLabel(period)}
+				</p>
 			)}
 		</section>
 	);
