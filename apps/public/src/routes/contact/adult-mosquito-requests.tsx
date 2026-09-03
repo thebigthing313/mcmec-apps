@@ -75,7 +75,9 @@ function RouteComponent() {
 		address_line_2: null,
 		email: null,
 		full_name: "",
-		is_accessible: true,
+		// Consent to enter a private yard while nobody is home is never a default. The
+		// resident turns this on deliberately or an inspector calls ahead instead.
+		is_accessible: false,
 		is_daytime: false,
 		is_dusk_dawn: false,
 		is_front_of_property: false,
@@ -163,11 +165,15 @@ function RouteComponent() {
 						</FieldDescription>
 						<form.AppField name="full_name">
 							{(field) => (
-								<field.TextField autoComplete="name" label="Full Name *" />
+								<field.TextField
+									autoComplete="name"
+									label="Full Name"
+									required
+								/>
 							)}
 						</form.AppField>
 						<form.AppField name="phone">
-							{(field) => <field.PhoneField label="Phone *" />}
+							{(field) => <field.PhoneField label="Phone" required />}
 						</form.AppField>
 
 						<form.AppField name="email">
@@ -187,7 +193,8 @@ function RouteComponent() {
 							{(field) => (
 								<field.TextField
 									autoComplete="street-address"
-									label="Address Line 1 *"
+									label="Address Line 1"
+									required
 								/>
 							)}
 						</form.AppField>
@@ -214,14 +221,21 @@ function RouteComponent() {
 											className="w-42"
 											emptyMessage="No zip code found."
 											items={zipCodeOptions}
-											label="Zip Code *"
+											label="Zip Code"
 											placeholder="Enter zip code..."
+											required
 										/>
 
+										{/*
+										 * Derived from the chosen zip code, not typed. It still needs a
+										 * real label association: without htmlFor/id this read-only input
+										 * reached assistive technology unnamed, like the zip combobox
+										 * beside it did.
+										 */}
 										<Field className="flex-1">
-											<FieldLabel>City</FieldLabel>
+											<FieldLabel htmlFor="city-display">City</FieldLabel>
 											<FieldContent>
-												<Input readOnly value={cityDisplay} />
+												<Input id="city-display" readOnly value={cityDisplay} />
 											</FieldContent>
 										</Field>
 									</div>
@@ -257,10 +271,10 @@ function RouteComponent() {
 						<form.AppField name="is_accessible">
 							{(field) => (
 								<field.SwitchField
-									description="Inspections are conducted between 7am-3:30pm. You do not need to be home during an inspection. Can we access your backyard even if you are not home?"
+									description="Inspections run 7am–3:30pm and you do not need to be home for one. May an inspector enter your yard while nobody is home? Turn this on only if you want to allow that — either answer is fine, and choosing no does not delay your request."
 									label="Access to Premises"
-									labelWhenFalse="No, I have a locked gate and/or an outdoor pet. Please call to make arrangements for inspection."
-									labelWhenTrue="Yes, you may access the property even if we are not home."
+									labelWhenFalse="No — an inspector will contact you to arrange a time. Choose this if a gate is locked or a pet is outside."
+									labelWhenTrue="Yes — an inspector may enter the property while nobody is home."
 									orientation="vertical"
 								/>
 							)}

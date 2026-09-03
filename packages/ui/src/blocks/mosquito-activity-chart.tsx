@@ -3,7 +3,6 @@ import {
 	CardContent,
 	CardDescription,
 	CardHeader,
-	CardTitle,
 } from "@mcmec/ui/components/card";
 import {
 	type ChartConfig,
@@ -32,18 +31,27 @@ interface ChartDataPoint {
 	rainfall: number;
 }
 
+/*
+ * Series colours come from the palette, not from hex literals.
+ *
+ * The current year takes Commission Green because it is the series the page exists to
+ * show; the five-year average takes chart-1 and stays dashed, so the two are told apart
+ * by stroke pattern and not by colour alone. Rainfall takes chart-5 at full opacity —
+ * it used to be drawn at 0.3, which put the bars at 1.41:1 against the card and made
+ * the one thing on the chart with a filled area the hardest thing on it to see.
+ */
 const chartConfig = {
 	currentYearCount: {
 		label: "Current Year",
-		color: "#000000",
+		color: "var(--primary)",
 	},
 	fiveYearAverage: {
 		label: "5-Year Average",
-		color: "#ec4899",
+		color: "var(--chart-1)",
 	},
 	rainfall: {
 		label: "Rainfall (in)",
-		color: "#3b82f6",
+		color: "var(--chart-5)",
 	},
 } satisfies ChartConfig;
 
@@ -113,6 +121,14 @@ function transformData(
 	});
 }
 
+/** A stable id fragment from a chart title, so each heading can be referenced. */
+function slug(value: string): string {
+	return value
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/(^-|-$)/g, "");
+}
+
 export interface MosquitoActivityChartProps {
 	data: MosquitoActivityRow[];
 	title: string;
@@ -160,100 +176,194 @@ export function MosquitoActivityChart({
 		return null;
 	}
 
+	const headingId = `mosquito-activity-${slug(title)}`;
+	const weeksShown = chartData.map((d) => d.week_number);
+	const firstWeek = weeksShown[0];
+	const lastWeek = weeksShown[weeksShown.length - 1];
+
+	/*
+	 * What the chart says, for anyone who cannot see it.
+	 *
+	 * `role="img"` on the container collapses the whole recharts subtree to this one
+	 * label, which is the point: left exposed, the SVG announces a stream of unlabelled
+	 * groups and tick text that conveys nothing. The label is the summary; the table
+	 * below is the equivalent, and between them the chart is no longer the only way to
+	 * reach the data.
+	 */
+	const chartSummary = `Line chart. ${title}, weeks ${firstWeek} to ${lastWeek} of ${selectedYear}: trapped mosquito count for the current year, the five-year average for the same weeks, and weekly rainfall in inches. The same figures follow in a table.`;
+
 	return (
-		<Card>
-			<CardHeader className="text-center">
-				<CardTitle>{title}</CardTitle>
-				{description && <CardDescription>{description}</CardDescription>}
-			</CardHeader>
-			<CardContent>
-				<ChartContainer className="h-55 w-full" config={chartConfig}>
-					<ComposedChart
-						data={chartData}
-						margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
+		<section aria-labelledby={headingId}>
+			<Card>
+				<CardHeader className="text-center">
+					{/*
+					 * A real heading, not a styled div. CardTitle renders a div, so eight charts
+					 * put eight titles on the page and none of them appeared in the heading
+					 * outline — the page's only headings were its h1 and the footer's.
+					 */}
+					<h2 className="font-semibold leading-none" id={headingId}>
+						{title}
+					</h2>
+					{description && <CardDescription>{description}</CardDescription>}
+				</CardHeader>
+				<CardContent>
+					<ChartContainer
+						aria-label={chartSummary}
+						className="h-55 w-full"
+						config={chartConfig}
+						role="img"
 					>
-						<XAxis
-							axisLine={false}
-							dataKey="week_number"
-							domain={weekDomain ?? ["dataMin", "dataMax"]}
-							interval={0}
-							label={{
-								value: "Week Number",
-								position: "insideBottom",
-								offset: -5,
-							}}
-							tickFormatter={(week: number) =>
-								week % 2 === 0 ? String(week) : ""
-							}
-							tickLine={false}
-							ticks={
-								weekDomain
-									? Array.from(
-											{ length: weekDomain[1] - weekDomain[0] + 1 },
-											(_, i) => weekDomain[0] + i,
-										)
-									: undefined
-							}
-							type="number"
-						/>
-						<YAxis
-							axisLine={false}
-							label={{
-								value: "Mosquito Count",
-								angle: -90,
-								position: "insideLeft",
-								offset: 0,
-							}}
-							tickLine={false}
-							yAxisId="left"
-						/>
-						<YAxis
-							axisLine={false}
-							domain={maxRainfall != null ? [0, maxRainfall] : undefined}
-							interval={0}
-							label={{
-								value: "Rainfall (in)",
-								angle: 90,
-								position: "insideRight",
-								offset: 0,
-							}}
-							orientation="right"
-							tickCount={
-								maxRainfall != null ? Math.ceil(maxRainfall) + 1 : undefined
-							}
-							tickLine={false}
-							yAxisId="right"
-						/>
-						<ChartTooltip content={<ChartTooltipContent />} />
-						<ChartLegend content={<ChartLegendContent />} />
-						<Bar
-							dataKey="rainfall"
-							fill="var(--color-rainfall)"
-							opacity={0.3}
-							radius={[2, 2, 0, 0]}
-							yAxisId="right"
-						/>
-						<Line
-							dataKey="currentYearCount"
-							dot={false}
-							stroke="var(--color-currentYearCount)"
-							strokeWidth={2}
-							type="monotone"
-							yAxisId="left"
-						/>
-						<Line
-							dataKey="fiveYearAverage"
-							dot={false}
-							stroke="var(--color-fiveYearAverage)"
-							strokeDasharray="5 5"
-							strokeWidth={2}
-							type="monotone"
-							yAxisId="left"
-						/>
-					</ComposedChart>
-				</ChartContainer>
-			</CardContent>
-		</Card>
+						<ComposedChart
+							data={chartData}
+							margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
+						>
+							<XAxis
+								axisLine={false}
+								dataKey="week_number"
+								domain={weekDomain ?? ["dataMin", "dataMax"]}
+								interval={0}
+								label={{
+									value: "Week Number",
+									position: "insideBottom",
+									offset: -5,
+								}}
+								tickFormatter={(week: number) =>
+									week % 2 === 0 ? String(week) : ""
+								}
+								tickLine={false}
+								ticks={
+									weekDomain
+										? Array.from(
+												{ length: weekDomain[1] - weekDomain[0] + 1 },
+												(_, i) => weekDomain[0] + i,
+											)
+										: undefined
+								}
+								type="number"
+							/>
+							<YAxis
+								axisLine={false}
+								label={{
+									value: "Mosquito Count",
+									angle: -90,
+									position: "insideLeft",
+									offset: 0,
+								}}
+								tickLine={false}
+								yAxisId="left"
+							/>
+							<YAxis
+								axisLine={false}
+								domain={maxRainfall != null ? [0, maxRainfall] : undefined}
+								interval={0}
+								label={{
+									value: "Rainfall (in)",
+									angle: 90,
+									position: "insideRight",
+									offset: 0,
+								}}
+								orientation="right"
+								tickCount={
+									maxRainfall != null ? Math.ceil(maxRainfall) + 1 : undefined
+								}
+								tickLine={false}
+								yAxisId="right"
+							/>
+							<ChartTooltip content={<ChartTooltipContent />} />
+							<ChartLegend content={<ChartLegendContent />} />
+							<Bar
+								dataKey="rainfall"
+								fill="var(--color-rainfall)"
+								radius={[2, 2, 0, 0]}
+								yAxisId="right"
+							/>
+							<Line
+								dataKey="currentYearCount"
+								dot={false}
+								stroke="var(--color-currentYearCount)"
+								strokeWidth={2}
+								type="monotone"
+								yAxisId="left"
+							/>
+							<Line
+								dataKey="fiveYearAverage"
+								dot={false}
+								stroke="var(--color-fiveYearAverage)"
+								strokeDasharray="5 5"
+								strokeWidth={2}
+								type="monotone"
+								yAxisId="left"
+							/>
+						</ComposedChart>
+					</ChartContainer>
+
+					{/*
+					 * The text equivalent, and the reason the chart above can be a single
+					 * labelled image. Closed by default so the page looks as it did, but open
+					 * to anyone — a resident who wants the actual count for their week gets it
+					 * here rather than by reading pixels off a line.
+					 */}
+					<details className="mt-4">
+						<summary className="cursor-pointer text-muted-foreground text-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50">
+							Show the numbers
+						</summary>
+						<div className="mt-3 overflow-x-auto">
+							<table className="w-full border-collapse text-sm">
+								<caption className="sr-only">
+									{`${title}: weekly trapped mosquito count for ${selectedYear}, the five-year average for the same weeks, and weekly rainfall in inches.`}
+								</caption>
+								<thead>
+									<tr className="border-b text-left">
+										<th className="py-2 pr-4 font-medium" scope="col">
+											Week
+										</th>
+										<th
+											className="py-2 pr-4 text-right font-medium"
+											scope="col"
+										>
+											{selectedYear}
+										</th>
+										<th
+											className="py-2 pr-4 text-right font-medium"
+											scope="col"
+										>
+											5-year average
+										</th>
+										<th className="py-2 text-right font-medium" scope="col">
+											Rainfall (in)
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{chartData.map((row) => (
+										<tr
+											className="border-b last:border-0"
+											key={row.week_number}
+										>
+											<th
+												className="py-1.5 pr-4 font-normal text-muted-foreground"
+												scope="row"
+											>
+												{row.week_number}
+											</th>
+											<td className="py-1.5 pr-4 text-right tabular-nums">
+												{row.currentYearCount.toLocaleString()}
+											</td>
+											<td className="py-1.5 pr-4 text-right tabular-nums">
+												{row.fiveYearAverage.toLocaleString()}
+											</td>
+											<td className="py-1.5 text-right tabular-nums">
+												{row.rainfall.toFixed(2)}
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</details>
+				</CardContent>
+			</Card>
+		</section>
 	);
 }
 

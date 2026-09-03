@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 import { favicon, logo192, logo512 } from "@mcmec/lib/constants/assets";
+import { SkipLink } from "@mcmec/ui/blocks/skip-link";
 import { Toaster } from "@mcmec/ui/components/sonner";
 import appCss from "@mcmec/ui/styles/globals.css?url";
 import type { QueryClient } from "@tanstack/react-query";
@@ -77,9 +78,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<div className="flex min-h-screen flex-col bg-background">
+					{/*
+					 * WCAG 2.4.1, Level A. Seven nav groups and their popovers sat between a
+					 * keyboard user and the page on every navigation: the target id below has
+					 * been here all along with nothing pointing at it.
+					 */}
+					<SkipLink />
 					<Navbar />
 
-					<main className="my-8 flex-1" id="main-content">
+					{/*
+					 * tabIndex={-1} so the jump actually lands — a container is not focusable
+					 * on its own and the skip link would otherwise move nothing but the URL.
+					 */}
+					<main className="my-8 flex-1" id="main-content" tabIndex={-1}>
 						{children}
 					</main>
 					<Footer />
