@@ -30,17 +30,47 @@
 	--muted: oklch(0.94 0.01 150);
 	--muted-foreground: oklch(0.45 0.02 150);
 	--accent: oklch(0.6638 0.0267 183.8599);
-	--accent-foreground: oklch(0.98 0.005 150);
+	/*
+	 * Darkened from oklch(0.98 0.005 150) on 2026-09-03. Brackish Teal is a mid-tone, and the
+	 * near-white on it measured 2.86:1 — well under the 4.5:1 AA floor for normal text, and
+	 * carrying the name "contrast" while providing none, which is how it survived this long.
+	 * The pair is shadcn's hover and focus state, so that ratio was every
+	 * hovered dropdown item, menubar entry, context-menu row, command item, calendar cell and
+	 * outline button across all five frontends, plus the public footer, which compounded it
+	 * with a /70 alpha and reached 2.17:1.
+	 *
+	 * Ink on the same teal measures 5.22:1. Brackish Teal itself is unchanged. Darkening the
+	 * ground to rescue the near-white could also have cleared AA — it passes at L 0.55 and
+	 * reaches 5.14:1 by L 0.52 — but it was rejected on appearance, not on the ratio: the teal
+	 * is a hover tint on hundreds of surfaces, and taking it that dark makes every one of them
+	 * visibly heavier. The foreground was the thing at fault, so the foreground moved.
+	 *
+	 * Light mode only. In dark mode `--accent` is a near-black and its near-white foreground
+	 * already measures 14.48:1; ink there would be 1.05:1.
+	 */
+	--accent-foreground: oklch(0.2537 0.0035 164.7797);
 	--destructive: oklch(0.5046 0.2053 29.0423);
 	--destructive-foreground: oklch(0.8852 0.0042 91.4508);
 	--border: oklch(0.8 0.02 150);
 	--input: oklch(0.92 0.01 150);
 	--ring: oklch(0.5353 0.1357 153.5529);
+	/*
+	 * Series colours, dark enough to be data.
+	 *
+	 * These were pastels: measured against the card ground, chart-2 came out at 1.90:1,
+	 * chart-3 at 2.17:1, chart-4 at 1.49:1 and chart-5 at 1.85:1, all under the 3:1 that
+	 * WCAG 1.4.11 requires of a graphical object carrying meaning. A pastel works as a
+	 * large filled area and fails as a plotted line, which is what a chart palette is for.
+	 *
+	 * Each hue is kept and its lightness pulled down until it clears 3:1, with chroma
+	 * raised to stay vivid at the lower lightness. chart-1 already passed and is unchanged.
+	 * Ratios against the card ground: 3.68, 4.00, 3.86, 3.65, 3.46.
+	 */
 	--chart-1: oklch(0.6104 0.0767 299.7335);
-	--chart-2: oklch(0.7889 0.0802 359.9375);
-	--chart-3: oklch(0.7321 0.0749 169.867);
-	--chart-4: oklch(0.854 0.0882 76.8292);
-	--chart-5: oklch(0.7857 0.0645 258.0839);
+	--chart-2: oklch(0.6 0.13 359.9375);
+	--chart-3: oklch(0.58 0.095 169.867);
+	--chart-4: oklch(0.61 0.12 76.8292);
+	--chart-5: oklch(0.62 0.12 258.0839);
 	--sidebar: oklch(0.96 0.01 150);
 	--sidebar-foreground: oklch(0.2713 0.0023 145.5111);
 	--sidebar-primary: oklch(0.5353 0.1357 153.5529);

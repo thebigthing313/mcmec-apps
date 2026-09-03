@@ -14,6 +14,15 @@ import { Skeleton } from "../components/skeleton";
 import { cn } from "../lib/utils";
 
 type Props<T extends string> = {
+	"aria-required"?: boolean;
+	/**
+	 * The id of the text input itself.
+	 *
+	 * The field wrapper labels this control with `htmlFor`, and without an id on the
+	 * input that label points at nothing: the zip code field on the public request
+	 * forms had a visible "Zip Code" label whose `for` matched no element in the page.
+	 */
+	id?: string;
 	selectedValue: T;
 	onSelectedValueChange: (value: T) => void;
 	searchValue: string;
@@ -25,6 +34,8 @@ type Props<T extends string> = {
 };
 
 export function AutoComplete<T extends string>({
+	"aria-required": ariaRequired,
+	id,
 	selectedValue,
 	onSelectedValueChange,
 	searchValue,
@@ -99,7 +110,12 @@ export function AutoComplete<T extends string>({
 							onValueChange={onSearchValueChange}
 							value={searchValue}
 						>
-							<Input placeholder={placeholder} ref={inputRef} />
+							<Input
+								aria-required={ariaRequired}
+								id={id}
+								placeholder={placeholder}
+								ref={inputRef}
+							/>
 						</CommandPrimitive.Input>
 					</PopoverAnchor>
 					{!open && <CommandList aria-hidden="true" className="hidden" />}

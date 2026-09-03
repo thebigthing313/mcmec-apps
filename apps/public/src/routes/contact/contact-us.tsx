@@ -59,7 +59,7 @@ function RouteComponent() {
 		},
 		onSubmit: async ({ value }) => {
 			if (honeypot) {
-				toast.info("Submission successful! Thank you for contacting us.");
+				toast.info("Thank you — your message has been sent.");
 				form.reset();
 				return;
 			}
@@ -88,7 +88,7 @@ function RouteComponent() {
 			turnstileRef.current?.reset();
 
 			if (result.success) {
-				toast.success("Submission successful! Thank you for contacting us.");
+				toast.success("Thank you — your message has been sent.");
 				form.reset();
 			} else {
 				toast.error(
@@ -115,8 +115,8 @@ function RouteComponent() {
 					Whether you have questions regarding our surveillance programs, public
 					outreach, or current spray schedules, our office in Edison is here to
 					assist you. If you would like to report a mosquito problem, water
-					management issue, or request mosquito fish, please use our dedicated{" "}
-					<Link to="/contact/service-request">service request</Link> page.
+					management issue, or request mosquitofish, please use our dedicated{" "}
+					<Link to="/contact/service-request">Public Request</Link> page.
 				</p>
 			</article>
 

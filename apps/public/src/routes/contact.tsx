@@ -14,7 +14,7 @@ export const Route = createFileRoute("/contact")({
 });
 
 const contactLinks = [
-	{ label: "Service Requests", href: "/contact/service-request" },
+	{ label: "Public Requests", href: "/contact/service-request" },
 	{ label: "Contact Us", href: "/contact/contact-us" },
 ];
 

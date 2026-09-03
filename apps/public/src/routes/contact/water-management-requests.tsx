@@ -148,17 +148,21 @@ function RouteComponent() {
 					<FieldSet>
 						<FieldLegend>Contact Information</FieldLegend>
 						<FieldDescription>
-							Please provide your contact details so we can reach you if needed.
-							Please note that the Commission does not accept anonymous
-							requests.
+							We ask for your name and phone number so an inspector can reach
+							you if they cannot find the problem. There is no account to create
+							and no password to remember.
 						</FieldDescription>
 						<form.AppField name="full_name">
 							{(field) => (
-								<field.TextField autoComplete="name" label="Full Name *" />
+								<field.TextField
+									autoComplete="name"
+									label="Full Name"
+									required
+								/>
 							)}
 						</form.AppField>
 						<form.AppField name="phone">
-							{(field) => <field.PhoneField label="Phone *" />}
+							{(field) => <field.PhoneField label="Phone" required />}
 						</form.AppField>
 
 						<form.AppField name="email">
@@ -178,7 +182,8 @@ function RouteComponent() {
 							{(field) => (
 								<field.TextField
 									autoComplete="street-address"
-									label="Address Line 1 *"
+									label="Address Line 1"
+									required
 								/>
 							)}
 						</form.AppField>
@@ -205,14 +210,21 @@ function RouteComponent() {
 											className="w-42"
 											emptyMessage="No zip code found."
 											items={zipCodeOptions}
-											label="Zip Code *"
+											label="Zip Code"
 											placeholder="Enter zip code..."
+											required
 										/>
 
+										{/*
+										 * Derived from the chosen zip code, not typed. It still needs a
+										 * real label association: without htmlFor/id this read-only input
+										 * reached assistive technology unnamed, like the zip combobox
+										 * beside it did.
+										 */}
 										<Field className="flex-1">
-											<FieldLabel>City</FieldLabel>
+											<FieldLabel htmlFor="city-display">City</FieldLabel>
 											<FieldContent>
-												<Input readOnly value={cityDisplay} />
+												<Input id="city-display" readOnly value={cityDisplay} />
 											</FieldContent>
 										</Field>
 									</div>
