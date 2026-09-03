@@ -30,6 +30,15 @@ interface PublicNoticeCardProps {
 	showShare?: boolean;
 	onNoticeClick?: () => void;
 	getShareUrl?: () => string;
+	/**
+	 * Clip the body to a fixed height behind a fade.
+	 *
+	 * Defaults to true, which suits a browse surface like the archive. The current
+	 * notices register passes false: a notice posted there is the legal notice, and
+	 * P.L. 2025 c.72 does not allow the posting to be cut mid-sentence by a decorative
+	 * gradient with the remainder a click away.
+	 */
+	truncate?: boolean;
 }
 export function PublicNoticeCard({
 	title,
@@ -42,6 +51,7 @@ export function PublicNoticeCard({
 	onNoticeClick,
 	getShareUrl,
 	showShare = true,
+	truncate = true,
 }: PublicNoticeCardProps) {
 	const [open, setOpen] = useState(false);
 	const [copied, setCopied] = useState(false);
@@ -88,10 +98,14 @@ export function PublicNoticeCard({
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<div className="relative max-h-48 overflow-hidden">
+				{truncate ? (
+					<div className="relative max-h-48 overflow-hidden">
+						<TiptapRenderer content={content} />
+						<div className="pointer-events-none absolute right-0 bottom-0 left-0 h-12 bg-linear-to-t from-card to-transparent" />
+					</div>
+				) : (
 					<TiptapRenderer content={content} />
-					<div className="pointer-events-none absolute right-0 bottom-0 left-0 h-12 bg-linear-to-t from-card to-transparent" />
-				</div>
+				)}
 				{onNoticeClick && (
 					<div className="flex w-full justify-center">
 						<Button
