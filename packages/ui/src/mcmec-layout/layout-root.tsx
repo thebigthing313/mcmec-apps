@@ -6,6 +6,7 @@ import { SidebarProvider } from "@mcmec/ui/components/sidebar";
 import type { LayoutContextData } from "@mcmec/ui/mcmec-layout/layout-context.js";
 import { LayoutContextProvider } from "@mcmec/ui/mcmec-layout/layout-context.js";
 import * as React from "react";
+import { SkipLink } from "../blocks/skip-link";
 
 interface LayoutRootProps {
 	children: React.ReactNode;
@@ -62,22 +63,15 @@ export function LayoutRoot({ children, value }: LayoutRootProps) {
 		>
 			<SidebarProvider defaultOpen={defaultOpen}>
 				{/*
-				 * First focusable element on every staff screen.
+				 * First focusable element on every staff screen. Without it a keyboard user
+				 * tabs the sidebar trigger, the app switcher, every destination in the rail —
+				 * eleven of them in Website Management — and the user menu before reaching the
+				 * page, on every single navigation.
 				 *
-				 * Without it a keyboard user tabs the sidebar trigger, the app switcher, every
-				 * destination in the rail — eleven of them in Website Management — and the user menu
-				 * before reaching the page, on every single navigation. The public site has had one
-				 * of these all along; the staff applications, which people use all day, did not.
-				 *
-				 * Hidden until focused, then drawn as a real control rather than a ghost: someone
-				 * who tabs into it needs to see where the focus went.
+				 * Shared with the public site rather than copied: the note that used to sit
+				 * here claimed the public site already had one of these, and it did not.
 				 */}
-				<a
-					className="absolute top-0 left-0 z-50 -translate-y-full rounded-b-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-transform focus:translate-y-0"
-					href="#main-content"
-				>
-					Skip to main content
-				</a>
+				<SkipLink />
 				{children}
 			</SidebarProvider>
 		</LayoutContextProvider>
