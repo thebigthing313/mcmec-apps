@@ -30,6 +30,7 @@ export function TextField({
 		>
 			<TextInput
 				aria-invalid={!field.state.meta.isValid}
+				aria-required={formFieldProps.required}
 				autoComplete={autoComplete}
 				id={field.name}
 				name={field.name}
