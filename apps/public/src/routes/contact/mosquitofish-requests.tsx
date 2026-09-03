@@ -220,12 +220,7 @@ function RouteComponent() {
 										<Field className="flex-1">
 											<FieldLabel htmlFor="city-display">City</FieldLabel>
 											<FieldContent>
-												<Input
-													id="city-display"
-													readOnly
-													tabIndex={-1}
-													value={cityDisplay}
-												/>
+												<Input id="city-display" readOnly value={cityDisplay} />
 											</FieldContent>
 										</Field>
 									</div>

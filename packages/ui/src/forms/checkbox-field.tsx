@@ -8,7 +8,12 @@ export function CheckboxField({
 	...formFieldProps
 }: Omit<
 	React.ComponentPropsWithRef<typeof FormField>,
-	"children" | "errors" | "htmlFor" | "data-invalid"
+	/*
+	 * `required` is omitted because it would be a silent no-op here: the marker is drawn
+	 * beside FormField's own label, and this field deliberately withholds `label` from
+	 * FormField (see below), so nothing would render and no caller would find out.
+	 */
+	"children" | "errors" | "htmlFor" | "data-invalid" | "required"
 >) {
 	const field = useFieldContext<boolean>();
 	return (
