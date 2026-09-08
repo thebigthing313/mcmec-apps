@@ -328,9 +328,13 @@ There is one authored gesture, and it belongs to the auth frame: **a rule is dra
 
 The tokens are `--animate-rule-x` and `--animate-rule-y`. `prefers-reduced-motion: reduce` removes the animation entirely, which leaves each rule at its untransformed size — the frame is simply there.
 
+The public home page's hero plate is the one surface that moves on its own, and it moves by the same rule. Its six photographs crossfade over `900ms` on the same exponential ease-out, and the meter that times them is `--animate-rule-x` again — six hairline segments spanning the plate, the selected one filling in Commission Green over the `6s` dwell. That instance takes a **linear** curve rather than the exponential settle, because a meter has to be honest about elapsed time; the settle belongs to a line being ruled, not to a clock. It inherits the token's `prefers-reduced-motion` override for free, which leaves the hairline at full width — and the plate additionally does not start advancing at all under that preference.
+
 ### Named Rules
 
 **The Motion Is A Rule Being Drawn Rule.** If a new surface wants motion, it animates a hairline. Content does not fade, rise, stagger, or scale in. A system whose structure is carried by borders has exactly one thing worth animating, and scattering entrance effects across content is how five applications stop feeling like one instrument.
+
+**The Autoplay Owes A Pause Rule.** Motion the visitor did not start, running past five seconds beside other content, is WCAG 2.2.2 territory and needs a mechanism to stop it. The control is a real, always-present, keyboard-reachable button — never a hover-only affordance, never a gesture, never omitted because the motion is “just decoration.” The home hero is the only such surface in the system, and it is the reason this rule is written down rather than discovered again.
 
 ## Shapes
 
@@ -424,6 +428,23 @@ The system's signature control, and the subject of ADR 0001. A lifecycle action 
 
 It defaults to the outline variant so it reads as a deliberate act rather than the form's primary submit, and it relabels when the form beneath it is dirty: "Publish" becomes "Save and Publish," and the caller then sends both intents in one atomic request. A refused lifecycle command rolls the field save back with it, so the refusal copy must say the changes were not saved either.
 
+### Home Hero
+
+The public home page, and the one place in the system where a photograph is half the composition. It is a **split plate**: the Commission's name, the 1914 line and the six destinations occupy the left half on Paper; six photographs of the Commission's own work crossfade on the right.
+
+It looks like the arrangement the Auth Frame rejects by name, and the difference is the whole design. **Nothing is laid over the photograph.** No scrim, no gradient, no heading floating on the image, no type that has to survive whatever is behind it. The plate is a sibling of the panel beside it — same `14px` corner, same `1px` Rule border, same Paper ground under both — rather than a backdrop the page sits on. That is the same licence the auth frame's building plate takes, and it is what lets the heading be Ink on Paper at `13:1` instead of white text negotiating with a sky.
+
+- **Structure:** a `max-w-7xl` two-column grid at `lg` and above, one column below it. The plate is **last in the DOM and rightmost on a wide screen**, so reading order and tab order are the same order in both layouts — heading, then destinations, then photographs. Below `lg` that also puts the six answers above the imagery, which is the right way round for a resident who arrived with one urgent question.
+- **Destinations:** one register, not six cards. A single bordered `14px` container whose cells sit on a `1px` gap over a Rule-coloured ground — the Signal Band's construction, reused. The first two cells lead at a larger title with a Commission Green arrow that steps `2px` on hover; the remaining four follow at a compact weight. Cells take Pale Green on hover and raise above their neighbours on focus so the `3px` ring is not clipped by a divider. Icons are Commission Green at `1.5rem` on the leads and `1.25rem` on the rest.
+- **Ranking is editorial.** The order is the Commission's, not the navigation's, and the two leads answer the two questions PRODUCT.md says residents arrive with: get something dealt with, and find out whether their street is being treated.
+- **The photographs are silent.** No captions, no overlaid titles, and no click target — a moving link is a hostile one, and a second call to action inside a hero competes with the register that is already there. Each image still carries a real `alt`, because a caption is a visual decision and a description is an accessibility obligation.
+- **Crops are chosen, never defaulted.** Every slide carries its own `object-position`. These are working snapshots rather than art direction: several put a third of the frame in empty sky, and a centred crop of the headquarters cuts the Commission's own road sign mid-word.
+- **The control rail sits below the plate, not on it.** Six hairline segments spanning the plate's width, each a button that selects its photograph, and a pause toggle at the right end. Off the image, contrast is a solved problem rather than a negotiation with whatever pixel is underneath. The segments are **Muted Ink, not Rule**: they are the only visual those buttons have, so WCAG 1.4.11 asks `3:1` of them against Paper, and Rule measures `1.7:1`. The selected segment fills in Commission Green over that track, so its state is carried by how much of it is green and not by hue alone.
+- **Behavior:** a `6s` dwell, restarted whenever the visitor picks a photograph by hand. `aria-live` is `off` while the plate advances on its own — a screen reader should not be interrupted every six seconds — and `polite` once the visitor has taken control, where the announcement answers something they just did. See The Autoplay Owes A Pause Rule.
+- **Weight:** the plate is one eager `fetchPriority="high"` image and five lazy ones, each `1400px` on the long edge, which is roughly `1.75x` the widest the plate is ever painted.
+
+It lives in `apps/public/src/components/hero-carousel.tsx` and is deliberately app-local. No staff screen has a hero, and the day one does is the day to ask whether it should.
+
 ### Signal Band
 
 A band of named signals across the top of a staff screen, each opening its own queue in place. It answers the stat-card grid, where every count was a dead end: the number is not the work, so the count and the queue it counts share one surface and reading that queue costs a keypress rather than a page.
@@ -500,5 +521,6 @@ One deliberate exemption: a **confirming register**, like the dashboard's "What 
 - **Don't** spend design effort on phone-optimised staff layouts — thumb-zone bars, mobile-only flows. The floor is that narrow works, not that narrow is the target.
 - **Don't** bury, paginate, collapse, or lazily defer a statutorily required posting — a legal Notice within its seven-day Retention Period, a meeting agenda, or a cancelled meeting. Layout may never obstruct the public record.
 - **Don't** put a card on the auth screens. They were four copies of a centered card and are now one frame; a card inside that frame is a container inside a container.
-- **Don't** animate content. Motion belongs to rules being drawn — see The Motion Is A Rule Being Drawn Rule.
+- **Don't** animate content. Motion belongs to rules being drawn — see The Motion Is A Rule Being Drawn Rule. The home hero's crossfade is the single stated exception, and it is timed by a drawn rule.
 - **Don't** reach for gradient meshes, glassmorphism, or marketing-hero patterns. Equally, don't accept clip-art seals, unstyled link lists, or PDFs standing in for an interface.
+- **Don't** lay type, a scrim, or a gradient over a photograph. The system has two photographs in it — the auth frame's plate and the home hero's — and neither shares pixels with anything. A photograph is a plate beside the content, never a ground beneath it.

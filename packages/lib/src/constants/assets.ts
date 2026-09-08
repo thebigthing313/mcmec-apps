@@ -17,6 +17,17 @@ export const countyLogo = `${ASSETS_BASE}/county-logo.png`;
 export const favicon = `${ASSETS_BASE}/favicon.ico`;
 export const heroMobile = `${ASSETS_BASE}/hero-mobile.avif`;
 export const hero = `${ASSETS_BASE}/hero.avif`;
+
+/**
+ * The home page's hero plate, six photographs of the Commission's own work. The masters and
+ * the ffmpeg recipe that produced these live in `apps/api/assets/hero/`.
+ */
+export const heroBuilding = `${ASSETS_BASE}/hero-building.avif`;
+export const heroHelicopter = `${ASSETS_BASE}/hero-helicopter.avif`;
+export const heroLab = `${ASSETS_BASE}/hero-lab.avif`;
+export const heroOutreach = `${ASSETS_BASE}/hero-outreach.avif`;
+export const heroTires = `${ASSETS_BASE}/hero-tires.avif`;
+export const heroWaterManagement = `${ASSETS_BASE}/hero-water-management.avif`;
 export const logo = `${ASSETS_BASE}/logo.png`;
 export const logo192 = `${ASSETS_BASE}/logo192.png`;
 export const logo512 = `${ASSETS_BASE}/logo512.png`;

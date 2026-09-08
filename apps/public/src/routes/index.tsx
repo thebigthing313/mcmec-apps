@@ -1,14 +1,15 @@
-import { hero, heroMobile } from "@mcmec/lib/constants/assets";
-import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
+import { cn } from "@mcmec/ui/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+	Activity,
+	ArrowRight,
 	CalendarDays,
 	ConciergeBell,
-	FileText,
-	Info,
+	Droplets,
 	Newspaper,
 	Users,
 } from "lucide-react";
+import { HeroCarousel } from "../components/hero-carousel";
 import { canonical, seo } from "../lib/seo";
 
 export const Route = createFileRoute("/")({
@@ -46,125 +47,158 @@ const organizationJsonLd = JSON.stringify({
 	},
 });
 
-function RouteComponent() {
-	const isMobile = useIsMobile();
+/**
+ * The six destinations, in the order the Commission ranked them. The first two lead because
+ * they are the two urgent questions a resident arrives with — get something dealt with, and
+ * find out whether their street is being treated; the rest follow at a compact weight.
+ *
+ * They are one register rather than six cards: a single bordered container whose cells sit on
+ * a 1px gap over a Rule-coloured ground, which is the Signal Band's construction from
+ * `packages/ui`. It draws every divider at once and holds them exact when the cells wrap.
+ */
+interface Destination {
+	title: string;
+	description: string;
+	icon: typeof ConciergeBell;
+	href: string;
+}
 
+const leadDestinations: Destination[] = [
+	{
+		description:
+			"Report a mosquito problem, a water management issue, or request mosquitofish.",
+		href: "/contact/service-request",
+		icon: ConciergeBell,
+		title: "Request Service",
+	},
+	{
+		description: "Upcoming Spray Missions, by municipality and date.",
+		href: "/mosquito-control/spray-schedule",
+		icon: CalendarDays,
+		title: "Spray Schedule",
+	},
+];
+
+const furtherDestinations: Destination[] = [
+	{
+		description: "Weekly mosquito activity reports for the county.",
+		href: "/mosquito-surveillance/weekly-activity",
+		icon: Activity,
+		title: "Weekly Mosquito Activity",
+	},
+	{
+		description: "Legal notices that are still currently in effect.",
+		href: "/notices",
+		icon: Newspaper,
+		title: "Public Notices",
+	},
+	{
+		description: "Find and empty the standing water around your property.",
+		href: "/mosquito-surveillance/mosquito-source-checklist",
+		icon: Droplets,
+		title: "Prevention at Home",
+	},
+	{
+		description: "Meeting schedules, agendas, and minutes.",
+		href: "/notices/meetings",
+		icon: Users,
+		title: "Public Meetings",
+	},
+];
+
+function RouteComponent() {
 	return (
-		<div className="-my-8 w-full">
+		<section className="mx-auto w-full max-w-7xl px-6 md:px-12">
 			<script
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD structured data
 				dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
 				type="application/ld+json"
 			/>
-			{/* Hero Banner */}
-			<div className="relative h-[60vh] min-h-80 w-full overflow-hidden">
-				<img
-					alt="Woodbridge River cleanup project"
-					className="absolute inset-0 h-full w-full object-cover"
-					fetchPriority="high"
-					src={isMobile ? heroMobile : hero}
-				/>
-				<div className="absolute inset-0 bg-linear-to-r from-primary/70 via-primary/40 to-transparent" />
-				<div className="absolute inset-0 flex items-center">
-					<div className="mx-auto w-full max-w-7xl px-6 md:px-12">
-						<h1 className="max-w-2xl font-bold text-2xl text-white leading-tight tracking-tight md:text-4xl">
+
+			{/*
+			 * The plate is last in the DOM and rightmost on a wide screen, so reading order and
+			 * tab order are the same order in both layouts: the heading, then the destinations,
+			 * then the photographs. Below `lg` that also puts the six answers above the imagery,
+			 * which is the right way round for someone who arrived with one urgent question.
+			 */}
+			<div className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-12">
+				<div className="flex flex-col justify-center gap-8">
+					<div>
+						<h1 className="text-balance font-bold text-[clamp(1.75rem,3.4vw,2.5rem)] text-foreground leading-[1.12] tracking-[-0.025em]">
 							Middlesex County Mosquito Extermination Commission
 						</h1>
-						<p className="mt-3 max-w-xl text-base text-white/90 md:text-lg">
+						<p className="mt-4 max-w-[46ch] text-base text-muted-foreground leading-relaxed md:text-lg">
 							Protecting the health and comfort of Middlesex County residents
 							and visitors since 1914.
 						</p>
 					</div>
-				</div>
-			</div>
 
-			{/* Quick Actions */}
-			<section className="bg-background py-10 md:py-14">
-				<div className="mx-auto max-w-7xl px-6 md:px-12">
-					<h2 className="mb-6 text-center font-semibold text-foreground text-lg md:text-xl">
-						How Can We Help You Today?
-					</h2>
-					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-						<ActionCard
-							description="Report a mosquito problem or request mosquitofish."
-							href="/contact/service-request"
-							icon={<ConciergeBell className="size-6 text-primary" />}
-							title="Request Service"
-						/>
-						<ActionCard
-							description="View current legal notices and announcements."
-							href="/notices"
-							icon={<Newspaper className="size-6 text-primary" />}
-							title="Public Notices"
-						/>
-						<ActionCard
-							description="Meeting schedules, agendas, and minutes."
-							href="/notices/meetings"
-							icon={<Users className="size-6 text-primary" />}
-							title="Public Meetings"
-						/>
-						<ActionCard
-							description="View upcoming mosquito spray missions."
-							href="/mosquito-control/spray-schedule"
-							icon={<CalendarDays className="size-6 text-primary" />}
-							title="Spray Schedule"
-						/>
-						<ActionCard
-							description="Weekly mosquito activity reports for the county."
-							href="/mosquito-surveillance/weekly-activity"
-							icon={<FileText className="size-6 text-primary" />}
-							title="Weekly Mosquito Activity"
-						/>
-						<ActionCard
-							description="Tips on mosquito protection and prevention."
-							external
-							href="https://middlesexmosquito.sharepoint.com/:b:/g/IQCLzJFwXLQLSaGsaq3XvsZeAUmMrM-lZmc8Bg5lBTX4MIE?e=LJshK5"
-							icon={<Info className="size-6 text-primary" />}
-							title="Mosquito Fact Sheet"
-						/>
+					<div>
+						<h2 className="sr-only">How can we help you today?</h2>
+						<div className="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2">
+							{leadDestinations.map((destination) => (
+								<DestinationCell
+									destination={destination}
+									key={destination.href}
+									lead
+								/>
+							))}
+							{furtherDestinations.map((destination) => (
+								<DestinationCell
+									destination={destination}
+									key={destination.href}
+								/>
+							))}
+						</div>
 					</div>
 				</div>
-			</section>
-		</div>
+
+				<HeroCarousel />
+			</div>
+		</section>
 	);
 }
 
-function ActionCard({
-	title,
-	description,
-	icon,
-	href,
-	external,
+function DestinationCell({
+	destination,
+	lead = false,
 }: {
-	title: string;
-	description: string;
-	icon: React.ReactNode;
-	href: string;
-	external?: boolean;
+	destination: Destination;
+	lead?: boolean;
 }) {
-	const className =
-		"flex flex-col gap-3 rounded-lg border bg-card p-6 shadow-sm transition-shadow hover:shadow-md";
-
-	if (external) {
-		return (
-			<a
-				className={className}
-				href={href}
-				rel="noopener noreferrer"
-				target="_blank"
-			>
-				{icon}
-				<h3 className="font-semibold text-base text-foreground">{title}</h3>
-				<p className="text-muted-foreground text-sm">{description}</p>
-			</a>
-		);
-	}
+	const Icon = destination.icon;
 
 	return (
-		<Link className={className} to={href}>
-			{icon}
-			<h3 className="font-semibold text-base text-foreground">{title}</h3>
-			<p className="text-muted-foreground text-sm">{description}</p>
+		<Link
+			// `relative` and the raised z on focus keep the 3px ring from being clipped by the
+			// neighbouring cell, the same reason the Signal Band raises its cells.
+			className={cn(
+				"group relative flex flex-col gap-1.5 bg-card transition-colors hover:bg-secondary focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+				lead ? "p-5 sm:p-6" : "p-4 sm:p-5",
+			)}
+			to={destination.href}
+		>
+			<Icon
+				className={cn("text-primary", lead ? "size-6" : "size-5")}
+				strokeWidth={1.75}
+			/>
+			<span
+				className={cn(
+					"mt-1 flex items-center gap-1.5 font-semibold text-foreground",
+					lead ? "text-lg" : "text-sm",
+				)}
+			>
+				{destination.title}
+				{lead ? (
+					<ArrowRight
+						aria-hidden="true"
+						className="size-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+					/>
+				) : null}
+			</span>
+			<span className="text-muted-foreground text-sm leading-snug">
+				{destination.description}
+			</span>
 		</Link>
 	);
 }
