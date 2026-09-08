@@ -9,6 +9,7 @@ import {
 	Newspaper,
 	Users,
 } from "lucide-react";
+import type { CSSProperties } from "react";
 import { HeroCarousel } from "../components/hero-carousel";
 import { canonical, seo } from "../lib/seo";
 
@@ -108,7 +109,22 @@ const furtherDestinations: Destination[] = [
 
 function RouteComponent() {
 	return (
-		<section className="mx-auto w-full max-w-7xl px-6 md:px-12">
+		/*
+		 * `--bleed` is the inset that keeps the left half's *content* on the site's `max-w-7xl`
+		 * measure while its *ground* runs to the viewport edge. DESIGN.md's rule survives the
+		 * full-bleed band intact: the frame reaches the edge because it is the edge of the page,
+		 * and the reading column does not grow with the display.
+		 *
+		 * `-my-8` cancels the shell's `main` margin so the band meets the navigation above it
+		 * and the footer below with no Paper gap. A hero that floats in the page is a section;
+		 * one that touches both edges is a band.
+		 */
+		<section
+			className="-my-8 w-full"
+			style={
+				{ "--bleed": "max(1.5rem, calc((100vw - 80rem) / 2))" } as CSSProperties
+			}
+		>
 			<script
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD structured data
 				dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
@@ -116,13 +132,22 @@ function RouteComponent() {
 			/>
 
 			{/*
+			 * No gap between the halves, and no radius on either. The two grounds meet at a
+			 * single hairline seam and each runs to its own viewport edge, which is what makes
+			 * this one band rather than two panels that happen to be adjacent.
+			 *
+			 * The split waits for `xl`, not `lg`. Each half needs roughly 640px to hold a
+			 * two-column register or a photograph worth looking at; splitting a 1024px display
+			 * gives them 512px each, the register drops to one column, and the band grows to
+			 * about 1200px tall with a photograph stretched into a slot beside it.
+			 *
 			 * The plate is last in the DOM and rightmost on a wide screen, so reading order and
 			 * tab order are the same order in both layouts: the heading, then the destinations,
 			 * then the photographs. Below `lg` that also puts the six answers above the imagery,
 			 * which is the right way round for someone who arrived with one urgent question.
 			 */}
-			<div className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-12">
-				<div className="flex flex-col justify-center gap-8">
+			<div className="grid items-stretch xl:grid-cols-2">
+				<div className="flex flex-col justify-center gap-8 border-b bg-muted px-6 py-10 md:px-12 xl:border-r xl:border-b-0 xl:py-16 xl:pr-12 xl:pl-[var(--bleed)]">
 					<div>
 						<h1 className="text-balance font-bold text-[clamp(1.75rem,3.4vw,2.5rem)] text-foreground leading-[1.12] tracking-[-0.025em]">
 							Middlesex County Mosquito Extermination Commission
@@ -133,9 +158,15 @@ function RouteComponent() {
 						</p>
 					</div>
 
-					<div>
+					{/*
+					 * A container query, not a viewport one. The register's width is now half the
+					 * page rather than all of it, so `sm:grid-cols-2` would put two columns in a
+					 * 448px panel at exactly the width the layout splits — the panel has to be
+					 * asked about itself.
+					 */}
+					<div className="@container">
 						<h2 className="sr-only">How can we help you today?</h2>
-						<div className="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2">
+						<div className="grid @lg:grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border">
 							{leadDestinations.map((destination) => (
 								<DestinationCell
 									destination={destination}

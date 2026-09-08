@@ -15,9 +15,14 @@ import { type CSSProperties, useCallback, useEffect, useState } from "react";
  *
  * Three decisions are load-bearing and should survive a redesign of everything around them.
  *
- * **Nothing is laid over the photograph.** No scrim, no gradient, no heading floating on the
- * image. That is the same licence the auth frame's building plate takes, and it is why the
+ * **No content is laid over the photograph.** No scrim, no gradient, no heading floating on
+ * the image. That is the same licence the auth frame's building plate takes, and it is why the
  * heading beside it can be Ink on Paper instead of white text fighting a photo for 4.5:1.
+ *
+ * The controls are the one thing that sits on the image, and they bring their own ground: an
+ * opaque Paper plaque with a Rule border, so every ratio inside it is measured against a colour
+ * we chose rather than against whatever pixel of sky or gravel happens to be underneath. That
+ * is the difference between a control on a photograph and a control in a photograph.
  *
  * **The progress meter is the system's drawn rule.** `animate-rule-x` is the one authored
  * gesture `globals.css` owns, reused here at the dwell duration on a linear curve — a meter
@@ -117,18 +122,24 @@ export function HeroCarousel() {
 
 	const running = playing && !reduced;
 
+	/*
+	 * Stacked, the photograph is a band across the page and its aspect flattens as the page
+	 * widens — a 4:3 crop at 1024px would be 768px of photograph before a visitor reached
+	 * anything. Beside the register at `xl` it takes the column's own height instead.
+	 */
 	return (
-		<div className="flex flex-col gap-3">
+		<div className="relative aspect-4/3 overflow-hidden bg-muted sm:aspect-16/9 lg:aspect-21/9 xl:aspect-auto xl:min-h-[34rem]">
 			{/*
 			 * `aria-live` is off while the plate advances on its own, so a screen reader is not
 			 * interrupted every six seconds; polite once the visitor has taken control, where
-			 * the announcement is the answer to something they just did.
+			 * the announcement is the answer to something they just did. The controls sit
+			 * outside this region — they are not the thing that changed.
 			 */}
 			<section
 				aria-label="Photographs of the Commission's work"
 				aria-live={running ? "off" : "polite"}
 				aria-roledescription="carousel"
-				className="relative aspect-4/3 overflow-hidden rounded-xl border bg-muted lg:aspect-auto lg:min-h-[26rem] lg:flex-1"
+				className="absolute inset-0"
 			>
 				{slides.map((slide, position) => {
 					const isCurrent = position === index;
@@ -157,29 +168,29 @@ export function HeroCarousel() {
 				})}
 			</section>
 
-			<div className="flex items-center gap-3">
-				{/*
-				 * The six ticks together span the plate as one hairline broken into segments, so
-				 * the control reads as a measure of the whole rather than as six dots. Each
-				 * button is padded to a real target height around a 2px mark.
-				 */}
-				<div className="flex flex-1 items-center gap-1">
+			{/*
+			 * The plaque. A card's corner and border, an opaque Paper ground, and the system's
+			 * own resting shadow — the one place the Flat-By-Default Rule yields, because this
+			 * element genuinely is above the surface behind it rather than pretending to be.
+			 */}
+			<div className="absolute right-4 bottom-4 z-30 flex items-center gap-2 rounded-xl border bg-background py-1.5 pr-1.5 pl-3 shadow-sm sm:right-6 sm:bottom-6">
+				<div className="flex items-center gap-1.5">
 					{slides.map((slide, position) => (
 						<button
 							aria-current={position === index ? "true" : undefined}
 							aria-label={`Show photograph ${position + 1} of ${slides.length}`}
-							className="group flex-1 rounded-xs py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+							className="group w-6 rounded-xs py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 							key={slide.src}
 							onClick={() => show(position)}
 							type="button"
 						>
 							{/*
 							 * Muted Ink, not Rule. These hairlines are the only visual the tick
-							 * buttons have, so WCAG 1.4.11 asks 3:1 of them against Paper — Rule
-							 * measures 1.7:1 and would make the control invisible to the people
-							 * the criterion exists for. The selected tick fills in Commission
-							 * Green over this track, so its state is carried by how much of it
-							 * is green rather than by hue alone.
+							 * buttons have, so WCAG 1.4.11 asks 3:1 of them against the plaque's
+							 * Paper — Rule measures 1.7:1 and would make the control invisible to
+							 * the people the criterion exists for. The selected tick fills in
+							 * Commission Green over this track, so its state is carried by how
+							 * much of it is green rather than by hue alone.
 							 */}
 							<span className="block h-0.5 w-full overflow-hidden bg-muted-foreground/90 transition-colors group-hover:bg-foreground">
 								{position === index ? (
@@ -203,7 +214,7 @@ export function HeroCarousel() {
 					aria-label={
 						playing ? "Pause the photographs" : "Play the photographs"
 					}
-					className="-mr-2 inline-flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+					className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
 					onClick={() => setPlaying((current) => !current)}
 					type="button"
 				>
