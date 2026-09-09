@@ -49,6 +49,24 @@
 	 * already measures 14.48:1; ink there would be 1.05:1.
 	 */
 	--accent-foreground: oklch(0.2537 0.0035 164.7797);
+	/*
+	 * The public footer's band, and nothing else. It was `--accent` / `--accent-foreground`,
+	 * which is shadcn's hover-and-focus pair on hundreds of surfaces across all five frontends
+	 * — so the footer could not be recoloured without dragging every hovered dropdown item and
+	 * calendar cell with it. Its own pair is the seam that lets the two move independently.
+	 *
+	 * Near-black rather than Brackish Teal, at the Commission's request. White on it measures
+	 * 15.85:1, so the contrast argument recorded on `--accent-foreground` above no longer applies
+	 * to this band; that note now covers only the hover states it was really about.
+	 *
+	 * One value for both schemes. The band is already darker than either page ground, and a
+	 * dark-mode variant would be lightening a near-black to sit on a near-black.
+	 *
+	 * Hex rather than oklch, as `--shadow-color` above already is: the Commission specified
+	 * `#202322` exactly, and a conversion here would only be a chance to land a shade off it.
+	 */
+	--footer: #202322;
+	--footer-foreground: #ffffff;
 	--destructive: oklch(0.5046 0.2053 29.0423);
 	--destructive-foreground: oklch(0.8852 0.0042 91.4508);
 	--border: oklch(0.8 0.02 150);
@@ -65,8 +83,10 @@
 	 * Two changes. The alpha is gone, because a 50% ring is a 50% contrast ratio. And the
 	 * lightness drops to 0.36, which is where a single colour clears 3:1 against every light
 	 * ground the ring can land on — Paper 9.47, Surface 9.35, Muted 8.32, Pale Green 7.88,
-	 * Field 7.83, Sidebar Ground 8.83, and Brackish Teal 3.27, the footer's ground and the
-	 * tightest of them.
+	 * Field 7.83, Sidebar Ground 8.83, and Brackish Teal 3.27, the tightest of them — the teal
+	 * is the hover state on dropdown items and calendar cells, which is where the ring meets
+	 * it. It was also the public footer's ground until that band went near-black; on `--footer`
+	 * this ring measures 1.55:1, so the footer inverts it the way green grounds do, below.
 	 *
 	 * No single colour can also clear 3:1 against Commission Green: light enough for the green
 	 * needs L≈0.83, dark enough for Paper needs L≤0.57. So green grounds invert the ring to the
@@ -178,6 +198,8 @@
 	--color-accent-foreground: var(--accent-foreground);
 	--color-destructive: var(--destructive);
 	--color-destructive-foreground: var(--destructive-foreground);
+	--color-footer: var(--footer);
+	--color-footer-foreground: var(--footer-foreground);
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);

@@ -252,6 +252,7 @@ Required (set via `.env` files per app — see each app's `.env.example`):
 - `VITE_API_URL` — admin, central, hr, website-management; the `api` origin they read shapes and write data through
 - `VITE_APP_NAME`, `VITE_DOMAIN_NAME` — central app
 - `VITE_CLOUDFLARE_TURNSTILE_SITEKEY` — public app
+- `VITE_ASSETS_ORIGIN` — all five web apps; optional origin for the brand images at `/assets`. Unset, they come from production; set it to your own api to see images a branch adds before that branch reaches `main`
 - `API_URL` — public app; it reaches the api server-side only, so this is not a `VITE_` var (stays plain http in local dev)
 
 Server-side, on the `api` service only:

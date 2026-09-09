@@ -29,6 +29,11 @@ import type { NitroAppPlugin, NitroRuntimeHooks } from "nitro/types";
  *   console error in issue #99 is this policy rejecting its own stylesheet. Self-hosting the
  *   font would remove both origins and the extra round trip; until then they have to be here.
  * - `api.middlesexmosquito.org` — the shared brand images, which `api` serves at `/assets/*`.
+ *   Read from `VITE_ASSETS_ORIGIN` so it tracks `@mcmec/lib/constants/assets`, which resolves the
+ *   same variable to build those URLs. A policy naming the production origin while the page
+ *   requests a local one blocks every image, so the two cannot be allowed to disagree. Unset —
+ *   which is how production runs — both sides fall back to production and this header is
+ *   byte-for-byte what `vercel.json` still sends.
  *
  * Dropped in the move: `vercel.live` and `*.vercel.com`, which existed only for Vercel's
  * preview toolbar.
@@ -38,12 +43,16 @@ import type { NitroAppPlugin, NitroRuntimeHooks } from "nitro/types";
  * either needs a per-request nonce threaded through both, which is a change to how the app
  * renders rather than to this header.
  */
+const ASSETS_ORIGIN = (
+	process.env.VITE_ASSETS_ORIGIN ?? "https://api.middlesexmosquito.org"
+).replace(/\/+$/, "");
+
 const CSP = [
 	"default-src 'self'",
 	"script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
 	"style-src 'self' 'unsafe-inline' data: https://fonts.googleapis.com",
 	"font-src 'self' data: https://fonts.gstatic.com",
-	"img-src 'self' data: https://api.middlesexmosquito.org",
+	`img-src 'self' data: ${ASSETS_ORIGIN}`,
 	"frame-src 'self' https://challenges.cloudflare.com",
 	"connect-src 'self' https://challenges.cloudflare.com",
 ].join("; ");

@@ -1,4 +1,4 @@
-import { logoMark } from "@mcmec/lib/constants/assets";
+import { logo192 } from "@mcmec/lib/constants/assets";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	Collapsible,
@@ -196,11 +196,18 @@ export function Navbar() {
 		 * the home hero's `z-30` control plaque.
 		 */
 		<header className="sticky top-0 z-50">
-			{/* Mobile: menu button + sheet */}
-			<div className="lg:hidden">
-				<MobileNavBar />
-			</div>
-			{/* Desktop: full nav bar */}
+			{/*
+			 * One masthead at every width. At `lg` it is two bands: the identity rail, then the
+			 * seven groups on a Commission Green tier. Below `lg` the Menu button moves into the
+			 * rail and that second band goes entirely — a 56px strip holding one button is 56px
+			 * of a sticky header charged against a phone viewport for the whole visit, and the
+			 * rail had the room for it either way.
+			 *
+			 * The rail itself used to be desktop-only, which cost a phone visitor the seal, the
+			 * agency's name and its one-line description, and left the two form factors with
+			 * different information architectures.
+			 */}
+			<IdentityRail />
 			<div className="hidden lg:block">
 				<WebNavBar />
 			</div>
@@ -225,20 +232,77 @@ export function Navbar() {
 // visitor was not. Ink at 25% reads 5.50:1 under the label and darkens rather than lightens,
 // for the reason the hover comment gives.
 const navLinkClass =
-	"inline-flex h-10 items-center justify-center rounded-md px-3 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-foreground/15 focus:bg-foreground/15 focus-visible:ring-[3px] focus-visible:ring-primary-foreground aria-[current]:bg-foreground/25 data-[active=true]:bg-foreground/25";
+	"inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-foreground/15 focus:bg-foreground/15 focus-visible:ring-[3px] focus-visible:ring-primary-foreground aria-[current]:bg-foreground/25 data-[active=true]:bg-foreground/25";
 
+/*
+ * Two tiers. The seal needs a light ground to be readable at all — its disc is
+ * transparent, so on Commission Green the arced lettering sat straight on the green
+ * and dissolved. The old white "puck" was a crude version of this fix, shaped to hide
+ * the square white tile that `logo-mark-128.png` bakes in. `logo192` is the mark
+ * alone, and 192px keeps it crisp at 80px on a 2x display.
+ */
+function IdentityRail() {
+	return (
+		<div className="flex items-center justify-between gap-4 border-b bg-background px-[clamp(1rem,3vw,3rem)] py-2 sm:gap-6 sm:py-3 lg:h-26 lg:py-0">
+			<Link className="flex items-center gap-4" to="/">
+				<img
+					alt="MCMEC Logo"
+					className="h-12 w-auto sm:h-16 lg:h-20"
+					src={logo192}
+				/>
+				{/*
+				 * The full name at every width, and the size does the adapting. It was briefly
+				 * shortened to "MCMEC" below `sm` to keep the rail short, which is the wrong
+				 * trade: an initialism identifies the agency only to someone who already knows
+				 * it, and most arrivals here come from a search result knowing nothing. Wrapping
+				 * to three lines at 11px costs less than a visitor who cannot tell whose site
+				 * they opened.
+				 */}
+				<span className="flex min-w-0 flex-col leading-tight">
+					<span className="font-bold text-[0.6875rem] uppercase tracking-wide sm:text-sm lg:text-base">
+						Middlesex County
+					</span>
+					<span className="font-semibold text-[0.6875rem] text-muted-foreground uppercase tracking-wide sm:text-sm lg:text-base">
+						Mosquito Extermination Commission
+					</span>
+				</span>
+			</Link>
+			<span className="hidden text-right font-semibold text-[0.625rem] text-muted-foreground uppercase leading-relaxed tracking-[0.16em] md:block lg:text-xs">
+				{/*
+				 * Hidden below `sm`. The whole masthead is sticky, so every pixel of it is charged
+				 * against the viewport for the rest of the visit — three lines of standfirst took the
+				 * header to 198px on a 320px-tall-by-568 phone, better than a third of the screen,
+				 * permanently. The seal and the agency's name stay at every width, which is the part
+				 * a visitor needs; this is the sentence that can wait for a wider screen.
+				 *
+				 * The three lines are forced, not wrapped. At `0.16em` the sentence runs about
+				 * 740px unbroken, and letting it find its own breaks at a capped measure put
+				 * "community" and "from" in places that read as two different clauses. Each
+				 * `{" "}` is load-bearing: a block boundary is a visual break, not a textual
+				 * one, so without them the accessible name runs the lines together as words.
+				 */}
+				<span className="block">Advancing public health</span>{" "}
+				<span className="block">and protecting our community</span>{" "}
+				<span className="block">from mosquitoes since 1914</span>
+			</span>
+			<div className="lg:hidden">
+				<MobileNavBar />
+			</div>
+		</div>
+	);
+}
+
+/*
+ * The seven groups need 959px on one line at this size, measured rather than
+ * guessed. Giving the nav its own tier is what buys that at `lg`; a single row
+ * carrying the seal as well needs 1063px and would not fit until `xl`.
+ */
 function WebNavBar() {
 	return (
-		<div className="flex h-16 flex-row items-center justify-start bg-primary py-2">
-			<div className="flex w-20 flex-row justify-center rounded-r-full bg-background">
-				<Link to="/">
-					<img alt="MCMEC Logo" className="m-2 h-12" src={logoMark} />
-				</Link>
-			</div>
-
+		<div className="flex h-14 items-center bg-primary px-[clamp(1.5rem,3vw,3rem)]">
 			<nav
 				aria-label="Main"
-				className="ml-8 flex flex-1 flex-row items-center justify-start gap-1"
+				className="flex flex-1 flex-row flex-nowrap items-center gap-0.5"
 			>
 				{menuItems.map((item) =>
 					item.subItems ? (
@@ -309,104 +373,119 @@ function MobileNavBar() {
 	const { pathname } = useLocation();
 
 	return (
-		<div className="flex h-14 flex-row items-center justify-between bg-primary pl-3">
-			<Sheet onOpenChange={setOpen} open={open}>
-				<SheetTrigger className="-ml-1 rounded-md px-1 py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-foreground">
-					<div className="flex flex-row items-center gap-2 text-primary-foreground">
-						<Menu className="size-5" />
-						<span className="font-semibold text-sm uppercase tracking-wide">
-							Menu
+		<Sheet onOpenChange={setOpen} open={open}>
+			{/*
+			 * On Paper now rather than on Commission Green, so the label takes Ink and the ring
+			 * reverts to `--ring` — the dark green is measured against every light ground in the
+			 * system, and the pale ring the green tier needed would be invisible here.
+			 *
+			 * `min-h-11` is 44px: this is the only route to six of the seven groups on a phone,
+			 * and it is reached by thumb.
+			 */}
+			<SheetTrigger className="-mr-1 flex min-h-11 items-center gap-2 rounded-md border px-3 py-2 font-semibold text-foreground text-sm uppercase tracking-wide transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring">
+				<Menu className="size-5" />
+				Menu
+			</SheetTrigger>
+			<SheetContent side="left">
+				<SheetHeader>
+					{/*
+					 * The agency identifies itself here, where there is room the rail has not:
+					 * below `sm` the rail is down to the seal, "MCMEC" and this button, so the
+					 * full name and the standfirst have nowhere else to be on a phone.
+					 *
+					 * `SheetTitle` stays "Menu" and goes `sr-only`. It is the dialog's accessible
+					 * name, and a navigation panel that announces itself as the agency's name
+					 * tells a screen-reader user nothing about what just opened.
+					 */}
+					<SheetTitle className="sr-only">Menu</SheetTitle>
+					<span className="flex flex-col leading-tight">
+						<span className="font-bold text-base uppercase tracking-wide">
+							Middlesex County
 						</span>
-					</div>
-				</SheetTrigger>
-				<SheetContent side="left">
-					<SheetHeader>
-						<SheetTitle>Menu</SheetTitle>
-						{/*
-						 * Not decoration. `SheetContent` always points `aria-describedby` at the
-						 * description's generated id, so with no description rendered the dialog
-						 * carried a reference that resolved to nothing — measured as
-						 * `aria-describedby="radix-_R_aj6H2_"` against an element that did not
-						 * exist, on the only navigation a mobile screen-reader user has. The
-						 * `aria-describedby="Mobile Menu"` that used to sit on the `Sheet` root
-						 * did not help: the root does not forward it, and that string is not an id.
-						 */}
-						<SheetDescription className="sr-only">
-							Every section of the Commission's website. The section you are
-							reading is open and marked.
-						</SheetDescription>
-					</SheetHeader>
-					<nav aria-label="Main" className="mt-4 flex flex-col gap-0">
-						{menuItems.map((item, index) => {
-							const groupActive = isGroupActive(item, pathname);
-							return (
-								<div key={item.title}>
-									{item.subItems ? (
-										/*
-										 * Open on the section the visitor is already reading. The sheet
-										 * used to present seven closed drawers with nothing marked, so a
-										 * resident who opened the menu to move sideways within a section
-										 * had to remember which of the two groups beginning "Mosquito"
-										 * they had come from. `defaultOpen` is enough because the portal
-										 * unmounts on close, so every open is a fresh mount.
-										 */
-										<Collapsible defaultOpen={groupActive}>
-											<CollapsibleTrigger asChild>
-												<Button
-													className={cn(sheetRowClass, "justify-between")}
-													data-active={groupActive}
-													variant="ghost"
-												>
-													<span>{item.title}</span>
-													<ChevronDown className="h-4 w-4" />
-												</Button>
-											</CollapsibleTrigger>
-											<CollapsibleContent className="pt-2 pl-4">
-												<div className="flex flex-col gap-1">
-													{item.subItems.map((subItem) => (
-														<Link
-															// Exact, so exactly one row is current. Fuzzy matching
-															// would light "Legal Notices" (`/notices`) while the
-															// visitor is on `/notices/archive`, and two current
-															// rows answer "where am I" with a question.
-															activeOptions={{ exact: true }}
-															className="block rounded-md p-2 text-sm hover:bg-muted aria-[current]:bg-secondary aria-[current]:font-semibold"
-															key={subItem.title}
-															onClick={() => setOpen(false)}
-															to={subItem.linkProps.to}
-														>
-															{subItem.title}
-														</Link>
-													))}
-												</div>
-											</CollapsibleContent>
-										</Collapsible>
-									) : (
-										<Button asChild className={sheetRowClass} variant="ghost">
-											<Link
-												activeOptions={{ exact: true }}
-												onClick={() => setOpen(false)}
-												to={item.linkProps?.to}
+						<span className="font-semibold text-base text-muted-foreground uppercase tracking-wide">
+							Mosquito Extermination Commission
+						</span>
+					</span>
+					<span className="mt-1 font-semibold text-[0.625rem] text-muted-foreground uppercase leading-relaxed tracking-[0.16em]">
+						Advancing public health and protecting our community from mosquitoes
+						since 1914
+					</span>
+					{/*
+					 * Not decoration. `SheetContent` always points `aria-describedby` at the
+					 * description's generated id, so with no description rendered the dialog
+					 * carried a reference that resolved to nothing — measured as
+					 * `aria-describedby="radix-_R_aj6H2_"` against an element that did not
+					 * exist, on the only navigation a mobile screen-reader user has. The
+					 * `aria-describedby="Mobile Menu"` that used to sit on the `Sheet` root
+					 * did not help: the root does not forward it, and that string is not an id.
+					 */}
+					<SheetDescription className="sr-only">
+						Every section of the Commission's website. The section you are
+						reading is open and marked.
+					</SheetDescription>
+				</SheetHeader>
+				<nav aria-label="Main" className="mt-4 flex flex-col gap-0">
+					{menuItems.map((item, index) => {
+						const groupActive = isGroupActive(item, pathname);
+						return (
+							<div key={item.title}>
+								{item.subItems ? (
+									/*
+									 * Open on the section the visitor is already reading. The sheet
+									 * used to present seven closed drawers with nothing marked, so a
+									 * resident who opened the menu to move sideways within a section
+									 * had to remember which of the two groups beginning "Mosquito"
+									 * they had come from. `defaultOpen` is enough because the portal
+									 * unmounts on close, so every open is a fresh mount.
+									 */
+									<Collapsible defaultOpen={groupActive}>
+										<CollapsibleTrigger asChild>
+											<Button
+												className={cn(sheetRowClass, "justify-between")}
+												data-active={groupActive}
+												variant="ghost"
 											>
 												<span>{item.title}</span>
-											</Link>
-										</Button>
-									)}
-									{index < menuItems.length - 1 && (
-										<Separator className="my-1" />
-									)}
-								</div>
-							);
-						})}
-					</nav>
-				</SheetContent>
-			</Sheet>
-			<Link
-				className="flex h-14 w-16 items-center justify-center rounded-l-full bg-background"
-				to="/"
-			>
-				<img alt="MCMEC Logo" className="h-10" src={logoMark} />
-			</Link>
-		</div>
+												<ChevronDown className="h-4 w-4" />
+											</Button>
+										</CollapsibleTrigger>
+										<CollapsibleContent className="pt-2 pl-4">
+											<div className="flex flex-col gap-1">
+												{item.subItems.map((subItem) => (
+													<Link
+														// Exact, so exactly one row is current. Fuzzy matching
+														// would light "Legal Notices" (`/notices`) while the
+														// visitor is on `/notices/archive`, and two current
+														// rows answer "where am I" with a question.
+														activeOptions={{ exact: true }}
+														className="block rounded-md p-2 text-sm hover:bg-muted aria-[current]:bg-secondary aria-[current]:font-semibold"
+														key={subItem.title}
+														onClick={() => setOpen(false)}
+														to={subItem.linkProps.to}
+													>
+														{subItem.title}
+													</Link>
+												))}
+											</div>
+										</CollapsibleContent>
+									</Collapsible>
+								) : (
+									<Button asChild className={sheetRowClass} variant="ghost">
+										<Link
+											activeOptions={{ exact: true }}
+											onClick={() => setOpen(false)}
+											to={item.linkProps?.to}
+										>
+											<span>{item.title}</span>
+										</Link>
+									</Button>
+								)}
+								{index < menuItems.length - 1 && <Separator className="my-1" />}
+							</div>
+						);
+					})}
+				</nav>
+			</SheetContent>
+		</Sheet>
 	);
 }

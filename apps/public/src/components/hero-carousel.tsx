@@ -128,7 +128,7 @@ export function HeroCarousel() {
 	 * anything. Beside the register at `xl` it takes the column's own height instead.
 	 */
 	return (
-		<div className="relative aspect-4/3 overflow-hidden bg-muted sm:aspect-16/9 lg:aspect-21/9 xl:aspect-auto xl:min-h-[34rem]">
+		<div className="relative aspect-4/3 overflow-hidden bg-muted sm:aspect-16/9 lg:aspect-21/9 xl:aspect-auto xl:h-full xl:min-h-0">
 			{/*
 			 * `aria-live` is off while the plate advances on its own, so a screen reader is not
 			 * interrupted every six seconds; polite once the visitor has taken control, where
@@ -172,6 +172,19 @@ export function HeroCarousel() {
 			 * The plaque. A card's corner and border, an opaque Paper ground, and the system's
 			 * own resting shadow — the one place the Flat-By-Default Rule yields, because this
 			 * element genuinely is above the surface behind it rather than pretending to be.
+			 */}
+			{/*
+			 * The controls stay visible. They were briefly hidden until hover, and the keyboard
+			 * and touch holes in that are patchable — `group-focus-within` for the tab order,
+			 * `(hover: none)` for touch. The one that is not is WCAG 2.2.2: the plate advances
+			 * on its own every six seconds, which makes the play/pause button the mechanism the
+			 * criterion requires for stopping moving content, and a required mechanism cannot be
+			 * behind a hover. Someone reading at magnification never sees it appear, and anyone
+			 * who needs the motion to stop has to first guess that hovering the photograph
+			 * reveals a control.
+			 *
+			 * The house rule points the same way: motion here animates a hairline, and the
+			 * plate's own crossfade is the system's single stated exception.
 			 */}
 			<div className="absolute right-4 bottom-4 z-30 flex items-center gap-2 rounded-xl border bg-background py-1.5 pr-1.5 pl-3 shadow-sm sm:right-6 sm:bottom-6">
 				<div className="flex items-center gap-1.5">
