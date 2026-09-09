@@ -7,7 +7,7 @@ import {
 	sprayPeriodLabel,
 } from "@mcmec/lib/functions/spray-periods";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { SprayScheduleCard } from "@/src/components/spray-schedule-card";
 import { SprayScheduleFilters } from "@/src/components/spray-schedule-filters";
@@ -90,6 +90,11 @@ function RouteComponent() {
 					Middlesex County Mosquito Extermination Commission. Spray operations
 					are weather-dependent and may be delayed or cancelled.
 				</p>
+				<p>
+					For our{" "}
+					<Link to="/mosquito-control/spray-notice">general spray notice</Link>,
+					please click here.
+				</p>
 			</article>
 
 			<SprayScheduleFilters
@@ -159,6 +164,7 @@ function SprayMissionGroup({
 					<SprayScheduleCard
 						areaDescription={schedule.area_description}
 						endTime={schedule.end_time}
+						insecticideActiveIngredient={schedule.insecticideActiveIngredient}
 						insecticideLabelUrl={schedule.insecticideLabelUrl}
 						insecticideMsdsUrl={schedule.insecticideMsdsUrl}
 						insecticideName={schedule.insecticideName}

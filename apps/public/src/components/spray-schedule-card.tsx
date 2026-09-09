@@ -9,7 +9,33 @@ import {
 } from "@mcmec/ui/components/card";
 import { ExternalLink, MapPin } from "lucide-react";
 
+/*
+ * Every mission on this schedule is applied the same way, so the method is a constant rather
+ * than a stored field. If the Commission ever sprays by another method, this moves to the
+ * mission record — the card already reads it as one line either way.
+ */
+const SPRAY_METHOD = "Ultralow Volume Spraying by Truck";
+
+/*
+ * TEMPORARY — issue #220. Insecticides carry a label and an SDS URL and nothing else, so the one
+ * fact sheet we have to publish is matched by trade name here rather than stored. It comes out
+ * the moment `insecticides` grows a `fact_sheet_url` column and this becomes a third URL like
+ * the others.
+ */
+const FACT_SHEET_URLS: Record<string, string> = {
+	zenivex:
+		"https://middlesexmosquito.sharepoint.com/:b:/g/IQA8WAM64HkzSYZ8dAej33eKAQFheJOEA3HntjhHQMKkLSE?e=62lpBx",
+};
+
+function factSheetUrl(insecticideName: string): string | undefined {
+	const key = Object.keys(FACT_SHEET_URLS).find((name) =>
+		insecticideName.toLowerCase().includes(name),
+	);
+	return key ? FACT_SHEET_URLS[key] : undefined;
+}
+
 interface SprayScheduleCardProps {
+	insecticideActiveIngredient: string;
 	missionDate: Date;
 	startTime: string;
 	endTime: string;
@@ -55,6 +81,7 @@ function formatTimeDisplay(time: string): string {
 }
 
 export function SprayScheduleCard({
+	insecticideActiveIngredient,
 	missionDate,
 	startTime,
 	endTime,
@@ -67,6 +94,8 @@ export function SprayScheduleCard({
 	insecticideMsdsUrl,
 	mapUrl,
 }: SprayScheduleCardProps) {
+	const insecticideFactSheetUrl = factSheetUrl(insecticideName);
+
 	return (
 		<Card>
 			<CardHeader>
@@ -101,7 +130,12 @@ export function SprayScheduleCard({
 							Insecticide
 						</dt>
 						<dd className="flex flex-wrap items-center gap-x-3 gap-y-1">
-							<span>{insecticideName}</span>
+							<span>
+								{insecticideName}
+								{insecticideActiveIngredient
+									? ` (${insecticideActiveIngredient})`
+									: ""}
+							</span>
 							{insecticideLabelUrl && (
 								<a
 									className="inline-flex items-center gap-1 text-primary text-xs underline hover:no-underline"
@@ -124,7 +158,24 @@ export function SprayScheduleCard({
 									<ExternalLink className="h-3 w-3" />
 								</a>
 							)}
+							{insecticideFactSheetUrl && (
+								<a
+									className="inline-flex items-center gap-1 text-primary text-xs underline hover:no-underline"
+									href={insecticideFactSheetUrl}
+									rel="noopener noreferrer"
+									target="_blank"
+								>
+									Fact Sheet
+									<ExternalLink className="h-3 w-3" />
+								</a>
+							)}
 						</dd>
+					</div>
+					<div className="flex items-start gap-2">
+						<dt className="min-w-32 font-semibold text-muted-foreground">
+							Method
+						</dt>
+						<dd>{SPRAY_METHOD}</dd>
 					</div>
 					{rainDate && (
 						<div className="flex items-start gap-2">
