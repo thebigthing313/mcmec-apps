@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-09T17:53:40.550Z
-commit: efc7409 feat(public): spray dates name the weekday, and times read as a clock (#222)
+released: 2026-09-09T18:15:09.082Z
+commit: e05c0c9 fix(public): Prevention At Home opens the prevention guide (#223)
