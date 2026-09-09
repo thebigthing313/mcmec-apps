@@ -251,24 +251,18 @@ function IdentityRail() {
 					src={logo192}
 				/>
 				{/*
-				 * Short name below `sm`, the same shortening the auth frame's masthead already
-				 * does. Beside the Menu button a phone leaves the name about 200px, and the full
-				 * name breaks over four lines there — which is what set the rail's height rather
-				 * than the seal did. The full name follows as `sr-only`, so the accessible name
-				 * still spells the agency out and still opens with the visible label.
+				 * The full name at every width, and the size does the adapting. It was briefly
+				 * shortened to "MCMEC" below `sm` to keep the rail short, which is the wrong
+				 * trade: an initialism identifies the agency only to someone who already knows
+				 * it, and most arrivals here come from a search result knowing nothing. Wrapping
+				 * to three lines at 11px costs less than a visitor who cannot tell whose site
+				 * they opened.
 				 */}
-				<span className="font-bold text-base uppercase tracking-wide sm:hidden">
-					MCMEC
-					<span className="sr-only">
-						{" "}
-						Middlesex County Mosquito Extermination Commission
-					</span>
-				</span>
-				<span className="hidden flex-col leading-tight sm:flex">
-					<span className="font-bold text-sm uppercase tracking-wide lg:text-base">
+				<span className="flex min-w-0 flex-col leading-tight">
+					<span className="font-bold text-[0.6875rem] uppercase tracking-wide sm:text-sm lg:text-base">
 						Middlesex County
 					</span>
-					<span className="font-semibold text-muted-foreground text-sm uppercase tracking-wide lg:text-base">
+					<span className="font-semibold text-[0.6875rem] text-muted-foreground uppercase tracking-wide sm:text-sm lg:text-base">
 						Mosquito Extermination Commission
 					</span>
 				</span>
