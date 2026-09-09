@@ -272,7 +272,7 @@ function IdentityRail() {
 				 * box and crop the tail of the Q in "Mosquito". A unitless multiple resolves
 				 * against each line's own size instead — 19.8px at `lg`.
 				 */}
-				<span className="flex min-w-0 flex-col leading-tight lg:leading-[1.1]">
+				<span className="flex min-w-0 flex-col leading-tight">
 					{/*
 					 * One colour for the whole block. The second name line and the standfirst were
 					 * `text-muted-foreground`, which set the agency's own name in two different
@@ -282,7 +282,7 @@ function IdentityRail() {
 					 * Every line is a point and a half larger than it was — 1.5pt is 2px, so the
 					 * name goes 11/14/16px to 13/16/18px across the breakpoints.
 					 */}
-					<span className="font-bold text-[0.8125rem] uppercase tracking-wide sm:text-base lg:text-lg">
+					<span className="font-bold text-[0.8125rem] uppercase tracking-wide sm:text-base lg:text-lg lg:leading-3">
 						Middlesex County
 					</span>
 					<span className="font-semibold text-[0.8125rem] uppercase tracking-wide sm:text-base lg:text-lg">
@@ -300,7 +300,7 @@ function IdentityRail() {
 					 * phone visitor needs that more than a desktop one, not less. 10px keeps the
 					 * cost to about two lines on a 390px screen.
 					 */}
-					<span className="mt-0.5 text-xs leading-snug md:text-sm">
+					<span className="mt-0.5 text-[0.9375rem] leading-snug md:text-sm">
 						Advancing public health and protecting our community from mosquitoes
 						since 1914.
 					</span>
