@@ -17,9 +17,10 @@ import { ExternalLink, MapPin } from "lucide-react";
 const SPRAY_METHOD = "Ultralow Volume Spraying by Truck";
 
 /*
- * TEMPORARY. Insecticides carry a label and an SDS URL and nothing else, so the one fact sheet
- * we have to publish is matched by trade name here rather than stored. It comes out the moment
- * `insecticides` grows a `fact_sheet_url` column and this becomes a third URL like the others.
+ * TEMPORARY — issue #220. Insecticides carry a label and an SDS URL and nothing else, so the one
+ * fact sheet we have to publish is matched by trade name here rather than stored. It comes out
+ * the moment `insecticides` grows a `fact_sheet_url` column and this becomes a third URL like
+ * the others.
  */
 const FACT_SHEET_URLS: Record<string, string> = {
 	zenivex:
