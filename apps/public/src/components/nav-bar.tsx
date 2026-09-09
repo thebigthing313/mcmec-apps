@@ -265,26 +265,24 @@ function IdentityRail() {
 					<span className="font-semibold text-[0.6875rem] text-muted-foreground uppercase tracking-wide sm:text-sm lg:text-base">
 						Mosquito Extermination Commission
 					</span>
+					{/*
+					 * The standfirst sits under the name it describes, rather than off at the far
+					 * right of the rail where it read as a second, unrelated masthead. Sentence
+					 * case with a full stop: it is a sentence, and the uppercase-with-wide-tracking
+					 * setting it had competed with the agency's name for the same emphasis.
+					 *
+					 * Shown at every width. It used to be `md` and up, on the reasoning that a sticky
+					 * masthead charges every pixel against the viewport for the whole visit — but
+					 * the sentence is what tells a first-time arrival what this agency does, and a
+					 * phone visitor needs that more than a desktop one, not less. 10px keeps the
+					 * cost to about two lines on a 390px screen.
+					 */}
+					<span className="mt-0.5 text-[0.625rem] text-muted-foreground leading-snug md:text-xs">
+						Advancing public health and protecting our community from mosquitoes
+						since 1914.
+					</span>
 				</span>
 			</Link>
-			<span className="hidden text-right font-semibold text-[0.625rem] text-muted-foreground uppercase leading-relaxed tracking-[0.16em] md:block lg:text-xs">
-				{/*
-				 * Hidden below `sm`. The whole masthead is sticky, so every pixel of it is charged
-				 * against the viewport for the rest of the visit — three lines of standfirst took the
-				 * header to 198px on a 320px-tall-by-568 phone, better than a third of the screen,
-				 * permanently. The seal and the agency's name stay at every width, which is the part
-				 * a visitor needs; this is the sentence that can wait for a wider screen.
-				 *
-				 * The three lines are forced, not wrapped. At `0.16em` the sentence runs about
-				 * 740px unbroken, and letting it find its own breaks at a capped measure put
-				 * "community" and "from" in places that read as two different clauses. Each
-				 * `{" "}` is load-bearing: a block boundary is a visual break, not a textual
-				 * one, so without them the accessible name runs the lines together as words.
-				 */}
-				<span className="block">Advancing public health</span>{" "}
-				<span className="block">and protecting our community</span>{" "}
-				<span className="block">from mosquitoes since 1914</span>
-			</span>
 			<div className="lg:hidden">
 				<MobileNavBar />
 			</div>
@@ -382,9 +380,20 @@ function MobileNavBar() {
 			 * `min-h-11` is 44px: this is the only route to six of the seven groups on a phone,
 			 * and it is reached by thumb.
 			 */}
-			<SheetTrigger className="-mr-1 flex min-h-11 items-center gap-2 rounded-md border px-3 py-2 font-semibold text-foreground text-sm uppercase tracking-wide transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring">
+			<SheetTrigger className="-mr-1 flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-md border px-2 py-2 font-semibold text-foreground text-sm uppercase tracking-wide transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring sm:px-3">
 				<Menu className="size-5" />
-				Menu
+				{/*
+				 * The word goes `sr-only` on a portrait phone and comes back from `sm`. It was
+				 * costing the identity block about 50px of the rail's measure at the width where
+				 * the agency's name and standfirst have the least room to wrap, and the glyph
+				 * carries the meaning on its own at that size.
+				 *
+				 * `sr-only`, not removed: this is the only route to six of the seven nav groups
+				 * on a phone, and a button with an icon and no text has no accessible name at
+				 * all. The class positions the span absolutely, so it contributes no width and
+				 * the `gap-2` collapses with it.
+				 */}
+				<span className="sr-only sm:not-sr-only">Menu</span>
 			</SheetTrigger>
 			<SheetContent side="left">
 				<SheetHeader>
@@ -406,9 +415,9 @@ function MobileNavBar() {
 							Mosquito Extermination Commission
 						</span>
 					</span>
-					<span className="mt-1 font-semibold text-[0.625rem] text-muted-foreground uppercase leading-relaxed tracking-[0.16em]">
+					<span className="mt-1 text-muted-foreground text-xs leading-snug">
 						Advancing public health and protecting our community from mosquitoes
-						since 1914
+						since 1914.
 					</span>
 					{/*
 					 * Not decoration. `SheetContent` always points `aria-describedby` at the
