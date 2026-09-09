@@ -118,12 +118,6 @@ export function Footer() {
 						>
 							<Link
 								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
-								to="/mosquito-surveillance/weekly-activity"
-							>
-								Weekly Mosquito Activity
-							</Link>
-							<Link
-								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
 								to="/mosquito-surveillance/municipal-packet"
 							>
 								Municipal Packet
