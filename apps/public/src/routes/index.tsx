@@ -96,6 +96,8 @@ interface Destination {
 	description: string;
 	icon: typeof ConciergeBell;
 	href: string;
+	/** Set when `href` leaves the site, so the cell renders an anchor rather than a Link. */
+	external?: boolean;
 }
 
 const destinations: Destination[] = [
@@ -128,7 +130,8 @@ const destinations: Destination[] = [
 	{
 		description:
 			"Learn how to remove mosquito habitats, apply repellents, and prevent mosquito bites.",
-		href: "/mosquito-surveillance/mosquito-source-checklist",
+		external: true,
+		href: "https://middlesexmosquito.sharepoint.com/:b:/g/IQCLzJFwXLQLSaGsaq3XvsZeASTGdz9VT-S_B3wdzNFA8Yc?e=0McKcA",
 		icon: Droplets,
 		title: "Prevention At Home",
 	},
@@ -261,21 +264,21 @@ function RouteComponent() {
 	);
 }
 
+// `relative` and the raised z on focus keep the 3px ring above the neighbouring
+// card: the 8px gap does not cover a ring drawn outside the border box.
+//
+// `flex-1` over a `basis-0`: every card takes the same share of the register whatever
+// its description runs to, so the six read as one set of equal choices rather than as
+// a ranking by how much there was to say. The `min-h` is the floor a two-line
+// description needs; below it the register scrolls rather than crushing the type.
+const destinationCellClassName =
+	"group relative flex min-h-[4.75rem] flex-1 items-center gap-3.5 rounded-lg border bg-card px-4 py-2.5 transition-colors hover:bg-secondary focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring";
+
 function DestinationCell({ destination }: { destination: Destination }) {
 	const Icon = destination.icon;
 
-	return (
-		<Link
-			// `relative` and the raised z on focus keep the 3px ring above the neighbouring
-			// card: the 8px gap does not cover a ring drawn outside the border box.
-			//
-			// `flex-1` over a `basis-0`: every card takes the same share of the register whatever
-			// its description runs to, so the six read as one set of equal choices rather than as
-			// a ranking by how much there was to say. The `min-h` is the floor a two-line
-			// description needs; below it the register scrolls rather than crushing the type.
-			className="group relative flex min-h-[4.75rem] flex-1 items-center gap-3.5 rounded-lg border bg-card px-4 py-2.5 transition-colors hover:bg-secondary focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
-			to={destination.href}
-		>
+	const body = (
+		<>
 			<Icon
 				aria-hidden="true"
 				className="size-6 shrink-0 text-primary"
@@ -296,6 +299,28 @@ function DestinationCell({ destination }: { destination: Destination }) {
 					{destination.description}
 				</span>
 			</span>
+		</>
+	);
+
+	// An off-site destination cannot go through `Link` — the router would try to match the
+	// SharePoint URL against the route tree. `target="_blank"` because it is a PDF held on
+	// another origin, and the visitor should keep their place on the front door.
+	if (destination.external) {
+		return (
+			<a
+				className={destinationCellClassName}
+				href={destination.href}
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				{body}
+			</a>
+		);
+	}
+
+	return (
+		<Link className={destinationCellClassName} to={destination.href}>
+			{body}
 		</Link>
 	);
 }
