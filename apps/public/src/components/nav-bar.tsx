@@ -14,10 +14,12 @@ import { Separator } from "@mcmec/ui/components/separator";
 import {
 	Sheet,
 	SheetContent,
+	SheetDescription,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
 } from "@mcmec/ui/components/sheet";
+import { cn } from "@mcmec/ui/lib/utils";
 import { Link, type LinkProps, useLocation } from "@tanstack/react-router";
 import { ChevronDown, Menu } from "lucide-react";
 import { useState } from "react";
@@ -151,6 +153,25 @@ const menuItems: MenuItem[] = [
 	},
 ];
 
+/**
+ * A group is current when the visitor is anywhere inside one of its children — the same rule
+ * the staff rail uses. Prefix matching is what a group needs and `aria-current` cannot give it:
+ * a group's trigger is a button, and a button never carries the attribute a `Link` does, so
+ * without this the bar shows nothing at all on `/notices/archive`.
+ *
+ * Shared by the desktop popover and the mobile sheet. It was computed inside `NavPopover` and
+ * nowhere else, which is exactly how the two breakpoints came to disagree about whether the
+ * header knows where you are.
+ */
+function isGroupActive(item: MenuItem, pathname: string) {
+	return (
+		item.subItems?.some((subItem) => {
+			const to = subItem.linkProps.to;
+			return typeof to === "string" && pathname.startsWith(to);
+		}) ?? false
+	);
+}
+
 export function Navbar() {
 	return (
 		/*
@@ -162,8 +183,19 @@ export function Navbar() {
 		 * 842px and it was taking over at 768, so the document scrolled horizontally from
 		 * 768px to 856px on every page — a WCAG 1.4.10 Reflow failure that also lands on a
 		 * 1536px desktop at 200% zoom, which is how a resident who needs magnification reads.
+		 *
+		 * **The stick belongs here, not on the bars.** Both bars carried `sticky top-0 z-50`
+		 * and neither one stuck: a sticky element is clamped to its parent's box, and each
+		 * bar's parent was the breakpoint wrapper directly around it — 64px of parent around
+		 * 64px of child, so the travel range was zero and the bar scrolled away like static
+		 * content. On the archive, the spray schedule and Transparency, the only way back to
+		 * the menu was to scroll to the top of the document.
+		 *
+		 * On `<header>` the containing block is the shell's `min-h-screen flex-col`, which has
+		 * the height for it, and one declaration covers both breakpoints. `z-50` still clears
+		 * the home hero's `z-30` control plaque.
 		 */
-		<header>
+		<header className="sticky top-0 z-50">
 			{/* Mobile: menu button + sheet */}
 			<div className="lg:hidden">
 				<MobileNavBar />
@@ -197,7 +229,7 @@ const navLinkClass =
 
 function WebNavBar() {
 	return (
-		<div className="sticky top-0 z-50 flex h-16 flex-row items-center justify-start bg-primary py-2">
+		<div className="flex h-16 flex-row items-center justify-start bg-primary py-2">
 			<div className="flex w-20 flex-row justify-center rounded-r-full bg-background">
 				<Link to="/">
 					<img alt="MCMEC Logo" className="m-2 h-12" src={logoMark} />
@@ -230,15 +262,7 @@ function NavPopover({ item }: { item: MenuItem }) {
 	const [open, setOpen] = useState(false);
 	const { pathname } = useLocation();
 
-	// Matched by path prefix, so a group stays lit while the visitor is anywhere inside it —
-	// the same rule the staff rail uses. Without this the bar shows nothing at all on
-	// `/notices/archive`, because a group's trigger is a button and never carries
-	// `aria-current` the way a Link does.
-	const active =
-		item.subItems?.some((subItem) => {
-			const to = subItem.linkProps.to;
-			return typeof to === "string" && pathname.startsWith(to);
-		}) ?? false;
+	const active = isGroupActive(item, pathname);
 
 	return (
 		<Popover onOpenChange={setOpen} open={open}>
@@ -273,12 +297,20 @@ function NavPopover({ item }: { item: MenuItem }) {
 	);
 }
 
+// The sheet's own rows. Ghost buttons on Paper, so the current row takes Pale Green rather
+// than the Ink tint the bar's links take on Commission Green — the ground is inverted, and so
+// is the direction the state moves in. `aria-current` is the router's, `data-active` is the
+// group's; both land on the same treatment so the two rows read as one kind of thing.
+const sheetRowClass =
+	"w-full justify-start aria-[current]:bg-secondary aria-[current]:font-semibold data-[active=true]:bg-secondary";
+
 function MobileNavBar() {
 	const [open, setOpen] = useState(false);
+	const { pathname } = useLocation();
 
 	return (
-		<div className="sticky top-0 z-50 flex h-14 flex-row items-center justify-between bg-primary pl-3">
-			<Sheet aria-describedby="Mobile Menu" onOpenChange={setOpen} open={open}>
+		<div className="flex h-14 flex-row items-center justify-between bg-primary pl-3">
+			<Sheet onOpenChange={setOpen} open={open}>
 				<SheetTrigger className="-ml-1 rounded-md px-1 py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-foreground">
 					<div className="flex flex-row items-center gap-2 text-primary-foreground">
 						<Menu className="size-5" />
@@ -290,53 +322,82 @@ function MobileNavBar() {
 				<SheetContent side="left">
 					<SheetHeader>
 						<SheetTitle>Menu</SheetTitle>
+						{/*
+						 * Not decoration. `SheetContent` always points `aria-describedby` at the
+						 * description's generated id, so with no description rendered the dialog
+						 * carried a reference that resolved to nothing — measured as
+						 * `aria-describedby="radix-_R_aj6H2_"` against an element that did not
+						 * exist, on the only navigation a mobile screen-reader user has. The
+						 * `aria-describedby="Mobile Menu"` that used to sit on the `Sheet` root
+						 * did not help: the root does not forward it, and that string is not an id.
+						 */}
+						<SheetDescription className="sr-only">
+							Every section of the Commission's website. The section you are
+							reading is open and marked.
+						</SheetDescription>
 					</SheetHeader>
 					<nav aria-label="Main" className="mt-4 flex flex-col gap-0">
-						{menuItems.map((item, index) => (
-							<div key={item.title}>
-								{item.subItems ? (
-									<Collapsible>
-										<CollapsibleTrigger asChild>
-											<Button
-												className="w-full justify-between"
-												variant="ghost"
+						{menuItems.map((item, index) => {
+							const groupActive = isGroupActive(item, pathname);
+							return (
+								<div key={item.title}>
+									{item.subItems ? (
+										/*
+										 * Open on the section the visitor is already reading. The sheet
+										 * used to present seven closed drawers with nothing marked, so a
+										 * resident who opened the menu to move sideways within a section
+										 * had to remember which of the two groups beginning "Mosquito"
+										 * they had come from. `defaultOpen` is enough because the portal
+										 * unmounts on close, so every open is a fresh mount.
+										 */
+										<Collapsible defaultOpen={groupActive}>
+											<CollapsibleTrigger asChild>
+												<Button
+													className={cn(sheetRowClass, "justify-between")}
+													data-active={groupActive}
+													variant="ghost"
+												>
+													<span>{item.title}</span>
+													<ChevronDown className="h-4 w-4" />
+												</Button>
+											</CollapsibleTrigger>
+											<CollapsibleContent className="pt-2 pl-4">
+												<div className="flex flex-col gap-1">
+													{item.subItems.map((subItem) => (
+														<Link
+															// Exact, so exactly one row is current. Fuzzy matching
+															// would light "Legal Notices" (`/notices`) while the
+															// visitor is on `/notices/archive`, and two current
+															// rows answer "where am I" with a question.
+															activeOptions={{ exact: true }}
+															className="block rounded-md p-2 text-sm hover:bg-muted aria-[current]:bg-secondary aria-[current]:font-semibold"
+															key={subItem.title}
+															onClick={() => setOpen(false)}
+															to={subItem.linkProps.to}
+														>
+															{subItem.title}
+														</Link>
+													))}
+												</div>
+											</CollapsibleContent>
+										</Collapsible>
+									) : (
+										<Button asChild className={sheetRowClass} variant="ghost">
+											<Link
+												activeOptions={{ exact: true }}
+												onClick={() => setOpen(false)}
+												to={item.linkProps?.to}
 											>
 												<span>{item.title}</span>
-												<ChevronDown className="h-4 w-4" />
-											</Button>
-										</CollapsibleTrigger>
-										<CollapsibleContent className="pt-2 pl-4">
-											<div className="flex flex-col gap-1">
-												{item.subItems.map((subItem) => (
-													<Link
-														className="block rounded-md p-2 text-sm hover:bg-muted"
-														key={subItem.title}
-														onClick={() => setOpen(false)}
-														to={subItem.linkProps.to}
-													>
-														{subItem.title}
-													</Link>
-												))}
-											</div>
-										</CollapsibleContent>
-									</Collapsible>
-								) : (
-									<Button
-										asChild
-										className="w-full justify-start"
-										variant="ghost"
-									>
-										<Link
-											onClick={() => setOpen(false)}
-											to={item.linkProps?.to}
-										>
-											<span>{item.title}</span>
-										</Link>
-									</Button>
-								)}
-								{index < menuItems.length - 1 && <Separator className="my-1" />}
-							</div>
-						))}
+											</Link>
+										</Button>
+									)}
+									{index < menuItems.length - 1 && (
+										<Separator className="my-1" />
+									)}
+								</div>
+							);
+						})}
 					</nav>
 				</SheetContent>
 			</Sheet>
