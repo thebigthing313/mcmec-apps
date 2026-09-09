@@ -258,7 +258,21 @@ function IdentityRail() {
 				 * to three lines at 11px costs less than a visitor who cannot tell whose site
 				 * they opened.
 				 */}
-				<span className="flex min-w-0 flex-col leading-tight">
+				{/*
+				 * Tighter between the two name lines from `lg`, where they are 18px and set on one
+				 * rail with room to spare — `leading-tight` left a gap that read as two separate
+				 * labels rather than one two-line name. Below `lg` the leading stays as it was:
+				 * the name wraps to three lines on a phone, and closing it up there would set
+				 * wrapped words tighter than the line breaks the design intends.
+				 *
+				 * The standfirst is unaffected — it carries its own `leading-snug`.
+				 *
+				 * `1.1`, not `leading-none`. Tailwind's `leading-none` is the length `1lh` at the
+				 * *container's* font size, which is 16px here, so 18px lines would sit in a 16px
+				 * box and crop the tail of the Q in "Mosquito". A unitless multiple resolves
+				 * against each line's own size instead — 19.8px at `lg`.
+				 */}
+				<span className="flex min-w-0 flex-col leading-tight lg:leading-[1.1]">
 					{/*
 					 * One colour for the whole block. The second name line and the standfirst were
 					 * `text-muted-foreground`, which set the agency's own name in two different
