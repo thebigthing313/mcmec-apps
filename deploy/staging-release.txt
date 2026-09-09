@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-09T19:08:46.942Z
-commit: ce4aab0 fix(public): the masthead is a point and a half larger, and one ink throughout (#225)
+released: 2026-09-09T19:19:37.791Z
+commit: c40aec7 fix(public): close up the masthead's two name lines on desktop (#226)
