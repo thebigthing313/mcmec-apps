@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-09T19:19:37.791Z
-commit: c40aec7 fix(public): close up the masthead's two name lines on desktop (#226)
+released: 2026-09-09T19:56:41.822Z
+commit: 3a51dd6 fix: header leading (#227)
