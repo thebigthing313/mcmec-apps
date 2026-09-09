@@ -51,13 +51,14 @@ function RouteComponent() {
 					provided by the New Jersey Agricultural Experiment Station, Rutgers
 					University:{" "}
 					<a
-						href="https://vectorbio.rutgers.edu/outreach/docs/bmpmcnj.pdf"
+						href="https://middlesexmosquito.sharepoint.com/:b:/g/IQB0zfvnuWucR7N_OJg0K9AcAeIX0zhMDZPUOtx82FgLvSM?e=4DOTJE"
 						rel="noopener noreferrer"
 						target="_blank"
 					>
-						"Insecticides Recommended For Mosquito Control in New Jersey in
-						2012" publication #P-08001-01-12.
+						"Insecticides Recommended for Mosquito Control in New Jersey: 2026
+						Update"
 					</a>
+					.
 				</p>
 			</article>
 			<div className="mt-8">
