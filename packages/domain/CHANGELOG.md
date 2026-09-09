@@ -1,41 +1,8 @@
-# @mcmec/sync
+# @mcmec/domain
 
-## 1.0.0
+## 0.1.0
 
-### Major Changes
-
-- ecb366f: Rename `@mcmec/collections` to `@mcmec/sync` and give it the per-app collection sets
-
-  The package held the Electric collection factories and the write helpers, while the four
-  per-app collection sets (`admin`, `central`, `hr`, `notices`) lived in `@mcmec/schemas` — so
-  neither name described what it held, and `schemas` depended on `collections` to build them.
-
-  - **`packages/collections` → `packages/sync`.** The shared builders move to `src/factories/`
-    and `@mcmec/schemas/src/collections/*` moves in as `src/collections/*`, so an app now
-    imports `@mcmec/sync/collections/notices` instead of `@mcmec/schemas/collections/notices`.
-  - **`@mcmec/sync/routes` is a new export that imports nothing** — `COMMAND_PATH`,
-    `shapePathFor` and `dataPathFor`, the URLs the client and the API agree on. Keeping it
-    dependency-free is what lets the Hono server take the paths without the TanStack stack
-    behind them. `crud.ts`, `snapshot.ts` and `electric-collection.ts` now derive their URLs
-    from it rather than each spelling out its own template string.
-  - **`@mcmec/schemas` is a pure Zod leaf.** With the collection sets gone it drops
-    `@mcmec/collections`, `@tanstack/react-db`, `@tanstack/react-query` and
-    `@tanstack/query-core` — all four unused by the `db/*` schemas — leaving `zod` and
-    `@mcmec/lib`. Its tsconfig drops the React preset with them, its dead `src/index.ts` barrel
-    (unreachable through the `exports` map, imported by nobody) is deleted, and the
-    `./collections/*` export goes with the files. The dependency cycle between the two packages
-    is gone: `sync` depends on `schemas`, and `schemas` on nothing of ours but `lib`.
-  - `admin`, `central` and `hr` drop their direct `@mcmec/schemas` dependency — they only ever
-    reached it for the collection sets.
-
-  `zod` is pinned to 4.3.5 for the v4 range in the root `pnpm.overrides`. Splitting the
-  collection sets into a package of their own gave them a second, freshly-resolved zod (4.4.3)
-  whose `ZodType` is structurally incompatible with 4.3.5's, which broke the schema arguments
-  to the collection factories at the type level. The override is scoped `zod@^4` so the v3 that
-  `@tanstack/router-generator` needs is left alone.
-
-  No runtime behaviour changes. `crud.ts` and the Insert/Update schema pairs stay — they still
-  serve the tables that have not cut over to named commands.
+### Minor Changes
 
 - 5548a61: Delete the generic write path
 
@@ -77,126 +44,35 @@
 
   Not browser-verified — that is deferred wholesale to the end-of-cutover pass.
 
-- 229923c: Job Postings authoring moves from `hr` to `website-management`, on named commands
-
-  **Who can do this changes.** A job posting is content published to the public website, so
-  #134 put `job_postings` in the `website` domain, where its commands inherit `manage_website`.
-  Authoring it from `apps/hr` — an app gated end to end on `manage_employees` — would have made
-  every save a 403. A per-command permission override was considered and rejected: job postings
-  are not an exception to website ownership, the screens were simply in the wrong app. So the
-  screens moved.
-
-  An HR-only user loses access to job postings entirely, including the ability to read drafts
-  and closed postings. A website-manager gains it. The public careers page is unchanged — it
-  reads the anonymous published-and-open shape, which is untouched.
-
-  **Both gates moved, not just the write one.** `apps/api/src/shapes.ts` restricted the full
-  `job_postings` shape to `manage_employees`; a read rule that disagreed with the write rule
-  would have left the authoring screens able to save a draft they could not then see. The
-  legacy `/api/data/job_postings` entry is **deleted** rather than re-gated: a cut-over table
-  must not keep a generic door, whose writes would land in `audit_log` with a null command
-  (#150).
-
-  **Seven named commands** replace the generic CRUD for this table: `website.createJobPosting`,
-  `updateJobPostingDetails`, `publishJobPosting`, `unpublishJobPosting`, `closeJobPosting`,
-  `reopenJobPosting`, `deleteJobPosting`. Both lifecycle columns are omitted from
-  `updateJobPostingDetails`, so they can only move through a command that names the transition,
-  and every audit row now carries that name.
-
-  **`published_at` becomes server-owned.** It was a date picker whose emptiness _meant_ draft
-  ("leave empty for draft"), so publishing was spelled as typing a date — and backdating or
-  future-dating a posting was a normal thing the form invited. `publishJobPosting` stamps
-  `now()`. The form loses the date field and the Closed switch and gains Publish/Unpublish and
-  Close/Reopen actions; a new posting is always a draft.
-
-  The `pending` status (a publish date in the future) is now unreachable for new writes.
-  `getJobPostingStatus` keeps the branch for rows written before this landed.
-
-  **`@mcmec/sync` is a major** because `HrCollections` no longer carries `jobPostings` — the
-  collection moved to the website-management set and onto the command write path, losing its
-  Insert/Update schema pair (a command payload is not "a row minus the server columns"). The
-  schemas themselves stay in `@mcmec/schemas`' `db/job-postings.ts`, but with the `WRITABLE`
-  entry gone nothing imports them any more — the cutover deletes them along with the rest of the
-  generic path.
-
-- 3960d61: Remove the last Supabase references now that production runs on Railway.
-
-  **Renamed two packages.** Neither contained Supabase code any more, so the names were
-  actively misleading — a reader could reasonably assume `@mcmec/supabase` was a Supabase
-  client:
-
-  - `@mcmec/supabase` → **`@mcmec/schemas`** — Zod row/insert/update schemas (`db/*`) and the
-    per-app TanStack DB collection factories (`collections/*`)
-  - `@mcmec/supabase-tanstack-db-integration` → **`@mcmec/collections`** — Electric collection
-    factories, API write handlers, `fetchShapeSnapshot`
-
-  The directories moved to `packages/schemas` and `packages/collections` to match. Every
-  import site, `exports` map, and tsconfig path alias was updated; no runtime behavior changes.
-
-  **Deleted dead code.** `@mcmec/schemas` drops the Supabase-generated `Database` type
-  (`src/database.types.ts`), the `Table`/`View`/`Row`/`InsertRow`/`UpdateRow` helpers derived
-  from it (`src/data-types.ts`), the `./database.types` export, and the `Database` re-export
-  from the barrel. Their last consumers were `public`'s Supabase clients, deleted during the
-  Phase 4 wiring.
-
-  **Removed the root `supabase/` directory** — config, migrations, schemas, seeds, scripts, and
-  the dead `invite-employee` edge function (replaced by `POST /api/invite`). The schema is
-  owned by Drizzle in `apps/api/src/db/schema.ts` with migrations in `apps/api/drizzle/`. The
-  root `gen-types` and `gen-seed` scripts that drove it are gone too.
-
-  **Stray references.** `admin` drops its unused `@supabase/supabase-js` and
-  `@tanstack/query-db-collection` dependencies, and the root `pnpm.overrides` pins for both are
-  removed. `@mcmec/collections`' README and docs described a Supabase PostgREST API that no
-  longer exists (`fetchRows`, `selectAndParse`, predicate pushdown, a `supabase` client option)
-  — rewritten against the Electric + data-API surface the package actually exports. The
-  Playwright auth setup signed in through the local Supabase API and wrote an `sb-*-auth-token`
-  localStorage key; it now drives the HR login form and saves the Better Auth session cookie.
-  `@mcmec/ui`'s layout README referenced a `signOut` export that moved to `@mcmec/auth`.
-
-### Minor Changes
-
-- 9b0ea3c: Give every employee the public record to read, in Central
-
-  Central had one destination. An employee without `manage_website` who wanted to know when the
-  next meeting is, whether last month's minutes are posted, or what a notice actually says had to
-  leave the staff applications for the public website — the one surface in the system that is
-  written for residents rather than for the people who produce it.
-
-  A new **Commission** group in Central's rail answers both questions in place:
-
-  - **Public Meetings** — the whole meeting record, read a year at a time, with each meeting's
-    48-hour notice and minutes on the row. The year defaults to the most recent one that has
-    meetings rather than to `getFullYear()`, so January never opens a full record on an empty
-    table.
-  - **Public Notices** — every notice that is on the public website, filterable by whether a
-    resident finds it under Legal Notices or in the Archive, each one opening to its rendered text.
-
-  Both are read-only and composed from `RecordIndex` and `RecordDetail`, so they sort, search,
-  paginate and round-trip their state through the URL like every other staff register. Neither
-  carries a lifecycle action: publishing, archiving and cancelling are `manage_website` commands,
-  and Central is the application every employee has.
-
-  **Only what the public sees.** The shape proxy hands any authenticated session the whole
-  `notices` table, drafts included, because its policy is per-table and Website Management authors
-  against the same shape. Central narrows to `is_published` in the open, in one place — and the
-  notice route refuses an unpublished id rather than leaving the rule to the list, where a URL
-  could walk around it.
-
-  Two things move out of one application so a second could not fork them: `meetingStatus` goes to
-  `@mcmec/lib/functions/meeting-status`, beside `job-posting-status`, so Scheduled / Past /
-  Cancelled is spelled once across the apps that draw it; and `PUBLIC_SITE_URL` joins the app
-  constants, deriving the public origin from the same hostname the app switcher reads, so a "view
-  on the public website" link from staging cannot land on the production record.
-
-  `RecordIndex` gains an optional `totalRows`. A `filters` control is applied by the route, so the
-  block receives rows the caller has already narrowed and its "13 of 137" count was rendering the
-  numerator twice — "13 of 13", which reads as an off-by-one rather than as a filtered list. The
-  prop defaults to `rows.length`, so a screen whose only narrowing is the search field passes
-  nothing and is unchanged.
-
 - 1b5e787: Derive a collection's write path from the command vocabulary, so a cut-over table's two halves cannot disagree.
 
   A command definition now carries the table it is about, bound once per module via `defineDomain(...).table(...)`. `packages/sync` keys its collection options off that union: a commanded table must declare `commands: true` and may carry no Insert/Update schema, and an uncommanded one may not declare it — checked at the call site, with the vocabulary imported type-only so no app pays for it at runtime. `apps/api` refuses at boot to serve a generic write door for a table that has commands. Table names come from a new `@mcmec/schemas/tables` union rather than being free strings.
+
+- 8fe2bff: Documents write through named domain commands
+
+  `documents` is the first slice to cross with a lifecycle pair, so it is the first bound by
+  ADR 0001 rather than only by the command split (#160). Five commands — `createDocument`,
+  `updateDocumentDetails`, `publishDocument`, `unpublishDocument`, `deleteDocument` — defined in
+  `@mcmec/domain`, implemented in `apps/api/src/commands/website/documents.ts`, and named at all
+  five call sites in `website-management`. `documents` leaves `WRITABLE`, so it keeps no generic
+  door whose writes would log `audit_log.command = null`.
+
+  A document is a _link_, not a file: `documents.url` is a plain external URL column, so nothing
+  in this slice touches storage and no command needs an after-commit thunk.
+
+  The publish switch leaves the edit form. `is_published` appears in no `updateDetails` payload
+  schema, so publishing is a button on the detail view, in the edit form as Save-and-Publish, and
+  as a row shortcut — never a field you save your way into. Creating a document still offers the
+  initial state, because a create is not a transition.
+
+  Delete moves off the edit form into the danger zone on the detail page, which is the one
+  placement ADR 0001 fixes.
+
+  Two behaviour changes fall out. Publishing from the detail view no longer navigates away — the
+  badge beside the title is live, so the result of the click is visible where the click was; it
+  used to bounce to the index because the page had no way to show the answer. And the edit form
+  now sends only the fields that actually changed, against the live row, instead of writing back a
+  whole row seeded once on mount.
 
 - 9f288ec: Employee and user management writes through named domain commands
 
@@ -259,6 +135,87 @@
   server-minted id has nothing to be optimistic about — and TanStack DB drops an update with no
   tracked changes, which would have failed it silently behind a success state (#162).
 
+- 229923c: Job Postings authoring moves from `hr` to `website-management`, on named commands
+
+  **Who can do this changes.** A job posting is content published to the public website, so
+  #134 put `job_postings` in the `website` domain, where its commands inherit `manage_website`.
+  Authoring it from `apps/hr` — an app gated end to end on `manage_employees` — would have made
+  every save a 403. A per-command permission override was considered and rejected: job postings
+  are not an exception to website ownership, the screens were simply in the wrong app. So the
+  screens moved.
+
+  An HR-only user loses access to job postings entirely, including the ability to read drafts
+  and closed postings. A website-manager gains it. The public careers page is unchanged — it
+  reads the anonymous published-and-open shape, which is untouched.
+
+  **Both gates moved, not just the write one.** `apps/api/src/shapes.ts` restricted the full
+  `job_postings` shape to `manage_employees`; a read rule that disagreed with the write rule
+  would have left the authoring screens able to save a draft they could not then see. The
+  legacy `/api/data/job_postings` entry is **deleted** rather than re-gated: a cut-over table
+  must not keep a generic door, whose writes would land in `audit_log` with a null command
+  (#150).
+
+  **Seven named commands** replace the generic CRUD for this table: `website.createJobPosting`,
+  `updateJobPostingDetails`, `publishJobPosting`, `unpublishJobPosting`, `closeJobPosting`,
+  `reopenJobPosting`, `deleteJobPosting`. Both lifecycle columns are omitted from
+  `updateJobPostingDetails`, so they can only move through a command that names the transition,
+  and every audit row now carries that name.
+
+  **`published_at` becomes server-owned.** It was a date picker whose emptiness _meant_ draft
+  ("leave empty for draft"), so publishing was spelled as typing a date — and backdating or
+  future-dating a posting was a normal thing the form invited. `publishJobPosting` stamps
+  `now()`. The form loses the date field and the Closed switch and gains Publish/Unpublish and
+  Close/Reopen actions; a new posting is always a draft.
+
+  The `pending` status (a publish date in the future) is now unreachable for new writes.
+  `getJobPostingStatus` keeps the branch for rows written before this landed.
+
+  **`@mcmec/sync` is a major** because `HrCollections` no longer carries `jobPostings` — the
+  collection moved to the website-management set and onto the command write path, losing its
+  Insert/Update schema pair (a command payload is not "a row minus the server columns"). The
+  schemas themselves stay in `@mcmec/schemas`' `db/job-postings.ts`, but with the `WRITABLE`
+  entry gone nothing imports them any more — the cutover deletes them along with the rest of the
+  generic path.
+
+- a88e150: Lift the shared command-handler helpers before the third slice
+
+  Two tables have been cut over to named commands, and both wrote out the same handler code by
+  hand. #134 names 49 commands, most of which are one `set` or one `delete` against one row, so a
+  third copy would have made the duplication a convention by accident.
+
+  **`setFields`, `deleteRow`, `NOT_FOUND` and `isForeignKeyViolation` move to
+  `apps/api/src/commands/rows.ts`.** They stay in the API rather than in `@mcmec/domain`, and
+  deliberately so: #135 split the two packages on define-versus-implement, and these take a
+  Drizzle table and a transaction. The line to hold is that nothing in `rows.ts` may grow a
+  precondition — `archiveNotice` keeps P.L. 2025 c.72 to itself — because a shared helper that
+  quietly starts carrying policy is how the define/implement split erodes.
+
+  `deleteRow` deliberately does not handle foreign keys. #137 put the FK→409 mapping on the
+  deleting handler, because "still referenced" needs a sentence naming what still references it,
+  and only the handler knows; `notices` keeps its wrapper and `job_postings` documents why it has
+  none.
+
+  **A Tiptap document has one spelling now.** `notices` typed `content` from
+  `NoticesRowSchema.shape.content`, which is `z.any()` — so `updateNoticeDetails` would have
+  carried `content: null` into a NOT NULL column and failed as a 500 where a 422 is the truth.
+  `job_postings` hand-rolled an object schema. The object is right, and it becomes
+  `TiptapDocument` in `@mcmec/domain`, where the shape of a rich-text document belongs: what
+  `content` may be is part of what a payload _means_.
+
+  This is the one behavioural change here — `website.createNotice` and
+  `website.updateNoticeDetails` now refuse a `content` that is not a JSON object. Nothing in the
+  app could send one; the editor emits a document and the column is NOT NULL. `TiptapDocument`
+  stops at "a JSON object" rather than describing Tiptap's node grammar, because the grammar is
+  the editor's and tightening further would start refusing documents already stored.
+
+  **Two shared components for ADR 0001.** `DangerZoneCard` is where `delete*` lives — the one
+  lifecycle action whose placement is not free — and `LifecycleButton` is the rest of them, which
+  may sit wherever is convenient but may never be a switch. The button relabels on a dirty form
+  ("Publish" → "Save and Publish") and hands `isDirty` back to the caller, which composes the two
+  intents into one atomic request; `toastOnError` gains `savedTogether`, so a refusal says the
+  field save rolled back with it. Both are presentational and know nothing about the vocabulary.
+  They have no callers yet: #167 retrofits notices and job postings onto them.
+
 - 976244f: Notice categories, document categories and insecticides write through named domain commands
 
   The three plain lookup tables cross together (#159): no lifecycle columns between them, so
@@ -281,6 +238,39 @@
   reserved `reference` domain, which ships no commands until that screen exists. It was an open
   write door on a table with no authoring UI, so it is deleted rather than cut over. The read
   shape is untouched.
+
+- 0562505: Meetings write through named domain commands
+
+  Five commands — `createMeeting`, `updateMeetingDetails`, `cancelMeeting`, `uncancelMeeting`,
+  `deleteMeeting` — defined in `@mcmec/domain`, implemented in
+  `apps/api/src/commands/website/meetings.ts`, and named at all three call sites in
+  `website-management` (#161). `meetings` leaves `WRITABLE`, so it keeps no generic door whose
+  writes would log `audit_log.command = null`.
+
+  **A cancelled meeting now has to say why, and the server is the one enforcing it.** This is the
+  third and last of the three form-only rules #134 promoted to a server precondition. It lived as
+  a conditional `onBlur` validator on the notes field, revalidated by an `onChange` hook on the
+  `is_cancelled` switch — a rule `PATCH /api/data/meetings` could not see, because the switch and
+  the notes reached it as two indistinguishable columns of one row. `cancelMeeting` now reads the
+  STORED notes and refuses with a sentence written for the person who clicked. Re-homing it takes
+  two interlocking validators out of the form and leaves one plain optional field.
+
+  Save-and-Cancel works because the two intents share a transaction and run in client order:
+  `updateMeetingDetails` lands the reason, then `cancelMeeting` reads it. A refused cancel rolls
+  the field save back with it, and the toast says so.
+
+  **Meetings gain the detail page ADR 0001 requires.** `$meetingId` was the edit form; it is now a
+  read-only view carrying the Cancel/Reinstate pair, the meeting's links and notes, and the danger
+  zone. The form moves to `$meetingId/edit`. Cancelling is also a row shortcut on the index —
+  `MeetingsTable` and `MeetingsMobileList` take an optional `rowActions` prop, which the public
+  site does not pass.
+
+  Cancelling still changes only what the public meetings page _says_ about a meeting, never
+  whether it appears: `shapes.ts` gives `meetings` no predicate at all, and the read side is
+  untouched.
+
+  Creating a meeting no longer offers an initial cancelled state. It was never a real choice — a
+  meeting is born scheduled, and `createMeeting`'s payload has no `is_cancelled` to set.
 
 - f811615: The mosquito CSV import writes through a named domain command
 
@@ -439,120 +429,59 @@
 
 ### Patch Changes
 
-- 32de0ba: Upgrade the TanStack DB stack to its current generation.
+- ab92401: The `manage_users` self-lockout guard moves to the server
 
-  - `@tanstack/db` 0.5.33 → **0.8.3**
-  - `@tanstack/react-db` 0.1.61 → **0.3.3**
-  - `@tanstack/electric-db-collection` 0.2.41 → **0.4.3**
+  `users.revokeAppRole` now refuses when the envelope target is the acting session's own user id
+  **and** the role being revoked is `manage_users`. The refusal is
+  `409 { error: "precondition_failed", reason: "self_revocation", message }`, and the message is a
+  finished sentence the permissions grid already renders through `findCommandRefusal`.
 
-  The three packages pin `@tanstack/db` as a hard dependency rather than a peer, so they move
-  as one generation; the root `pnpm.overrides` pin moves with them. No source changes were
-  needed — type-check, lint, build and the schemas test suite all pass against the new
-  versions untouched.
+  Until now the only thing standing between an admin and locking themselves out was a `disabled`
+  prop on one checkbox. Anything that is not that checkbox — curl, a stale tab, a hand-written
+  envelope, a future client that forgets — reached the handler and was obeyed, and the way back from
+  that is direct database access. The rule is now enforced where an attacker actually runs; the
+  client guard stays, demoted to a courtesy that keeps an admin from clicking something the server
+  would refuse.
 
-  **The code paths our Electric collection depends on are unchanged.**
-  `mergePendingMutations` is byte-identical (mutation metadata still merges last-write-wins
-  via `incoming.metadata ?? existing.metadata`, still replacing the object whole), the
-  `subscriberCount` getter is identical, and `awaitTxId` still defaults to 5000 ms and still
-  _rejects_ on timeout — which is what `settleTxids` in `electric-collection.ts` exists to
-  swallow. `PendingMutation.metadata` is still typed `unknown`. Verified by diffing the
-  installed sources, then by syncing a live shape and driving a mutation against the new
-  versions.
+  `409 precondition_failed` rather than the `403` the report proposed. `403 forbidden` already means
+  "you may not send this command", and the caller here _does_ hold `manage_users` — dispatch checked
+  it. This is a rule about the gesture, checked against stored state, which is the shape
+  `archiveNotice`'s retention check already uses.
 
-  `@tanstack/electric-db-collection` 0.4.3 still fetches shapes over **GET** with the same
-  query params and needs `@electric-sql/client ^1.5.15`, which the existing `^1.5.12` range
-  already resolves to. The shape auth-proxy in `apps/api/src/shapes.ts` needs no change — the
-  GET → POST migration its comments anticipate has not happened yet.
+  Deliberately narrow, and the neighbouring cases are covered by tests rather than left to reading:
+  revoking `manage_users` from **someone else** succeeds, revoking **any other** role from yourself
+  succeeds, and `grantAppRole` is untouched — granting yourself a role cannot lock you out. Whether
+  the caller would still hold `manage_users` by some other route is not asked, and refusing a
+  revocation that would leave the system with zero administrators is a different and harder rule
+  that this is not.
 
-  **Two behavioural changes to know about.**
+  `@mcmec/lib` gains a named `MANAGE_USERS` export so the guard and the role list cannot come apart,
+  and `apps/api` gains a test runner — these are its first tests, and CI now runs them.
 
-  _Virtual properties._ Rows read out of a collection now carry `$synced`, `$origin`, `$key`
-  and `$collectionId`, and these survive both object spread and `JSON.stringify`. Mutation
-  `changes` / `modified` / `original` are clean, so the existing write path is unaffected, and
-  no call site currently spreads a row into a write body. Anything that starts building a
-  write payload from a synced row must pick fields explicitly.
-
-  _Auto-indexing._ `@tanstack/db` 0.6.0 changed `autoIndex` to default to `off`. We declare no
-  explicit indexes, so live queries that were implicitly indexed now scan. Nothing was
-  perceptibly slower in local testing; `mosquito_activity_data` is the collection to watch,
-  since it is the only one that reaches five figures of rows.
-
+- Updated dependencies [0e49037]
+- Updated dependencies [62f332a]
+- Updated dependencies [9b0ea3c]
 - Updated dependencies [ecb366f]
+- Updated dependencies [30bef37]
 - Updated dependencies [5548a61]
 - Updated dependencies [1b5e787]
+- Updated dependencies [9f288ec]
+- Updated dependencies [30bef37]
+- Updated dependencies [0e49037]
 - Updated dependencies [3960d61]
+- Updated dependencies [d00dfe1]
+- Updated dependencies [e6877ea]
+- Updated dependencies [3b8822d]
+- Updated dependencies [4515e79]
 - Updated dependencies [3dd1ec0]
+- Updated dependencies [8381e83]
+- Updated dependencies [ab92401]
+- Updated dependencies [0e49037]
+- Updated dependencies [62f332a]
+- Updated dependencies [efc7409]
 - Updated dependencies [2aefe19]
 - Updated dependencies [32de0ba]
+- Updated dependencies [51aef15]
 - Updated dependencies [66e8715]
+  - @mcmec/lib@0.10.0
   - @mcmec/schemas@3.0.0
-
-## 0.3.0
-
-### Minor Changes
-
-- 76ce7e8: Railway migration Phase 4 — rewire the `public` site to the new backend. This completes the frontend migration.
-
-  **public** — every read now comes from the API's ElectricSQL shape proxy instead of Supabase, and the four intake forms post to the merged public-requests endpoint.
-
-  The site stays server-rendered: reads still run inside TanStack Start server functions, so the data is in the SSR response rather than waiting on a client fetch, and the exported `*QueryOptions` are unchanged — no route touched them. Reading anonymously also means the shape proxy applies the public policy server-side, so unpublished notices, documents, and job postings never reach the process. Spray schedules were a nested PostgREST select; shapes are per-table, so the four shapes are read in parallel and joined in the handler.
-
-  The four submit functions collapse into one that forwards to `POST /api/requests`, which owns the honeypot, Turnstile verification, per-type validation and the insert. Forwarding server-side (rather than posting from the browser) keeps the site talking only to its own origin — no CORS, nothing added to the CSP — and the Turnstile secret now lives only in the API. The visitor's IP is passed through so Turnstile still scores the real client.
-
-  Removed: both Supabase clients, the local Turnstile validator, and `@supabase/ssr` / `@supabase/supabase-js`. `connect-src https://*.supabase.co` is dropped from the CSP; `img-src` keeps it until the brand assets are rehosted. Needs `API_URL` server-side, and no longer needs the Supabase or Turnstile-secret variables.
-
-  **@mcmec/supabase** — the public intake contract, shared by the site and mirroring what the API validates: a `requestType` discriminated union of submission payloads, plus the flat form schemas the site's fields bind to and a helper mapping the contact block into a payload.
-
-  **@mcmec/supabase-tanstack-db-integration** — new `fetchShapeSnapshot`: a one-shot shape read for callers that want current rows rather than a live collection. It waits for the shape to report up-to-date, then aborts the stream so no long-poll outlives an SSR request, and applies the same parser the collections use so server and client rows agree.
-
-### Patch Changes
-
-- 76ce7e8: Let on-demand collections sync through the shape proxy.
-
-  On-demand syncing sends `log=changes_only` plus `subset__where` / `subset__order_by` / `subset__params` to pull slices rather than whole tables, and the proxy forwarded only its sync-cursor allowlist. The dropped params didn't fail loudly — the collection simply synced nothing, so the 178-row public-requests table rendered as "0 of 0".
-
-  The proxy now forwards `log` and any `subset__*` param. That's safe because Electric intersects a subset with the shape's own `where` instead of replacing it: verified against staging, a shape pinned to `status = 'resolved'` returned zero rows for `subset__where: status = 'new'` while such a row existed, and `subset__where: true = true` still returned only the resolved set. A client cannot reach rows the policy excludes.
-
-  `public_requests` and `mosquito_activity_data` stay on-demand as intended — both only grow, and pulling them whole on every page load doesn't scale.
-
-- 76ce7e8: Stop a slow sync from rolling back a committed write.
-
-  The collection handlers returned `{ txid }`, which handed the settle wait to
-  `@tanstack/electric-db-collection`. Its `processMatchingStrategy` calls `awaitTxId` with a 5
-  second default, and that call **rejects** on timeout. The rejection propagates out of the
-  mutation handler, so the transaction is marked failed and the optimistic state rolls back —
-  the user watches their edit disappear from the screen while Postgres has it durably committed.
-
-  Five seconds is comfortable against a local API, but the production path is longer, and a
-  cold start on a sleeping Serverless service could plausibly exceed it. A write vanishing from
-  the UI is the worst possible way to report "sync was briefly slow."
-
-  The API's 2xx response is the durability signal: `handleWrite` throws on any non-2xx, so
-  genuine failures still reject and still roll back exactly as before. Only the lag case
-  changes. Each handler now awaits its own txids, with a 30 second window, and swallows a
-  timeout rather than failing the mutation — then returns a result with no `txid` key so the
-  collection does not wait a second time (its check keys off that property's presence).
-
-  In the normal case the optimistic overlay persists until the real row arrives, so there is no
-  flicker. If the window is exceeded, the overlay drops and the row shows its last synced value
-  until the collection converges — a brief flicker instead of a lost edit, and a console warning
-  naming the collection.
-
-## 0.2.1
-
-### Patch Changes
-
-- 5c3f9fd: Add service requests and contact submissions management to the notices app
-  - Add on-demand collections for adult mosquito complaints, mosquitofish requests, water management requests, and contact form submissions
-  - Add full CRUD routes for all 3 service request types and contact submissions with detail, edit, and create pages
-  - Restyle dashboard with stat cards, pending requests, open submissions, recent notices, and meetings
-  - Add mutation error toasts via TanStack DB isPersisted — only shown when server rejects and optimistic state rolls back
-  - Fix useNotices join duplication bug causing cartesian products with employee left join
-  - Fix on-demand collection queryKey prefix validation warnings
-  - Replace table cell links with clickable rows using navigate
-
-## 0.2.0
-
-### Minor Changes
-
-- 9e06271: Add supabase-tanstack-db-integration package. Bridges TanStack DB with Supabase for reactive collections with optimistic mutations.

@@ -45,5 +45,5 @@
 		"start": "sirv dist --single --etag --host 0.0.0.0"
 	},
 	"type": "module",
-	"version": "0.4.1"
+	"version": "0.5.0"
 }
