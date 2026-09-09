@@ -1,8 +1,6 @@
-import { cn } from "@mcmec/ui/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
 	Activity,
-	ArrowRight,
 	CalendarDays,
 	ConciergeBell,
 	Droplets,
@@ -85,9 +83,9 @@ const organizationJsonLd = JSON.stringify({
 });
 
 /**
- * The six destinations, in the order the Commission ranked them. The first two lead because
- * they are the two urgent questions a resident arrives with — get something dealt with, and
- * find out whether their street is being treated; the rest follow at a compact weight.
+ * The six destinations, in the order the Commission ranked them. They are set at one weight:
+ * the first two answer the questions a resident most often arrives with, and ordering says so
+ * on its own. A size hierarchy on top of the ordering said it twice.
  *
  * They are one register rather than six cards: a single bordered container whose cells sit on
  * a 1px gap over a Rule-coloured ground, which is the Signal Band's construction from
@@ -100,46 +98,43 @@ interface Destination {
 	href: string;
 }
 
-const leadDestinations: Destination[] = [
+const destinations: Destination[] = [
 	{
 		description:
-			"Report a mosquito problem, a water management issue, or request mosquitofish.",
+			"Report a mosquito problem, request a property inspection or order mosquitofish.",
 		href: "/contact/service-request",
 		icon: ConciergeBell,
 		title: "Request Service",
 	},
 	{
-		description: "Upcoming Spray Missions, by municipality and date.",
+		description: "View upcoming mosquito spray treatments by municipality.",
 		href: "/mosquito-control/spray-schedule",
 		icon: CalendarDays,
 		title: "Spray Schedule",
 	},
-];
-
-const furtherDestinations: Destination[] = [
 	{
-		description: "Weekly mosquito activity reports for the county.",
+		description:
+			"View current activity of common mosquito groups in the County.",
 		href: "/mosquito-surveillance/weekly-activity",
 		icon: Activity,
-		title: "Weekly Mosquito Activity",
+		title: "Mosquito Activity",
 	},
 	{
-		description: "Notices that are still currently in effect.",
+		description: "Review legal notices, announcements and public reports.",
 		href: "/notices",
 		icon: Newspaper,
-		// "Legal Notices" is what the navigation, the footer and the page's own heading call
-		// this URL. It was "Public Notices" here and in the nav *group* above it, so one
-		// destination carried two names and the group collided with its own child.
-		title: "Legal Notices",
+		title: "Public Notices",
 	},
 	{
-		description: "Find and empty the standing water around your property.",
+		description:
+			"Learn how to remove mosquito habitats, apply repellents, and prevent mosquito bites.",
 		href: "/mosquito-surveillance/mosquito-source-checklist",
 		icon: Droplets,
-		title: "Prevention at Home",
+		title: "Prevention At Home",
 	},
 	{
-		description: "Meeting schedules, agendas, and minutes.",
+		description:
+			"Access Commission meeting schedules, agendas, and public record minutes.",
 		href: "/notices/meetings",
 		icon: Users,
 		title: "Public Meetings",
@@ -170,13 +165,16 @@ function RouteComponent() {
 		 */
 		<section
 			/*
-			 * The band owns the fold. `main` is `flex-1` inside a `min-h-screen` column, so on a
-			 * tall display it stretched and the band did not — leaving a strip of dead Paper
-			 * between the record cells and the footer, on the one page that is supposed to run
-			 * edge to edge. A column with the halves growing puts that height into the
-			 * photograph instead. `4rem` is the sticky bar's own height.
+			 * The band owns the fold, exactly. `10rem` is the masthead: a `h-26` (104px) identity
+			 * rail over a `h-14` (56px) nav tier, both fixed so this arithmetic stays true. What
+			 * is left is spent on the hero and the record strip, so a visitor landing here sees
+			 * the identity, the navigation, the photograph and the published record without
+			 * scrolling — and the footer sits below the fold rather than intruding on it.
+			 *
+			 * `h-`, not `min-h-`: the point is that the four bands total one viewport. A minimum
+			 * would let a tall display grow the band past the fold again.
 			 */
-			className="-my-8 flex w-full flex-col xl:min-h-[calc(100svh-4rem)]"
+			className="-my-8 flex w-full flex-col xl:h-[calc(100svh-10rem)]"
 			style={{ "--band-inset": "clamp(1.5rem, 5vw, 7rem)" } as CSSProperties}
 		>
 			<script
@@ -200,35 +198,52 @@ function RouteComponent() {
 			 * then the photographs. Below `lg` that also puts the six answers above the imagery,
 			 * which is the right way round for someone who arrived with one urgent question.
 			 */}
-			<div className="grid flex-1 items-stretch xl:grid-cols-2">
-				<div className="flex flex-col justify-center gap-8 border-b bg-muted px-[var(--band-inset)] py-10 xl:border-r xl:border-b-0 xl:py-16">
-					<div>
-						<h1 className="text-balance font-bold text-[clamp(1.75rem,3.4vw,2.5rem)] text-foreground leading-[1.12] tracking-[-0.025em]">
-							Middlesex County Mosquito Extermination Commission
-						</h1>
-						<p className="mt-4 max-w-[46ch] text-base text-muted-foreground leading-relaxed md:text-lg">
-							Protecting the health and comfort of Middlesex County residents
-							and visitors since 1914.
-						</p>
-					</div>
+			{/*
+			 * The page still needs an `h1`, and it no longer has a visible one: the Commission's
+			 * name moved into the masthead, where it is a site-wide identity block rather than
+			 * this page's heading. A document with no `h1` gives a screen-reader user nothing to
+			 * jump to and hands search engines no title for the site's most important route, so
+			 * the heading stays and only its rendering goes.
+			 */}
+			<h1 className="sr-only">
+				Middlesex County Mosquito Extermination Commission
+			</h1>
 
+			<div className="grid min-h-0 flex-1 items-stretch xl:grid-cols-[1fr_2fr]">
+				<div className="flex min-h-0 flex-col justify-center gap-3 border-b bg-muted px-[var(--band-inset)] py-6 xl:border-r xl:border-b-0">
 					{/*
 					 * A container query, not a viewport one. The register's width is now half the
 					 * page rather than all of it, so `sm:grid-cols-2` would put two columns in a
 					 * 448px panel at exactly the width the layout splits — the panel has to be
 					 * asked about itself.
 					 */}
-					<div className="@container">
-						<h2 className="sr-only">How can we help you today?</h2>
-						<div className="grid @lg:grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border">
-							{leadDestinations.map((destination) => (
-								<DestinationCell
-									destination={destination}
-									key={destination.href}
-									lead
-								/>
-							))}
-							{furtherDestinations.map((destination) => (
+					<div className="flex min-h-0 flex-col">
+						{/*
+						 * Visible rather than `sr-only`: the register had a heading for screen readers
+						 * only, so sighted visitors met six unlabelled cells. Sentence case, not the
+						 * uppercase eyebrow the Current Record's column headings take — the Uppercase
+						 * Is Structural Rule keeps caps off a heading read for content.
+						 */}
+						<h2 className="mb-2 font-semibold text-foreground text-lg">
+							Resident Services & Information
+						</h2>
+						{/*
+						 * One column, not two. The register is a third of the band now rather than a
+						 * half, and six two-column cells in that width would set a 20ch measure. A
+						 * single stack also lets each destination read as a row — icon, name, and the
+						 * line that tells a resident which of six is theirs — which is the shape that
+						 * survives being squeezed vertically to fit the fold.
+						 *
+						 * Two columns between `sm` and `xl`. The single stack is right when this is a
+						 * third of the band beside the photograph; on a tablet it is the full width of
+						 * the page, and six rows of one card each leave most of that width empty.
+						 *
+						 * Six separate cards rather than one divided register: each destination
+						 * owns its own edge, so the six read as six choices rather than as rows of
+						 * a list to be worked through in order.
+						 */}
+						<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:flex xl:min-h-0 xl:flex-col xl:overflow-y-auto">
+							{destinations.map((destination) => (
 								<DestinationCell
 									destination={destination}
 									key={destination.href}
@@ -246,45 +261,40 @@ function RouteComponent() {
 	);
 }
 
-function DestinationCell({
-	destination,
-	lead = false,
-}: {
-	destination: Destination;
-	lead?: boolean;
-}) {
+function DestinationCell({ destination }: { destination: Destination }) {
 	const Icon = destination.icon;
 
 	return (
 		<Link
-			// `relative` and the raised z on focus keep the 3px ring from being clipped by the
-			// neighbouring cell, the same reason the Signal Band raises its cells.
-			className={cn(
-				"group relative flex flex-col gap-1.5 bg-card transition-colors hover:bg-secondary focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
-				lead ? "p-5 sm:p-6" : "p-4 sm:p-5",
-			)}
+			// `relative` and the raised z on focus keep the 3px ring above the neighbouring
+			// card: the 8px gap does not cover a ring drawn outside the border box.
+			//
+			// `flex-1` over a `basis-0`: every card takes the same share of the register whatever
+			// its description runs to, so the six read as one set of equal choices rather than as
+			// a ranking by how much there was to say. The `min-h` is the floor a two-line
+			// description needs; below it the register scrolls rather than crushing the type.
+			className="group relative flex min-h-[4.75rem] flex-1 items-center gap-3.5 rounded-lg border bg-card px-4 py-2.5 transition-colors hover:bg-secondary focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
 			to={destination.href}
 		>
 			<Icon
-				className={cn("text-primary", lead ? "size-6" : "size-5")}
+				aria-hidden="true"
+				className="size-6 shrink-0 text-primary"
 				strokeWidth={1.75}
 			/>
-			<span
-				className={cn(
-					"mt-1 flex items-center gap-1.5 font-semibold text-foreground",
-					lead ? "text-lg" : "text-sm",
-				)}
-			>
-				{destination.title}
-				{lead ? (
-					<ArrowRight
-						aria-hidden="true"
-						className="size-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
-					/>
-				) : null}
-			</span>
-			<span className="text-muted-foreground text-sm leading-snug">
-				{destination.description}
+			<span className="flex min-w-0 flex-col gap-0.5">
+				{/*
+				 * Caps come from `uppercase`, not from the strings in `destinations`. The DOM text
+				 * stays "Request Service", so the accessible name is a phrase rather than a run of
+				 * capitals some screen readers spell letter by letter, and the words still match
+				 * what the destination page calls itself. Caps also close up without added
+				 * tracking, hence `tracking-wide`.
+				 */}
+				<span className="font-semibold text-base text-foreground uppercase tracking-wide">
+					{destination.title}
+				</span>
+				<span className="text-[0.9375rem] text-muted-foreground leading-snug">
+					{destination.description}
+				</span>
 			</span>
 		</Link>
 	);

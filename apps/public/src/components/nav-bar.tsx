@@ -1,4 +1,4 @@
-import { logoMark } from "@mcmec/lib/constants/assets";
+import { logo192 } from "@mcmec/lib/constants/assets";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	Collapsible,
@@ -196,11 +196,17 @@ export function Navbar() {
 		 * the home hero's `z-30` control plaque.
 		 */
 		<header className="sticky top-0 z-50">
-			{/* Mobile: menu button + sheet */}
+			{/*
+			 * One masthead at every width: the identity rail, then a navigation tier. Only the
+			 * tier swaps — the seven groups on a bar at `lg`, a sheet behind a Menu button below
+			 * it. The rail used to be desktop-only, which cost a phone visitor the seal, the
+			 * agency's name and its one-line description, and left the two form factors with
+			 * different information architectures.
+			 */}
+			<IdentityRail />
 			<div className="lg:hidden">
 				<MobileNavBar />
 			</div>
-			{/* Desktop: full nav bar */}
 			<div className="hidden lg:block">
 				<WebNavBar />
 			</div>
@@ -225,20 +231,66 @@ export function Navbar() {
 // visitor was not. Ink at 25% reads 5.50:1 under the label and darkens rather than lightens,
 // for the reason the hover comment gives.
 const navLinkClass =
-	"inline-flex h-10 items-center justify-center rounded-md px-3 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-foreground/15 focus:bg-foreground/15 focus-visible:ring-[3px] focus-visible:ring-primary-foreground aria-[current]:bg-foreground/25 data-[active=true]:bg-foreground/25";
+	"inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-foreground/15 focus:bg-foreground/15 focus-visible:ring-[3px] focus-visible:ring-primary-foreground aria-[current]:bg-foreground/25 data-[active=true]:bg-foreground/25";
 
+/*
+ * Two tiers. The seal needs a light ground to be readable at all — its disc is
+ * transparent, so on Commission Green the arced lettering sat straight on the green
+ * and dissolved. The old white "puck" was a crude version of this fix, shaped to hide
+ * the square white tile that `logo-mark-128.png` bakes in. `logo192` is the mark
+ * alone, and 192px keeps it crisp at 80px on a 2x display.
+ */
+function IdentityRail() {
+	return (
+		<div className="flex items-center justify-between gap-4 border-b bg-background px-[clamp(1rem,3vw,3rem)] py-2 sm:gap-6 sm:py-3 lg:h-26 lg:py-0">
+			<Link className="flex items-center gap-4" to="/">
+				<img
+					alt="MCMEC Logo"
+					className="h-12 w-auto sm:h-16 lg:h-20"
+					src={logo192}
+				/>
+				<span className="flex flex-col leading-tight">
+					<span className="font-bold text-sm uppercase tracking-wide lg:text-base">
+						Middlesex County
+					</span>
+					<span className="font-semibold text-muted-foreground text-sm uppercase tracking-wide lg:text-base">
+						Mosquito Extermination Commission
+					</span>
+				</span>
+			</Link>
+			<span className="hidden text-right font-semibold text-[0.625rem] text-muted-foreground uppercase leading-relaxed tracking-[0.16em] sm:block lg:text-xs">
+				{/*
+				 * Hidden below `sm`. The whole masthead is sticky, so every pixel of it is charged
+				 * against the viewport for the rest of the visit — three lines of standfirst took the
+				 * header to 198px on a 320px-tall-by-568 phone, better than a third of the screen,
+				 * permanently. The seal and the agency's name stay at every width, which is the part
+				 * a visitor needs; this is the sentence that can wait for a wider screen.
+				 *
+				 * The three lines are forced, not wrapped. At `0.16em` the sentence runs about
+				 * 740px unbroken, and letting it find its own breaks at a capped measure put
+				 * "community" and "from" in places that read as two different clauses. Each
+				 * `{" "}` is load-bearing: a block boundary is a visual break, not a textual
+				 * one, so without them the accessible name runs the lines together as words.
+				 */}
+				<span className="block">Advancing public health</span>{" "}
+				<span className="block">and protecting our community</span>{" "}
+				<span className="block">from mosquitoes since 1914</span>
+			</span>
+		</div>
+	);
+}
+
+/*
+ * The seven groups need 959px on one line at this size, measured rather than
+ * guessed. Giving the nav its own tier is what buys that at `lg`; a single row
+ * carrying the seal as well needs 1063px and would not fit until `xl`.
+ */
 function WebNavBar() {
 	return (
-		<div className="flex h-16 flex-row items-center justify-start bg-primary py-2">
-			<div className="flex w-20 flex-row justify-center rounded-r-full bg-background">
-				<Link to="/">
-					<img alt="MCMEC Logo" className="m-2 h-12" src={logoMark} />
-				</Link>
-			</div>
-
+		<div className="flex h-14 items-center bg-primary px-[clamp(1.5rem,3vw,3rem)]">
 			<nav
 				aria-label="Main"
-				className="ml-8 flex flex-1 flex-row items-center justify-start gap-1"
+				className="flex flex-1 flex-row flex-nowrap items-center gap-0.5"
 			>
 				{menuItems.map((item) =>
 					item.subItems ? (
@@ -309,9 +361,9 @@ function MobileNavBar() {
 	const { pathname } = useLocation();
 
 	return (
-		<div className="flex h-14 flex-row items-center justify-between bg-primary pl-3">
+		<div className="flex h-14 flex-row items-center bg-primary px-[clamp(1rem,3vw,3rem)]">
 			<Sheet onOpenChange={setOpen} open={open}>
-				<SheetTrigger className="-ml-1 rounded-md px-1 py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-foreground">
+				<SheetTrigger className="-ml-2 rounded-md px-2 py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-foreground">
 					<div className="flex flex-row items-center gap-2 text-primary-foreground">
 						<Menu className="size-5" />
 						<span className="font-semibold text-sm uppercase tracking-wide">
@@ -401,12 +453,6 @@ function MobileNavBar() {
 					</nav>
 				</SheetContent>
 			</Sheet>
-			<Link
-				className="flex h-14 w-16 items-center justify-center rounded-l-full bg-background"
-				to="/"
-			>
-				<img alt="MCMEC Logo" className="h-10" src={logoMark} />
-			</Link>
 		</div>
 	);
 }

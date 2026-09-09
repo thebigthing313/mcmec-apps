@@ -199,12 +199,15 @@ A single institutional green against a family of neutrals that share its hue, so
 
 ### Tertiary
 
-- **Brackish Teal** (`oklch(0.6638 0.0267 183.8599)`): Desaturated gray-teal — the color of standing water. It grounds the public footer as a full-bleed band and supplies the hover ground for outline and ghost buttons. It is a *surface* color and a hover state; it never carries an action. **Its foreground is Ink, and the pair measures 5.22:1.**
+- **Brackish Teal** (`oklch(0.6638 0.0267 183.8599)`): Desaturated gray-teal — the color of standing water. It supplies the hover ground for outline and ghost buttons. It is a *surface* color and a hover state; it never carries an action. **Its foreground is Ink, and the pair measures 5.22:1.** It grounded the public footer as a full-bleed band until 2026-09-09, when that band went near-black; see Footer Black below.
 
   Brackish Teal has no pale contrast colour of its own. It used to: a near-white (`oklch(0.98 0.005 150)`) carrying the name *Brackish Teal Contrast* while measuring **2.86:1** against the teal, which is how it survived undetected — the token was named for a property it did not have. It was replaced by Ink on 2026-09-03. Because this is shadcn's `accent` pair, that ratio was every hovered dropdown item, menubar entry, context-menu row, command item, calendar cell and outline button in all five frontends, plus the public footer, which compounded it with a `/70` alpha and reached 2.17:1. The teal itself did not move: darkening the ground far enough to rescue a near-white would have made every hover tint in the product visibly heavier, and the foreground was the thing at fault. Light mode only — in dark mode `accent` is a near-black whose near-white foreground already measures 14.48:1, where Ink would be 1.05:1.
 
 ### Neutral
 
+- **Footer Black** (`#202322`): The public footer's full-bleed band, and nothing else. **Its foreground is white, and the pair measures 15.85:1.** It has its own token pair (`--footer` / `--footer-foreground`) rather than borrowing shadcn's `accent`, which is the hover-and-focus state on hundreds of surfaces across five frontends — sharing it is what made a footer recolour a change to every dropdown and calendar cell in the product. One value in both schemes: the band is already darker than either page ground. Written as hex, as `--shadow-color` is, because the value was specified exactly.
+
+  It is the one ground in the system the standard focus ring cannot clear — `1.55:1` — so the footer inverts the ring to its own white foreground. See The Focus Ring Contrasts Its Ground Rule.
 - **Paper** (`oklch(0.985 0.002 150)`): The page. Near-white with just enough green to be warm under daylight.
 - **Surface** (`oklch(0.98 0.005 150)`): Cards and popovers. A half-step off paper, which is why cards need no shadow to separate.
 - **Sidebar Ground** (`oklch(0.96 0.01 150)`): The staff navigation rail in the light theme.
@@ -232,7 +235,9 @@ The current-year series on that chart is the one exception to the separation, an
 
 **The Hue-150 Rule.** Every neutral in the light theme sits on hue 150 at low chroma. A neutral pulled from outside that family will read as a foreign gray against the rest of the page, however close its lightness.
 
-**The Focus Ring Contrasts Its Ground Rule.** A focus indicator is a graphical object under WCAG 1.4.11 and owes `3:1` against whatever it is drawn on. The ring is therefore **opaque** — an alpha is a discount on the ratio — and **dark**, at `oklch(0.36 …)`, which clears every light ground in the system: Paper `9.47`, Surface `9.35`, Muted `8.32`, Pale Green `7.88`, Field `7.83`, Sidebar Ground `8.83`, and Brackish Teal `3.27`, the footer's ground and the tightest of them.
+**The Focus Ring Contrasts Its Ground Rule.** A focus indicator is a graphical object under WCAG 1.4.11 and owes `3:1` against whatever it is drawn on. The ring is therefore **opaque** — an alpha is a discount on the ratio — and **dark**, at `oklch(0.36 …)`, which clears every light ground in the system: Paper `9.47`, Surface `9.35`, Muted `8.32`, Pale Green `7.88`, Field `7.83`, Sidebar Ground `8.83`, and Brackish Teal `3.27`, the tightest of them — the teal is the hover state on dropdown items and calendar cells, which is where the ring meets it.
+
+Two grounds are too dark for it rather than too light, and both invert the ring to a pale foreground: Commission Green (`4.62:1`) and, since 2026-09-09, Footer Black, where the dark ring measures `1.55:1` and white measures `15.85:1`. The public footer carries the agency's phone link and three navs, so it is keyboard territory and the indicator has to be visible on it.
 
 No single colour also clears `3:1` against Commission Green — light enough for the green needs `L≈0.83`, dark enough for Paper needs `L≤0.57` — so **a Commission Green ground inverts the ring to the pale foreground** (`4.62:1`). That is the same shape as the navigation hover rule: a treatment laid on a mid-tone or darker ground moves away from it, not toward it.
 
