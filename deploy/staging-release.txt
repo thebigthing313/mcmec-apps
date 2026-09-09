@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-09T18:46:30.367Z
-commit: 82ef221 fix(public): standfirst sits under the agency name, and the footer drops a link (#224)
+released: 2026-09-09T19:08:46.942Z
+commit: ce4aab0 fix(public): the masthead is a point and a half larger, and one ink throughout (#225)
