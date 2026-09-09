@@ -16,6 +16,23 @@ import { ExternalLink, MapPin } from "lucide-react";
  */
 const SPRAY_METHOD = "Ultralow Volume Spraying by Truck";
 
+/*
+ * TEMPORARY. Insecticides carry a label and an SDS URL and nothing else, so the one fact sheet
+ * we have to publish is matched by trade name here rather than stored. It comes out the moment
+ * `insecticides` grows a `fact_sheet_url` column and this becomes a third URL like the others.
+ */
+const FACT_SHEET_URLS: Record<string, string> = {
+	zenivex:
+		"https://middlesexmosquito.sharepoint.com/:b:/g/IQA8WAM64HkzSYZ8dAej33eKAQFheJOEA3HntjhHQMKkLSE?e=62lpBx",
+};
+
+function factSheetUrl(insecticideName: string): string | undefined {
+	const key = Object.keys(FACT_SHEET_URLS).find((name) =>
+		insecticideName.toLowerCase().includes(name),
+	);
+	return key ? FACT_SHEET_URLS[key] : undefined;
+}
+
 interface SprayScheduleCardProps {
 	insecticideActiveIngredient: string;
 	missionDate: Date;
@@ -76,6 +93,8 @@ export function SprayScheduleCard({
 	insecticideMsdsUrl,
 	mapUrl,
 }: SprayScheduleCardProps) {
+	const insecticideFactSheetUrl = factSheetUrl(insecticideName);
+
 	return (
 		<Card>
 			<CardHeader>
@@ -135,6 +154,17 @@ export function SprayScheduleCard({
 									target="_blank"
 								>
 									SDS
+									<ExternalLink className="h-3 w-3" />
+								</a>
+							)}
+							{insecticideFactSheetUrl && (
+								<a
+									className="inline-flex items-center gap-1 text-primary text-xs underline hover:no-underline"
+									href={insecticideFactSheetUrl}
+									rel="noopener noreferrer"
+									target="_blank"
+								>
+									Fact Sheet
 									<ExternalLink className="h-3 w-3" />
 								</a>
 							)}
