@@ -180,3 +180,27 @@ export function emptySprayPeriodLabel(period: SprayPeriod): string {
 /** What the page says when a filter matches nothing, as opposed to there being nothing. */
 export const NO_MISSIONS_MATCHING_FILTERS =
 	"No spray missions match your filters.";
+
+/**
+ * What the front-door strip says when the next mission is not the only one that night.
+ *
+ * The strip has room for exactly one mission, and on a busy night the Commission sprays
+ * several municipalities on the same date. Showing the first one alone tells a resident of
+ * the second municipality that their street is not being treated, which is the one direction
+ * a wrong answer must never point. Naming the others is what keeps the single card honest.
+ *
+ * Returns an empty string when there is nothing to add, so the caller can render it
+ * unconditionally.
+ *
+ * @example
+ * otherMissionsLabel(0) // ""
+ * otherMissionsLabel(1) // "and 1 other"
+ * otherMissionsLabel(3) // "and 3 others"
+ */
+export function otherMissionsLabel(count: number): string {
+	if (count <= 0) {
+		return "";
+	}
+
+	return `and ${count} other${count === 1 ? "" : "s"}`;
+}

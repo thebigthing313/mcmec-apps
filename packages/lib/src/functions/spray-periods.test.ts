@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	emptySprayPeriodLabel,
 	missionEndsAt,
+	otherMissionsLabel,
 	partitionSprayMissions,
 	type SprayMissionTimes,
 	sprayPeriodCountLabel,
@@ -175,5 +176,20 @@ describe("labels", () => {
 		expect(emptySprayPeriodLabel("upcoming")).toBe(
 			"No upcoming spray missions scheduled.",
 		);
+	});
+});
+
+describe("otherMissionsLabel", () => {
+	it("says nothing when the next mission is the only one that night", () => {
+		expect(otherMissionsLabel(0)).toBe("");
+		expect(otherMissionsLabel(-1)).toBe("");
+	});
+
+	it("counts one other mission in the singular", () => {
+		expect(otherMissionsLabel(1)).toBe("and 1 other");
+	});
+
+	it("counts several in the plural", () => {
+		expect(otherMissionsLabel(3)).toBe("and 3 others");
 	});
 });
