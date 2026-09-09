@@ -10,7 +10,13 @@ import {
 	Users,
 } from "lucide-react";
 import type { CSSProperties } from "react";
+import { CurrentRecord } from "../components/current-record";
 import { HeroCarousel } from "../components/hero-carousel";
+import {
+	meetingsQueryOptions,
+	noticesQueryOptions,
+	spraySchedulesQueryOptions,
+} from "../lib/queries";
 import { canonical, seo } from "../lib/seo";
 
 export const Route = createFileRoute("/")({
@@ -24,7 +30,37 @@ export const Route = createFileRoute("/")({
 		}),
 		links: [canonical("/")],
 	}),
+	/*
+	 * Prefetched, capped, and never awaited to completion.
+	 *
+	 * Every other route that carries the record blocks on the api, and when the api is slow or
+	 * down those pages hang indefinitely. The home page is the one page that cannot afford
+	 * that: it is where a resident lands from a mailer or a search result, and a hero that
+	 * never paints is far worse than a record strip that fills in a moment later on the
+	 * client. `prefetchQuery` does not throw, so a refusal degrades the strip to its stated
+	 * empty sentences rather than the page to an error.
+	 */
+	loader: async ({ context }) => {
+		let release: ReturnType<typeof setTimeout> | undefined;
+		const budget = new Promise((resolve) => {
+			release = setTimeout(resolve, RECORD_BUDGET_MS);
+		});
+
+		await Promise.race([
+			Promise.allSettled([
+				context.queryClient.prefetchQuery(spraySchedulesQueryOptions()),
+				context.queryClient.prefetchQuery(noticesQueryOptions()),
+				context.queryClient.prefetchQuery(meetingsQueryOptions()),
+			]),
+			budget,
+		]);
+
+		clearTimeout(release);
+	},
 });
+
+/** How long the front door will wait on the record before rendering without it. */
+const RECORD_BUDGET_MS = 2500;
 
 const organizationJsonLd = JSON.stringify({
 	"@context": "https://schema.org",
@@ -88,10 +124,13 @@ const furtherDestinations: Destination[] = [
 		title: "Weekly Mosquito Activity",
 	},
 	{
-		description: "Legal notices that are still currently in effect.",
+		description: "Notices that are still currently in effect.",
 		href: "/notices",
 		icon: Newspaper,
-		title: "Public Notices",
+		// "Legal Notices" is what the navigation, the footer and the page's own heading call
+		// this URL. It was "Public Notices" here and in the nav *group* above it, so one
+		// destination carried two names and the group collided with its own child.
+		title: "Legal Notices",
 	},
 	{
 		description: "Find and empty the standing water around your property.",
@@ -186,6 +225,8 @@ function RouteComponent() {
 
 				<HeroCarousel />
 			</div>
+
+			<CurrentRecord />
 		</section>
 	);
 }
@@ -204,7 +245,7 @@ function DestinationCell({
 			// `relative` and the raised z on focus keep the 3px ring from being clipped by the
 			// neighbouring cell, the same reason the Signal Band raises its cells.
 			className={cn(
-				"group relative flex flex-col gap-1.5 bg-card transition-colors hover:bg-secondary focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+				"group relative flex flex-col gap-1.5 bg-card transition-colors hover:bg-secondary focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
 				lead ? "p-5 sm:p-6" : "p-4 sm:p-5",
 			)}
 			to={destination.href}

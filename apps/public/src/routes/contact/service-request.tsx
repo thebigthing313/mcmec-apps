@@ -49,7 +49,7 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4">
 			<article className="prose lg:prose-base max-w-none">
-				<h1>Service Request</h1>
+				<h1>Service Requests</h1>
 				<p>
 					Residents can submit an official service request through this page.
 					The Commission will review and respond to your request as soon as

@@ -1,4 +1,4 @@
-import { logo512 } from "@mcmec/lib/constants/assets";
+import { logoMark } from "@mcmec/lib/constants/assets";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	Collapsible,
@@ -18,7 +18,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@mcmec/ui/components/sheet";
-import { Link, type LinkProps } from "@tanstack/react-router";
+import { Link, type LinkProps, useLocation } from "@tanstack/react-router";
 import { ChevronDown, Menu } from "lucide-react";
 import { useState } from "react";
 
@@ -153,16 +153,26 @@ const menuItems: MenuItem[] = [
 
 export function Navbar() {
 	return (
-		<>
+		/*
+		 * A real `<header>`, so the site has a `banner` landmark. It had none: the bar was two
+		 * sibling `<div>`s, and a screen-reader rotor listed four unlabelled `navigation`
+		 * regions and no banner at all.
+		 *
+		 * The sheet/bar handover is at `lg`, not `md`. The desktop bar's intrinsic width is
+		 * 842px and it was taking over at 768, so the document scrolled horizontally from
+		 * 768px to 856px on every page — a WCAG 1.4.10 Reflow failure that also lands on a
+		 * 1536px desktop at 200% zoom, which is how a resident who needs magnification reads.
+		 */
+		<header>
 			{/* Mobile: menu button + sheet */}
-			<div className="md:hidden">
+			<div className="lg:hidden">
 				<MobileNavBar />
 			</div>
 			{/* Desktop: full nav bar */}
-			<div className="hidden md:block">
+			<div className="hidden lg:block">
 				<WebNavBar />
 			</div>
-		</>
+		</header>
 	);
 }
 
@@ -171,19 +181,33 @@ export function Navbar() {
 // white label from 4.62:1 at rest to 3.96:1 — so pointing at a nav link, or tabbing to it,
 // was the one interaction on the page that pushed it under AA. Ink at 15% moves the same
 // distance visually in the other direction and reads 5.56:1.
+//
+// The focus ring inverts here, and this is the rule rather than the exception's exception.
+// `--ring` is a dark green measured against every light ground in the system; on Commission
+// Green it lands at 2.06:1. The pale foreground reads 4.62:1 on the same ground. A focus
+// indicator has to contrast with what it is drawn on, so a mid-tone or darker ground takes
+// the pale ring — the same shape as the hover rule directly above.
+//
+// The active state is `aria-current`, which TanStack already emits on the matching link. It
+// was emitted and never painted: assistive technology was told the location and a sighted
+// visitor was not. Ink at 25% reads 5.50:1 under the label and darkens rather than lightens,
+// for the reason the hover comment gives.
 const navLinkClass =
-	"inline-flex h-10 items-center justify-center rounded-md px-3 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-foreground/15 focus:bg-foreground/15 focus-visible:ring-[3px] focus-visible:ring-ring/50";
+	"inline-flex h-10 items-center justify-center rounded-md px-3 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-foreground/15 focus:bg-foreground/15 focus-visible:ring-[3px] focus-visible:ring-primary-foreground aria-[current]:bg-foreground/25 data-[active=true]:bg-foreground/25";
 
 function WebNavBar() {
 	return (
-		<div className="sticky top-0 z-50 flex h-16 flex-row items-center justify-start bg-primary py-2 shadow-md">
+		<div className="sticky top-0 z-50 flex h-16 flex-row items-center justify-start bg-primary py-2">
 			<div className="flex w-20 flex-row justify-center rounded-r-full bg-background">
 				<Link to="/">
-					<img alt="MCMEC Logo" className="m-2 h-12" src={logo512} />
+					<img alt="MCMEC Logo" className="m-2 h-12" src={logoMark} />
 				</Link>
 			</div>
 
-			<nav className="ml-8 flex flex-1 flex-row items-center justify-start gap-1">
+			<nav
+				aria-label="Main"
+				className="ml-8 flex flex-1 flex-row items-center justify-start gap-1"
+			>
 				{menuItems.map((item) =>
 					item.subItems ? (
 						<NavPopover item={item} key={item.title} />
@@ -204,10 +228,21 @@ function WebNavBar() {
 
 function NavPopover({ item }: { item: MenuItem }) {
 	const [open, setOpen] = useState(false);
+	const { pathname } = useLocation();
+
+	// Matched by path prefix, so a group stays lit while the visitor is anywhere inside it —
+	// the same rule the staff rail uses. Without this the bar shows nothing at all on
+	// `/notices/archive`, because a group's trigger is a button and never carries
+	// `aria-current` the way a Link does.
+	const active =
+		item.subItems?.some((subItem) => {
+			const to = subItem.linkProps.to;
+			return typeof to === "string" && pathname.startsWith(to);
+		}) ?? false;
 
 	return (
 		<Popover onOpenChange={setOpen} open={open}>
-			<PopoverTrigger className={navLinkClass}>
+			<PopoverTrigger className={navLinkClass} data-active={active}>
 				{item.title}
 				<ChevronDown
 					aria-hidden="true"
@@ -244,7 +279,7 @@ function MobileNavBar() {
 	return (
 		<div className="sticky top-0 z-50 flex h-14 flex-row items-center justify-between bg-primary pl-3">
 			<Sheet aria-describedby="Mobile Menu" onOpenChange={setOpen} open={open}>
-				<SheetTrigger>
+				<SheetTrigger className="-ml-1 rounded-md px-1 py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-foreground">
 					<div className="flex flex-row items-center gap-2 text-primary-foreground">
 						<Menu className="size-5" />
 						<span className="font-semibold text-sm uppercase tracking-wide">
@@ -256,7 +291,7 @@ function MobileNavBar() {
 					<SheetHeader>
 						<SheetTitle>Menu</SheetTitle>
 					</SheetHeader>
-					<div className="mt-4 flex flex-col gap-0">
+					<nav aria-label="Main" className="mt-4 flex flex-col gap-0">
 						{menuItems.map((item, index) => (
 							<div key={item.title}>
 								{item.subItems ? (
@@ -302,14 +337,14 @@ function MobileNavBar() {
 								{index < menuItems.length - 1 && <Separator className="my-1" />}
 							</div>
 						))}
-					</div>
+					</nav>
 				</SheetContent>
 			</Sheet>
 			<Link
 				className="flex h-14 w-16 items-center justify-center rounded-l-full bg-background"
 				to="/"
 			>
-				<img alt="MCMEC Logo" className="h-10" src={logo512} />
+				<img alt="MCMEC Logo" className="h-10" src={logoMark} />
 			</Link>
 		</div>
 	);

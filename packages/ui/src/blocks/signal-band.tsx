@@ -137,7 +137,7 @@ export function SignalBand({
 							aria-selected={isSelected}
 							className={cn(
 								"relative flex flex-col items-start gap-0.5 px-4 py-3 text-left transition-colors",
-								"focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+								"focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
 								isSelected
 									? "bg-primary text-primary-foreground"
 									: "bg-card hover:bg-secondary",

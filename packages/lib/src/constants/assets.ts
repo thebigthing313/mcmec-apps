@@ -30,4 +30,10 @@ export const heroTires = `${ASSETS_BASE}/hero-tires.avif`;
 export const heroWaterManagement = `${ASSETS_BASE}/hero-water-management.avif`;
 export const logo = `${ASSETS_BASE}/logo.png`;
 export const logo192 = `${ASSETS_BASE}/logo192.png`;
+/*
+ * The masthead mark, at the size a masthead actually paints it. `logo512` is 128KB of PNG and
+ * the public navbar renders it into a 48px box — 10.67x its rendered size, downloaded on every
+ * page of the site. It stays the 512px icon it was named for; this is the one for an <img>.
+ */
+export const logoMark = `${ASSETS_BASE}/logo-mark-128.png`;
 export const logo512 = `${ASSETS_BASE}/logo512.png`;

@@ -304,7 +304,7 @@ export function MosquitoActivityChart({
 					 * here rather than by reading pixels off a line.
 					 */}
 					<details className="mt-4">
-						<summary className="cursor-pointer text-muted-foreground text-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50">
+						<summary className="cursor-pointer text-muted-foreground text-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring">
 							Show the numbers
 						</summary>
 						<div className="mt-3 overflow-x-auto">

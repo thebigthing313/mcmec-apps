@@ -324,4 +324,4 @@ export function AuthActions({
 
 /** The one link treatment these screens use. Quiet until it is wanted. */
 export const authLinkClassName =
-	"rounded-sm text-muted-foreground text-sm underline underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
+	"rounded-sm text-muted-foreground text-sm underline underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring";

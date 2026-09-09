@@ -138,7 +138,7 @@ function RouteComponent() {
 					<div className="flex flex-wrap gap-2">
 						{links.map((link) => (
 							<a
-								className="rounded-sm text-primary text-sm hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+								className="rounded-sm text-primary text-sm hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
 								href={link.url as string}
 								key={link.label}
 								rel="noopener noreferrer"

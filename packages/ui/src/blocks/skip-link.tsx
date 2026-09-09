@@ -31,7 +31,7 @@ export function SkipLink({
 }) {
 	return (
 		<a
-			className="absolute top-0 left-0 z-[60] -translate-y-full rounded-b-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-transform focus:translate-y-0"
+			className="absolute top-0 left-0 z-[60] -translate-y-full rounded-b-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm outline-none transition-transform focus:translate-y-0 focus-visible:ring-[3px] focus-visible:ring-primary-foreground"
 			href={`#${targetId}`}
 		>
 			{children}

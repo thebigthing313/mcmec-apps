@@ -179,20 +179,37 @@ export function HeroCarousel() {
 						<button
 							aria-current={position === index ? "true" : undefined}
 							aria-label={`Show photograph ${position + 1} of ${slides.length}`}
-							className="group w-6 rounded-xs py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+							className="group flex w-6 items-center rounded-xs py-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
 							key={slide.src}
 							onClick={() => show(position)}
 							type="button"
 						>
 							{/*
-							 * Muted Ink, not Rule. These hairlines are the only visual the tick
-							 * buttons have, so WCAG 1.4.11 asks 3:1 of them against the plaque's
-							 * Paper — Rule measures 1.7:1 and would make the control invisible to
-							 * the people the criterion exists for. The selected tick fills in
-							 * Commission Green over this track, so its state is carried by how
-							 * much of it is green rather than by hue alone.
+							 * Two contrasts to satisfy, not one, and the first version only
+							 * satisfied the first.
+							 *
+							 * The track is Muted Ink rather than Rule because these hairlines are
+							 * the only visual the tick buttons have, so WCAG 1.4.11 asks 3:1 of
+							 * them against the plaque's Paper — Rule measures 1.7:1 and would make
+							 * the control invisible to the people the criterion exists for. Muted
+							 * Ink reads 7.06:1.
+							 *
+							 * But the *selected* tick then fills in Commission Green **over that
+							 * track**, and green on Muted Ink measures 1.19:1 — so the mark that
+							 * says which photograph is showing was invisible against the thing it
+							 * was drawn on, which is the same failure one layer down. The selected
+							 * tick's track drops to Pale Green, where the fill reads 3.83:1, and
+							 * it thickens to 4px so the state is also carried by size and not by
+							 * contrast alone.
 							 */}
-							<span className="block h-0.5 w-full overflow-hidden bg-muted-foreground/90 transition-colors group-hover:bg-foreground">
+							<span
+								className={cn(
+									"block w-full overflow-hidden transition-colors",
+									position === index
+										? "h-1 bg-secondary"
+										: "h-0.5 bg-muted-foreground/90 group-hover:bg-foreground",
+								)}
+							>
 								{position === index ? (
 									<span
 										className={cn(
@@ -214,7 +231,7 @@ export function HeroCarousel() {
 					aria-label={
 						playing ? "Pause the photographs" : "Play the photographs"
 					}
-					className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+					className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
 					onClick={() => setPlaying((current) => !current)}
 					type="button"
 				>
