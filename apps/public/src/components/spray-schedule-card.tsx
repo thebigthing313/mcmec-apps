@@ -1,4 +1,7 @@
-import { formatDate } from "@mcmec/lib/functions/date-fns";
+import {
+	formatClockTime,
+	formatDateWithWeekday,
+} from "@mcmec/lib/functions/date-fns";
 import { Badge } from "@mcmec/ui/components/badge";
 import {
 	Card,
@@ -72,14 +75,6 @@ function getStatusBadgeVariant(
 	}
 }
 
-function formatTimeDisplay(time: string): string {
-	const parts = time.split(":");
-	const h = Number.parseInt(parts[0] ?? "0", 10);
-	const ampm = h >= 12 ? "PM" : "AM";
-	const h12 = h % 12 || 12;
-	return `${h12}:${parts[1] ?? "00"} ${ampm}`;
-}
-
 export function SprayScheduleCard({
 	insecticideActiveIngredient,
 	missionDate,
@@ -101,9 +96,11 @@ export function SprayScheduleCard({
 			<CardHeader>
 				<div className="flex items-start justify-between gap-2">
 					<div>
-						<CardTitle className="text-xl">{formatDate(missionDate)}</CardTitle>
+						<CardTitle className="text-xl">
+							{formatDateWithWeekday(missionDate)}
+						</CardTitle>
 						<CardDescription className="text-base">
-							{formatTimeDisplay(startTime)} – {formatTimeDisplay(endTime)}
+							{formatClockTime(startTime)} – {formatClockTime(endTime)}
 						</CardDescription>
 					</div>
 					<Badge variant={getStatusBadgeVariant(status)}>
@@ -182,7 +179,7 @@ export function SprayScheduleCard({
 							<dt className="min-w-32 font-semibold text-muted-foreground">
 								Rain Date
 							</dt>
-							<dd>{formatDate(rainDate)}</dd>
+							<dd>{formatDateWithWeekday(rainDate)}</dd>
 						</div>
 					)}
 					{mapUrl && (

@@ -414,3 +414,105 @@ export function formatTimestampDateShort(
 
 	return dateObj.toLocaleDateString(locale);
 }
+
+/**
+ * Format a date-only value with the weekday in front of it.
+ *
+ * A spray mission is something a resident plans an evening around — close the windows, bring
+ * the dog in — and "September 04, 2026" makes them count on a calendar to find out whether
+ * that is a school night. The weekday is the part of the date they actually act on, so it
+ * leads.
+ *
+ * UTC-pinned for the same reason {@link formatDate} is: a `date` column carries no instant,
+ * and reading it in a western zone would name both the wrong day *and* the wrong weekday.
+ *
+ * @example
+ * formatDateWithWeekday(new Date('2026-09-04')) // "Friday, September 04, 2026"
+ */
+export function formatDateWithWeekday(
+	date: Date | string | null | undefined,
+	locale = "en-US",
+): string {
+	if (!date) {
+		return "";
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return "";
+	}
+
+	return dateObj.toLocaleDateString(locale, {
+		day: "2-digit",
+		month: "long",
+		timeZone: "UTC",
+		weekday: "long",
+		year: "numeric",
+	});
+}
+
+/**
+ * The same date, abbreviated, for somewhere the full sentence will not fit.
+ *
+ * `formatDateShort` gives "9/4/2026", which carries no weekday and asks the reader to parse
+ * a numeric date. This is the compact form that still names the day.
+ *
+ * @example
+ * formatDateShortWithWeekday(new Date('2026-09-04')) // "Fri, Sep 4, 2026"
+ */
+export function formatDateShortWithWeekday(
+	date: Date | string | null | undefined,
+	locale = "en-US",
+): string {
+	if (!date) {
+		return "";
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return "";
+	}
+
+	return dateObj.toLocaleDateString(locale, {
+		day: "numeric",
+		month: "short",
+		timeZone: "UTC",
+		weekday: "short",
+		year: "numeric",
+	});
+}
+
+/**
+ * Render a `time` column's `HH:MM[:SS]` as a wall clock a resident reads.
+ *
+ * The database stores 19:00; the public site says 7:00 PM. This is a plain string transform
+ * rather than a `Date` formatter on purpose — a `time` column has no date and no zone to
+ * attach one to, and building a `Date` around it only invites the timezone shift the rest of
+ * this module exists to avoid.
+ *
+ * An unparseable value comes back unchanged rather than as "NaN:00 AM": a malformed row
+ * should show its own bad data, not a broken formatter.
+ *
+ * @example
+ * formatClockTime("19:00:00") // "7:00 PM"
+ * formatClockTime("03:30")    // "3:30 AM"
+ */
+export function formatClockTime(time: string | null | undefined): string {
+	if (!time) {
+		return "";
+	}
+
+	const [rawHours, rawMinutes] = time.split(":");
+	const hours = Number.parseInt(rawHours ?? "", 10);
+
+	if (Number.isNaN(hours)) {
+		return time;
+	}
+
+	const minutes = rawMinutes ?? "00";
+	const meridiem = hours >= 12 ? "PM" : "AM";
+
+	return `${hours % 12 || 12}:${minutes} ${meridiem}`;
+}

@@ -1,5 +1,14 @@
-import { formatDate, formatDateShort } from "@mcmec/lib/functions/date-fns";
-import { partitionSprayMissions } from "@mcmec/lib/functions/spray-periods";
+import {
+	formatClockTime,
+	formatDate,
+	formatDateShort,
+	formatDateShortWithWeekday,
+	isSameDay,
+} from "@mcmec/lib/functions/date-fns";
+import {
+	otherMissionsLabel,
+	partitionSprayMissions,
+} from "@mcmec/lib/functions/spray-periods";
 import { Badge } from "@mcmec/ui/components/badge";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -74,13 +83,29 @@ export function CurrentRecord() {
 	const { data: notices } = useQuery(noticesQueryOptions());
 	const { data: meetings } = useQuery(meetingsQueryOptions());
 
-	const nextMission = schedules
+	const upcomingMissions = schedules
 		? partitionSprayMissions(schedules, (schedule) => ({
 				endTime: schedule.end_time,
 				missionDate: schedule.mission_date,
 				startTime: schedule.start_time,
-			})).upcoming[0]
-		: undefined;
+			})).upcoming
+		: [];
+
+	const nextMission = upcomingMissions[0];
+
+	/*
+	 * The Commission sprays several municipalities on a busy night, and the strip shows one
+	 * mission. Counted by calendar date rather than by start time: two missions the same night
+	 * rarely share an hour, and a resident asking "is my town out tonight" is asking about the
+	 * date, not the shift.
+	 */
+	const otherMissionsThatDate = nextMission
+		? upcomingMissions.filter(
+				(mission) =>
+					mission.id !== nextMission.id &&
+					isSameDay(mission.mission_date, nextMission.mission_date),
+			).length
+		: 0;
 
 	const latestNotice = notices
 		? [...notices]
@@ -121,7 +146,7 @@ export function CurrentRecord() {
 					{nextMission ? (
 						<>
 							<span className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold text-base text-foreground">
-								{formatDateShort(nextMission.mission_date)}
+								{formatDateShortWithWeekday(nextMission.mission_date)}
 								<Badge
 									variant={
 										nextMission.status === "scheduled" ? "default" : "outline"
@@ -136,9 +161,19 @@ export function CurrentRecord() {
 									? nextMission.municipalities.map((m) => m.name).join(", ")
 									: nextMission.area_description}
 								{" · "}
-								{nextMission.start_time.slice(0, 5)}–
-								{nextMission.end_time.slice(0, 5)}
+								{formatClockTime(nextMission.start_time)}–
+								{formatClockTime(nextMission.end_time)}
 							</span>
+							{/*
+							 * Its own line rather than appended to the one above: run on after a time
+							 * range, "and 2 others" reads as two more times rather than two more
+							 * missions.
+							 */}
+							{otherMissionsThatDate > 0 && (
+								<span className="text-muted-foreground text-sm">
+									{otherMissionsLabel(otherMissionsThatDate)}
+								</span>
+							)}
 						</>
 					) : (
 						<Absent>No spray missions are currently scheduled.</Absent>

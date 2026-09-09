@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
 	COMMISSION_TIME_ZONE,
+	formatClockTime,
 	formatDate,
 	formatDateShort,
+	formatDateShortWithWeekday,
 	formatDateTime,
+	formatDateWithWeekday,
 } from "./date-fns";
 
 /**
@@ -76,5 +79,64 @@ describe("formatDateShort", () => {
 
 	it("returns an empty string for nothing", () => {
 		expect(formatDateShort(null)).toBe("");
+	});
+});
+
+describe("formatDateWithWeekday", () => {
+	it("names the weekday of a date-only value", () => {
+		expect(formatDateWithWeekday(new Date("2026-09-04"))).toBe(
+			"Friday, September 04, 2026",
+		);
+	});
+
+	it("keeps the weekday on the mission's own day, not the reader's", () => {
+		// UTC midnight read in New Jersey is 8pm the previous evening — a Thursday. Pinned to
+		// UTC, the mission stays Friday wherever the page renders.
+		expect(formatDateWithWeekday("2026-09-04")).toBe(
+			"Friday, September 04, 2026",
+		);
+	});
+
+	it("returns an empty string for nothing", () => {
+		expect(formatDateWithWeekday(null)).toBe("");
+		expect(formatDateWithWeekday(undefined)).toBe("");
+		expect(formatDateWithWeekday("not a date")).toBe("");
+	});
+});
+
+describe("formatDateShortWithWeekday", () => {
+	it("abbreviates the weekday and the month", () => {
+		expect(formatDateShortWithWeekday(new Date("2026-09-04"))).toBe(
+			"Fri, Sep 4, 2026",
+		);
+	});
+
+	it("returns an empty string for nothing", () => {
+		expect(formatDateShortWithWeekday(null)).toBe("");
+		expect(formatDateShortWithWeekday("not a date")).toBe("");
+	});
+});
+
+describe("formatClockTime", () => {
+	it("renders an evening shift as a wall clock", () => {
+		expect(formatClockTime("19:00:00")).toBe("7:00 PM");
+	});
+
+	it("renders an early-morning shift as AM", () => {
+		expect(formatClockTime("03:30")).toBe("3:30 AM");
+	});
+
+	it("calls midnight 12 AM and noon 12 PM", () => {
+		expect(formatClockTime("00:00:00")).toBe("12:00 AM");
+		expect(formatClockTime("12:00:00")).toBe("12:00 PM");
+	});
+
+	it("returns an empty string for nothing", () => {
+		expect(formatClockTime(null)).toBe("");
+		expect(formatClockTime("")).toBe("");
+	});
+
+	it("hands back an unparseable value rather than NaN", () => {
+		expect(formatClockTime("whenever")).toBe("whenever");
 	});
 });
