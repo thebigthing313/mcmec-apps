@@ -52,7 +52,7 @@ export function Footer() {
 							 * on the record for the people who need it and nothing dials it.
 							 */}
 							<a
-								className="mt-1 flex items-center justify-center gap-2 hover:underline sm:justify-start"
+								className="mt-1 flex min-h-6 items-center justify-center gap-2 font-medium underline underline-offset-2 sm:justify-start"
 								href={`tel:${COMPANY_INFO.phone}`}
 							>
 								<Phone aria-hidden="true" size={14} />
@@ -72,23 +72,37 @@ export function Footer() {
 						<h3 className="font-bold text-sm uppercase tracking-wide">
 							Quick Links
 						</h3>
-						<nav className="flex flex-col gap-1 text-sm">
-							<Link className="hover:underline" to="/contact/service-request">
+						{/*
+						 * Labelled, like its two siblings below. The footer held three unlabelled
+						 * `<nav>` elements, so a landmark rotor read "navigation, navigation,
+						 * navigation" with no way to tell Quick Links from Contact Us.
+						 */}
+						<nav
+							aria-label="Quick links"
+							className="flex flex-col gap-1 text-sm"
+						>
+							<Link
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
+								to="/contact/service-request"
+							>
 								Request Service
 							</Link>
 							<Link
-								className="hover:underline"
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
 								to="/mosquito-control/spray-schedule"
 							>
 								Spray Schedule
 							</Link>
 							<Link
-								className="hover:underline"
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
 								to="/mosquito-surveillance/weekly-activity"
 							>
 								Weekly Mosquito Activity
 							</Link>
-							<Link className="hover:underline" to="/job-opportunities">
+							<Link
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
+								to="/job-opportunities"
+							>
 								Job Opportunities
 							</Link>
 						</nav>
@@ -99,17 +113,32 @@ export function Footer() {
 						<h3 className="font-bold text-sm uppercase tracking-wide">
 							Public Information
 						</h3>
-						<nav className="flex flex-col gap-1 text-sm">
-							<Link className="hover:underline" to="/notices">
+						<nav
+							aria-label="Public information"
+							className="flex flex-col gap-1 text-sm"
+						>
+							<Link
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
+								to="/notices"
+							>
 								Legal Notices
 							</Link>
-							<Link className="hover:underline" to="/notices/meetings">
+							<Link
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
+								to="/notices/meetings"
+							>
 								Public Meetings
 							</Link>
-							<Link className="hover:underline" to="/notices/transparency">
+							<Link
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
+								to="/notices/transparency"
+							>
 								Transparency
 							</Link>
-							<Link className="hover:underline" to="/notices/archive">
+							<Link
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
+								to="/notices/archive"
+							>
 								Archived Notices
 							</Link>
 						</nav>
@@ -120,14 +149,20 @@ export function Footer() {
 						<h3 className="font-bold text-sm uppercase tracking-wide">
 							Contact Us
 						</h3>
-						<nav className="flex flex-col gap-1 text-sm">
+						<nav
+							aria-label="Contact us"
+							className="flex flex-col gap-1 text-sm"
+						>
 							<a
-								className="hover:underline"
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
 								href="mailto:clerk@middlesexmosquito.org"
 							>
 								E-mail Us
 							</a>
-							<Link className="hover:underline" to="/contact/contact-us">
+							<Link
+								className="inline-flex min-h-6 items-center justify-center hover:underline sm:justify-start"
+								to="/contact/contact-us"
+							>
 								General Inquiries
 							</Link>
 						</nav>

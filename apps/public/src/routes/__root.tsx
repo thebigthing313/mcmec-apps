@@ -89,8 +89,18 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					{/*
 					 * tabIndex={-1} so the jump actually lands — a container is not focusable
 					 * on its own and the skip link would otherwise move nothing but the URL.
+					 *
+					 * `scroll-mt-*` is the sticky bar's rent. A jump to `#main-content` scrolls
+					 * this element's top to the viewport's top, which is now underneath the
+					 * header: measured at 47px of the first heading hidden on a phone and 64px
+					 * on a desktop, so the skip link delivered a keyboard user to content they
+					 * could not see. The values are the two bar heights plus a small gap.
 					 */}
-					<main className="my-8 flex-1" id="main-content" tabIndex={-1}>
+					<main
+						className="my-8 flex-1 scroll-mt-16 lg:scroll-mt-20"
+						id="main-content"
+						tabIndex={-1}
+					>
 						{children}
 					</main>
 					<Footer />

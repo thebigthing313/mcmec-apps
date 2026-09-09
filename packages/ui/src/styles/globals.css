@@ -53,7 +53,26 @@
 	--destructive-foreground: oklch(0.8852 0.0042 91.4508);
 	--border: oklch(0.8 0.02 150);
 	--input: oklch(0.92 0.01 150);
-	--ring: oklch(0.5353 0.1357 153.5529);
+	/*
+	 * The focus ring, and the reason it is this dark.
+	 *
+	 * It used to be `oklch(0.5353 …)` drawn at 50% alpha. `--primary` is `oklch(0.5364 …)` — the
+	 * same lightness — so on the public navigation bar the ring composited to **1.00:1** against
+	 * its own ground. Not faint: arithmetically identical. It measured 1.95–2.05:1 on Paper,
+	 * Surface and Muted too, all under the 3:1 WCAG 1.4.11 asks of a focus indicator. The system
+	 * documented this ring as "never removed" while shipping it invisible on five frontends.
+	 *
+	 * Two changes. The alpha is gone, because a 50% ring is a 50% contrast ratio. And the
+	 * lightness drops to 0.36, which is where a single colour clears 3:1 against every light
+	 * ground the ring can land on — Paper 9.47, Surface 9.35, Muted 8.32, Pale Green 7.88,
+	 * Field 7.83, Sidebar Ground 8.83, and Brackish Teal 3.27, the footer's ground and the
+	 * tightest of them.
+	 *
+	 * No single colour can also clear 3:1 against Commission Green: light enough for the green
+	 * needs L≈0.83, dark enough for Paper needs L≤0.57. So green grounds invert the ring to the
+	 * pale foreground instead (4.62:1) — see The Focus Ring Contrasts Its Ground Rule.
+	 */
+	--ring: oklch(0.36 0.13 153.5);
 	/*
 	 * Series colours, dark enough to be data.
 	 *
@@ -78,7 +97,7 @@
 	--sidebar-accent: oklch(0.92 0.03 150);
 	--sidebar-accent-foreground: oklch(0.3867 0.0191 145.1951);
 	--sidebar-border: oklch(0.8 0.02 150);
-	--sidebar-ring: oklch(0.5353 0.1357 153.5529);
+	--sidebar-ring: oklch(0.36 0.13 153.5);
 	--font-sans: "Roboto", system-ui, sans-serif;
 	--font-serif: "Lora", Georgia, serif;
 	--font-mono: "Fira Code", "Courier New", monospace;
@@ -213,7 +232,7 @@
 
 @layer base {
 	* {
-		@apply border-border outline-ring/50;
+		@apply border-border outline-ring;
 	}
 	body {
 		@apply bg-background text-foreground;

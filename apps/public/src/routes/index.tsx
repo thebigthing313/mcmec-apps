@@ -1,14 +1,22 @@
-import { hero, heroMobile } from "@mcmec/lib/constants/assets";
-import { useIsMobile } from "@mcmec/ui/hooks/use-mobile";
+import { cn } from "@mcmec/ui/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+	Activity,
+	ArrowRight,
 	CalendarDays,
 	ConciergeBell,
-	FileText,
-	Info,
+	Droplets,
 	Newspaper,
 	Users,
 } from "lucide-react";
+import type { CSSProperties } from "react";
+import { CurrentRecord } from "../components/current-record";
+import { HeroCarousel } from "../components/hero-carousel";
+import {
+	meetingsQueryOptions,
+	noticesQueryOptions,
+	spraySchedulesQueryOptions,
+} from "../lib/queries";
 import { canonical, seo } from "../lib/seo";
 
 export const Route = createFileRoute("/")({
@@ -22,7 +30,37 @@ export const Route = createFileRoute("/")({
 		}),
 		links: [canonical("/")],
 	}),
+	/*
+	 * Prefetched, capped, and never awaited to completion.
+	 *
+	 * Every other route that carries the record blocks on the api, and when the api is slow or
+	 * down those pages hang indefinitely. The home page is the one page that cannot afford
+	 * that: it is where a resident lands from a mailer or a search result, and a hero that
+	 * never paints is far worse than a record strip that fills in a moment later on the
+	 * client. `prefetchQuery` does not throw, so a refusal degrades the strip to its stated
+	 * empty sentences rather than the page to an error.
+	 */
+	loader: async ({ context }) => {
+		let release: ReturnType<typeof setTimeout> | undefined;
+		const budget = new Promise((resolve) => {
+			release = setTimeout(resolve, RECORD_BUDGET_MS);
+		});
+
+		await Promise.race([
+			Promise.allSettled([
+				context.queryClient.prefetchQuery(spraySchedulesQueryOptions()),
+				context.queryClient.prefetchQuery(noticesQueryOptions()),
+				context.queryClient.prefetchQuery(meetingsQueryOptions()),
+			]),
+			budget,
+		]);
+
+		clearTimeout(release);
+	},
 });
+
+/** How long the front door will wait on the record before rendering without it. */
+const RECORD_BUDGET_MS = 2500;
 
 const organizationJsonLd = JSON.stringify({
 	"@context": "https://schema.org",
@@ -46,125 +84,208 @@ const organizationJsonLd = JSON.stringify({
 	},
 });
 
-function RouteComponent() {
-	const isMobile = useIsMobile();
+/**
+ * The six destinations, in the order the Commission ranked them. The first two lead because
+ * they are the two urgent questions a resident arrives with — get something dealt with, and
+ * find out whether their street is being treated; the rest follow at a compact weight.
+ *
+ * They are one register rather than six cards: a single bordered container whose cells sit on
+ * a 1px gap over a Rule-coloured ground, which is the Signal Band's construction from
+ * `packages/ui`. It draws every divider at once and holds them exact when the cells wrap.
+ */
+interface Destination {
+	title: string;
+	description: string;
+	icon: typeof ConciergeBell;
+	href: string;
+}
 
+const leadDestinations: Destination[] = [
+	{
+		description:
+			"Report a mosquito problem, a water management issue, or request mosquitofish.",
+		href: "/contact/service-request",
+		icon: ConciergeBell,
+		title: "Request Service",
+	},
+	{
+		description: "Upcoming Spray Missions, by municipality and date.",
+		href: "/mosquito-control/spray-schedule",
+		icon: CalendarDays,
+		title: "Spray Schedule",
+	},
+];
+
+const furtherDestinations: Destination[] = [
+	{
+		description: "Weekly mosquito activity reports for the county.",
+		href: "/mosquito-surveillance/weekly-activity",
+		icon: Activity,
+		title: "Weekly Mosquito Activity",
+	},
+	{
+		description: "Notices that are still currently in effect.",
+		href: "/notices",
+		icon: Newspaper,
+		// "Legal Notices" is what the navigation, the footer and the page's own heading call
+		// this URL. It was "Public Notices" here and in the nav *group* above it, so one
+		// destination carried two names and the group collided with its own child.
+		title: "Legal Notices",
+	},
+	{
+		description: "Find and empty the standing water around your property.",
+		href: "/mosquito-surveillance/mosquito-source-checklist",
+		icon: Droplets,
+		title: "Prevention at Home",
+	},
+	{
+		description: "Meeting schedules, agendas, and minutes.",
+		href: "/notices/meetings",
+		icon: Users,
+		title: "Public Meetings",
+	},
+];
+
+function RouteComponent() {
 	return (
-		<div className="-my-8 w-full">
+		/*
+		 * `--band-inset` is one symmetric gutter, shared by the left half and the record strip
+		 * below it, so everything in the band starts on the same vertical line.
+		 *
+		 * It replaces an inset pinned to the site's `max-w-7xl` measure, which was wrong here
+		 * for a reason worth keeping: the split sits at `50vw`, and `(100vw - 80rem)/2 + 40rem`
+		 * *is* `50vw`. Pinning content to the 7xl grid therefore gave the left half exactly the
+		 * left half of a 1280px box — 640px of register inside a 953px column at 1920, and 640
+		 * inside 1280 at 2560 — while the photograph filled 100% of its own half at every width.
+		 * The halves were visibly unequal, and got more unequal the wider the display.
+		 *
+		 * A gutter that scales with the viewport keeps both halves full and both edges even.
+		 * The reading measure is still capped, just not by this: the heading balances and the
+		 * standfirst holds `46ch`, which is where the "don't grow a column with the display"
+		 * rule actually belongs.
+		 *
+		 * `-my-8` cancels the shell's `main` margin so the band meets the navigation above it
+		 * and the footer below with no Paper gap. A hero that floats in the page is a section;
+		 * one that touches both edges is a band.
+		 */
+		<section
+			/*
+			 * The band owns the fold. `main` is `flex-1` inside a `min-h-screen` column, so on a
+			 * tall display it stretched and the band did not — leaving a strip of dead Paper
+			 * between the record cells and the footer, on the one page that is supposed to run
+			 * edge to edge. A column with the halves growing puts that height into the
+			 * photograph instead. `4rem` is the sticky bar's own height.
+			 */
+			className="-my-8 flex w-full flex-col xl:min-h-[calc(100svh-4rem)]"
+			style={{ "--band-inset": "clamp(1.5rem, 5vw, 7rem)" } as CSSProperties}
+		>
 			<script
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD structured data
 				dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
 				type="application/ld+json"
 			/>
-			{/* Hero Banner */}
-			<div className="relative h-[60vh] min-h-80 w-full overflow-hidden">
-				<img
-					alt="Woodbridge River cleanup project"
-					className="absolute inset-0 h-full w-full object-cover"
-					fetchPriority="high"
-					src={isMobile ? heroMobile : hero}
-				/>
-				<div className="absolute inset-0 bg-linear-to-r from-primary/70 via-primary/40 to-transparent" />
-				<div className="absolute inset-0 flex items-center">
-					<div className="mx-auto w-full max-w-7xl px-6 md:px-12">
-						<h1 className="max-w-2xl font-bold text-2xl text-white leading-tight tracking-tight md:text-4xl">
+
+			{/*
+			 * No gap between the halves, and no radius on either. The two grounds meet at a
+			 * single hairline seam and each runs to its own viewport edge, which is what makes
+			 * this one band rather than two panels that happen to be adjacent.
+			 *
+			 * The split waits for `xl`, not `lg`. Each half needs roughly 640px to hold a
+			 * two-column register or a photograph worth looking at; splitting a 1024px display
+			 * gives them 512px each, the register drops to one column, and the band grows to
+			 * about 1200px tall with a photograph stretched into a slot beside it.
+			 *
+			 * The plate is last in the DOM and rightmost on a wide screen, so reading order and
+			 * tab order are the same order in both layouts: the heading, then the destinations,
+			 * then the photographs. Below `lg` that also puts the six answers above the imagery,
+			 * which is the right way round for someone who arrived with one urgent question.
+			 */}
+			<div className="grid flex-1 items-stretch xl:grid-cols-2">
+				<div className="flex flex-col justify-center gap-8 border-b bg-muted px-[var(--band-inset)] py-10 xl:border-r xl:border-b-0 xl:py-16">
+					<div>
+						<h1 className="text-balance font-bold text-[clamp(1.75rem,3.4vw,2.5rem)] text-foreground leading-[1.12] tracking-[-0.025em]">
 							Middlesex County Mosquito Extermination Commission
 						</h1>
-						<p className="mt-3 max-w-xl text-base text-white/90 md:text-lg">
+						<p className="mt-4 max-w-[46ch] text-base text-muted-foreground leading-relaxed md:text-lg">
 							Protecting the health and comfort of Middlesex County residents
 							and visitors since 1914.
 						</p>
 					</div>
-				</div>
-			</div>
 
-			{/* Quick Actions */}
-			<section className="bg-background py-10 md:py-14">
-				<div className="mx-auto max-w-7xl px-6 md:px-12">
-					<h2 className="mb-6 text-center font-semibold text-foreground text-lg md:text-xl">
-						How Can We Help You Today?
-					</h2>
-					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-						<ActionCard
-							description="Report a mosquito problem or request mosquitofish."
-							href="/contact/service-request"
-							icon={<ConciergeBell className="size-6 text-primary" />}
-							title="Request Service"
-						/>
-						<ActionCard
-							description="View current legal notices and announcements."
-							href="/notices"
-							icon={<Newspaper className="size-6 text-primary" />}
-							title="Public Notices"
-						/>
-						<ActionCard
-							description="Meeting schedules, agendas, and minutes."
-							href="/notices/meetings"
-							icon={<Users className="size-6 text-primary" />}
-							title="Public Meetings"
-						/>
-						<ActionCard
-							description="View upcoming mosquito spray missions."
-							href="/mosquito-control/spray-schedule"
-							icon={<CalendarDays className="size-6 text-primary" />}
-							title="Spray Schedule"
-						/>
-						<ActionCard
-							description="Weekly mosquito activity reports for the county."
-							href="/mosquito-surveillance/weekly-activity"
-							icon={<FileText className="size-6 text-primary" />}
-							title="Weekly Mosquito Activity"
-						/>
-						<ActionCard
-							description="Tips on mosquito protection and prevention."
-							external
-							href="https://middlesexmosquito.sharepoint.com/:b:/g/IQCLzJFwXLQLSaGsaq3XvsZeAUmMrM-lZmc8Bg5lBTX4MIE?e=LJshK5"
-							icon={<Info className="size-6 text-primary" />}
-							title="Mosquito Fact Sheet"
-						/>
+					{/*
+					 * A container query, not a viewport one. The register's width is now half the
+					 * page rather than all of it, so `sm:grid-cols-2` would put two columns in a
+					 * 448px panel at exactly the width the layout splits — the panel has to be
+					 * asked about itself.
+					 */}
+					<div className="@container">
+						<h2 className="sr-only">How can we help you today?</h2>
+						<div className="grid @lg:grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border">
+							{leadDestinations.map((destination) => (
+								<DestinationCell
+									destination={destination}
+									key={destination.href}
+									lead
+								/>
+							))}
+							{furtherDestinations.map((destination) => (
+								<DestinationCell
+									destination={destination}
+									key={destination.href}
+								/>
+							))}
+						</div>
 					</div>
 				</div>
-			</section>
-		</div>
+
+				<HeroCarousel />
+			</div>
+
+			<CurrentRecord />
+		</section>
 	);
 }
 
-function ActionCard({
-	title,
-	description,
-	icon,
-	href,
-	external,
+function DestinationCell({
+	destination,
+	lead = false,
 }: {
-	title: string;
-	description: string;
-	icon: React.ReactNode;
-	href: string;
-	external?: boolean;
+	destination: Destination;
+	lead?: boolean;
 }) {
-	const className =
-		"flex flex-col gap-3 rounded-lg border bg-card p-6 shadow-sm transition-shadow hover:shadow-md";
-
-	if (external) {
-		return (
-			<a
-				className={className}
-				href={href}
-				rel="noopener noreferrer"
-				target="_blank"
-			>
-				{icon}
-				<h3 className="font-semibold text-base text-foreground">{title}</h3>
-				<p className="text-muted-foreground text-sm">{description}</p>
-			</a>
-		);
-	}
+	const Icon = destination.icon;
 
 	return (
-		<Link className={className} to={href}>
-			{icon}
-			<h3 className="font-semibold text-base text-foreground">{title}</h3>
-			<p className="text-muted-foreground text-sm">{description}</p>
+		<Link
+			// `relative` and the raised z on focus keep the 3px ring from being clipped by the
+			// neighbouring cell, the same reason the Signal Band raises its cells.
+			className={cn(
+				"group relative flex flex-col gap-1.5 bg-card transition-colors hover:bg-secondary focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
+				lead ? "p-5 sm:p-6" : "p-4 sm:p-5",
+			)}
+			to={destination.href}
+		>
+			<Icon
+				className={cn("text-primary", lead ? "size-6" : "size-5")}
+				strokeWidth={1.75}
+			/>
+			<span
+				className={cn(
+					"mt-1 flex items-center gap-1.5 font-semibold text-foreground",
+					lead ? "text-lg" : "text-sm",
+				)}
+			>
+				{destination.title}
+				{lead ? (
+					<ArrowRight
+						aria-hidden="true"
+						className="size-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+					/>
+				) : null}
+			</span>
+			<span className="text-muted-foreground text-sm leading-snug">
+				{destination.description}
+			</span>
 		</Link>
 	);
 }

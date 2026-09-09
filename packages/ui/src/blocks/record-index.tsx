@@ -484,7 +484,7 @@ export function RecordIndex<TRow>({
 														renderRowLink({
 															children: column.cell(row),
 															className:
-																"-mx-1 block rounded-sm px-1 font-medium hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+																"-mx-1 block rounded-sm px-1 font-medium hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
 															row,
 														})
 													: column.cell(row)}

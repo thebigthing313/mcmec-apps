@@ -495,7 +495,7 @@ function RegisterFact({
 }) {
 	return (
 		<Link
-			className="bg-muted px-4 py-3 transition-colors hover:bg-secondary focus-visible:relative focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+			className="bg-muted px-4 py-3 transition-colors hover:bg-secondary focus-visible:relative focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
 			to={to}
 		>
 			<span className="block text-muted-foreground text-xs">{label}</span>

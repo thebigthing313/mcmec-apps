@@ -57,7 +57,7 @@ function RouteComponent() {
 		label,
 		value: url ? (
 			<a
-				className="inline-flex items-center gap-1 rounded-sm text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+				className="inline-flex items-center gap-1 rounded-sm text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
 				href={url}
 				rel="noopener noreferrer"
 				target="_blank"

@@ -70,7 +70,7 @@ export function SignalQueue({
 				<li className="border-b last:border-b-0" key={item.id}>
 					<Link
 						{...item.linkProps}
-						className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-2.5 transition-colors hover:bg-secondary focus-visible:relative focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+						className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-2.5 transition-colors hover:bg-secondary focus-visible:relative focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
 					>
 						<div className="min-w-0">
 							<p className="truncate font-medium text-sm leading-tight">
