@@ -259,10 +259,19 @@ function IdentityRail() {
 				 * they opened.
 				 */}
 				<span className="flex min-w-0 flex-col leading-tight">
-					<span className="font-bold text-[0.6875rem] uppercase tracking-wide sm:text-sm lg:text-base">
+					{/*
+					 * One colour for the whole block. The second name line and the standfirst were
+					 * `text-muted-foreground`, which set the agency's own name in two different
+					 * inks and read as though the second line were a caption on the first. They
+					 * inherit the rail's foreground now, so the masthead is one voice.
+					 *
+					 * Every line is a point and a half larger than it was — 1.5pt is 2px, so the
+					 * name goes 11/14/16px to 13/16/18px across the breakpoints.
+					 */}
+					<span className="font-bold text-[0.8125rem] uppercase tracking-wide sm:text-base lg:text-lg">
 						Middlesex County
 					</span>
-					<span className="font-semibold text-[0.6875rem] text-muted-foreground uppercase tracking-wide sm:text-sm lg:text-base">
+					<span className="font-semibold text-[0.8125rem] uppercase tracking-wide sm:text-base lg:text-lg">
 						Mosquito Extermination Commission
 					</span>
 					{/*
@@ -277,7 +286,7 @@ function IdentityRail() {
 					 * phone visitor needs that more than a desktop one, not less. 10px keeps the
 					 * cost to about two lines on a 390px screen.
 					 */}
-					<span className="mt-0.5 text-[0.625rem] text-muted-foreground leading-snug md:text-xs">
+					<span className="mt-0.5 text-xs leading-snug md:text-sm">
 						Advancing public health and protecting our community from mosquitoes
 						since 1914.
 					</span>
@@ -408,14 +417,14 @@ function MobileNavBar() {
 					 */}
 					<SheetTitle className="sr-only">Menu</SheetTitle>
 					<span className="flex flex-col leading-tight">
-						<span className="font-bold text-base uppercase tracking-wide">
+						<span className="font-bold text-lg uppercase tracking-wide">
 							Middlesex County
 						</span>
-						<span className="font-semibold text-base text-muted-foreground uppercase tracking-wide">
+						<span className="font-semibold text-lg uppercase tracking-wide">
 							Mosquito Extermination Commission
 						</span>
 					</span>
-					<span className="mt-1 text-muted-foreground text-xs leading-snug">
+					<span className="mt-1 text-sm leading-snug">
 						Advancing public health and protecting our community from mosquitoes
 						since 1914.
 					</span>
