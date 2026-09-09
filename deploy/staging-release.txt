@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-09T18:15:09.082Z
-commit: e05c0c9 fix(public): Prevention At Home opens the prevention guide (#223)
+released: 2026-09-09T18:46:30.367Z
+commit: 82ef221 fix(public): standfirst sits under the agency name, and the footer drops a link (#224)
