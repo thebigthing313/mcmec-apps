@@ -3,28 +3,56 @@ import {
 	NonEmptyStringSchema,
 	NonEmptyUUID,
 } from "@mcmec/lib/constants/validators";
-import {
-	NoticesRowSchema,
-	type NoticesRowType,
-} from "@mcmec/supabase/db/notices";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 
+/**
+ * The details of a notice — exactly the fields `website.updateNoticeDetails` accepts.
+ *
+ * `is_published` and `is_archived` are not here. A lifecycle column can only move through a
+ * named command, so publishing and archiving are actions on the notice rather than switches
+ * inside an edit form — which is also what lets the server enforce P.L. 2025 c.72 instead of
+ * warning about it.
+ */
+export interface NoticeDetailValues {
+	notice_type_id: string;
+	title: string;
+	notice_date: Date;
+	content: string;
+}
+
+/**
+ * What the form submits: the details plus the state the notice is being created in.
+ *
+ * `is_published` is not a field the author sets — it is decided by *which button was pressed*,
+ * and the form fills it in from the submit's meta. Create offers two acts, "Create as Draft"
+ * and "Create and Publish", so publishing a legal notice is always something someone chose to
+ * do rather than a switch that happened to be left on.
+ */
+export type NoticeFormValues = NoticeDetailValues & { is_published: boolean };
+
 interface NoticeFormProps {
-	defaultValues: {
-		id: string;
-		notice_type_id: string;
-		title: string;
-		notice_date: Date;
-		content: string;
-		is_published: boolean;
-		is_archived: boolean;
-		created_at: Date;
-		updated_at: Date;
-	};
-	onSubmit: (value: NoticesRowType) => void | Promise<void>;
+	defaultValues: NoticeDetailValues;
+	onSubmit: (value: NoticeFormValues) => void | Promise<void>;
 	categories: Array<{ label: string; value: string }>;
-	formLabel: string;
+	formLabel?: string;
 	submitLabel: string;
+	/**
+	 * Create renders its own "Create and Publish" beneath the primary submit; edit leaves the
+	 * lifecycle to `actions`, where the row already exists and Publish/Unpublish is a command
+	 * against it. Either way `is_published` is never a field — `updateNoticeDetails` has no such
+	 * field to send it to, and ADR 0001 gives create no exemption.
+	 */
+	mode: "create" | "edit";
+	/**
+	 * Lifecycle actions rendered beneath the fields — ADR 0001's buttons, never fields.
+	 *
+	 * A render prop rather than a plain node because Save-and-X needs the form's *current*
+	 * values: the caller diffs them against the live row to decide whether the label says
+	 * "Publish" or "Save and Publish", and to fill the `updateNoticeDetails` half of the
+	 * envelope. The form keeps owning its state; the caller borrows a read of it.
+	 */
+	actions?: (state: { values: NoticeDetailValues }) => React.ReactNode;
 }
 
 export function NoticeForm({
@@ -33,13 +61,17 @@ export function NoticeForm({
 	categories,
 	formLabel,
 	submitLabel,
+	mode,
+	actions,
 }: NoticeFormProps) {
 	const form = useAppForm({
 		defaultValues,
-		onSubmit: async ({ value }) => {
-			const parsedValue = NoticesRowSchema.parse(value);
-			await onSubmit(parsedValue);
+		// The publish decision travels with the submit rather than living in the values, so both
+		// create buttons run the same validation and the form has no publish state to leave on.
+		onSubmit: async ({ value, meta }) => {
+			await onSubmit({ ...value, is_published: meta.publish });
 		},
+		onSubmitMeta: { publish: false },
 	});
 
 	return (
@@ -81,65 +113,28 @@ export function NoticeForm({
 				<form.AppField name="content">
 					{(field) => <field.ContentField label="Content" />}
 				</form.AppField>
-				<form.AppField name="is_published">
-					{(field) => (
-						<field.SwitchField
-							description="Mark notice as ready to publish or as a draft"
-							label="Publish Status"
-							labelWhenFalse="This notice is a draft and will never display in the legal notices pages."
-							labelWhenTrue="This notice is published and will display in the legal notices pages once the publish date is reached."
-							orientation="vertical"
-						/>
-					)}
-				</form.AppField>
-				<form.AppField name="is_archived">
-					{(field) => (
-						<field.SwitchField
-							description="Indicates whether the notice is archived or active. Archived notices are notices whose information is no longer current but are kept for historical reference."
-							label="Archive Status"
-							labelWhenFalse="This notice is active and will display in the current legal notices page."
-							labelWhenTrue="This notice is no longer active and will display in the archived notices page."
-							orientation="vertical"
-						/>
-					)}
-				</form.AppField>
-				<form.Subscribe
-					selector={(state) => ({
-						isArchived: state.values.is_archived,
-						noticeDate: state.values.notice_date,
-					})}
-				>
-					{({ isArchived, noticeDate }) => (
-						<RetentionWarning isArchived={isArchived} noticeDate={noticeDate} />
-					)}
-				</form.Subscribe>
 				<form.SubmitFormButton className="w-full" label={submitLabel} />
+				{mode === "create" ? (
+					// Disabled on the same condition as the draft button, and that matters more
+					// here than there: this is the irreversible half of the pair. Leaving the
+					// public act clickable while the safe one is greyed out inverts the guard.
+					<form.Subscribe selector={(state) => state.canSubmit}>
+						{(canSubmit) => (
+							<LifecycleButton
+								className="w-full"
+								disabled={!canSubmit}
+								label="Create and Publish"
+								onAct={() => form.handleSubmit({ publish: true })}
+							/>
+						)}
+					</form.Subscribe>
+				) : null}
+				{actions ? (
+					<form.Subscribe selector={(state) => state.values}>
+						{(values) => actions({ values })}
+					</form.Subscribe>
+				) : null}
 			</form.FormWrapper>
 		</form.AppForm>
-	);
-}
-
-function RetentionWarning({
-	isArchived,
-	noticeDate,
-}: {
-	isArchived: boolean;
-	noticeDate: Date;
-}) {
-	if (!isArchived || !noticeDate) return null;
-
-	const daysSincePosted = Math.floor(
-		(Date.now() - new Date(noticeDate).getTime()) / (1000 * 60 * 60 * 24),
-	);
-
-	if (daysSincePosted >= 7) return null;
-
-	return (
-		<div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-amber-800 text-sm">
-			This notice was posted {daysSincePosted} day
-			{daysSincePosted !== 1 ? "s" : ""} ago. Per P.L. 2025, c.72, legal notices
-			must remain on the current notices page for at least 7 days before
-			archiving.
-		</div>
 	);
 }

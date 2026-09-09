@@ -4,7 +4,7 @@
 		"paths": {
 			"@/*": ["./*"],
 			"@mcmec/lib/*": ["../../packages/lib/src/*"],
-			"@mcmec/supabase/*": ["../../packages/supabase/src/*"],
+			"@mcmec/schemas/*": ["../../packages/schemas/src/*"],
 			"@mcmec/ui/*": ["../../packages/ui/src/*"]
 		},
 		"types": ["vite/client"]

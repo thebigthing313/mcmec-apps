@@ -9,6 +9,8 @@ import {
 import { cn } from "../lib/utils";
 
 interface PhoneInputProps {
+	"aria-invalid"?: boolean;
+	"aria-required"?: boolean;
 	id: string;
 	name: string;
 	value?: string;
@@ -18,6 +20,8 @@ interface PhoneInputProps {
 }
 
 export function PhoneInput({
+	"aria-invalid": ariaInvalid,
+	"aria-required": ariaRequired,
 	id,
 	value,
 	name,
@@ -104,7 +108,8 @@ export function PhoneInput({
 	return (
 		<div className={cn("flex gap-2", className)}>
 			<Input
-				aria-invalid={!isValid}
+				aria-invalid={ariaInvalid || !isValid}
+				aria-required={ariaRequired}
 				autoComplete="tel"
 				className={showExt ? "w-3/4" : "w-full"}
 				id={id}
@@ -116,8 +121,17 @@ export function PhoneInput({
 			/>
 			{showExt && (
 				<InputGroup className="w-1/4">
+					{/*
+					 * The addon is decoration: it is not a label element, so on its own this
+					 * input reached assistive technology with no name whatsoever — the "ext."
+					 * beside it is visible only to people who can see it. The aria-label is
+					 * what names the control; the addon stays as the visual cue.
+					 */}
 					<InputGroupAddon align="inline-start">ext.</InputGroupAddon>
 					<InputGroupInput
+						aria-label="Phone extension"
+						id={`${id}-ext`}
+						name={`${name}-ext`}
 						onBlur={handleBlur}
 						onChange={handleExtChange}
 						type="text"

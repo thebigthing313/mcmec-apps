@@ -3,14 +3,15 @@
 
 
 ## Checklist
-- [ ] Tested locally (`pnpm dev` / `supabase db reset` if migrations changed)
+- [ ] Tested locally (`pnpm dev` / `pnpm --filter api db:migrate` if migrations changed)
 - [ ] Types pass (`pnpm check-types`)
 - [ ] Changeset added (`pnpm change`) — or N/A for config/CI-only changes
 - [ ] No new env vars without updating `.env.example`
 - [ ] No secrets committed
 
-### If this PR includes Supabase migrations:
-> **Warning:** Migrations auto-apply to the production database when merged to `main`.
+### If this PR includes Drizzle migrations:
+> **Warning:** Migrations auto-apply on deploy — to staging on merge to `develop`, and to the production database on merge to `main`.
 
-- [ ] Migration tested locally with `supabase db reset`
+- [ ] Migration generated with `pnpm --filter api db:generate` (not hand-written)
+- [ ] Migration applied and tested against staging
 - [ ] Migration is backwards-compatible (no destructive column/table drops without coordination)

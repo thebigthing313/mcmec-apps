@@ -114,7 +114,7 @@ function RouteComponent() {
 				</div>
 
 				<h3>Notice Date: {formatDate(notice_date)}</h3>
-				<TiptapRenderer content={content} />
+				<TiptapRenderer className="mt-4" content={content} />
 			</article>
 			<div className="flex flex-col text-foreground/70 text-sm italic">
 				<p>Notice Type: {type}</p>

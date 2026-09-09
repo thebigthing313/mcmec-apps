@@ -30,6 +30,15 @@ interface PublicNoticeCardProps {
 	showShare?: boolean;
 	onNoticeClick?: () => void;
 	getShareUrl?: () => string;
+	/**
+	 * Clip the body to a fixed height behind a fade.
+	 *
+	 * Defaults to true, which suits a browse surface like the archive. The current
+	 * notices register passes false: a notice posted there is the legal notice, and
+	 * P.L. 2025 c.72 does not allow the posting to be cut mid-sentence by a decorative
+	 * gradient with the remainder a click away.
+	 */
+	truncate?: boolean;
 }
 export function PublicNoticeCard({
 	title,
@@ -42,6 +51,7 @@ export function PublicNoticeCard({
 	onNoticeClick,
 	getShareUrl,
 	showShare = true,
+	truncate = true,
 }: PublicNoticeCardProps) {
 	const [open, setOpen] = useState(false);
 	const [copied, setCopied] = useState(false);
@@ -66,11 +76,24 @@ export function PublicNoticeCard({
 	return (
 		<Card className={className}>
 			<CardHeader className="border-b">
-				<CardTitle
-					className={`text-xl ${onNoticeClick ? "cursor-pointer hover:underline" : ""}`}
-					onClick={onNoticeClick}
-				>
-					{title}
+				{/*
+				 * The title looked clickable and was not reachable. It carried `cursor-pointer`,
+				 * a hover underline and an onClick on a plain div — no focus, no Enter, nothing
+				 * for a screen reader to announce as an action. A button gets all of that for
+				 * free and keeps the styling; where there is nothing to click it stays text.
+				 */}
+				<CardTitle className="text-xl">
+					{onNoticeClick ? (
+						<button
+							className="cursor-pointer rounded-sm text-left outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring"
+							onClick={onNoticeClick}
+							type="button"
+						>
+							{title}
+						</button>
+					) : (
+						title
+					)}
 				</CardTitle>
 				{showShare && (
 					<CardAction>
@@ -83,15 +106,28 @@ export function PublicNoticeCard({
 						/>
 					</CardAction>
 				)}
-				<CardDescription className="text-sm">
-					Published on: {noticeDate ? formatDateShort(noticeDate) : "[unknown]"}
-				</CardDescription>
+				{/*
+				 * "Notice date", not "Published on". The value is the notice's own legal date
+				 * from `notice_date`, which is not the day it went up on the site, and
+				 * labelling it as a publication date misstates the record. The old fallback
+				 * printed a literal "[unknown]" to the public; a notice with no date now shows
+				 * nothing rather than a placeholder.
+				 */}
+				{noticeDate && (
+					<CardDescription className="text-sm">
+						Notice date: {formatDateShort(noticeDate)}
+					</CardDescription>
+				)}
 			</CardHeader>
 			<CardContent>
-				<div className="relative max-h-48 overflow-hidden">
+				{truncate ? (
+					<div className="relative max-h-48 overflow-hidden">
+						<TiptapRenderer content={content} />
+						<div className="pointer-events-none absolute right-0 bottom-0 left-0 h-12 bg-linear-to-t from-card to-transparent" />
+					</div>
+				) : (
 					<TiptapRenderer content={content} />
-					<div className="pointer-events-none absolute right-0 bottom-0 left-0 h-12 bg-linear-to-t from-card to-transparent" />
-				</div>
+				)}
 				{onNoticeClick && (
 					<div className="flex w-full justify-center">
 						<Button
@@ -106,7 +142,11 @@ export function PublicNoticeCard({
 			</CardContent>
 			<CardFooter className="flex items-center justify-between border-t pt-4">
 				<div className="text-muted-foreground text-sm">
-					<span className="font-medium">Type:</span> {type}
+					{type && (
+						<>
+							<span className="font-medium">Type:</span> {type}
+						</>
+					)}
 				</div>
 				<PublicNoticeBadge
 					isArchived={isArchived}

@@ -66,7 +66,14 @@ export function ComboboxInput({
 						<CommandGroup>
 							{options.map((option) => (
 								<CommandItem
+									// Same fix as `MultiComboboxInput`, and for the same reason:
+									// the item's `value` is the id, so cmdk filtered the search box
+									// against a list of uuids and emptied the popover. `keywords` is
+									// a separate argument to cmdk's filter — it never reaches
+									// `onSelect`, which still receives the resolved value, i.e. the
+									// id this list is keyed and selected by.
 									key={option.value}
+									keywords={[option.label]}
 									onSelect={(currentValue) => {
 										onChange?.(currentValue === value ? "" : currentValue);
 										setOpen(false);

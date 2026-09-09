@@ -1,4 +1,6 @@
+import { COMPANY_INFO } from "@mcmec/lib/constants/company";
 import { createFileRoute, Link, type LinkProps } from "@tanstack/react-router";
+import { parsePhoneNumberWithError } from "libphonenumber-js";
 import { canonical, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute("/contact/service-request")({
@@ -14,13 +16,13 @@ export const Route = createFileRoute("/contact/service-request")({
 	}),
 });
 
-type ServiceRequestOption = {
+type PublicRequestOption = {
 	title: string;
 	description: string;
 	link: LinkProps["to"];
 };
 
-const options: Array<ServiceRequestOption> = [
+const options: Array<PublicRequestOption> = [
 	{
 		description:
 			"Select this option if you are experiencing a high number of mosquitoes on your property or in your immediate area and believe they are causing a nuisance.",
@@ -47,7 +49,7 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4">
 			<article className="prose lg:prose-base max-w-none">
-				<h1>Service Request</h1>
+				<h1>Service Requests</h1>
 				<p>
 					Residents can submit an official service request through this page.
 					The Commission will review and respond to your request as soon as
@@ -58,16 +60,24 @@ function RouteComponent() {
 					{options.map((option) => (
 						<Link className="no-underline" key={option.title} to={option.link}>
 							<div className="flex flex-1 flex-col rounded-lg border border-accent p-6 transition-all duration-200 ease-in-out hover:border-primary hover:bg-primary/10">
-								<div className="mb-4 font-bold text-2xl">{option.title}</div>
+								{/*
+								 * A heading, not a styled div. These three cards are the whole
+								 * choice this page offers and none of them appeared in the
+								 * outline. `mt-0` holds prose's heading margin off so the card
+								 * keeps the spacing it had.
+								 */}
+								<h2 className="mt-0 mb-4 font-bold text-2xl">{option.title}</h2>
 								<div className="font-normal text-lg">{option.description}</div>
 							</div>
 						</Link>
 					))}
 				</div>
 				<p>
-					For other requests or questions, please contact our office at (732)
-					549-0665 or by using our general contact form linked{" "}
-					<Link to="/contact/contact-us">here</Link>.
+					For anything else, call the office at{" "}
+					<a href={`tel:${COMPANY_INFO.phone}`}>
+						{parsePhoneNumberWithError(COMPANY_INFO.phone).formatNational()}
+					</a>{" "}
+					or send us a <Link to="/contact/contact-us">general inquiry</Link>.
 				</p>
 			</article>
 		</div>

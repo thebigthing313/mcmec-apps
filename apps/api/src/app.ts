@@ -1,15 +1,12 @@
+import { COMMAND_PATH } from "@mcmec/sync/routes";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
 import { assetsRouter } from "./assets";
 import { auth } from "./auth";
-import { deleteRow, insertRow, updateRow } from "./data";
-import { inviteEmployee } from "./invite";
-import { importMosquitoActivity } from "./mosquito";
+import { postCommands } from "./commands/dispatch";
 import { submitRequest } from "./requests";
 import { shapeProxy } from "./shapes";
-import { setSprayScheduleMunicipalities } from "./spray-municipalities";
-import { setUserRoles } from "./users";
 
 export const app = new Hono();
 
@@ -53,18 +50,7 @@ app.get("/api/shapes/:table", shapeProxy);
 // honeypot/Turnstile checks, so bound it up front on this unauthenticated route.
 app.post("/api/requests", bodyLimit({ maxSize: 64 * 1024 }), submitRequest);
 
-// Write path (permission-gated, audit-logged via app.* GUCs)
-app.post("/api/data/:table", insertRow);
-app.patch("/api/data/:table/:id", updateRow);
-app.delete("/api/data/:table/:id", deleteRow);
-
-// Non-CRUD writes (composite-key / bulk / role) that the generic /api/data path can't express
-app.put("/api/users/:id/roles", setUserRoles); // manage_users
-app.post("/api/mosquito-activity/import", importMosquitoActivity); // manage_website
-app.put(
-	"/api/spray-schedules/:id/municipalities",
-	setSprayScheduleMunicipalities,
-); // manage_website
-
-// Employee invite (manage_employees) + set-password email
-app.post("/api/invite", inviteEmployee);
+// Write path — the only one. Every write in every app names a command, permission-gated and
+// audit-logged via the app.* GUCs. The three generic doors that stood beside this line
+// (`POST`/`PATCH`/`DELETE /api/data/:table`) went with `data.ts` in #140.
+app.post(COMMAND_PATH, postCommands);

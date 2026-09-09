@@ -1,4 +1,12 @@
 /**
+ * Where the Commission sits, and therefore when its meetings happen.
+ *
+ * Named rather than inlined because it is a fact about the agency, not a formatting option:
+ * every meeting on the public record is called in Edison, New Jersey.
+ */
+export const COMMISSION_TIME_ZONE = "America/New_York";
+
+/**
  * Timezone-safe date utility functions
  *
  * These functions help avoid common timezone-related bugs when working with dates.
@@ -272,6 +280,19 @@ export function isOnOrAfterDay(
  * Format a date with time as a localized date and time string with timezone.
  * Displays full date, time, and timezone abbreviation.
  *
+ * Pinned to the Commission's own timezone, for two reasons.
+ *
+ * It used to pin none, which meant it rendered in whatever zone the runtime happened to be
+ * in. On `apps/public` that is a real defect rather than a cosmetic one: the SSR server runs
+ * in UTC, so the server-rendered HTML showed a 12:00 PM meeting as 4:00 PM (UTC) and the
+ * browser then re-rendered it as 12:00 PM (EDT) — a React #418 hydration mismatch, and, for
+ * a crawler or a reader before hydration, a meeting time wrong by four or five hours on the
+ * page that discharges the Commission's 48-hour OPMA notice.
+ *
+ * And a meeting happens where it happens. A resident reading this page from another state
+ * needs the time the doors actually open in Edison, not that instant translated into their
+ * own zone, which is what an unpinned formatter would give them.
+ *
  * @param date - The date to format (can be Date, string, or null/undefined)
  * @param locale - The locale to use for formatting (defaults to 'en-US')
  * @returns Formatted date-time string or empty string if date is invalid
@@ -297,6 +318,7 @@ export function formatDateTime(
 	const dateStr = dateObj.toLocaleDateString(locale, {
 		day: "numeric",
 		month: "long",
+		timeZone: COMMISSION_TIME_ZONE,
 		weekday: "long",
 		year: "numeric",
 	});
@@ -305,14 +327,192 @@ export function formatDateTime(
 		hour: "numeric",
 		hour12: true,
 		minute: "2-digit",
+		timeZone: COMMISSION_TIME_ZONE,
 	});
 
 	const timeZoneStr = dateObj
 		.toLocaleTimeString(locale, {
+			timeZone: COMMISSION_TIME_ZONE,
 			timeZoneName: "short",
 		})
 		.split(" ")
 		.pop();
 
 	return `${dateStr} ${timeStr} (${timeZoneStr})`;
+}
+
+/**
+ * Read a date-only value into a Date positioned at **local** midnight.
+ *
+ * The rest of this module treats a date-only value as UTC midnight, which is right for reading
+ * it — `formatDateShort` pins `timeZone: "UTC"` so the day never shifts. A calendar picker is
+ * the one consumer that cannot use that convention: `<Calendar selected>` compares against the
+ * user's local day, so handing it UTC midnight highlights the *previous* day anywhere west of
+ * Greenwich. New Jersey is four or five hours west of it every day of the year.
+ *
+ * @example
+ * // in America/New_York, with a `date` column read as 2026-09-05T00:00:00Z
+ * toLocalDateOnly(row.rain_date) // Sat Sep 05 2026 00:00:00 GMT-0400
+ */
+export function toLocalDateOnly(
+	date: Date | string | null | undefined,
+): Date | undefined {
+	if (!date) {
+		return undefined;
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return undefined;
+	}
+
+	return new Date(
+		dateObj.getUTCFullYear(),
+		dateObj.getUTCMonth(),
+		dateObj.getUTCDate(),
+	);
+}
+
+/**
+ * Write a locally-positioned Date back out as the `YYYY-MM-DD` a `date` column takes.
+ *
+ * The mirror of {@link toLocalDateOnly}, and the reason it exists: `toISOString().slice(0, 10)`
+ * reads the *UTC* day, so a date the user picked in the evening of their own timezone can be
+ * stored as the next one.
+ */
+export function toDateOnlyString(date: Date | null | undefined): string | null {
+	if (!date || Number.isNaN(date.getTime())) {
+		return null;
+	}
+
+	const month = `${date.getMonth() + 1}`.padStart(2, "0");
+	const day = `${date.getDate()}`.padStart(2, "0");
+	return `${date.getFullYear()}-${month}-${day}`;
+}
+
+/**
+ * Format a **timestamp** as a short local date.
+ *
+ * `formatDateShort` is for date-only columns and pins UTC deliberately. A `timestamptz` is a real
+ * instant, so pinning UTC renders an evening in New Jersey as the following day. Use this one
+ * wherever the underlying column carries a time.
+ */
+export function formatTimestampDateShort(
+	date: Date | string | null | undefined,
+	locale = "en-US",
+): string {
+	if (!date) {
+		return "";
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return "";
+	}
+
+	return dateObj.toLocaleDateString(locale);
+}
+
+/**
+ * Format a date-only value with the weekday in front of it.
+ *
+ * A spray mission is something a resident plans an evening around — close the windows, bring
+ * the dog in — and "September 04, 2026" makes them count on a calendar to find out whether
+ * that is a school night. The weekday is the part of the date they actually act on, so it
+ * leads.
+ *
+ * UTC-pinned for the same reason {@link formatDate} is: a `date` column carries no instant,
+ * and reading it in a western zone would name both the wrong day *and* the wrong weekday.
+ *
+ * @example
+ * formatDateWithWeekday(new Date('2026-09-04')) // "Friday, September 04, 2026"
+ */
+export function formatDateWithWeekday(
+	date: Date | string | null | undefined,
+	locale = "en-US",
+): string {
+	if (!date) {
+		return "";
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return "";
+	}
+
+	return dateObj.toLocaleDateString(locale, {
+		day: "2-digit",
+		month: "long",
+		timeZone: "UTC",
+		weekday: "long",
+		year: "numeric",
+	});
+}
+
+/**
+ * The same date, abbreviated, for somewhere the full sentence will not fit.
+ *
+ * `formatDateShort` gives "9/4/2026", which carries no weekday and asks the reader to parse
+ * a numeric date. This is the compact form that still names the day.
+ *
+ * @example
+ * formatDateShortWithWeekday(new Date('2026-09-04')) // "Fri, Sep 4, 2026"
+ */
+export function formatDateShortWithWeekday(
+	date: Date | string | null | undefined,
+	locale = "en-US",
+): string {
+	if (!date) {
+		return "";
+	}
+
+	const dateObj = typeof date === "string" ? new Date(date) : date;
+
+	if (Number.isNaN(dateObj.getTime())) {
+		return "";
+	}
+
+	return dateObj.toLocaleDateString(locale, {
+		day: "numeric",
+		month: "short",
+		timeZone: "UTC",
+		weekday: "short",
+		year: "numeric",
+	});
+}
+
+/**
+ * Render a `time` column's `HH:MM[:SS]` as a wall clock a resident reads.
+ *
+ * The database stores 19:00; the public site says 7:00 PM. This is a plain string transform
+ * rather than a `Date` formatter on purpose — a `time` column has no date and no zone to
+ * attach one to, and building a `Date` around it only invites the timezone shift the rest of
+ * this module exists to avoid.
+ *
+ * An unparseable value comes back unchanged rather than as "NaN:00 AM": a malformed row
+ * should show its own bad data, not a broken formatter.
+ *
+ * @example
+ * formatClockTime("19:00:00") // "7:00 PM"
+ * formatClockTime("03:30")    // "3:30 AM"
+ */
+export function formatClockTime(time: string | null | undefined): string {
+	if (!time) {
+		return "";
+	}
+
+	const [rawHours, rawMinutes] = time.split(":");
+	const hours = Number.parseInt(rawHours ?? "", 10);
+
+	if (Number.isNaN(hours)) {
+		return time;
+	}
+
+	const minutes = rawMinutes ?? "00";
+	const meridiem = hours >= 12 ? "PM" : "AM";
+
+	return `${hours % 12 || 12}:${minutes} ${meridiem}`;
 }

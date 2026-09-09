@@ -3,12 +3,12 @@
 # The https ports here are the BROWSER-FACING origins. The Vite dev servers and the API stay
 # on plain http behind this proxy and shouldn't be opened directly.
 #
-#   https://localhost:3443  ->  :3005  api (Hono)
-#   https://localhost:3444  ->  :3001  central
-#   https://localhost:3445  ->  :3003  hr
-#   https://localhost:3446  ->  :3004  admin
-#   https://localhost:3447  ->  :3006  website-management
-#   https://localhost:3448  ->  :3007  public
+#   https://localhost:3443  ->  :3543  api (Hono)
+#   https://localhost:3444  ->  :3544  central
+#   https://localhost:3445  ->  :3545  hr
+#   https://localhost:3446  ->  :3546  admin
+#   https://localhost:3447  ->  :3547  website-management
+#   https://localhost:3448  ->  :3548  public
 #
 # Why HTTPS for everything, not just the API:
 #
@@ -28,11 +28,19 @@
 #   caddy run              # auto-loads this Caddyfile from the repo root
 #
 # Each upstream keeps its own Host header so Vite's host checks and Better Auth's
-# BETTER_AUTH_URL (http://localhost:3005) still match, and the session cookie stays host-only
+# BETTER_AUTH_URL (http://localhost:3543) still match, and the session cookie stays host-only
 # on `localhost` — shared across every localhost port, which is what gives us dev SSO.
 #
-# Ports: 3443-3448 and the admin endpoint on 2020 deliberately avoid 3000, 3002, 5173-5176,
-# 80 and 2019, which a concurrent project on this machine reserves (see CLAUDE.md).
+# Ports: every MCMEC port sits in one block. Browse on 3443-3448; each proxies to the upstream
+# carrying the same last two digits one hundred above, 3543-3548. The rule is *upstream = browse
+# port + 100*, so a URL in the address bar names the port behind it without a lookup. The Caddy
+# admin endpoint is on 2020.
+#
+# The block avoids 3000, 3001, 3002, 4173, 5173-5176, 55432, 80 and 2019, which the concurrent
+# project on this machine reserves (see CLAUDE.md). The upstreams used to be 3001-3007, and that
+# is exactly what went wrong: that project's docker-compose maps ElectricSQL to host 3001 and
+# took central's port out from under it, with `strictPort` reporting it as a dead upstream rather
+# than as a collision. 30xx was never a range we could sit adjacent to safely.
 
 # Move the admin endpoint off the default :2019 so this instance can coexist with another
 # Caddy already running, and skip the automatic HTTP->HTTPS redirect listener (it would try to
@@ -43,39 +51,39 @@
 }
 
 https://localhost:3443 {
-	reverse_proxy localhost:3005 {
-		header_up Host localhost:3005
+	reverse_proxy localhost:3543 {
+		header_up Host localhost:3543
 	}
 }
 
 # The app servers. reverse_proxy upgrades WebSockets automatically, which is what carries
 # Vite's HMR socket — each app's vite config points its HMR client at the port below.
 https://localhost:3444 {
-	reverse_proxy localhost:3001 {
-		header_up Host localhost:3001
+	reverse_proxy localhost:3544 {
+		header_up Host localhost:3544
 	}
 }
 
 https://localhost:3445 {
-	reverse_proxy localhost:3003 {
-		header_up Host localhost:3003
+	reverse_proxy localhost:3545 {
+		header_up Host localhost:3545
 	}
 }
 
 https://localhost:3446 {
-	reverse_proxy localhost:3004 {
-		header_up Host localhost:3004
+	reverse_proxy localhost:3546 {
+		header_up Host localhost:3546
 	}
 }
 
 https://localhost:3447 {
-	reverse_proxy localhost:3006 {
-		header_up Host localhost:3006
+	reverse_proxy localhost:3547 {
+		header_up Host localhost:3547
 	}
 }
 
 https://localhost:3448 {
-	reverse_proxy localhost:3007 {
-		header_up Host localhost:3007
+	reverse_proxy localhost:3548 {
+		header_up Host localhost:3548
 	}
 }

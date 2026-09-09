@@ -16,6 +16,12 @@ import { Route as AuthSetPasswordRouteImport } from './routes/_auth/set-password
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
+import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
+import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
+import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/index'
+import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
+import { Route as appMeetingsMeetingIdRouteImport } from './routes/(app)/meetings/$meetingId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -50,13 +56,49 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const appNoticesRouteRoute = appNoticesRouteRouteImport.update({
+  id: '/notices',
+  path: '/notices',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appMeetingsRouteRoute = appMeetingsRouteRouteImport.update({
+  id: '/meetings',
+  path: '/meetings',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appNoticesIndexRoute = appNoticesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appNoticesRouteRoute,
+} as any)
+const appMeetingsIndexRoute = appMeetingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appMeetingsRouteRoute,
+} as any)
+const appNoticesNoticeIdRoute = appNoticesNoticeIdRouteImport.update({
+  id: '/$noticeId',
+  path: '/$noticeId',
+  getParentRoute: () => appNoticesRouteRoute,
+} as any)
+const appMeetingsMeetingIdRoute = appMeetingsMeetingIdRouteImport.update({
+  id: '/$meetingId',
+  path: '/$meetingId',
+  getParentRoute: () => appMeetingsRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
+  '/meetings': typeof appMeetingsRouteRouteWithChildren
+  '/notices': typeof appNoticesRouteRouteWithChildren
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/set-password': typeof AuthSetPasswordRoute
   '/': typeof appIndexRoute
+  '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
+  '/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/meetings/': typeof appMeetingsIndexRoute
+  '/notices/': typeof appNoticesIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -64,36 +106,67 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/set-password': typeof AuthSetPasswordRoute
   '/': typeof appIndexRoute
+  '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
+  '/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/meetings': typeof appMeetingsIndexRoute
+  '/notices': typeof appNoticesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/(app)/meetings': typeof appMeetingsRouteRouteWithChildren
+  '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/set-password': typeof AuthSetPasswordRoute
   '/(app)/': typeof appIndexRoute
+  '/(app)/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
+  '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/(app)/meetings/': typeof appMeetingsIndexRoute
+  '/(app)/notices/': typeof appNoticesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/meetings'
+    | '/notices'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
     | '/set-password'
     | '/'
+    | '/meetings/$meetingId'
+    | '/notices/$noticeId'
+    | '/meetings/'
+    | '/notices/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/forgot-password' | '/login' | '/reset-password' | '/set-password' | '/'
+  to:
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/set-password'
+    | '/'
+    | '/meetings/$meetingId'
+    | '/notices/$noticeId'
+    | '/meetings'
+    | '/notices'
   id:
     | '__root__'
     | '/(app)'
     | '/_auth'
+    | '/(app)/meetings'
+    | '/(app)/notices'
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/reset-password'
     | '/_auth/set-password'
     | '/(app)/'
+    | '/(app)/meetings/$meetingId'
+    | '/(app)/notices/$noticeId'
+    | '/(app)/meetings/'
+    | '/(app)/notices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,14 +225,87 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/(app)/notices': {
+      id: '/(app)/notices'
+      path: '/notices'
+      fullPath: '/notices'
+      preLoaderRoute: typeof appNoticesRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/meetings': {
+      id: '/(app)/meetings'
+      path: '/meetings'
+      fullPath: '/meetings'
+      preLoaderRoute: typeof appMeetingsRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/notices/': {
+      id: '/(app)/notices/'
+      path: '/'
+      fullPath: '/notices/'
+      preLoaderRoute: typeof appNoticesIndexRouteImport
+      parentRoute: typeof appNoticesRouteRoute
+    }
+    '/(app)/meetings/': {
+      id: '/(app)/meetings/'
+      path: '/'
+      fullPath: '/meetings/'
+      preLoaderRoute: typeof appMeetingsIndexRouteImport
+      parentRoute: typeof appMeetingsRouteRoute
+    }
+    '/(app)/notices/$noticeId': {
+      id: '/(app)/notices/$noticeId'
+      path: '/$noticeId'
+      fullPath: '/notices/$noticeId'
+      preLoaderRoute: typeof appNoticesNoticeIdRouteImport
+      parentRoute: typeof appNoticesRouteRoute
+    }
+    '/(app)/meetings/$meetingId': {
+      id: '/(app)/meetings/$meetingId'
+      path: '/$meetingId'
+      fullPath: '/meetings/$meetingId'
+      preLoaderRoute: typeof appMeetingsMeetingIdRouteImport
+      parentRoute: typeof appMeetingsRouteRoute
+    }
   }
 }
 
+interface appMeetingsRouteRouteChildren {
+  appMeetingsMeetingIdRoute: typeof appMeetingsMeetingIdRoute
+  appMeetingsIndexRoute: typeof appMeetingsIndexRoute
+}
+
+const appMeetingsRouteRouteChildren: appMeetingsRouteRouteChildren = {
+  appMeetingsMeetingIdRoute: appMeetingsMeetingIdRoute,
+  appMeetingsIndexRoute: appMeetingsIndexRoute,
+}
+
+const appMeetingsRouteRouteWithChildren =
+  appMeetingsRouteRoute._addFileChildren(appMeetingsRouteRouteChildren)
+
+interface appNoticesRouteRouteChildren {
+  appNoticesNoticeIdRoute: typeof appNoticesNoticeIdRoute
+  appNoticesIndexRoute: typeof appNoticesIndexRoute
+}
+
+const appNoticesRouteRouteChildren: appNoticesRouteRouteChildren = {
+  appNoticesNoticeIdRoute: appNoticesNoticeIdRoute,
+  appNoticesIndexRoute: appNoticesIndexRoute,
+}
+
+const appNoticesRouteRouteWithChildren = appNoticesRouteRoute._addFileChildren(
+  appNoticesRouteRouteChildren,
+)
+
 interface appRouteRouteChildren {
+  appMeetingsRouteRoute: typeof appMeetingsRouteRouteWithChildren
+  appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appIndexRoute: typeof appIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
+  appMeetingsRouteRoute: appMeetingsRouteRouteWithChildren,
+  appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appIndexRoute: appIndexRoute,
 }
 

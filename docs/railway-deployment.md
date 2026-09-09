@@ -31,6 +31,60 @@ served to the internet; privacy lives in the Better Auth session and permission 
 - **production** environment ← `main`
 - **staging** environment ← `develop`
 
+Production deploys on every merge to `main`. **Staging does not deploy on every merge to
+`develop`** — see below.
+
+## Staging deploys on demand (`pnpm stage`)
+
+Staging is only worth rebuilding when someone is about to browser-test it. Six services
+rebuilding on every merged PR is build minutes and churn spent on a copy nobody is looking at,
+and it means the environment moves under you mid-test.
+
+So each `railway.json` carries an `environments.staging` block whose `watchPatterns` list holds
+exactly one path:
+
+```json
+"environments": {
+	"staging": {
+		"build": { "watchPatterns": ["deploy/staging-release.txt"] }
+	}
+}
+```
+
+Railway skips a build when nothing in a service's watch patterns changed, so **pushes to
+`develop` deploy nothing**. When you are ready:
+
+```bash
+git checkout develop && git pull
+pnpm stage              # or: pnpm stage --dry-run
+```
+
+`scripts/stage.mjs` writes a timestamp into `deploy/staging-release.txt`, commits it and pushes
+`develop`. That one changed path matches every service's staging watch pattern, so all six
+rebuild together from the latest `develop`.
+
+Two things make this work the way it does:
+
+- **The override is per-environment, so production is untouched.** Config-as-code resolves
+  environment-specific config above base config *per setting*, so staging replaces
+  `watchPatterns` while keeping the base `buildCommand` and `startCommand`. `main` still deploys
+  on every merge. The `api` service had no base watch patterns at all — it deployed on every
+  push — and now has the staging gate like the rest.
+- **The marker has to change content.** Railway does not redeploy on an *empty* commit when
+  watch paths are configured; the diff is what gets matched. That is why the script writes a
+  timestamp rather than touching the file.
+
+> [!IMPORTANT]
+> A skipped deploy is invisible unless you look for it. Railway's deployment list hides skipped
+> deploys behind **Show Skipped** — a merge to `develop` that produces no new deployment is the
+> gate working, not a broken webhook. Conversely, if a push to `develop` *does* still build
+> staging, the override is not being read: check that the service's config-as-code path is set
+> (`apps/<app>/railway.json`, or the repo root for `api`) and that the environment is named
+> exactly `staging`.
+
+To rebuild one service without a commit, use **Deploy Latest Commit** from the Railway command
+palette (`CMD+K`) on that service — it ignores watch patterns.
+
 ## Per-service configuration
 
 Each app carries its own `apps/<app>/railway.json` with its build command, start command and

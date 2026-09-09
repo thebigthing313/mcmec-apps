@@ -1,5 +1,28 @@
 # @mcmec/auth
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [0e49037]
+- Updated dependencies [62f332a]
+- Updated dependencies [9b0ea3c]
+- Updated dependencies [30bef37]
+- Updated dependencies [9f288ec]
+- Updated dependencies [30bef37]
+- Updated dependencies [0e49037]
+- Updated dependencies [d00dfe1]
+- Updated dependencies [e6877ea]
+- Updated dependencies [3b8822d]
+- Updated dependencies [4515e79]
+- Updated dependencies [8381e83]
+- Updated dependencies [ab92401]
+- Updated dependencies [0e49037]
+- Updated dependencies [62f332a]
+- Updated dependencies [efc7409]
+- Updated dependencies [51aef15]
+  - @mcmec/lib@0.10.0
+
 ## 0.4.1
 
 ### Patch Changes

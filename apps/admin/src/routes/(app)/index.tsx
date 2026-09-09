@@ -1,14 +1,14 @@
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(app)/")({
+	loader: () => ({ crumb: "Dashboard" }),
 	component: () => {
 		return (
-			<div>
-				<h1 className="font-bold text-2xl">Admin Dashboard</h1>
-				<p className="mt-2 text-muted-foreground">
-					Manage user permissions and access control.
-				</p>
-			</div>
+			<PageHeader
+				description="Manage user permissions and access control."
+				title="Dashboard"
+			/>
 		);
 	},
 });

@@ -1,4 +1,4 @@
-import { logo512 } from "@mcmec/lib/constants/assets";
+import { logo192 } from "@mcmec/lib/constants/assets";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	Collapsible,
@@ -14,11 +14,13 @@ import { Separator } from "@mcmec/ui/components/separator";
 import {
 	Sheet,
 	SheetContent,
+	SheetDescription,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
 } from "@mcmec/ui/components/sheet";
-import { Link, type LinkProps } from "@tanstack/react-router";
+import { cn } from "@mcmec/ui/lib/utils";
+import { Link, type LinkProps, useLocation } from "@tanstack/react-router";
 import { ChevronDown, Menu } from "lucide-react";
 import { useState } from "react";
 
@@ -60,9 +62,10 @@ const menuItems: MenuItem[] = [
 				title: "Service Requests",
 			},
 			{
-				description: "For general inquiries and support.",
+				description:
+					"Questions about our program, surveillance, spray schedules, or anything else.",
 				linkProps: { to: "/contact/contact-us" },
-				title: "Contact Us",
+				title: "General Inquiries",
 			},
 		],
 		title: "Contact",
@@ -150,34 +153,178 @@ const menuItems: MenuItem[] = [
 	},
 ];
 
-export function Navbar() {
+/**
+ * A group is current when the visitor is anywhere inside one of its children — the same rule
+ * the staff rail uses. Prefix matching is what a group needs and `aria-current` cannot give it:
+ * a group's trigger is a button, and a button never carries the attribute a `Link` does, so
+ * without this the bar shows nothing at all on `/notices/archive`.
+ *
+ * Shared by the desktop popover and the mobile sheet. It was computed inside `NavPopover` and
+ * nowhere else, which is exactly how the two breakpoints came to disagree about whether the
+ * header knows where you are.
+ */
+function isGroupActive(item: MenuItem, pathname: string) {
 	return (
-		<>
-			{/* Mobile: menu button + sheet */}
-			<div className="md:hidden">
-				<MobileNavBar />
-			</div>
-			{/* Desktop: full nav bar */}
-			<div className="hidden md:block">
-				<WebNavBar />
-			</div>
-		</>
+		item.subItems?.some((subItem) => {
+			const to = subItem.linkProps.to;
+			return typeof to === "string" && pathname.startsWith(to);
+		}) ?? false
 	);
 }
 
-const navLinkClass =
-	"inline-flex h-10 items-center justify-center rounded-md px-3 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-accent/40 focus:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/50";
+export function Navbar() {
+	return (
+		/*
+		 * A real `<header>`, so the site has a `banner` landmark. It had none: the bar was two
+		 * sibling `<div>`s, and a screen-reader rotor listed four unlabelled `navigation`
+		 * regions and no banner at all.
+		 *
+		 * The sheet/bar handover is at `lg`, not `md`. The desktop bar's intrinsic width is
+		 * 842px and it was taking over at 768, so the document scrolled horizontally from
+		 * 768px to 856px on every page — a WCAG 1.4.10 Reflow failure that also lands on a
+		 * 1536px desktop at 200% zoom, which is how a resident who needs magnification reads.
+		 *
+		 * **The stick belongs here, not on the bars.** Both bars carried `sticky top-0 z-50`
+		 * and neither one stuck: a sticky element is clamped to its parent's box, and each
+		 * bar's parent was the breakpoint wrapper directly around it — 64px of parent around
+		 * 64px of child, so the travel range was zero and the bar scrolled away like static
+		 * content. On the archive, the spray schedule and Transparency, the only way back to
+		 * the menu was to scroll to the top of the document.
+		 *
+		 * On `<header>` the containing block is the shell's `min-h-screen flex-col`, which has
+		 * the height for it, and one declaration covers both breakpoints. `z-50` still clears
+		 * the home hero's `z-30` control plaque.
+		 */
+		<header className="sticky top-0 z-50">
+			{/*
+			 * One masthead at every width. At `lg` it is two bands: the identity rail, then the
+			 * seven groups on a Commission Green tier. Below `lg` the Menu button moves into the
+			 * rail and that second band goes entirely — a 56px strip holding one button is 56px
+			 * of a sticky header charged against a phone viewport for the whole visit, and the
+			 * rail had the room for it either way.
+			 *
+			 * The rail itself used to be desktop-only, which cost a phone visitor the seal, the
+			 * agency's name and its one-line description, and left the two form factors with
+			 * different information architectures.
+			 */}
+			<IdentityRail />
+			<div className="hidden lg:block">
+				<WebNavBar />
+			</div>
+		</header>
+	);
+}
 
+// Hover and focus darken the green rather than lightening it. The tint here used to be
+// `accent/40`, a pale teal laid over Commission Green, which lifted the ground and took the
+// white label from 4.62:1 at rest to 3.96:1 — so pointing at a nav link, or tabbing to it,
+// was the one interaction on the page that pushed it under AA. Ink at 15% moves the same
+// distance visually in the other direction and reads 5.56:1.
+//
+// The focus ring inverts here, and this is the rule rather than the exception's exception.
+// `--ring` is a dark green measured against every light ground in the system; on Commission
+// Green it lands at 2.06:1. The pale foreground reads 4.62:1 on the same ground. A focus
+// indicator has to contrast with what it is drawn on, so a mid-tone or darker ground takes
+// the pale ring — the same shape as the hover rule directly above.
+//
+// The active state is `aria-current`, which TanStack already emits on the matching link. It
+// was emitted and never painted: assistive technology was told the location and a sighted
+// visitor was not. Ink at 25% reads 5.50:1 under the label and darkens rather than lightens,
+// for the reason the hover comment gives.
+const navLinkClass =
+	"inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 font-semibold text-primary-foreground text-sm uppercase tracking-wide outline-none transition-[color,box-shadow] hover:bg-foreground/15 focus:bg-foreground/15 focus-visible:ring-[3px] focus-visible:ring-primary-foreground aria-[current]:bg-foreground/25 data-[active=true]:bg-foreground/25";
+
+/*
+ * Two tiers. The seal needs a light ground to be readable at all — its disc is
+ * transparent, so on Commission Green the arced lettering sat straight on the green
+ * and dissolved. The old white "puck" was a crude version of this fix, shaped to hide
+ * the square white tile that `logo-mark-128.png` bakes in. `logo192` is the mark
+ * alone, and 192px keeps it crisp at 80px on a 2x display.
+ */
+function IdentityRail() {
+	return (
+		<div className="flex items-center justify-between gap-4 border-b bg-background px-[clamp(1rem,3vw,3rem)] py-2 sm:gap-6 sm:py-3 lg:h-26 lg:py-0">
+			<Link className="flex items-center gap-4" to="/">
+				<img
+					alt="MCMEC Logo"
+					className="h-12 w-auto sm:h-16 lg:h-20"
+					src={logo192}
+				/>
+				{/*
+				 * The full name at every width, and the size does the adapting. It was briefly
+				 * shortened to "MCMEC" below `sm` to keep the rail short, which is the wrong
+				 * trade: an initialism identifies the agency only to someone who already knows
+				 * it, and most arrivals here come from a search result knowing nothing. Wrapping
+				 * to three lines at 11px costs less than a visitor who cannot tell whose site
+				 * they opened.
+				 */}
+				{/*
+				 * Tighter between the two name lines from `lg`, where they are 18px and set on one
+				 * rail with room to spare — `leading-tight` left a gap that read as two separate
+				 * labels rather than one two-line name. Below `lg` the leading stays as it was:
+				 * the name wraps to three lines on a phone, and closing it up there would set
+				 * wrapped words tighter than the line breaks the design intends.
+				 *
+				 * The standfirst is unaffected — it carries its own `leading-snug`.
+				 *
+				 * `1.1`, not `leading-none`. Tailwind's `leading-none` is the length `1lh` at the
+				 * *container's* font size, which is 16px here, so 18px lines would sit in a 16px
+				 * box and crop the tail of the Q in "Mosquito". A unitless multiple resolves
+				 * against each line's own size instead — 19.8px at `lg`.
+				 */}
+				<span className="flex min-w-0 flex-col leading-tight">
+					{/*
+					 * One colour for the whole block. The second name line and the standfirst were
+					 * `text-muted-foreground`, which set the agency's own name in two different
+					 * inks and read as though the second line were a caption on the first. They
+					 * inherit the rail's foreground now, so the masthead is one voice.
+					 *
+					 * Every line is a point and a half larger than it was — 1.5pt is 2px, so the
+					 * name goes 11/14/16px to 13/16/18px across the breakpoints.
+					 */}
+					<span className="font-bold text-[0.8125rem] uppercase tracking-wide sm:text-base lg:text-lg lg:leading-3">
+						Middlesex County
+					</span>
+					<span className="font-semibold text-[0.8125rem] uppercase tracking-wide sm:text-base lg:text-lg">
+						Mosquito Extermination Commission
+					</span>
+					{/*
+					 * The standfirst sits under the name it describes, rather than off at the far
+					 * right of the rail where it read as a second, unrelated masthead. Sentence
+					 * case with a full stop: it is a sentence, and the uppercase-with-wide-tracking
+					 * setting it had competed with the agency's name for the same emphasis.
+					 *
+					 * Shown at every width. It used to be `md` and up, on the reasoning that a sticky
+					 * masthead charges every pixel against the viewport for the whole visit — but
+					 * the sentence is what tells a first-time arrival what this agency does, and a
+					 * phone visitor needs that more than a desktop one, not less. 10px keeps the
+					 * cost to about two lines on a 390px screen.
+					 */}
+					<span className="mt-0.5 text-[0.9375rem] leading-snug md:text-sm">
+						Advancing public health and protecting our community from mosquitoes
+						since 1914.
+					</span>
+				</span>
+			</Link>
+			<div className="lg:hidden">
+				<MobileNavBar />
+			</div>
+		</div>
+	);
+}
+
+/*
+ * The seven groups need 959px on one line at this size, measured rather than
+ * guessed. Giving the nav its own tier is what buys that at `lg`; a single row
+ * carrying the seal as well needs 1063px and would not fit until `xl`.
+ */
 function WebNavBar() {
 	return (
-		<div className="sticky top-0 z-50 flex h-16 flex-row items-center justify-start bg-primary py-2 shadow-md">
-			<div className="flex w-20 flex-row justify-center rounded-r-full bg-background">
-				<Link to="/">
-					<img alt="MCMEC Logo" className="m-2 h-12" src={logo512} />
-				</Link>
-			</div>
-
-			<nav className="ml-8 flex flex-1 flex-row items-center justify-start gap-1">
+		<div className="flex h-14 items-center bg-primary px-[clamp(1.5rem,3vw,3rem)]">
+			<nav
+				aria-label="Main"
+				className="flex flex-1 flex-row flex-nowrap items-center gap-0.5"
+			>
 				{menuItems.map((item) =>
 					item.subItems ? (
 						<NavPopover item={item} key={item.title} />
@@ -198,10 +345,13 @@ function WebNavBar() {
 
 function NavPopover({ item }: { item: MenuItem }) {
 	const [open, setOpen] = useState(false);
+	const { pathname } = useLocation();
+
+	const active = isGroupActive(item, pathname);
 
 	return (
 		<Popover onOpenChange={setOpen} open={open}>
-			<PopoverTrigger className={navLinkClass}>
+			<PopoverTrigger className={navLinkClass} data-active={active}>
 				{item.title}
 				<ChevronDown
 					aria-hidden="true"
@@ -232,32 +382,99 @@ function NavPopover({ item }: { item: MenuItem }) {
 	);
 }
 
+// The sheet's own rows. Ghost buttons on Paper, so the current row takes Pale Green rather
+// than the Ink tint the bar's links take on Commission Green — the ground is inverted, and so
+// is the direction the state moves in. `aria-current` is the router's, `data-active` is the
+// group's; both land on the same treatment so the two rows read as one kind of thing.
+const sheetRowClass =
+	"w-full justify-start aria-[current]:bg-secondary aria-[current]:font-semibold data-[active=true]:bg-secondary";
+
 function MobileNavBar() {
 	const [open, setOpen] = useState(false);
+	const { pathname } = useLocation();
 
 	return (
-		<div className="sticky top-0 z-50 flex h-14 flex-row items-center justify-between bg-primary pl-3">
-			<Sheet aria-describedby="Mobile Menu" onOpenChange={setOpen} open={open}>
-				<SheetTrigger>
-					<div className="flex flex-row items-center gap-2 text-primary-foreground">
-						<Menu className="size-5" />
-						<span className="font-semibold text-sm uppercase tracking-wide">
-							Menu
+		<Sheet onOpenChange={setOpen} open={open}>
+			{/*
+			 * On Paper now rather than on Commission Green, so the label takes Ink and the ring
+			 * reverts to `--ring` — the dark green is measured against every light ground in the
+			 * system, and the pale ring the green tier needed would be invisible here.
+			 *
+			 * `min-h-11` is 44px: this is the only route to six of the seven groups on a phone,
+			 * and it is reached by thumb.
+			 */}
+			<SheetTrigger className="-mr-1 flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-md border px-2 py-2 font-semibold text-foreground text-sm uppercase tracking-wide transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring sm:px-3">
+				<Menu className="size-5" />
+				{/*
+				 * The word goes `sr-only` on a portrait phone and comes back from `sm`. It was
+				 * costing the identity block about 50px of the rail's measure at the width where
+				 * the agency's name and standfirst have the least room to wrap, and the glyph
+				 * carries the meaning on its own at that size.
+				 *
+				 * `sr-only`, not removed: this is the only route to six of the seven nav groups
+				 * on a phone, and a button with an icon and no text has no accessible name at
+				 * all. The class positions the span absolutely, so it contributes no width and
+				 * the `gap-2` collapses with it.
+				 */}
+				<span className="sr-only sm:not-sr-only">Menu</span>
+			</SheetTrigger>
+			<SheetContent side="left">
+				<SheetHeader>
+					{/*
+					 * The agency identifies itself here, where there is room the rail has not:
+					 * below `sm` the rail is down to the seal, "MCMEC" and this button, so the
+					 * full name and the standfirst have nowhere else to be on a phone.
+					 *
+					 * `SheetTitle` stays "Menu" and goes `sr-only`. It is the dialog's accessible
+					 * name, and a navigation panel that announces itself as the agency's name
+					 * tells a screen-reader user nothing about what just opened.
+					 */}
+					<SheetTitle className="sr-only">Menu</SheetTitle>
+					<span className="flex flex-col leading-tight">
+						<span className="font-bold text-lg uppercase tracking-wide">
+							Middlesex County
 						</span>
-					</div>
-				</SheetTrigger>
-				<SheetContent side="left">
-					<SheetHeader>
-						<SheetTitle>Menu</SheetTitle>
-					</SheetHeader>
-					<div className="mt-4 flex flex-col gap-0">
-						{menuItems.map((item, index) => (
+						<span className="font-semibold text-lg uppercase tracking-wide">
+							Mosquito Extermination Commission
+						</span>
+					</span>
+					<span className="mt-1 text-sm leading-snug">
+						Advancing public health and protecting our community from mosquitoes
+						since 1914.
+					</span>
+					{/*
+					 * Not decoration. `SheetContent` always points `aria-describedby` at the
+					 * description's generated id, so with no description rendered the dialog
+					 * carried a reference that resolved to nothing — measured as
+					 * `aria-describedby="radix-_R_aj6H2_"` against an element that did not
+					 * exist, on the only navigation a mobile screen-reader user has. The
+					 * `aria-describedby="Mobile Menu"` that used to sit on the `Sheet` root
+					 * did not help: the root does not forward it, and that string is not an id.
+					 */}
+					<SheetDescription className="sr-only">
+						Every section of the Commission's website. The section you are
+						reading is open and marked.
+					</SheetDescription>
+				</SheetHeader>
+				<nav aria-label="Main" className="mt-4 flex flex-col gap-0">
+					{menuItems.map((item, index) => {
+						const groupActive = isGroupActive(item, pathname);
+						return (
 							<div key={item.title}>
 								{item.subItems ? (
-									<Collapsible>
+									/*
+									 * Open on the section the visitor is already reading. The sheet
+									 * used to present seven closed drawers with nothing marked, so a
+									 * resident who opened the menu to move sideways within a section
+									 * had to remember which of the two groups beginning "Mosquito"
+									 * they had come from. `defaultOpen` is enough because the portal
+									 * unmounts on close, so every open is a fresh mount.
+									 */
+									<Collapsible defaultOpen={groupActive}>
 										<CollapsibleTrigger asChild>
 											<Button
-												className="w-full justify-between"
+												className={cn(sheetRowClass, "justify-between")}
+												data-active={groupActive}
 												variant="ghost"
 											>
 												<span>{item.title}</span>
@@ -268,7 +485,12 @@ function MobileNavBar() {
 											<div className="flex flex-col gap-1">
 												{item.subItems.map((subItem) => (
 													<Link
-														className="block rounded-md p-2 text-sm hover:bg-muted"
+														// Exact, so exactly one row is current. Fuzzy matching
+														// would light "Legal Notices" (`/notices`) while the
+														// visitor is on `/notices/archive`, and two current
+														// rows answer "where am I" with a question.
+														activeOptions={{ exact: true }}
+														className="block rounded-md p-2 text-sm hover:bg-muted aria-[current]:bg-secondary aria-[current]:font-semibold"
 														key={subItem.title}
 														onClick={() => setOpen(false)}
 														to={subItem.linkProps.to}
@@ -280,12 +502,9 @@ function MobileNavBar() {
 										</CollapsibleContent>
 									</Collapsible>
 								) : (
-									<Button
-										asChild
-										className="w-full justify-start"
-										variant="ghost"
-									>
+									<Button asChild className={sheetRowClass} variant="ghost">
 										<Link
+											activeOptions={{ exact: true }}
 											onClick={() => setOpen(false)}
 											to={item.linkProps?.to}
 										>
@@ -295,16 +514,10 @@ function MobileNavBar() {
 								)}
 								{index < menuItems.length - 1 && <Separator className="my-1" />}
 							</div>
-						))}
-					</div>
-				</SheetContent>
-			</Sheet>
-			<Link
-				className="flex h-14 w-16 items-center justify-center rounded-l-full bg-background"
-				to="/"
-			>
-				<img alt="MCMEC Logo" className="h-10" src={logo512} />
-			</Link>
-		</div>
+						);
+					})}
+				</nav>
+			</SheetContent>
+		</Sheet>
 	);
 }

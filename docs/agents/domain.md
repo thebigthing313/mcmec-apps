@@ -20,7 +20,7 @@ If any of these files don't exist, **proceed silently**. Don't flag their absenc
 │   ├── 0001-....md
 │   └── 0002-....md
 ├── apps/          ← central, notices, public, admin, hr, api
-└── packages/      ← ui, lib, supabase, auth, typescript-config, ...
+└── packages/      ← ui, lib, schemas, collections, auth, typescript-config, ...
 ```
 
 This is a pnpm/Turborepo monorepo, but it models a single domain — the apps are surfaces over the same MCMEC concepts, not separate bounded contexts. If a genuinely distinct context ever emerges, switch to a root `CONTEXT-MAP.md` pointing at per-context `CONTEXT.md` files and update this file.

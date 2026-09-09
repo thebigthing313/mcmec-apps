@@ -2,7 +2,7 @@ import {
 	toContactPayload,
 	WaterManagementFormSchema,
 	type WaterManagementFormType,
-} from "@mcmec/supabase/db/public-requests";
+} from "@mcmec/schemas/db/public-requests";
 import {
 	Field,
 	FieldContent,
@@ -14,7 +14,6 @@ import {
 } from "@mcmec/ui/components/field";
 import { Input } from "@mcmec/ui/components/input";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
-import type { ComboboxOption } from "@mcmec/ui/inputs/combobox-input";
 import { revalidateLogic } from "@tanstack/react-form";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
@@ -32,6 +31,10 @@ import {
 import { zipCodesQueryOptions } from "@/src/lib/queries";
 import { canonical, seo } from "@/src/lib/seo";
 import { submitPublicRequestServerFn } from "@/src/lib/submit-public-request";
+import {
+	findServicedZipCode,
+	servicedZipCodeValidator,
+} from "@/src/lib/zip-codes";
 
 export const Route = createFileRoute("/contact/water-management-requests")({
 	component: RouteComponent,
@@ -59,11 +62,6 @@ function RouteComponent() {
 	const { data: zipCodes } = useSuspenseQuery(zipCodesQueryOptions());
 	const submitForm = useServerFn(submitPublicRequestServerFn);
 
-	const zipCodeOptions: ComboboxOption[] = zipCodes.map((zipCode) => ({
-		label: zipCode.code,
-		value: zipCode.id,
-	}));
-
 	const defaultValues: WaterManagementFormType = {
 		additional_details: null,
 		address_line_1: "",
@@ -75,7 +73,7 @@ function RouteComponent() {
 		is_on_public_property: false,
 		other_location_description: null,
 		phone: "",
-		zip_code_id: "",
+		zip_code: "",
 	};
 
 	const form = useAppForm({
@@ -92,11 +90,19 @@ function RouteComponent() {
 				return;
 			}
 
+			// The typed code was validated against the serviced list as the resident typed it;
+			// this resolves it to the row id the payload actually carries.
+			const zipCode = findServicedZipCode(zipCodes, value.zip_code);
+			if (!zipCode) {
+				toast.error("Please enter a zip code within our service area.");
+				return;
+			}
+
 			const result = await submitForm({
 				data: {
 					honeypot,
 					request: {
-						...toContactPayload(value),
+						...toContactPayload(value, zipCode.id),
 						details: {
 							additionalDetails: value.additional_details || undefined,
 							isOnMyProperty: value.is_on_my_property,
@@ -154,11 +160,15 @@ function RouteComponent() {
 						</FieldDescription>
 						<form.AppField name="full_name">
 							{(field) => (
-								<field.TextField autoComplete="name" label="Full Name *" />
+								<field.TextField
+									autoComplete="name"
+									label="Full Name"
+									required
+								/>
 							)}
 						</form.AppField>
 						<form.AppField name="phone">
-							{(field) => <field.PhoneField label="Phone *" />}
+							{(field) => <field.PhoneField label="Phone" required />}
 						</form.AppField>
 
 						<form.AppField name="email">
@@ -178,7 +188,8 @@ function RouteComponent() {
 							{(field) => (
 								<field.TextField
 									autoComplete="street-address"
-									label="Address Line 1 *"
+									label="Address Line 1"
+									required
 								/>
 							)}
 						</form.AppField>
@@ -190,29 +201,47 @@ function RouteComponent() {
 								/>
 							)}
 						</form.AppField>
-						<form.AppField name="zip_code_id">
+						{/*
+						 * A plain postal-code input, not a combobox over the serviced zip codes.
+						 * The browser is already autofilling the two fields above it, and a
+						 * combobox in the postal-code slot fought that autofill on every
+						 * submission. The serviced-area check moved into a validator, which says
+						 * so in words instead of leaving the resident hunting an absent option.
+						 */}
+						<form.AppField
+							name="zip_code"
+							validators={{ onDynamic: servicedZipCodeValidator(zipCodes) }}
+						>
 							{(field) => {
-								const selectedZipCode = zipCodes.find(
-									(zc) => zc.id === field.state.value,
+								const servicedZipCode = findServicedZipCode(
+									zipCodes,
+									field.state.value,
 								);
-								const cityDisplay = selectedZipCode
-									? `${selectedZipCode.city}, NJ`
+								const cityDisplay = servicedZipCode
+									? `${servicedZipCode.city}, ${servicedZipCode.state}`
 									: "";
 
 								return (
 									<div className="flex w-full flex-row flex-wrap items-center justify-between gap-4">
-										<field.AutocompleteField
+										<field.TextField
+											autoComplete="postal-code"
 											className="w-42"
-											emptyMessage="No zip code found."
-											items={zipCodeOptions}
-											label="Zip Code *"
-											placeholder="Enter zip code..."
+											inputMode="numeric"
+											label="Zip Code"
+											maxLength={5}
+											required
 										/>
 
+										{/*
+										 * Derived from the typed zip code, not entered. It still needs a
+										 * real label association: without htmlFor/id this read-only input
+										 * reached assistive technology unnamed, like the zip field
+										 * beside it once did.
+										 */}
 										<Field className="flex-1">
-											<FieldLabel>City</FieldLabel>
+											<FieldLabel htmlFor="city-display">City</FieldLabel>
 											<FieldContent>
-												<Input readOnly value={cityDisplay} />
+												<Input id="city-display" readOnly value={cityDisplay} />
 											</FieldContent>
 										</Field>
 									</div>

@@ -1,8 +1,10 @@
-import { MosquitoActivityDataInsertSchema } from "@mcmec/supabase/db/mosquito-activity-data";
+import { mosquitoActivity } from "@mcmec/domain";
+import { findCommandRefusal, sendCommand } from "@mcmec/sync";
 import {
 	MosquitoActivityCharts,
 	type MosquitoActivityRow,
 } from "@mcmec/ui/blocks/mosquito-activity-chart";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
 import { Button } from "@mcmec/ui/components/button";
 import {
 	Card,
@@ -18,14 +20,14 @@ import { AlertTriangle, CheckCircle, Loader2, Upload } from "lucide-react";
 import Papa from "papaparse";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { apiFetch } from "@/src/lib/api";
 import { mosquitoActivityData } from "@/src/lib/db";
+import { API_URL } from "@/src/lib/queryClient";
 
 export const Route = createFileRoute("/(app)/weekly-activity/")({
 	component: RouteComponent,
 	loader: async () => {
 		await mosquitoActivityData.preload();
-		return { crumb: "Weekly Activity" };
+		return { crumb: "Weekly Mosquito Activity" };
 	},
 });
 
@@ -70,10 +72,9 @@ function parseCsvRows(raw: CsvRow[]): {
 			year: Number(r.year),
 		};
 
-		const result = MosquitoActivityDataInsertSchema.safeParse({
-			...parsed,
-			id: crypto.randomUUID(),
-		});
+		// The command's own row schema, so a row this screen accepts is a row the server
+		// accepts. No `id`: an import addresses a year, not a row (#163).
+		const result = mosquitoActivity.MosquitoImportRow.safeParse(parsed);
 
 		if (result.success) {
 			rows.push(parsed);
@@ -175,20 +176,17 @@ function RouteComponent() {
 
 		setIsUploading(true);
 		try {
-			// The endpoint replaces every row for the years present in the payload, in one
-			// transaction — so a re-imported season swaps cleanly and other years are untouched.
-			await apiFetch("/api/mosquito-activity/import", {
-				body: JSON.stringify({
-					rows: parsedRows.map((row) => ({
-						mosquitoCount: row.mosquito_count,
-						rainfallInches: row.rainfall_inches,
-						speciesGroup: row.species_group,
-						speciesName: row.species_name,
-						weekNumber: row.week_number,
-						year: row.year,
-					})),
-				}),
-				method: "POST",
+			// Straight to the dispatcher rather than through the collection: the command
+			// replaces every row for the years in the file, so there is no single optimistic
+			// row to write, and this screen reads aggregates rather than rows. The new season
+			// arrives on its own when Electric streams the write back (#163).
+			//
+			// The rows go over the wire named for their columns — the same snake_case the
+			// parser already produced, so there is no mapping step here to disagree with the
+			// payload schema.
+			await sendCommand(API_URL, {
+				intents: ["website.importMosquitoActivity"],
+				rows: parsedRows,
 			});
 
 			toast.success(`Successfully uploaded ${parsedRows.length} rows.`);
@@ -202,9 +200,10 @@ function RouteComponent() {
 			if (fileInput) fileInput.value = "";
 		} catch (err) {
 			toast.error(
-				err instanceof Error
-					? err.message
-					: "An unexpected error occurred during upload.",
+				findCommandRefusal(err)?.message ??
+					(err instanceof Error
+						? err.message
+						: "An unexpected error occurred during upload."),
 			);
 		} finally {
 			setIsUploading(false);
@@ -213,7 +212,10 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-6">
-			<h1 className="font-semibold text-2xl">Weekly Mosquito Activity</h1>
+			<PageHeader
+				description="Trap counts and rainfall by species, week and year. Loading a season replaces every record for the years in it."
+				title="Weekly Mosquito Activity"
+			/>
 
 			{/* Upload Section */}
 			<Card>

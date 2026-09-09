@@ -1,3 +1,4 @@
+import { keepRecentYears } from "@mcmec/lib/functions/recent-years";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
@@ -52,10 +53,15 @@ function RouteComponent() {
 		docs.sort((a, b) => b.fiscal_year - a.fiscal_year);
 	}
 
-	// Sort group names alphabetically
-	const sortedGroups = Array.from(grouped.entries()).sort(([a], [b]) =>
-		a.localeCompare(b),
+	// Windowed per group, not once for the page, so a category that has not been filed in
+	// for years still shows its own three most recent fiscal years rather than vanishing.
+	const windowedGroups = Array.from(grouped.entries()).map(
+		([typeName, docs]) =>
+			[typeName, keepRecentYears(docs, (doc) => doc.fiscal_year)] as const,
 	);
+
+	// Sort group names alphabetically
+	const sortedGroups = windowedGroups.sort(([a], [b]) => a.localeCompare(b));
 
 	return (
 		<div className="mx-auto max-w-4xl">

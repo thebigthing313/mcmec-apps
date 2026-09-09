@@ -81,7 +81,12 @@ export function MultiComboboxInput({
 							<CommandGroup>
 								{options.map((option) => (
 									<CommandItem
+										// The item's `value` is the id, so cmdk's filter would
+										// match the search box against a uuid and find nothing.
+										// `keywords` is what makes the label searchable without
+										// changing the value the list is keyed and toggled by.
 										key={option.value}
+										keywords={[option.label]}
 										onSelect={() => handleToggle(option.value)}
 										value={option.value}
 									>

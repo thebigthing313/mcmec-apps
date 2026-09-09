@@ -5,10 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@supabase/supabase-js': ^2.100.1
-  '@tanstack/db': ^0.5.33
-  '@tanstack/query-db-collection': ^1.0.30
+  '@tanstack/db': ^0.8.3
   '@tanstack/react-router': ^1.157.18
+  zod@^4: 4.3.5
 
 importers:
 
@@ -23,12 +22,9 @@ importers:
       '@manypkg/cli':
         specifier: ^0.25.1
         version: 0.25.1
-      '@playwright/test':
-        specifier: ^1.59.0
-        version: 1.59.0
       '@tanstack/db':
-        specifier: ^0.5.33
-        version: 0.5.33(typescript@5.9.3)
+        specifier: ^0.8.3
+        version: 0.8.3(typescript@5.9.3)
       '@tanstack/intent':
         specifier: ^0.0.23
         version: 0.0.23
@@ -56,15 +52,15 @@ importers:
       '@mcmec/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@mcmec/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/sync':
         specifier: workspace:*
-        version: link:../../packages/supabase
-      '@mcmec/supabase-tanstack-db-integration':
-        specifier: workspace:*
-        version: link:../../packages/supabase-tanstack-db-integration
+        version: link:../../packages/sync
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -77,18 +73,12 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
-      '@supabase/supabase-js':
-        specifier: ^2.100.1
-        version: 2.100.1
       '@tanstack/db':
-        specifier: ^0.5.33
-        version: 0.5.33(typescript@5.9.3)
-      '@tanstack/query-db-collection':
-        specifier: ^1.0.30
-        version: 1.0.31(@tanstack/query-core@5.95.2)(typescript@5.9.3)
+        specifier: ^0.8.3
+        version: 0.8.3(typescript@5.9.3)
       '@tanstack/react-db':
-        specifier: ^0.1.61
-        version: 0.1.61(react@19.2.3)(typescript@5.9.3)
+        specifier: ^0.3.3
+        version: 0.3.3(react@19.2.3)(typescript@5.9.3)
       '@tanstack/react-query':
         specifier: ^5.95.2
         version: 5.95.2(react@19.2.3)
@@ -116,11 +106,14 @@ importers:
       sirv-cli:
         specifier: ^3.0.1
         version: 3.0.1
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       vite-tsconfig-paths:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -156,6 +149,15 @@ importers:
       '@hono/node-server':
         specifier: ^2.0.12
         version: 2.0.12(hono@4.12.32)
+      '@mcmec/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@mcmec/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
+      '@mcmec/sync':
+        specifier: workspace:*
+        version: link:../../packages/sync
       better-auth:
         specifier: ^1.6.25
         version: 1.6.25(@tanstack/react-start@1.157.18(crossws@0.4.4(srvx@0.10.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3)))(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0))(pg@8.22.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.12)(vitest@2.1.9(@types/node@25.0.9)(lightningcss@1.30.2))
@@ -165,9 +167,6 @@ importers:
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0)
-      drizzle-zod:
-        specifier: ^0.8.3
-        version: 0.8.3(drizzle-orm@0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0))(zod@4.3.5)
       hono:
         specifier: ^4.12.32
         version: 4.12.32
@@ -178,7 +177,7 @@ importers:
         specifier: ^4.21.0
         version: 4.21.0
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -196,6 +195,9 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.5
+        version: 2.1.9(@types/node@25.0.9)(lightningcss@1.30.2)
 
   apps/central:
     dependencies:
@@ -205,9 +207,9 @@ importers:
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/sync':
         specifier: workspace:*
-        version: link:../../packages/supabase
+        version: link:../../packages/sync
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -221,8 +223,8 @@ importers:
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
       '@tanstack/react-db':
-        specifier: ^0.1.61
-        version: 0.1.61(react@19.2.3)(typescript@5.9.3)
+        specifier: ^0.3.3
+        version: 0.3.3(react@19.2.3)(typescript@5.9.3)
       '@tanstack/react-query':
         specifier: ^5.95.2
         version: 5.95.2(react@19.2.3)
@@ -251,7 +253,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -287,15 +289,15 @@ importers:
       '@mcmec/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@mcmec/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/sync':
         specifier: workspace:*
-        version: link:../../packages/supabase
-      '@mcmec/supabase-tanstack-db-integration':
-        specifier: workspace:*
-        version: link:../../packages/supabase-tanstack-db-integration
+        version: link:../../packages/sync
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -309,11 +311,11 @@ importers:
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
       '@tanstack/db':
-        specifier: ^0.5.33
-        version: 0.5.33(typescript@5.9.3)
+        specifier: ^0.8.3
+        version: 0.8.3(typescript@5.9.3)
       '@tanstack/react-db':
-        specifier: ^0.1.61
-        version: 0.1.61(react@19.2.3)(typescript@5.9.3)
+        specifier: ^0.3.3
+        version: 0.3.3(react@19.2.3)(typescript@5.9.3)
       '@tanstack/react-query':
         specifier: ^5.95.2
         version: 5.95.2(react@19.2.3)
@@ -341,11 +343,14 @@ importers:
       sirv-cli:
         specifier: ^3.0.1
         version: 3.0.1
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       vite-tsconfig-paths:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -381,12 +386,12 @@ importers:
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/schemas':
         specifier: workspace:*
-        version: link:../../packages/supabase
-      '@mcmec/supabase-tanstack-db-integration':
+        version: link:../../packages/schemas
+      '@mcmec/sync':
         specifier: workspace:*
-        version: link:../../packages/supabase-tanstack-db-integration
+        version: link:../../packages/sync
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -442,7 +447,7 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@biomejs/biome':
@@ -481,12 +486,18 @@ importers:
       '@mcmec/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@mcmec/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@mcmec/supabase':
+      '@mcmec/schemas':
         specifier: workspace:*
-        version: link:../../packages/supabase
+        version: link:../../packages/schemas
+      '@mcmec/sync':
+        specifier: workspace:*
+        version: link:../../packages/sync
       '@mcmec/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -500,8 +511,8 @@ importers:
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
       '@tanstack/react-db':
-        specifier: ^0.1.61
-        version: 0.1.61(react@19.2.3)(typescript@5.9.3)
+        specifier: ^0.3.3
+        version: 0.3.3(react@19.2.3)(typescript@5.9.3)
       '@tanstack/react-query':
         specifier: ^5.95.2
         version: 5.95.2(react@19.2.3)
@@ -536,8 +547,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       zod:
-        specifier: ^4.3.5
-        version: 4.4.3
+        specifier: 4.3.5
+        version: 4.3.5
     devDependencies:
       '@biomejs/biome':
         specifier: 2.3.11
@@ -582,7 +593,7 @@ importers:
         specifier: ^1.6.25
         version: 1.6.25(@tanstack/react-start@1.157.18(crossws@0.4.4(srvx@0.10.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@5.4.21(@types/node@25.0.9)(lightningcss@1.30.2)))(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0))(pg@8.22.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.12)(vitest@2.1.9(@types/node@25.0.9)(lightningcss@1.30.2))
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -598,6 +609,25 @@ importers:
         specifier: ^2.1.5
         version: 2.1.9(@types/node@25.0.9)(lightningcss@1.30.2)
 
+  packages/domain:
+    dependencies:
+      '@mcmec/lib':
+        specifier: workspace:*
+        version: link:../lib
+      '@mcmec/schemas':
+        specifier: workspace:*
+        version: link:../schemas
+      zod:
+        specifier: 4.3.5
+        version: 4.3.5
+    devDependencies:
+      '@mcmec/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/lib:
     dependencies:
       libphonenumber-js:
@@ -607,7 +637,7 @@ importers:
         specifier: ^0.475.0
         version: 0.475.0(react@19.2.3)
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -622,26 +652,17 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.5
+        version: 2.1.9(@types/node@25.0.9)(lightningcss@1.30.2)
 
-  packages/supabase:
+  packages/schemas:
     dependencies:
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../lib
-      '@mcmec/supabase-tanstack-db-integration':
-        specifier: workspace:*
-        version: link:../supabase-tanstack-db-integration
-      '@tanstack/query-core':
-        specifier: ^5.90.20
-        version: 5.95.2
-      '@tanstack/react-db':
-        specifier: ^0.1.61
-        version: 0.1.61(react@19.2.3)(typescript@5.9.3)
-      '@tanstack/react-query':
-        specifier: ^5.90.16
-        version: 5.90.16(react@19.2.3)
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -657,24 +678,30 @@ importers:
         specifier: ^2.1.5
         version: 2.1.9(@types/node@25.0.9)(lightningcss@1.30.2)
 
-  packages/supabase-tanstack-db-integration:
+  packages/sync:
     dependencies:
       '@electric-sql/client':
         specifier: ^1.5.12
         version: 1.5.25
+      '@mcmec/schemas':
+        specifier: workspace:*
+        version: link:../schemas
       '@standard-schema/spec':
         specifier: ^1.1.0
         version: 1.1.0
       '@tanstack/db':
-        specifier: ^0.5.33
-        version: 0.5.33(typescript@5.9.3)
+        specifier: ^0.8.3
+        version: 0.8.3(typescript@5.9.3)
       '@tanstack/electric-db-collection':
-        specifier: 0.2.41
-        version: 0.2.41(typescript@5.9.3)
+        specifier: 0.4.3
+        version: 0.4.3(typescript@5.9.3)
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
+      '@mcmec/domain':
+        specifier: workspace:*
+        version: link:../domain
       '@mcmec/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -689,9 +716,15 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.69.0(react@19.2.3))
+      '@mcmec/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@mcmec/lib':
         specifier: workspace:*
         version: link:../lib
+      '@mcmec/sync':
+        specifier: workspace:*
+        version: link:../sync
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -849,7 +882,7 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       zod:
-        specifier: ^4.3.5
+        specifier: 4.3.5
         version: 4.3.5
     devDependencies:
       '@mcmec/typescript-config':
@@ -2207,11 +2240,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@playwright/test@1.59.0':
-    resolution: {integrity: sha512-TOA5sTLd49rTDaZpYpvCQ9hGefHQq/OYOyCVnGqS2mjMfX+lGZv2iddIJd0I48cfxqSPttS9S3OuLKyylHcO1w==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   '@pnpm/config.env-replace@1.1.0':
     resolution: {integrity: sha512-htyl8TWnKL7K/ESFa1oW2UB5lVDxuF5DpM7tBi6Hu2LNL3mWkIzNLG6N4zoCUP1lCKNxWy/3iu8mS8MvToGd6w==}
     engines: {node: '>=12.22.0'}
@@ -2998,33 +3026,6 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@supabase/auth-js@2.100.1':
-    resolution: {integrity: sha512-c5FB4nrG7cs1mLSzFGuIVl2iR2YO5XkSJ96uF4zubYm8YDn71XOi2emE9sBm/avfGCj61jaRBLOvxEAVnpys0Q==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/functions-js@2.100.1':
-    resolution: {integrity: sha512-mo8QheoV4KR+wSubtyEWhZUxWnCM7YZ23TncccMAlbWAHb8YTDqRGRm9IalWCAswniKyud6buZCk9snRqI86KA==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/phoenix@0.4.0':
-    resolution: {integrity: sha512-RHSx8bHS02xwfHdAbX5Lpbo6PXbgyf7lTaXTlwtFDPwOIw64NnVRwFAXGojHhjtVYI+PEPNSWwkL90f4agN3bw==}
-
-  '@supabase/postgrest-js@2.100.1':
-    resolution: {integrity: sha512-OIh4mOSo2LdqF2kox76OAPDtcSs+PwKABJOjc6plUV4/LXhFEsI2uwdEEIs7K7fd141qehWEVl/Y+Ts0fNvYsw==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/realtime-js@2.100.1':
-    resolution: {integrity: sha512-FHuRWPX4qZQ4x+0Q+ZrKaBZnOiVGiwsgiAUJM98pYRib1yeaE/fOM1lZ1ozd+4gA8Udw23OyaD8SxKS5mT5NYw==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/storage-js@2.100.1':
-    resolution: {integrity: sha512-x9xpEIoWM4xKiAlwfWTgHPSN6N4Y0aS4FVU4F6ZPbq7Gayw08SrtC6/YH/gOr8CjXQr0HxXYXDop2xGTSjubYA==}
-    engines: {node: '>=20.0.0'}
-
-  '@supabase/supabase-js@2.100.1':
-    resolution: {integrity: sha512-CAeFm5sfX8sbTzxoxRafhohreIzl9a7R6qHTck3MrgTqm5M5g/u0IHfEKYzI9w/17r8NINl8UZrw2i08wrO7Iw==}
-    engines: {node: '>=20.0.0'}
-
   '@tailwindcss/node@4.1.18':
     resolution: {integrity: sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ==}
 
@@ -3123,13 +3124,13 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7
 
-  '@tanstack/db-ivm@0.1.17':
-    resolution: {integrity: sha512-DK7vm56CDxNuRAdsbiPs+gITJ+16tUtYgZg3BRTLYKGIDsy8sdIO7sQFq5zl7Y+aIKAPmMAbVp9UjJ75FTtwgQ==}
+  '@tanstack/db-ivm@0.1.19':
+    resolution: {integrity: sha512-3VGvgNXAPSVqny/pL8Y6n/txnaZzV49WmgSQ9N5eyCQNgMtuOEOJHKDatqqCy3gDxVu6pkhSHDKxcNFOtxMouw==}
     peerDependencies:
       typescript: '>=4.7'
 
-  '@tanstack/db@0.5.33':
-    resolution: {integrity: sha512-8pV3jZdqx6VgDubuddoT0UbQi8RrlCJ/kjhmgPIZUjvfhD3sz1TRMK4RTwOOf/JPTQ4qwWy5ggYLUTJxZZRB2w==}
+  '@tanstack/db@0.8.3':
+    resolution: {integrity: sha512-dTT8k7IMWz9AtvG8cMl2b4tmhqt9gG/SphOAfDOQ7tHak/vBNoYQZcCx4lheXteBRj+1u4npFfXBxbZOs2hlcg==}
     peerDependencies:
       typescript: '>=4.7'
 
@@ -3137,8 +3138,8 @@ packages:
     resolution: {integrity: sha512-RPfGuk2bDZgcu9bAJodvO2lnZeHuz4/71HjZ0bGb/SPg8+lyTA+RLSKQvo7fSmPSi8/vcH3aKQ8EM9ywf1olaw==}
     engines: {node: '>=18'}
 
-  '@tanstack/electric-db-collection@0.2.41':
-    resolution: {integrity: sha512-V8vmLrKrUYrATXtMTlAmAJ6PoDji4qf7iJ8pWqoxDgdHMGcgU0oOMbFSSHywRzscgVeKFRo+LJTSuZTrwTFn2A==}
+  '@tanstack/electric-db-collection@0.4.3':
+    resolution: {integrity: sha512-hCihJIpYDhmTEP4yUMhn079ENtTWeN9KZKr4XTa+KCRzWuqOAnQ8GFqZZOwt/weKHG97ZvIsWejezLKsnDKSPQ==}
 
   '@tanstack/form-core@1.27.7':
     resolution: {integrity: sha512-nvogpyE98fhb0NDw1Bf2YaCH+L7ZIUgEpqO9TkHucDn6zg3ni521boUpv0i8HKIrmmFwDYjWZoCnrgY4HYWTkw==}
@@ -3163,23 +3164,14 @@ packages:
     resolution: {integrity: sha512-3PouiFjR4B6x1c969/Pl4ZIJleof1M0n6fNX8NRiC9Sqv1g06CVDlEaXUR4212ycGFyfq4q+t8Gi37Xy+z34iQ==}
     engines: {node: '>=18'}
 
-  '@tanstack/query-core@5.90.16':
-    resolution: {integrity: sha512-MvtWckSVufs/ja463/K4PyJeqT+HMlJWtw6PrCpywznd2NSgO3m4KwO9RqbFqGg6iDE8vVMFWMeQI4Io3eEYww==}
-
   '@tanstack/query-core@5.95.2':
     resolution: {integrity: sha512-o4T8vZHZET4Bib3jZ/tCW9/7080urD4c+0/AUaYVpIqOsr7y0reBc1oX3ttNaSW5mYyvZHctiQ/UOP2PfdmFEQ==}
-
-  '@tanstack/query-db-collection@1.0.31':
-    resolution: {integrity: sha512-BJ2UYXWylixoq65dhy/Q9DGL1bAxGyHVjdvfU/kInpeIuiEV9Kh4pyMHm7cktOkgF1Dc8G/qEB+T+ngfL8pKGQ==}
-    peerDependencies:
-      '@tanstack/query-core': ^5.0.0
-      typescript: '>=4.7'
 
   '@tanstack/query-devtools@5.95.2':
     resolution: {integrity: sha512-QfaoqBn9uAZ+ICkA8brd1EHj+qBF6glCFgt94U8XP5BT6ppSsDBI8IJ00BU+cAGjQzp6wcKJL2EmRYvxy0TWIg==}
 
-  '@tanstack/react-db@0.1.61':
-    resolution: {integrity: sha512-WY76mGQmiTbAPM4qdsk+AvlQKdK0uC/lTpceCkZiozgpW4M7RrYYFYy92YBvi+PunauNazyUxfhUWlh53SvsAg==}
+  '@tanstack/react-db@0.3.3':
+    resolution: {integrity: sha512-bwTJ/fFehWRy7vPtYUQNhYS/znJBgcvVd/uQUN/4+b+gfExGb4/70BfKa0N8Cbm0W8CT3goYDGcrYSBZCxUjHw==}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -3196,11 +3188,6 @@ packages:
     resolution: {integrity: sha512-AFQFmbznVkbtfpx8VJ2DylW17wWagQel/qLstVLkYmNRo2CmJt3SNej5hvl6EnEeljJIdC3BTB+W7HZtpsH+3g==}
     peerDependencies:
       '@tanstack/react-query': ^5.95.2
-      react: ^18 || ^19
-
-  '@tanstack/react-query@5.90.16':
-    resolution: {integrity: sha512-bpMGOmV4OPmif7TNMteU/Ehf/hoC0Kf98PDc0F4BZkFrEapRMEqI/V6YS0lyzwSV6PQpY1y4xxArUIfBW5LVxQ==}
-    peerDependencies:
       react: ^18 || ^19
 
   '@tanstack/react-query@5.95.2':
@@ -3383,6 +3370,9 @@ packages:
 
   '@tanstack/store@0.8.0':
     resolution: {integrity: sha512-Om+BO0YfMZe//X2z0uLF2j+75nQga6TpTJgLJQBiq85aOyZNIhkCgleNcud2KQg4k4v9Y9l+Uhru3qWMPGTOzQ==}
+
+  '@tanstack/store@0.9.3':
+    resolution: {integrity: sha512-8reSzl/qGWGGVKhBoxXPMWzATSbZLZFWhwBAFO9NAyp0TxzfBP0mIrGb8CP8KrQTmvzXlR/vFPPUrHTLBGyFyw==}
 
   '@tanstack/table-core@8.21.3':
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
@@ -3652,9 +3642,6 @@ packages:
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
 
-  '@types/ws@8.18.1':
-    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
-
   '@vitejs/plugin-react@5.1.2':
     resolution: {integrity: sha512-EcA07pHJouywpzsoTUqNh5NwGayl2PPVEJKUSinGGSxFGYn+shYbqMGBg6FXDqgXum9Ou/ecb+411ssw8HImJQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -3867,7 +3854,7 @@ packages:
   better-call@1.3.7:
     resolution: {integrity: sha512-Al51/hjp2SSp6CRTa3F2ptcx4yQVS1xWKoY6jcVXqNYOap6mHFP2jUBn5EwIL4iIed1/Sq4hlQ+Umm6EflZG+w==}
     peerDependencies:
-      zod: ^4.0.0
+      zod: 4.3.5
     peerDependenciesMeta:
       zod:
         optional: true
@@ -4348,12 +4335,6 @@ packages:
       sqlite3:
         optional: true
 
-  drizzle-zod@0.8.3:
-    resolution: {integrity: sha512-66yVOuvGhKJnTdiqj1/Xaaz9/qzOdRJADpDa68enqS6g3t0kpNkwNYjUuaeXgZfO/UWuIM9HIhSlJ6C5ZraMww==}
-    peerDependencies:
-      drizzle-orm: '>=0.36.0'
-      zod: ^3.25.0 || ^4.0.0
-
   electron-to-chromium@1.5.267:
     resolution: {integrity: sha512-0Drusm6MVRXSOJpGbaSVgcQsuB4hEkMpHXaVstcPmhu5LIedxs1xNK/nIxmQIU/RPC0+1/o0AVZfBTkTNJOdUw==}
 
@@ -4458,6 +4439,7 @@ packages:
   eslint@9.39.2:
     resolution: {integrity: sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -4599,11 +4581,6 @@ packages:
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
-  fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -4737,10 +4714,6 @@ packages:
     resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
     engines: {node: '>=18'}
     hasBin: true
-
-  iceberg-js@0.8.1:
-    resolution: {integrity: sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA==}
-    engines: {node: '>=20.0.0'}
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -5437,16 +5410,6 @@ packages:
   pify@4.0.1:
     resolution: {integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==}
     engines: {node: '>=6'}
-
-  playwright-core@1.59.0:
-    resolution: {integrity: sha512-PW/X/IoZ6BMUUy8rpwHEZ8Kc0IiLIkgKYGNFaMs5KmQhcfLILNx9yCQD0rnWeWfz1PNeqcFP1BsihQhDOBCwZw==}
-    engines: {node: '>=18'}
-    hasBin: true
-
-  playwright@1.59.0:
-    resolution: {integrity: sha512-wihGScriusvATUxmhfENxg0tj1vHEFeIwxlnPFKQTOQVd7aG08mUfvvniRP/PtQOC+2Bs52kBOC/Up1jTXeIbw==}
-    engines: {node: '>=18'}
-    hasBin: true
 
   postcss-selector-parser@6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -6478,18 +6441,6 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  ws@8.18.3:
-    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
   xmlbuilder2@4.0.3:
     resolution: {integrity: sha512-bx8Q1STctnNaaDymWnkfQLKofs0mGNN7rLLapJlGuV3VlvegD7Ls4ggMjE3aUSWItCCzU0PEv45lI87iSigiCA==}
     engines: {node: '>=20.0'}
@@ -6523,9 +6474,6 @@ packages:
 
   zod@4.3.5:
     resolution: {integrity: sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g==}
-
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
 snapshots:
 
@@ -6665,11 +6613,11 @@ snapshots:
       '@better-fetch/fetch': 1.3.1
       '@opentelemetry/semantic-conventions': 1.43.0
       '@standard-schema/spec': 1.1.0
-      better-call: 1.3.7(zod@4.4.3)
+      better-call: 1.3.7(zod@4.3.5)
       jose: 6.2.4
       kysely: 0.29.4
       nanostores: 1.4.1
-      zod: 4.4.3
+      zod: 4.3.5
 
   '@better-auth/drizzle-adapter@1.6.25(@better-auth/core@1.6.25(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(better-call@1.3.7(zod@4.3.5))(jose@6.2.4)(kysely@0.29.4)(nanostores@1.4.1))(@better-auth/utils@0.4.2)(drizzle-orm@0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0))':
     dependencies:
@@ -7549,10 +7497,6 @@ snapshots:
   '@oxc-transform/binding-win32-x64-msvc@0.110.0':
     optional: true
 
-  '@playwright/test@1.59.0':
-    dependencies:
-      playwright: 1.59.0
-
   '@pnpm/config.env-replace@1.1.0': {}
 
   '@pnpm/network.ca-file@1.0.2':
@@ -8320,46 +8264,6 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@supabase/auth-js@2.100.1':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/functions-js@2.100.1':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/phoenix@0.4.0': {}
-
-  '@supabase/postgrest-js@2.100.1':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/realtime-js@2.100.1':
-    dependencies:
-      '@supabase/phoenix': 0.4.0
-      '@types/ws': 8.18.1
-      tslib: 2.8.1
-      ws: 8.18.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@supabase/storage-js@2.100.1':
-    dependencies:
-      iceberg-js: 0.8.1
-      tslib: 2.8.1
-
-  '@supabase/supabase-js@2.100.1':
-    dependencies:
-      '@supabase/auth-js': 2.100.1
-      '@supabase/functions-js': 2.100.1
-      '@supabase/postgrest-js': 2.100.1
-      '@supabase/realtime-js': 2.100.1
-      '@supabase/storage-js': 2.100.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@tailwindcss/node@4.1.18':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -8441,27 +8345,27 @@ snapshots:
       tailwindcss: 4.1.18
       vite: 7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3)
 
-  '@tanstack/db-ivm@0.1.17(typescript@5.9.3)':
+  '@tanstack/db-ivm@0.1.19(typescript@5.9.3)':
     dependencies:
       fractional-indexing: 3.2.0
       sorted-btree: 1.8.1
       typescript: 5.9.3
 
-  '@tanstack/db@0.5.33(typescript@5.9.3)':
+  '@tanstack/db@0.8.3(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
-      '@tanstack/db-ivm': 0.1.17(typescript@5.9.3)
+      '@tanstack/db-ivm': 0.1.19(typescript@5.9.3)
       '@tanstack/pacer-lite': 0.2.1
       typescript: 5.9.3
 
   '@tanstack/devtools-event-client@0.4.0': {}
 
-  '@tanstack/electric-db-collection@0.2.41(typescript@5.9.3)':
+  '@tanstack/electric-db-collection@0.4.3(typescript@5.9.3)':
     dependencies:
       '@electric-sql/client': 1.5.25
       '@standard-schema/spec': 1.1.0
-      '@tanstack/db': 0.5.33(typescript@5.9.3)
-      '@tanstack/store': 0.8.0
+      '@tanstack/db': 0.8.3(typescript@5.9.3)
+      '@tanstack/store': 0.9.3
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
@@ -8486,22 +8390,13 @@ snapshots:
 
   '@tanstack/pacer-lite@0.2.1': {}
 
-  '@tanstack/query-core@5.90.16': {}
-
   '@tanstack/query-core@5.95.2': {}
-
-  '@tanstack/query-db-collection@1.0.31(@tanstack/query-core@5.95.2)(typescript@5.9.3)':
-    dependencies:
-      '@standard-schema/spec': 1.1.0
-      '@tanstack/db': 0.5.33(typescript@5.9.3)
-      '@tanstack/query-core': 5.95.2
-      typescript: 5.9.3
 
   '@tanstack/query-devtools@5.95.2': {}
 
-  '@tanstack/react-db@0.1.61(react@19.2.3)(typescript@5.9.3)':
+  '@tanstack/react-db@0.3.3(react@19.2.3)(typescript@5.9.3)':
     dependencies:
-      '@tanstack/db': 0.5.33(typescript@5.9.3)
+      '@tanstack/db': 0.8.3(typescript@5.9.3)
       react: 19.2.3
       use-sync-external-store: 1.6.0(react@19.2.3)
     transitivePeerDependencies:
@@ -8521,11 +8416,6 @@ snapshots:
     dependencies:
       '@tanstack/query-devtools': 5.95.2
       '@tanstack/react-query': 5.95.2(react@19.2.3)
-      react: 19.2.3
-
-  '@tanstack/react-query@5.90.16(react@19.2.3)':
-    dependencies:
-      '@tanstack/query-core': 5.90.16
       react: 19.2.3
 
   '@tanstack/react-query@5.95.2(react@19.2.3)':
@@ -8889,6 +8779,8 @@ snapshots:
 
   '@tanstack/store@0.8.0': {}
 
+  '@tanstack/store@0.9.3': {}
+
   '@tanstack/table-core@8.21.3': {}
 
   '@tanstack/virtual-file-routes@1.145.4': {}
@@ -9208,10 +9100,6 @@ snapshots:
 
   '@types/use-sync-external-store@0.0.6': {}
 
-  '@types/ws@8.18.1':
-    dependencies:
-      '@types/node': 25.0.9
-
   '@vitejs/plugin-react@5.1.2(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
       '@babel/core': 7.28.5
@@ -9373,12 +9261,12 @@ snapshots:
       '@better-fetch/fetch': 1.3.1
       '@noble/ciphers': 2.2.0
       '@noble/hashes': 2.2.0
-      better-call: 1.3.7(zod@4.4.3)
+      better-call: 1.3.7(zod@4.3.5)
       defu: 6.1.7
       jose: 6.2.4
       kysely: 0.29.4
       nanostores: 1.4.1
-      zod: 4.4.3
+      zod: 4.3.5
     optionalDependencies:
       '@tanstack/react-start': 1.157.18(crossws@0.4.4(srvx@0.10.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@5.4.21(@types/node@25.0.9)(lightningcss@1.30.2))
       drizzle-kit: 0.31.10
@@ -9405,12 +9293,12 @@ snapshots:
       '@better-fetch/fetch': 1.3.1
       '@noble/ciphers': 2.2.0
       '@noble/hashes': 2.2.0
-      better-call: 1.3.7(zod@4.4.3)
+      better-call: 1.3.7(zod@4.3.5)
       defu: 6.1.7
       jose: 6.2.4
       kysely: 0.29.4
       nanostores: 1.4.1
-      zod: 4.4.3
+      zod: 4.3.5
     optionalDependencies:
       '@tanstack/react-start': 1.157.18(crossws@0.4.4(srvx@0.10.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
       drizzle-kit: 0.31.10
@@ -9424,14 +9312,14 @@ snapshots:
       - '@cloudflare/workers-types'
       - '@opentelemetry/api'
 
-  better-call@1.3.7(zod@4.4.3):
+  better-call@1.3.7(zod@4.3.5):
     dependencies:
       '@better-auth/utils': 0.4.2
       '@better-fetch/fetch': 1.3.1
       rou3: 0.7.12
       set-cookie-parser: 3.1.2
     optionalDependencies:
-      zod: 4.4.3
+      zod: 4.3.5
 
   better-path-resolve@1.0.0:
     dependencies:
@@ -9824,11 +9712,6 @@ snapshots:
       kysely: 0.29.4
       pg: 8.22.0
 
-  drizzle-zod@0.8.3(drizzle-orm@0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0))(zod@4.3.5):
-    dependencies:
-      drizzle-orm: 0.45.2(@types/pg@8.20.0)(kysely@0.29.4)(pg@8.22.0)
-      zod: 4.3.5
-
   electron-to-chromium@1.5.267: {}
 
   embla-carousel-react@8.6.0(react@19.2.3):
@@ -10182,9 +10065,6 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
-  fsevents@2.3.2:
-    optional: true
-
   fsevents@2.3.3:
     optional: true
 
@@ -10323,8 +10203,6 @@ snapshots:
   human-signals@2.1.0: {}
 
   husky@9.1.7: {}
-
-  iceberg-js@0.8.1: {}
 
   iconv-lite@0.4.24:
     dependencies:
@@ -11047,14 +10925,6 @@ snapshots:
   picomatch@4.0.3: {}
 
   pify@4.0.1: {}
-
-  playwright-core@1.59.0: {}
-
-  playwright@1.59.0:
-    dependencies:
-      playwright-core: 1.59.0
-    optionalDependencies:
-      fsevents: 2.3.2
 
   postcss-selector-parser@6.0.10:
     dependencies:
@@ -12004,8 +11874,6 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@8.18.3: {}
-
   xmlbuilder2@4.0.3:
     dependencies:
       '@oozcitak/dom': 2.0.2
@@ -12028,5 +11896,3 @@ snapshots:
   zod@3.25.76: {}
 
   zod@4.3.5: {}
-
-  zod@4.4.3: {}

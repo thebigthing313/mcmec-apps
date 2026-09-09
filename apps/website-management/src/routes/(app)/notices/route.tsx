@@ -6,7 +6,7 @@ export const Route = createFileRoute("/(app)/notices")({
 	loader: async () => {
 		await notices.preload();
 		await noticeTypes.preload();
-		return { crumb: "Notices" };
+		return { crumb: "Public Notices" };
 	},
 });
 

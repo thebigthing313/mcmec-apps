@@ -47,9 +47,12 @@ const POLICIES: Record<string, ShapePolicy> = {
 	// so is_published is the durable gate for now.
 	notices: publishedUnless(null, "is_published = true"),
 	documents: publishedUnless(null, "is_published = true"),
-	// published + open for everyone; full listing only for HR
+	// published + open for everyone; full listing for website managers.
+	// The gate is `manage_website`, not `manage_employees`: #134 puts job postings in the
+	// `website` domain, and a read rule that disagreed with the write rule would leave the
+	// authoring screens able to save a draft they cannot see (#145).
 	job_postings: publishedUnless(
-		"manage_employees",
+		"manage_website",
 		"published_at is not null and is_closed = false",
 	),
 	// staff-only

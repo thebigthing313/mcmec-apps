@@ -12,7 +12,7 @@ export interface EmployeeFormValues {
 
 interface EmployeeFormProps {
 	defaultValues: EmployeeFormValues;
-	formLabel: string;
+	formLabel?: string;
 	onSubmit: (value: EmployeeFormValues) => void | Promise<void>;
 	submitLabel: string;
 }

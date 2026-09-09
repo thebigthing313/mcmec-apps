@@ -23,18 +23,18 @@ export function PasswordInput({
 	return (
 		<InputGroup className={className}>
 			<InputGroupInput
-				type={visible ? "text" : "password"}
 				ref={ref}
+				type={visible ? "text" : "password"}
 				{...props}
 			/>
 			<InputGroupAddon align="inline-end">
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<InputGroupButton
-							variant="ghost"
-							size="icon-sm"
-							onClick={() => setVisible(!visible)}
 							aria-label={visible ? "Hide password" : "Show password"}
+							onClick={() => setVisible(!visible)}
+							size="icon-sm"
+							variant="ghost"
 						>
 							{visible ? <EyeOffIcon /> : <EyeIcon />}
 						</InputGroupButton>

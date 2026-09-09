@@ -20,6 +20,7 @@ export function PhoneField({
 		>
 			<PhoneInput
 				aria-invalid={!field.state.meta.isValid}
+				aria-required={formFieldProps.required}
 				id={field.name}
 				name={field.name}
 				onChange={(value) => field.handleChange(value)}

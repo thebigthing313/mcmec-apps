@@ -2,8 +2,8 @@
 	"author": "Adrian Kabigting",
 	"dependencies": {
 		"@mcmec/lib": "workspace:*",
-		"@mcmec/supabase": "workspace:*",
-		"@mcmec/supabase-tanstack-db-integration": "workspace:*",
+		"@mcmec/schemas": "workspace:*",
+		"@mcmec/sync": "workspace:*",
 		"@mcmec/ui": "workspace:*",
 		"@radix-ui/react-label": "^2.1.8",
 		"@radix-ui/react-separator": "^1.1.8",
@@ -46,10 +46,8 @@
 		"build": "vite build",
 		"check-types": "tsc --noEmit",
 		"dev": "vite dev",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
 		"start": "node .output/server/index.mjs"
 	},
 	"type": "module",
-	"version": "2.0.1"
+	"version": "2.1.0"
 }

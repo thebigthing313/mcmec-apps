@@ -29,9 +29,16 @@ function SectionSidebar({
 			aria-label={`${title} section navigation`}
 		>
 			<nav>
-				<h2 className="mb-3 border-b border-primary/20 pb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+				{/*
+				 * An eyebrow, not a heading. As an h2 this sat before the page's own h1 in DOM
+				 * order, so every interior public page opened with an out-of-order heading and
+				 * its real title was the second thing in the outline. The nav around it already
+				 * carries an aria-label built from the same title, so nothing is lost by taking
+				 * it out of the heading structure.
+				 */}
+				<div className="mb-3 border-b border-primary/20 pb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
 					{title}
-				</h2>
+				</div>
 				<ul className="flex flex-col gap-0">
 					{links.map((link) => {
 						const linkClassName = cn(

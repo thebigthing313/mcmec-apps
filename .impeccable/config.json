@@ -1,0 +1,14 @@
+{
+	"detector": {
+		"ignoreRules": [],
+		"ignoreFiles": [],
+		"ignoreValues": [
+			{
+				"rule": "overused-font",
+				"value": "roboto",
+				"createdAt": "2026-08-31T17:51:32.899Z",
+				"reason": "PRODUCT.md Brand Commitments lists the Roboto family as confirmed binding ('refine, never replace'); DESIGN.md's One Family Rule sets it across all five frontends and calls the unremarkableness deliberate. Pre-existing @import at globals.css L1, not introduced by this work. Not user-confirmed in session."
+			}
+		]
+	}
+}

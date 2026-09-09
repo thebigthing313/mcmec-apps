@@ -1,6 +1,6 @@
 export const ErrorMessages = {
 	AUTH: {
-		FORBIDDEN: "You do not have permission to this action or resource.",
+		FORBIDDEN: "You do not have permission for this action or resource.",
 		INVALID_JWT: "The provided authentication token is invalid.",
 		NOT_ONBOARDED: "User has not properly onboarded.",
 		SESSION_EXPIRED: "Your session has expired. Please log in again.",

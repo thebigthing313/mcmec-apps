@@ -20,6 +20,31 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
+/** The unfiltered value for the Type and Year selects. */
+const ALL = "all";
+
+/**
+ * Every string a Tiptap document actually says.
+ *
+ * Search used to match titles only, so a resident looking for their own street — which is
+ * named in the body of a spray notice and nowhere in its heading — got nothing back and had
+ * to read the register. The renderer walks the same shape; this walks it for text.
+ */
+function contentText(content: unknown): string {
+	if (typeof content === "string") {
+		return content;
+	}
+	if (Array.isArray(content)) {
+		return content.map(contentText).join(" ");
+	}
+	if (content && typeof content === "object") {
+		const node = content as { text?: unknown; content?: unknown };
+		const own = typeof node.text === "string" ? node.text : "";
+		return `${own} ${contentText(node.content)}`;
+	}
+	return "";
+}
+
 interface NoticeData {
 	content: object; // JSON content for tiptap renderer
 	id: string;
@@ -32,14 +57,27 @@ interface NoticeData {
 
 interface NoticeFeedProps {
 	notices: NoticeData[];
+	/**
+	 * Split the register across pages and clip each notice behind a fade.
+	 *
+	 * True on the archive, which is a browse surface that grows without bound. False on
+	 * the current notices register: P.L. 2025 c.72 designates that page as the
+	 * Commission's primary publication method, and a required posting may not be put
+	 * behind a pagination control or cut off mid-sentence while its Retention Period
+	 * runs. The page states that obligation in its own opening paragraph.
+	 */
+	paginate?: boolean;
 }
 
-export function NoticeFeed({ notices }: NoticeFeedProps) {
+export function NoticeFeed({ notices, paginate = true }: NoticeFeedProps) {
 	const navigate = useNavigate();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [searchQuery, setSearchQuery] = useState<string>("");
-	const [selectedType, setSelectedType] = useState<string>("");
-	const [selectedYear, setSelectedYear] = useState<string>("");
+	// "all" rather than "" because a Radix SelectItem cannot carry an empty value, and
+	// without an item there was no way back to unfiltered except the Clear button — which
+	// only appears once something is already filtered.
+	const [selectedType, setSelectedType] = useState<string>(ALL);
+	const [selectedYear, setSelectedYear] = useState<string>(ALL);
 	const itemsPerPage = 5;
 
 	// Get unique types and years for filter options
@@ -48,7 +86,13 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 		const years = new Set<string>();
 
 		notices?.forEach((notice) => {
-			types.add(notice.type);
+			// A notice whose category did not resolve carries an empty type. It must not
+			// reach the select: Radix throws on a SelectItem with an empty value, which
+			// would take the whole register down in exactly the case the empty string
+			// exists to handle. An unresolved category is not a filterable kind.
+			if (notice.type) {
+				types.add(notice.type);
+			}
 			const year = notice.noticeDate.getFullYear().toString();
 			years.add(year);
 		});
@@ -63,13 +107,16 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 	const filteredNotices = useMemo(() => {
 		if (!notices) return [];
 
+		const needle = searchQuery.trim().toLowerCase();
+
 		return notices.filter((notice) => {
 			const matchesSearch =
-				!searchQuery ||
-				notice.title.toLowerCase().includes(searchQuery.toLowerCase());
-			const matchesType = !selectedType || notice.type === selectedType;
+				!needle ||
+				notice.title.toLowerCase().includes(needle) ||
+				contentText(notice.content).toLowerCase().includes(needle);
+			const matchesType = selectedType === ALL || notice.type === selectedType;
 			const matchesYear =
-				!selectedYear ||
+				selectedYear === ALL ||
 				notice.noticeDate.getFullYear().toString() === selectedYear;
 
 			return matchesSearch && matchesType && matchesYear;
@@ -77,12 +124,13 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 	}, [notices, searchQuery, selectedType, selectedYear]);
 
 	// Calculate pagination
-	const totalPages = Math.ceil(filteredNotices.length / itemsPerPage);
+	const totalPages = paginate
+		? Math.ceil(filteredNotices.length / itemsPerPage)
+		: 1;
 	const startIndex = (currentPage - 1) * itemsPerPage;
-	const paginatedNotices = filteredNotices.slice(
-		startIndex,
-		startIndex + itemsPerPage,
-	);
+	const paginatedNotices = paginate
+		? filteredNotices.slice(startIndex, startIndex + itemsPerPage)
+		: filteredNotices;
 
 	// Reset to first page when filters change
 	const handleSearchChange = (value: string) => {
@@ -108,10 +156,13 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 		setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 	};
 
+	const isFiltered =
+		searchQuery !== "" || selectedType !== ALL || selectedYear !== ALL;
+
 	const clearFilters = () => {
 		setSearchQuery("");
-		setSelectedType("");
-		setSelectedYear("");
+		setSelectedType(ALL);
+		setSelectedYear(ALL);
 		setCurrentPage(1);
 	};
 
@@ -121,11 +172,11 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 			<div className="flex flex-col gap-4 rounded-lg bg-gray-50 p-4">
 				<div className="flex flex-wrap items-end gap-4">
 					<div className="flex min-w-50 flex-col gap-2">
-						<Label htmlFor="search-filter">Search by title</Label>
+						<Label htmlFor="search-filter">Search notices</Label>
 						<Input
 							id="search-filter"
 							onChange={(e) => handleSearchChange(e.target.value)}
-							placeholder="Search..."
+							placeholder="Search titles and text..."
 							value={searchQuery}
 						/>
 					</div>
@@ -137,6 +188,7 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 								<SelectValue placeholder="All Types" />
 							</SelectTrigger>
 							<SelectContent>
+								<SelectItem value={ALL}>All Types</SelectItem>
 								{uniqueTypes.map((type: string) => (
 									<SelectItem key={type} value={type}>
 										{type}
@@ -153,6 +205,7 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 								<SelectValue placeholder="All Years" />
 							</SelectTrigger>
 							<SelectContent>
+								<SelectItem value={ALL}>All Years</SelectItem>
 								{uniqueYears.map((year: string) => (
 									<SelectItem key={year} value={year}>
 										{year}
@@ -162,7 +215,7 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 						</Select>
 					</div>
 
-					{(searchQuery || selectedType || selectedYear) && (
+					{isFiltered && (
 						<Button onClick={clearFilters} variant="outline">
 							Clear Filters
 						</Button>
@@ -182,11 +235,16 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 			{/* Notices */}
 			<div className="flex flex-col gap-2">
 				{paginatedNotices.map((notice) => {
-					const shareUrl = `${window.location.origin}/notices/${notice.id}`;
+					// `window` does not exist during SSR, and reading it unguarded threw
+					// inside the route's Suspense boundary (React #419), bailing the whole
+					// route out to a client re-render. The share dialog only mounts on the
+					// client, so the empty origin here never reaches server HTML.
+					const getShareUrl = () =>
+						`${typeof window === "undefined" ? "" : window.location.origin}/notices/${notice.id}`;
 					return (
 						<PublicNoticeCard
 							content={notice.content}
-							getShareUrl={() => shareUrl}
+							getShareUrl={getShareUrl}
 							isArchived={notice.isArchived}
 							isPublished={notice.isPublished}
 							key={notice.id}
@@ -198,6 +256,7 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 								})
 							}
 							title={notice.title}
+							truncate={paginate}
 							type={notice.type}
 						/>
 					);
@@ -210,7 +269,9 @@ export function NoticeFeed({ notices }: NoticeFeedProps) {
 			{/* No results message */}
 			{filteredNotices.length === 0 && (
 				<div className="py-8 text-center text-muted-foreground">
-					No notices found matching the selected filters.
+					{isFiltered
+						? "No notices match your search or filters."
+						: "There are no notices posted right now."}
 				</div>
 			)}
 		</div>

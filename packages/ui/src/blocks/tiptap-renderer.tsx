@@ -17,10 +17,15 @@ export function TiptapRenderer({ content, className }: TiptapRendererProps) {
 		editable: false,
 		editorProps: {
 			attributes: {
-				class: cn(
-					"prose prose-sm sm:prose-base max-w-none px-4 py-3",
-					className,
-				),
+				// `max-w-[70ch]` rather than `max-w-none`: DESIGN.md caps reading measure at
+				// 65–75ch, and a Notice body rendered edge-to-edge in an 80rem container runs
+				// well past 120 characters a line. `prose-base` at every width, because Body is
+				// 1rem — the old `prose-sm` served a 14px legal notice on a phone.
+				//
+				// No padding of its own. Every caller already sits inside something that owns its
+				// spacing — a CardContent, an article — and the renderer's own `px-4` indented a
+				// notice's body 16px past the title above it on every surface that renders one.
+				class: cn("prose prose-base max-w-[70ch]", className),
 			},
 		},
 		extensions: [

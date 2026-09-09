@@ -15,7 +15,7 @@ export const Route = createFileRoute("/contact")({
 
 const contactLinks = [
 	{ label: "Service Requests", href: "/contact/service-request" },
-	{ label: "Contact Us", href: "/contact/contact-us" },
+	{ label: "General Inquiries", href: "/contact/contact-us" },
 ];
 
 function ContactLayout() {

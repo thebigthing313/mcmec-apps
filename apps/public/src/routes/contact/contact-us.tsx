@@ -2,7 +2,7 @@ import {
 	NonEmptyStringSchema,
 	ValidEmailSchema,
 } from "@mcmec/lib/constants/validators";
-import { GeneralInquirySubmissionSchema } from "@mcmec/supabase/db/public-requests";
+import { GeneralInquirySubmissionSchema } from "@mcmec/schemas/db/public-requests";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
 import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/contact/contact-us")({
 	component: RouteComponent,
 	head: () => ({
 		meta: seo({
-			title: "Contact Us - MCMEC",
+			title: "General Inquiries - MCMEC",
 			description:
 				"Get in touch with the Middlesex County Mosquito Extermination Commission.",
 			url: "/contact/contact-us",
@@ -59,7 +59,7 @@ function RouteComponent() {
 		},
 		onSubmit: async ({ value }) => {
 			if (honeypot) {
-				toast.info("Submission successful! Thank you for contacting us.");
+				toast.info("Thank you — your message has been sent.");
 				form.reset();
 				return;
 			}
@@ -88,7 +88,7 @@ function RouteComponent() {
 			turnstileRef.current?.reset();
 
 			if (result.success) {
-				toast.success("Submission successful! Thank you for contacting us.");
+				toast.success("Thank you — your message has been sent.");
 				form.reset();
 			} else {
 				toast.error(
@@ -107,16 +107,19 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4">
 			<article className="prose lg:prose-base max-w-none">
-				<h1>Contact Us</h1>
+				<h1>General Inquiries</h1>
+				<p className="lead">
+					Use this page for questions about our program — surveillance, spray
+					schedules, public outreach, records, or anything else you would like
+					to ask. To report a mosquito problem, standing water, or to request
+					mosquitofish, make a{" "}
+					<Link to="/contact/service-request">service request</Link> instead.
+				</p>
 				<p>
 					The Middlesex County Mosquito Extermination Commission is dedicated to
 					protecting our residents from mosquito-borne diseases and maintaining
 					a high quality of life through effective Integrated Pest Management.
-					Whether you have questions regarding our surveillance programs, public
-					outreach, or current spray schedules, our office in Edison is here to
-					assist you. If you would like to report a mosquito problem, water
-					management issue, or request mosquito fish, please use our dedicated{" "}
-					<Link to="/contact/service-request">service request</Link> page.
+					Our office in Edison is here to assist you.
 				</p>
 			</article>
 

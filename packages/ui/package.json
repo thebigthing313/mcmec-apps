@@ -2,7 +2,9 @@
 	"author": "",
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
+		"@mcmec/auth": "workspace:*",
 		"@mcmec/lib": "workspace:*",
+		"@mcmec/sync": "workspace:*",
 		"@radix-ui/react-accordion": "^1.2.12",
 		"@radix-ui/react-alert-dialog": "^1.1.15",
 		"@radix-ui/react-aspect-ratio": "^1.1.8",
@@ -87,9 +89,6 @@
 	"name": "@mcmec/ui",
 	"packageManager": "pnpm@10.19.0",
 	"private": true,
-	"scripts": {
-		"lint": "biome check --write ."
-	},
 	"type": "module",
-	"version": "1.6.1"
+	"version": "1.7.0"
 }

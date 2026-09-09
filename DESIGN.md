@@ -1,0 +1,549 @@
+---
+name: MCMEC
+description: The shared visual system behind the Middlesex County Mosquito Extermination Commission's public website and its four staff applications.
+colors:
+  commission-green: "oklch(0.5364 0.1457 150.5842)"
+  commission-green-contrast: "oklch(0.985 0.0199 112.9333)"
+  brackish-teal: "oklch(0.6638 0.0267 183.8599)"
+  paper: "oklch(0.985 0.002 150)"
+  surface: "oklch(0.98 0.005 150)"
+  sidebar-ground: "oklch(0.96 0.01 150)"
+  pale-green: "oklch(0.92 0.03 150)"
+  muted-surface: "oklch(0.94 0.01 150)"
+  ink: "oklch(0.2537 0.0035 164.7797)"
+  muted-ink: "oklch(0.45 0.02 150)"
+  rule: "oklch(0.8 0.02 150)"
+  field: "oklch(0.92 0.01 150)"
+  focus-ring: "oklch(0.5353 0.1357 153.5529)"
+  refusal-red: "oklch(0.5046 0.2053 29.0423)"
+  chart-1: "oklch(0.6104 0.0767 299.7335)"
+  chart-2: "oklch(0.6 0.13 359.9375)"
+  chart-3: "oklch(0.58 0.095 169.867)"
+  chart-4: "oklch(0.61 0.12 76.8292)"
+  chart-5: "oklch(0.62 0.12 258.0839)"
+typography:
+  display:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "clamp(1.5rem, 4vw, 2.25rem)"
+    fontWeight: 700
+    lineHeight: 1.25
+    letterSpacing: "-0.025em"
+  headline:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "clamp(1.125rem, 2vw, 1.25rem)"
+    fontWeight: 600
+    lineHeight: 1.4
+    letterSpacing: "normal"
+  title:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 600
+    lineHeight: 1
+    letterSpacing: "normal"
+  body:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "normal"
+  label:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 500
+    lineHeight: 1.25
+    letterSpacing: "normal"
+  overline:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 700
+    lineHeight: 1.25
+    letterSpacing: "0.025em"
+  masthead:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 700
+    lineHeight: 1
+    letterSpacing: "0.16em"
+  auth-heading:
+    fontFamily: "Roboto, system-ui, sans-serif"
+    fontSize: "clamp(1.5rem, 2.5vw, 1.875rem)"
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: "-0.025em"
+rounded:
+  sm: "6px"
+  md: "8px"
+  lg: "10px"
+  xl: "14px"
+  full: "9999px"
+spacing:
+  base: "4px"
+  sm: "8px"
+  md: "16px"
+  lg: "24px"
+  xl: "40px"
+  2xl: "56px"
+components:
+  button-primary:
+    backgroundColor: "{colors.commission-green}"
+    textColor: "{colors.commission-green-contrast}"
+    typography: "{typography.label}"
+    rounded: "{rounded.md}"
+    padding: "8px 16px"
+    height: "36px"
+  button-primary-hover:
+    backgroundColor: "oklch(0.5364 0.1457 150.5842 / 0.9)"
+    textColor: "{colors.commission-green-contrast}"
+  button-outline:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.md}"
+    padding: "8px 16px"
+    height: "36px"
+  button-outline-hover:
+    backgroundColor: "{colors.brackish-teal}"
+    textColor: "{colors.ink}"
+  button-destructive:
+    backgroundColor: "{colors.refusal-red}"
+    textColor: "#ffffff"
+    typography: "{typography.label}"
+    rounded: "{rounded.md}"
+    padding: "8px 16px"
+    height: "36px"
+  input-field:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.md}"
+    padding: "4px 12px"
+    height: "36px"
+  card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.xl}"
+    padding: "24px 0"
+  badge-status:
+    backgroundColor: "{colors.commission-green}"
+    textColor: "{colors.commission-green-contrast}"
+    typography: "{typography.label}"
+    rounded: "{rounded.full}"
+    padding: "2px 8px"
+  badge-status-draft:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.full}"
+    padding: "2px 8px"
+  signal-cell:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    padding: "12px 16px"
+  signal-cell-hover:
+    backgroundColor: "{colors.pale-green}"
+    textColor: "{colors.ink}"
+  signal-cell-selected:
+    backgroundColor: "{colors.commission-green}"
+    textColor: "{colors.commission-green-contrast}"
+    padding: "12px 16px"
+  signal-queue-row:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    padding: "10px 16px"
+  auth-frame:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    borderColor: "{colors.rule}"
+    rounded: "0px"
+    padding: "40px 56px"
+  auth-masthead:
+    backgroundColor: "transparent"
+    textColor: "{colors.muted-ink}"
+    typography: "{typography.masthead}"
+---
+
+# Design System: MCMEC
+
+## Overview
+
+**Creative North Star: "The Public Record, Legibly Kept"**
+
+This is an archival register that happens to be a website. The Commission's authority does not come from persuasion — it comes from the fact that what is posted here *is* the legal notice, and that nothing posted is ever quietly lost. Cancelled meetings stay visible. Archived notices stay reachable. The visual system exists to make that permanence feel deliberate rather than accidental: hairline rules, generous dates, columnar order, and a green so specific to this agency that it needs no explanation.
+
+The surfaces are warm, not clinical. Every neutral in the light theme carries a faint green cast (hue 150), so backgrounds read as paper in daylight rather than as a gray dashboard. Structure is carried entirely by borders and tonal steps, never by shadow. The result should feel crisp and institutional — tight registration, consistent rhythm, a faint formality — without ever tipping into decoration. A resident who arrives asking whether their street is being sprayed should get the answer and forget the interface existed.
+
+Two failure modes are rejected by name. The first is **startup SaaS**: gradient meshes, glassmorphism, oversized marketing heroes, "Get Started Free." This is a New Jersey county agency, not a product launch. The second is **municipal-site decay**: clip-art seals, unstyled link lists, tables from 2006, PDFs used as the interface. Being civic is not a license to be ugly. The system lives in the narrow band between them, and both edges are equally out of bounds.
+
+**Key Characteristics:**
+
+- Green-cast neutrals throughout — warm paper, not cold gray
+- Flat by default; borders and tonal steps carry all structure
+- One type family, Roboto, working across five applications
+- Status is always spelled as a word, never encoded in color alone
+- Uppercase and letterspacing are structural, never decorative
+- One design system, five frontends: `packages/ui` is the only visual authority
+
+## Colors
+
+A single institutional green against a family of neutrals that share its hue, so the palette reads as one material rather than an accent dropped onto gray.
+
+### Primary
+
+- **Commission Green** (`oklch(0.5364 0.1457 150.5842)`): The agency's voice. It appears on the primary action in every application, the staff sidebar ground, active navigation, iconography on the public quick-action cards, and the directional scrim over the hero photograph. Its foreground pair is a very pale warm green-white (`oklch(0.985 0.0199 112.9333)`) rather than pure white — the slight warmth keeps the button from reading as a generic call to action. **The pair measures 4.63:1**, which clears the 4.5:1 AA floor for normal-size text; it has to, because that foreground lands on 12px status badges as well as on buttons.
+
+  The foreground was lightened from `oklch(0.9556 …)` on 2026-08-28. The old value measured **4.24:1** and had been failing AA on every primary button, the skip link, and every filled status badge in all five frontends. Commission Green itself did not move — it is a brand commitment — and the warmth was kept, because removing the chroma entirely changes the ratio by 0.02 and so buys nothing worth the loss. The lesson is recorded rather than just the number: this pair is the system's most-reused colour relationship, and it went years undocumented and unmeasured.
+
+### Secondary
+
+- **Pale Green** (`oklch(0.92 0.03 150)`): The quiet fill. Secondary buttons, the hover ground for staff sidebar rows, the Archived badge, and any surface that needs to separate from paper without introducing a border. It marks *hover*, never *location* — the active row is Commission Green, and a pale-green active state a single step off the rail's own background is the version that reads as nothing from a normal seated distance.
+
+### Tertiary
+
+- **Brackish Teal** (`oklch(0.6638 0.0267 183.8599)`): Desaturated gray-teal — the color of standing water. It supplies the hover ground for outline and ghost buttons. It is a *surface* color and a hover state; it never carries an action. **Its foreground is Ink, and the pair measures 5.22:1.** It grounded the public footer as a full-bleed band until 2026-09-09, when that band went near-black; see Footer Black below.
+
+  Brackish Teal has no pale contrast colour of its own. It used to: a near-white (`oklch(0.98 0.005 150)`) carrying the name *Brackish Teal Contrast* while measuring **2.86:1** against the teal, which is how it survived undetected — the token was named for a property it did not have. It was replaced by Ink on 2026-09-03. Because this is shadcn's `accent` pair, that ratio was every hovered dropdown item, menubar entry, context-menu row, command item, calendar cell and outline button in all five frontends, plus the public footer, which compounded it with a `/70` alpha and reached 2.17:1. The teal itself did not move: darkening the ground far enough to rescue a near-white would have made every hover tint in the product visibly heavier, and the foreground was the thing at fault. Light mode only — in dark mode `accent` is a near-black whose near-white foreground already measures 14.48:1, where Ink would be 1.05:1.
+
+### Neutral
+
+- **Footer Black** (`#202322`): The public footer's full-bleed band, and nothing else. **Its foreground is white, and the pair measures 15.85:1.** It has its own token pair (`--footer` / `--footer-foreground`) rather than borrowing shadcn's `accent`, which is the hover-and-focus state on hundreds of surfaces across five frontends — sharing it is what made a footer recolour a change to every dropdown and calendar cell in the product. One value in both schemes: the band is already darker than either page ground. Written as hex, as `--shadow-color` is, because the value was specified exactly.
+
+  It is the one ground in the system the standard focus ring cannot clear — `1.55:1` — so the footer inverts the ring to its own white foreground. See The Focus Ring Contrasts Its Ground Rule.
+- **Paper** (`oklch(0.985 0.002 150)`): The page. Near-white with just enough green to be warm under daylight.
+- **Surface** (`oklch(0.98 0.005 150)`): Cards and popovers. A half-step off paper, which is why cards need no shadow to separate.
+- **Sidebar Ground** (`oklch(0.96 0.01 150)`): The staff navigation rail in the light theme.
+- **Muted Surface** (`oklch(0.94 0.01 150)`): Table header rows, disabled fields, skeleton states.
+- **Ink** (`oklch(0.2537 0.0035 164.7797)`): All primary text. Near-black with a trace of green — never pure `#000`.
+- **Muted Ink** (`oklch(0.45 0.02 150)`): Timestamps, helper text, card descriptions, secondary metadata.
+- **Rule** (`oklch(0.8 0.02 150)`): Every border, divider, and table line. This token does the work shadows would do in another system.
+- **Field** (`oklch(0.92 0.01 150)`): Input ground.
+- **Focus Ring** (`oklch(0.36 0.13 153.5)`): A dark green, rendered **opaque** in a `3px` ring. It was a mid-green at 50% opacity and it was the system's worst-measured failure — see The Focus Ring Contrasts Its Ground Rule.
+- **Refusal Red** (`oklch(0.5046 0.2053 29.0423)`): Destructive commands and validation failures. Nothing else.
+
+### Series
+
+`chart-1` through `chart-5` are a deliberately separate species: violet, rose, mint, sand and periwinkle, used only by the Weekly Mosquito Activity chart. They are tuned for adjacency in a dense multi-series plot, not for the interface, and must never leak into UI chrome.
+
+They were pastels until they had to carry data. Measured against the card ground, `chart-2` came out at 1.90:1, `chart-3` at 2.17:1, `chart-4` at 1.49:1 and `chart-5` at 1.85:1, all under the 3:1 that WCAG 1.4.11 requires of a graphical object carrying meaning: a pastel works as a large filled area and fails as a plotted line. Each hue is kept and its lightness pulled down until it clears 3:1, with chroma raised to stay vivid. `chart-1` already passed and is unchanged. Ratios against the card ground are now 3.68, 4.00, 3.86, 3.65 and 3.46.
+
+The current-year series on that chart is the one exception to the separation, and it runs the other way: it is drawn in Commission Green because it is the series the page exists to show. The five-year average takes `chart-1` and stays dashed, so the two are told apart by stroke pattern and not by colour alone; rainfall takes `chart-5`.
+
+### Named Rules
+
+**The One Green Rule.** Commission Green is the only color on a resting screen that carries meaning by itself. Reserve it for the agency's mark, the primary action, and the active navigation state. It is never a background for decoration, never a highlight, and never used twice in the same visual group.
+
+**The Status Is A Word Rule.** A record's state — Draft, Published, Pending, Archived, Scheduled, Delayed, Completed, Cancelled, Closed, Resolved, New — is always spelled out in the badge. Color may reinforce it; color may never be the only thing carrying it. This is a WCAG requirement on the public site and a legibility requirement everywhere else.
+
+**The Hue-150 Rule.** Every neutral in the light theme sits on hue 150 at low chroma. A neutral pulled from outside that family will read as a foreign gray against the rest of the page, however close its lightness.
+
+**The Focus Ring Contrasts Its Ground Rule.** A focus indicator is a graphical object under WCAG 1.4.11 and owes `3:1` against whatever it is drawn on. The ring is therefore **opaque** — an alpha is a discount on the ratio — and **dark**, at `oklch(0.36 …)`, which clears every light ground in the system: Paper `9.47`, Surface `9.35`, Muted `8.32`, Pale Green `7.88`, Field `7.83`, Sidebar Ground `8.83`, and Brackish Teal `3.27`, the tightest of them — the teal is the hover state on dropdown items and calendar cells, which is where the ring meets it.
+
+Two grounds are too dark for it rather than too light, and both invert the ring to a pale foreground: Commission Green (`4.62:1`) and, since 2026-09-09, Footer Black, where the dark ring measures `1.55:1` and white measures `15.85:1`. The public footer carries the agency's phone link and three navs, so it is keyboard territory and the indicator has to be visible on it.
+
+No single colour also clears `3:1` against Commission Green — light enough for the green needs `L≈0.83`, dark enough for Paper needs `L≤0.57` — so **a Commission Green ground inverts the ring to the pale foreground** (`4.62:1`). That is the same shape as the navigation hover rule: a treatment laid on a mid-tone or darker ground moves away from it, not toward it.
+
+This rule exists because the system shipped the opposite for a long time. The ring was `oklch(0.5353 …)` at 50% opacity and `--primary` is `oklch(0.5364 …)` — the same lightness — so on the public navigation bar the ring composited to **`1.00:1`** against its own ground. Not faint: arithmetically identical, on the most-used control on the site, on all five frontends. It measured `1.95–2.05:1` on Paper, Surface and Muted as well. The system documented this ring as "never removed" while rendering it invisible, which is the more dangerous failure — a removed ring gets noticed.
+
+**The Unowned Surfaces Rule.** Selection, the caret, and the focus ring are painted by the browser unless the system paints them, and a stock blue highlight is the loudest foreign colour on a warm hue-150 page. `::selection` takes Pale Green on Ink — the same pair that already means "touched but not chosen" on a sidebar row — and the caret takes Commission Green. These are set once in `globals.css` and apply everywhere; no component re-declares them.
+
+**Known drift.** The dark theme abandons this palette entirely: `.dark` is stock neutral gray at chroma 0, with `--primary` inverted to near-white and only `--sidebar` retaining Commission Green. Light and dark are not currently the same identity. Documented as observed, not endorsed.
+
+## Typography
+
+**Display Font:** Roboto (with `system-ui`, `sans-serif`)
+**Body Font:** Roboto (with `system-ui`, `sans-serif`)
+**Label/Mono Font:** Roboto — see known drift below
+
+**Character:** One family, worked hard. Roboto is the least remarkable choice available and that is precisely the point — it is the type of a form, a schedule, a posted notice. Personality is carried by weight, case, and letterspacing rather than by the letterforms themselves, which keeps five applications visually identical without any of them feeling styled.
+
+### Hierarchy
+
+- **Display** (700, `clamp(1.5rem, 4vw, 2.25rem)`, 1.25, tracking `-0.025em`): The hero headline on the public home page, set in white over the green scrim. One per page, and only where a photograph backs it.
+- **Headline** (600, `clamp(1.125rem, 2vw, 1.25rem)`, 1.4): Section headings on public pages — "How Can We Help You Today?" Also the page title in staff applications.
+- **Title** (600, `1.25rem`, 1.0): Card titles, including notice titles in the public feed. The 1.0 line-height is deliberate: titles are one or two lines and should sit tight against their date line.
+- **Body** (400, `1rem`, 1.5): All reading text, including Tiptap-rendered notice bodies. Cap the measure at 65–75ch — `TiptapRenderer` and `TiptapEditor` both set `max-w-[70ch]`, and the editor matches the renderer so an author lays out the line breaks a reader will actually get. Prose paragraphs take a `0.5rem` vertical margin and normal leading so a rendered notice stays dense enough to scan.
+
+  **The `.prose` overrides must stay unlayered.** `@tailwindcss/typography` emits into the `utilities` layer, and layer order beats specificity, so the same rules written inside `@layer base` lose to the plugin no matter how specific they are. They were written that way once and silently did nothing for as long as they existed: paragraphs shipped at the plugin's `1.25em` while this line claimed `0.5rem`. The rules now sit unlayered at the end of `globals.css`, which outranks every layer.
+
+  **A list item's paragraph is the item.** TipTap's StarterKit wraps each `<li>`'s content in its own `<p>`, so a paragraph rule fires inside every bullet: a 26px item occupied 46px of pitch and a thirteen-item list ran 600px. `.prose li > p` therefore takes no margin at all, and only a *second* paragraph inside one item is treated as a paragraph.
+- **Label** (500, `0.875rem`, 1.25): Buttons, form labels, table cells, badges, metadata. The workhorse size across all four staff applications.
+- **Overline** (700, tracking `0.025em`, uppercase): The agency's name in the public footer and the footer's column headings at `0.875rem`; the staff sidebar's group labels at `0.75rem`, a step below the destinations they cover. Structural only.
+
+- **Auth heading** (600, `1.5rem`, `1.875rem` from `sm`, 1.25, tracking `-0.025em`): The single heading on a sign-in, password-reset or invite screen. It is the one step between Headline and Display, and it exists because those screens hold one heading and nothing competing with it: the staff Headline is sized for a page title inside a dense shell, and inside a full-viewport frame it reads undersized. It does not travel — no other staff screen may use it, and it never appears twice on a page.
+
+### Named Rules
+
+**The One Family Rule.** Roboto sets everything. There is no display face, no serif for long reading, and no accent family. A second family is a system change, not a page decision.
+
+**The Uppercase Is Structural Rule.** Uppercase marks a boundary, never a sentence. It has four homes: the agency's identity block in the public footer, that footer's column headings, the group labels in the staff sidebar, and the auth frame's masthead. All four are edges between regions rather than text anyone reads for meaning, which is why caps suit them and why they are set below the size of what they cover. It never appears on a button, never on a heading a visitor reads for content, and never as emphasis inside a sentence.
+
+The masthead is the widest tracking in the system at `0.16em`, against `0.025em` everywhere else, and the exception is load-bearing rather than expressive: that type sits *on* a hairline with the rule running out of both ends of it, so the letters have to read as a ruled band rather than as a word dropped on a line. At `0.025em` it reads as a caption that has collided with a border. Both mastheads are set at `0.75rem`, the same step as the sidebar's group labels.
+
+**Known drift.** `--font-serif: "Lora"` and `--font-mono: "Fira Code"` are declared in `globals.css`, but only Roboto is imported from Google Fonts. Any consumer of those tokens silently falls back to Georgia and Courier New. Treat both as unavailable until they are actually loaded or the tokens are removed.
+
+## Layout
+
+The public site and the staff applications use two different spatial models over one spacing scale.
+
+**Public (`apps/public`).** A single centered column, `max-w-7xl` (80rem), with `1.5rem` gutters rising to `3rem` at `md`. Sections breathe at `2.5rem` vertical padding, `3.5rem` at `md`. The home page is the sole exception: it breaks the container to run the hero full-bleed at `60vh` (minimum `20rem`), then returns to the container for everything below. Every other route mounts inside a `max-w-7xl` wrapper with `1rem` padding and `2rem` of vertical margin around `<main>`.
+
+**Staff (`central`, `website-management`, `hr`, `admin`).** A persistent icon-collapsible sidebar rail against a content pane, provided by the shared `mcmec-layout` shell — root, sidebar, breadcrumb, content, app switcher, and user menu. Every staff application composes the same shell; none of them define their own chrome. The breadcrumb is the only wayfinding above the page title.
+
+**Rhythm.** A `4px` base unit. The recurring steps are `8px` (inline gaps), `16px` (form-field stacks), `24px` (card padding and card-to-card gaps), `40px` and `56px` (section separation). Card internals are uniformly `24px` horizontal with a `24px` vertical block, and cards stack their sections with a `24px` gap.
+
+**Responsive.** Grids move 1 → 2 → 3 columns at `sm` and `lg`. Text alignment shifts from centered on mobile to left-aligned from `sm` up in the public footer. Body text steps down from `1rem` to `0.875rem` at `md` inside form controls so a field doesn't dominate a dense staff form — the reverse of the usual direction, and correct here because staff work on large screens.
+
+### Named Rules
+
+**The Eighty-Rem Rule.** No content region exceeds `max-w-7xl` (80rem). The hero photograph may bleed past it; nothing readable may.
+
+**The Shell Owns The Chrome Rule.** Staff applications import `mcmec-layout` and fill it. An app that defines its own sidebar, header, or breadcrumb has forked the system, and four forks is how five applications stop looking like one.
+
+**The Desktop-First, Mobile-Survivable Rule.** The four staff applications are designed for the screen they are actually used on: a desk, a large display, a considered edit. Density, column count, keyboard reach, and information-per-screen are decided at desktop widths and are not compromised to suit a phone.
+
+But narrow is a state they must *survive*, because the job occasionally follows someone out of the building — a meeting cancelled from a car, a spray mission delayed from the field. On a phone every staff screen must therefore: fit the viewport with no horizontal page scroll; keep wide content (tables, toolbars, date ranges) scrolling inside its own `overflow-x: auto` container rather than pushing the page; keep every primary action reachable without a hover; and lose no destination — the rail becomes a sheet, never a truncation.
+
+The distinction is between a floor and a target. Nothing here asks for a phone-optimised layout, a thumb-zone action bar, or a mobile-specific flow; spending design effort there is spending it in the wrong place. What it forbids is the failure mode where a staff screen is unusable rather than merely cramped. A cramped table someone can scroll is fine. A form whose Save button sits outside the viewport is not.
+
+Browser zoom counts as narrow here, and should. A staff screen at 200% zoom has roughly the
+viewport of a phone, and WCAG 1.4.10 asks it to reflow rather than scroll in two directions — so
+the same collapse that serves a phone serves a magnified desktop, and the rail becoming an overlay
+at that size is the rule working rather than misfiring.
+
+`apps/public` is the exact inverse and is not covered by this rule: residents arrive on phones more often than not, and its layouts are decided at both ends.
+
+## Elevation & Depth
+
+The system is flat. Depth comes from a tonal ladder — paper → surface → sidebar ground → muted surface, each a small lightness step on the same hue — and from `1px` borders in Rule. A card separates from the page because it is a half-step lighter and outlined, not because it floats.
+
+Shadows exist only for elements that genuinely leave the page plane: popovers, dropdown menus, dialogs, sheets, and toasts. Resting surfaces do not cast them. The two exceptions in the current code are vestigial — outline buttons and inputs carry `shadow-xs`, a hairline that is effectively a second border.
+
+### Shadow Vocabulary
+
+- **Hairline** (`box-shadow: 0 1px 3px 0 hsl(150 3% 13% / 0.06)`): The vestigial edge on inputs and outline buttons. Do not extend it to new components.
+- **Resting card** (`box-shadow: 0 1px 3px 0 hsl(150 3% 13% / 0.08), 0 1px 2px -1px hsl(150 3% 13% / 0.08)`): The single step cards take today. Borders do the real work.
+- **Floating layer** (`box-shadow: 0 8px 16px -2px hsl(150 3% 13% / 0.1), 0 4px 6px -2px hsl(150 3% 13% / 0.06)`): Popovers, dropdowns, dialogs, sheets, toasts.
+
+All shadows are cast in `hsl(150 3% 13%)` — the same green-black as Ink — never in neutral black.
+
+### Named Rules
+
+**The Flat-By-Default Rule.** A shadow means the element is genuinely above the page and can be dismissed. Cards, tables, inputs, buttons, and panels are held by their border and their tonal step. If a new component wants a shadow to feel separated, it needs a border instead.
+
+**Known drift.** `globals.css` defines a full eight-step shadow scale (`2xs` through `2xl`) of which three steps are ever used. The unused steps are headroom nobody claimed; do not treat their existence as permission to layer.
+
+## Motion
+
+The system is almost entirely still, and that is a position rather than an omission: these are screens people work in every day, and an interface that performs on arrival becomes an interface that wastes a second of every visit.
+
+There is one authored gesture, and it belongs to the auth frame: **a rule is drawn**. The four hairlines scale from the corner each one starts at — the top rule first, the vertical edges at `180ms`, the bottom rule at `360ms` — over `620ms` on `cubic-bezier(0.16, 1, 0.3, 1)`. The easing is exponential ease-out, fast off the mark and long in the settle, so the line reads as ruled rather than as slid into place. Nothing else on the page moves, and no content ever animates: the type is present on the first frame, and only the rules arrive.
+
+The tokens are `--animate-rule-x` and `--animate-rule-y`. `prefers-reduced-motion: reduce` removes the animation entirely, which leaves each rule at its untransformed size — the frame is simply there.
+
+The public home page's hero plate is the one surface that moves on its own, and it moves by the same rule. Its six photographs crossfade over `900ms` on the same exponential ease-out, and the meter that times them is `--animate-rule-x` again — six hairline segments spanning the plate, the selected one filling in Commission Green over the `6s` dwell. That instance takes a **linear** curve rather than the exponential settle, because a meter has to be honest about elapsed time; the settle belongs to a line being ruled, not to a clock. It inherits the token's `prefers-reduced-motion` override for free, which leaves the hairline at full width — and the plate additionally does not start advancing at all under that preference.
+
+### Named Rules
+
+**The Motion Is A Rule Being Drawn Rule.** If a new surface wants motion, it animates a hairline. Content does not fade, rise, stagger, or scale in. A system whose structure is carried by borders has exactly one thing worth animating, and scattering entrance effects across content is how five applications stop feeling like one instrument.
+
+**The Autoplay Owes A Pause Rule.** Motion the visitor did not start, running past five seconds beside other content, is WCAG 2.2.2 territory and needs a mechanism to stop it. The control is a real, always-present, keyboard-reachable button — never a hover-only affordance, never a gesture, never omitted because the motion is “just decoration.” The home hero is the only such surface in the system, and it is the reason this rule is written down rather than discovered again.
+
+## Shapes
+
+A tight, closely-spaced radius family derived from one `--radius` of `0.625rem` (10px): `6px` (sm), `8px` (md), `10px` (lg), `14px` (xl). The range is narrow on purpose — the difference between a button and a card is legible but never expressive.
+
+Buttons, inputs, and selects take `8px`. Cards and panels take `14px`, the softest corner in the system. Status badges are the sole break: fully rounded at `9999px`.
+
+Borders are always `1px` in Rule. There are no double borders, no dashed borders outside a drop target, and no decorative dividers — a divider exists to separate two things a reader would otherwise merge. Card headers close with a bottom border and card footers open with a top border; both are structural, marking where metadata stops and content begins.
+
+Icons are Lucide, at `1rem` inside buttons and badges, `1.5rem` on public quick-action cards, and `0.875rem` inline beside footer contact details. They inherit `currentColor` except on the quick-action cards, where they carry Commission Green.
+
+### Named Rules
+
+**The Pill Is A Status Rule.** A fully rounded shape means "this is the state of a record." Nothing else in the system — no button, no tag, no avatar frame, no input — is a pill.
+
+## Components
+
+### Buttons
+
+- **Character:** Crisp and institutional. Tight height, precise label, no swagger.
+- **Shape:** Gently rounded (`8px`), `36px` tall at default, `32px` small, `40px` large. Icon-only buttons are square at the same three heights.
+- **Primary:** Commission Green ground, pale warm-white label, `8px 16px` padding, `0.875rem` medium weight. Hover drops the ground to 90% opacity.
+- **Outline:** Paper ground with a Rule border and a hairline shadow. Hover swaps to Brackish Teal ground. This is the default for lifecycle actions.
+- **Secondary / Ghost / Link:** Pale Green ground; transparent with a Brackish Teal hover; and a Commission Green label with an underline on hover, respectively.
+- **Destructive:** Refusal Red ground with white text and a red-tinted focus ring.
+- **Focus:** An opaque `3px` ring in Focus Ring, plus a border shift to the same hue. Never removed, never replaced with an outline-none, and never thinned with an alpha — a ring at 50% opacity is a contrast ratio at 50% too.
+- **Disabled:** 50% opacity and pointer events off. Never hidden — a staff member should be able to see that an action exists and is unavailable.
+
+### Inputs / Fields
+
+- **Style:** Transparent ground, `1px` Rule border, `8px` radius, `36px` tall, `4px 12px` padding. Text is `1rem` on mobile and `0.875rem` from `md` up.
+- **Focus:** Border shifts to Focus Ring and an opaque `3px` ring appears. No glow, no ground change.
+- **Error:** `aria-invalid` drives everything — the border goes Refusal Red and the ring tints to match. The invalid state is announced by the attribute, not only drawn.
+- **Disabled:** 50% opacity, `not-allowed` cursor.
+- **Placeholder:** Muted Ink. Never a substitute for a label; every input has a real `<label>`.
+
+### Cards / Containers
+
+- **Corner Style:** `14px`.
+- **Background:** Surface, a half-step above Paper.
+- **Border:** `1px` Rule. This is what separates the card, not the shadow.
+- **Shadow Strategy:** Resting card only. See Elevation & Depth.
+- **Internal Padding:** `24px` horizontal, `24px` vertical block, `24px` between stacked sections.
+- **Header / Footer:** The header is a two-column grid that reserves the right column for an action slot; it closes with a bottom border. The footer opens with a top border and `16px` of padding above its content.
+
+### Badges
+
+- **Style:** Fully rounded, `2px 8px`, `0.75rem` medium weight, transparent border on filled variants.
+- **State mapping:** Published and Pending take the filled Commission Green; Archived takes Pale Green; Draft takes the outline variant. On a Spray Mission, Scheduled takes the filled green, Completed takes Pale Green, and Delayed and Cancelled both take outline. The word is always present.
+- **Cancelled is not red.** Refusal Red belongs to destructive commands and validation failures and to nothing else, so no status badge takes it — a cancelled record has not failed, and on the public site a cancelled spray is neutral or welcome to most of the people reading it. Urgency is carried by the word, never by the colour.
+
+### Navigation
+
+**Public.** A horizontal bar of **seven** top-level groups — Home, About, Contact, Public Notices, Mosquito Control, Mosquito Surveillance, Job Opportunities — each opening a popover of titled links with one-line descriptions. Those descriptions are load-bearing: they are how a resident who does not know the difference between a legal notice and an archived one picks correctly. A skip link targets `#main-content`, and the whole bar lives inside a `<header>` so the site has a `banner` landmark; every `<nav>` in the shell is labelled, because four unlabelled ones read as "navigation, navigation, navigation, navigation" in a rotor.
+
+  Below **`lg`** — not `md` — the bar collapses into a sheet with the same groups as collapsibles. The bar's intrinsic width is `842px` and it used to take over at `768px`, so the document scrolled horizontally from 768 to 856 on every page: a WCAG 1.4.10 Reflow failure that also lands on a `1536px` desktop at 200% zoom, which is how a resident who needs magnification reads. **A breakpoint is a claim about how much room a component needs, and it has to be measured rather than guessed.**
+
+  The current destination is painted, not merely announced. TanStack emits `aria-current` on the matching link and nothing styled it, so assistive technology was told the location and a sighted visitor was not; a group's trigger is a button and never carries it at all, so groups match by **path prefix** the way the staff rail does. Both take Ink at 25% under the pale label (`6.31:1`) — darkening, per the hover rule above.
+
+  The top-level links are the one stated exception to the Brackish Teal hover. They sit on Commission Green, so a teal tint *lightens* their ground and pulls the white label down — the old `accent/40` took it from 4.62:1 at rest to **3.96:1**, making hover and keyboard focus the only interaction on the page that fell under AA. They darken instead, at `foreground/15`, for **5.56:1**. The rule generalises: a hover tint on a mid-tone or darker ground must move away from the label, not toward it.
+
+**Staff.** The `mcmec-layout` sidebar, collapsible to an icon rail, with the MCMEC mark in the header, navigation in the content, and the user menu in the footer. The app switcher lists only the applications the signed-in user's App Roles permit.
+
+The rail is rendered by the shell, not by each application: `Layout.Sidebar.Nav` takes groups of destinations and owns the three things a hand-rolled rail keeps losing. Every row carries a tooltip, which is the only label a collapsed rail has. The current destination takes Commission Green (`4.57:1` against its own label, `4.33:1` against the rail) and carries `aria-current="page"`, so location is never signalled by colour alone. Matching is by path prefix, so a drill-down keeps its parent lit. Groups run to four items or fewer and are labelled in the Overline; a rail of three or fewer destinations drops the label rather than inventing one.
+
+### Auth Frame
+
+- **Character:** The title page of the register. It is the only screen in the system with no shell, no card and no page chrome — the frame *is* the chrome.
+- **Structure:** A hairline in Rule inset from every viewport edge (`0.75rem`, `1.5rem` at `sm`, `2.5rem` at `md`). The top and bottom rules are drawn as flex children rather than borders so type can interrupt them: a short stub turns the corner, a masthead label breaks the line, the remainder runs to the far edge. The Commission's name sits on the top rule at the left and the destination application at the right; the office address and `Established 1914` sit on the bottom rule the same way. Below `sm` the name shortens to `MCMEC` and the address to `Edison, NJ` so neither masthead pushes its rule off-screen.
+- **Interior:** One column capped at `max-w-7xl` and centred, holding the heading, a field block bracketed top and bottom by rules in Rule, a reserved status line, and the action row. The bracketing rules span the whole column; the entries occupy its first `28rem`. The blank to their right is a ledger column left empty, not a layout that ran out.
+- **Frontispiece:** The Commission's building sits above the heading as a *plate* — bordered, square-cornered, at the action row's `42rem` measure — not as a backdrop. Nothing is laid over it, it carries no scrim or gradient, and it never shares pixels with the form. That is the whole licence for a photograph here: the arrangement this system rejects by name is the marketing split-screen, a photo owning half the viewport with the form floating on it. The crop is chosen rather than defaulted (`object-position: center 45%`), because `building.webp` puts its roofline in the top quarter and a third of dull winter lawn at the foot, and a centred wide slice lands on the ramp railing with the roof cut off.
+- **Height budget:** Below `1000px` of viewport height the vertical rhythm tightens and the plate scales with the viewport; below `600px` the plate goes entirely. A 1280x800 laptop is the common staff display, not an edge case, and at full padding the primary action landed on the fold there. The picture yields before the form does.
+- **States:** The status line reserves its height whether or not it has a message, so a failed sign-in never moves the button out from under the cursor about to press it again.
+- **Why no card:** A card here would be a container inside a container. The four staff logins were four copies of exactly that, and the frame replaces all of them.
+
+### Record Index
+
+The one index page, and the answer to eleven of them. Every staff list — Notices, Meetings, Documents, Insecticides, Job Postings, Public Requests, Spray Missions, Employees — is composed from `RecordIndex` in `packages/ui`, which owns the whole screen: heading, search and filter bar, table chrome, sorting, pagination, loading, and empty states.
+
+It is deliberately opinionated, because the unopinionated version was tried and produced nine copies of the sortable header (not one of which emitted `aria-sort`), eight copies of the pagination footer, six spellings of the empty state, three incompatible ways to reach a record, and zero loading states.
+
+- **Structure:** page heading, then an optional search-and-filter row carrying a live result count, then one `14px` rounded bordered container holding the table, then the pagination footer — which appears only when there is more than one page.
+- **The identity column is a link.** `renderRowLink` is required, so an index that cannot be operated by keyboard does not compile. Not a whole-row click target and not a stretched overlay: the first is invisible to assistive technology, and the second takes text selection away from every other cell.
+- **Row actions name their record.** The trigger reads "Actions for <record>, <date>", never a bare "Row actions" repeated down the column.
+- **Sorting is announced.** The sorted column carries `aria-sort`, and the table carries the page title as its accessible name.
+- **Loading and empty are different screens.** `state="loading"` renders skeleton rows; an empty register gets an authored empty state, and a search that matches nothing gets a different one that offers to clear itself. A register must never say "there are no records" while it is still syncing.
+- **State lives in the URL.** Sort, direction, page, size, and the search term round-trip through the route's search params, so returning from a record lands where you left. Search input is debounced and holds its own draft: writing each keystroke to the URL loses focus mid-word and turns the back button into an undo log.
+- **Default page size is 25**, because these screens are read at a desk on a large display.
+
+Per-domain choices stay with the route: the columns and their renderers, the `rowActions` builders, which lifecycle actions a row offers, the filter dimensions, and the default sort. The arrangement belongs to the system; the domain belongs to the screen.
+
+### Lifecycle Button
+
+The system's signature control, and the subject of ADR 0001. A lifecycle action — Publish, Archive, Cancel, Close, Resolve, Reschedule — is always a button that fires its own named command. It is never a switch, never a checkbox, and never a status field the user edits and saves.
+
+It defaults to the outline variant so it reads as a deliberate act rather than the form's primary submit, and it relabels when the form beneath it is dirty: "Publish" becomes "Save and Publish," and the caller then sends both intents in one atomic request. A refused lifecycle command rolls the field save back with it, so the refusal copy must say the changes were not saved either.
+
+### Home Hero
+
+The public home page, and the one place in the system where a photograph is half the composition. It is a **split plate**: the Commission's name, the 1914 line and the six destinations occupy the left half on Paper; six photographs of the Commission's own work crossfade on the right.
+
+It looks like the arrangement the Auth Frame rejects by name, and the difference is the whole design. **No content is laid over the photograph.** No scrim, no gradient, no heading floating on the image, no type that has to survive whatever is behind it. The photograph occupies its own half and the words occupy theirs; neither borrows the other's pixels. That is the same licence the auth frame's building plate takes, and it is what lets the heading be Ink on Paper at `13:1` instead of white text negotiating with a sky.
+
+The band is **full-bleed**. Both halves run to their own viewport edge, meeting at a single hairline seam with no gap and no radius; the band closes flush against the navigation above and the footer below, and it grows to fill the fold rather than leaving Paper above the footer on a tall display. A hero that floats in the page is a section; one that touches every edge is a band.
+
+Its gutter is **one symmetric inset, `clamp(1.5rem, 5vw, 7rem)`**, shared by the left half and the record strip so everything in the band starts on the same vertical line. That inset replaced one pinned to the site's `max-w-7xl` measure, and the reason is worth keeping, because the arithmetic is not obvious: the split sits at `50vw`, and `(100vw - 80rem)/2 + 40rem` **is** `50vw`. Pinning content to the 7xl grid therefore gave the left half exactly the left half of a 1280px box — 640px of register inside a 953px column at 1920, and 640 inside 1280 at 2560 — while the photograph filled 100% of its own half at every width. The halves read as visibly unequal, and got more unequal the wider the display.
+
+This is the boundary of the `max-w-7xl` Do, not an exception to it. **A capped measure protects a line of prose; it does not decide a column's share of a split.** Where a full-bleed band divides the viewport, the gutter scales and the reading measure is capped where it belongs — on the standfirst at `46ch`, and on a heading that balances.
+
+- **Structure:** a full-bleed two-column grid at `xl` and above, one column below it. The left half takes a Muted ground so the split is legible edge to edge; the register sits on it in Surface cells, a tonal step lighter. The plate is **last in the DOM and rightmost on a wide screen**, so reading order and tab order are the same order in both layouts — heading, then destinations, then photographs. Below `xl` that also puts the six answers above the imagery, which is the right way round for a resident who arrived with one urgent question.
+- **The split waits for `xl`, not `lg`.** Each half needs roughly `640px` to hold a two-column register or a photograph worth looking at. Splitting a `1024px` display gives them `512px` each, the register drops to one column, and the band grows to about `1200px` tall with a photograph stretched into a slot beside it. Stacked, the photograph is a band across the page whose aspect flattens as the page widens — `4:3`, then `16:9`, then `21:9` — because a `4:3` crop at `1024px` is `768px` of photograph before a visitor reaches anything.
+- **Destinations:** one register, not six cards. A single bordered `14px` container whose cells sit on a `1px` gap over a Rule-coloured ground — the Signal Band's construction, reused. Its two columns are a **container query**, not a viewport one: the register's width is half the page rather than all of it, so a viewport breakpoint puts two columns in a `448px` panel at exactly the width the layout splits. A component that no longer spans the page has to be asked about itself. The first two cells lead at a larger title with a Commission Green arrow that steps `2px` on hover; the remaining four follow at a compact weight. Cells take Pale Green on hover and raise above their neighbours on focus so the `3px` ring is not clipped by a divider. Icons are Commission Green at `1.5rem` on the leads and `1.25rem` on the rest.
+- **Ranking is editorial.** The order is the Commission's, not the navigation's, and the two leads answer the two questions PRODUCT.md says residents arrive with: get something dealt with, and find out whether their street is being treated.
+- **The photographs are silent.** No captions, no overlaid titles, and no click target — a moving link is a hostile one, and a second call to action inside a hero competes with the register that is already there. Each image still carries a real `alt`, because a caption is a visual decision and a description is an accessibility obligation.
+- **Crops are chosen, never defaulted.** Every slide carries its own `object-position`. These are working snapshots rather than art direction: several put a third of the frame in empty sky, and a centred crop of the headquarters cuts the Commission's own road sign mid-word.
+- **The record strip closes the band.** Three cells under the hero, in the register's own construction, carrying the next Spray Mission, the latest Legal Notice with its date, and the next Public Meeting. The page had no date on it at all — on a site whose stated product *is* the record, that leaves a visitor no way to tell a maintained register from an abandoned one, and answers "is my street being treated" with a link instead of an answer. Three rules govern it. **It never says "tonight"**: `spray-periods.ts` rejects that word by name because missions run overnight, so a "tonight" claim is wrong for a large share of them and wrong in the direction that tells a resident they are clear when they are not. **Absence is an answer** — every cell states its empty case as a full sentence ("No spray missions are currently scheduled"), because a blank cell is a bug the visitor has to diagnose. **A cancelled meeting still appears**, carrying the word, because PRODUCT.md keeps it visible and tidying it away would be the deletion that principle forbids. The strip's queries are non-blocking and capped: the front door renders whether or not the api answers, which no other route on this site can currently claim.
+- **The controls sit on the photograph, and bring their own ground.** A plaque in the plate's bottom corner — a card's `14px` corner, a `1px` Rule border, an opaque Paper ground and the system's resting shadow — holding six hairline segments that each select a photograph, and a pause toggle. This is the one place the Flat-By-Default Rule yields, because the plaque genuinely is above the surface behind it rather than pretending to be. Every ratio inside it is measured against a colour we chose rather than against whatever pixel of sky or gravel happens to be underneath: that is the difference between a control **on** a photograph and a control **in** one. The segments are **Muted Ink, not Rule** — they are the only visual those buttons have, so WCAG 1.4.11 asks `3:1` of them against the plaque's Paper, and Rule measures `1.7:1`; Muted Ink reads `5.49`. **There are two contrasts here, not one, and the first version satisfied only the first.** The selected segment fills in Commission Green *over that track*, and green on Muted Ink measures `1.19:1` — so the mark saying which photograph is showing was invisible against the thing it was drawn on, the same failure one layer down. The selected segment's track drops to Pale Green, where the fill reads `3.83:1`, and thickens from `2px` to `4px` so the state is carried by size as well as by colour.
+- **Behavior:** a `6s` dwell, restarted whenever the visitor picks a photograph by hand. `aria-live` is `off` while the plate advances on its own — a screen reader should not be interrupted every six seconds — and `polite` once the visitor has taken control, where the announcement answers something they just did. See The Autoplay Owes A Pause Rule.
+- **Weight:** the plate is one eager `fetchPriority="high"` image and five lazy ones, each `1400px` on the long edge, which is roughly `1.75x` the widest the plate is ever painted.
+
+It lives in `apps/public/src/components/hero-carousel.tsx` and is deliberately app-local. No staff screen has a hero, and the day one does is the day to ask whether it should.
+
+### Signal Band
+
+A band of named signals across the top of a staff screen, each opening its own queue in place. It answers the stat-card grid, where every count was a dead end: the number is not the work, so the count and the queue it counts share one surface and reading that queue costs a keypress rather than a page.
+
+- **Structure:** One `14px` rounded container, one border, both halves inside it. The cells sit on a `1px` gap over a Rule-coloured ground, which draws every divider at once and holds them exact when the cells wrap; the panel sits directly beneath under a top border, opening with its own header row — the queue's name, its condition, and a trailing action slot. Band and panel read as one instrument, not a toolbar above an unrelated list.
+- **Cell:** the count first at `1.5rem` semibold in tabular figures, then the queue's name at `0.875rem` medium, then its condition at `0.75rem` in Muted Ink. A count of zero recedes to muted so the eye lands on the signals holding real work.
+- **Selected:** Commission Green ground with the pale warm-white label — the active-navigation state, the same job the colour does in the staff rail. On the lit cell the two lower lines tint down from the foreground rather than dropping to muted grey, which would fall under `4.5:1` against the green. A small rotated square joins the lit cell to its panel on the single-row band only; once the cells wrap it would point at another cell, and a pointer aimed at the wrong thing is worse than none.
+- **Rest / hover / focus:** Surface ground, Pale Green on hover, and the system's `3px` focus ring with the cell raised above its neighbours so the ring is not clipped by the divider.
+- **Labels:** Sentence case. The Uppercase Is Structural Rule gives uppercase three homes and a control is not one of them.
+- **Urgency:** carried by the caller's left-to-right ordering, by each signal's condition phrase — "open 5+ days," "awaiting triage," "none scheduled" — and by which signal the screen opens on. Never by colour. This is The Status Is A Word Rule applied to a control instead of a badge.
+- **Behavior:** a real WAI-ARIA tablist with roving focus and automatic activation. Left / Right / Home / End move the selection and open the queue as they go. `aria-orientation="horizontal"` is declared and ArrowUp / ArrowDown are deliberately absent: below `lg` the band wraps to a two-dimensional grid where a vertical arrow would move the selection sideways. The panel is itself focusable, because an empty queue offers a keyboard user nothing else to land on.
+- **Responsive:** five columns at `lg`, three at `sm`, two below. Breakpoint-aware filler cells square off the trailing row at each column count for any number of signals, so the grid's own ground never shows through as a dead block. The panel carries a `min-height` floor from `sm` up only — enough that switching to an empty queue on a desktop does not collapse the instrument and drag the page beneath it upward, while narrow widths reflow, which is the point of reflowing.
+- **Motion:** the swap settles rather than cuts — a `200ms` fade and one-step slide keyed to the selected signal, `motion-reduce` honoured. It is the screen's one authored moment; nothing else on it moves.
+- **Copy:** an optional panel label overrides the cell's label in the header, where there is room the cell does not have. A five-across cell fits "Missions tonight"; the header says "Spray Missions tonight," which is the word the rest of the product uses.
+
+It lives in `packages/ui/src/blocks/signal-band.tsx`, so it is available to all four staff frontends, not only the one that uses it today.
+
+### Signal Queue Row
+
+One row vocabulary for every queue a Signal Band opens, whatever domain the record comes from. Left to themselves, five queues across four domains grow five arrangements on one surface, and the eye has to re-learn where the important word sits every time the panel changes.
+
+- **Slots:** four, always in the same places. `primary` — what the record is — leads at `0.875rem` medium and truncates rather than wrapping, so the row stays one line tall. `secondary` — where or who — sits under it at `0.75rem` in Muted Ink. `meta` — when: a date, a time range, an age — is right-aligned in tabular figures so the column holds as the panel changes. `badge` closes the row, carrying the word.
+- **Shape:** a two-column grid (`minmax(0,1fr) auto`), `16px` between the columns, `16px` horizontal and `10px` vertical padding, a Rule bottom border on every row but the last. No radius and no card of its own; the band's container is the only edge.
+- **Row target:** the whole row is a typed route link. Hover takes Pale Green; focus takes the standard `3px` ring and raises the row above its siblings.
+- **Empty:** the queue states its own empty case — an icon, a short title, a line of description — rather than leaving the panel blank. An empty signal is a legitimate answer and should read as one.
+
+It lives in `apps/website-management/src/components/signal-queue.tsx` and is app-local today. If a second staff application grows a queue, promote it to `packages/ui` beside the band rather than copying it.
+
+### Named Rules
+
+**The Confirm Is For The Public Rule.** A row action asks before it fires when it **withdraws or contradicts something the public is already relying on**. Unpublishing a Notice takes a statutorily posted legal notice off the public website; cancelling a Meeting contradicts a calendar entry the Open Public Meetings Act made people plan around. Both name the record before they act and again after. `delete*`, which is less publicly consequential, always had a danger zone.
+
+Publishing is deliberately **not** guarded, and the rule is worded to say so. It is the forward act these screens exist for, performed routinely by a small expert team (PRODUCT.md's operating profile), and it is immediately reversible by the very action that *is* guarded. An earlier wording — "does a stranger see the result" — would have caught publishing too, and a confirmation on the primary workflow is friction rather than care. Actions whose result the user can watch land on their own screen need no ceremony either.
+
+**The Lifecycle Is A Button Rule.** State transitions are performed, not set. If a design shows a record's state as a toggle, a select, or a checkbox, the design is wrong regardless of how it looks — see `docs/adr/0001-lifecycle-actions-are-buttons.md`.
+
+**The Copy Confirms Itself Rule.** A copy button confirms by **icon swap** — the copy glyph becomes a check and the accessible name becomes "Copied" — and **speaks only when it fails**, as an error toast. The two paths are deliberately asymmetric. A successful copy is an action the user watched land on their own screen, so it needs no ceremony (the same reasoning that leaves publishing unguarded above). A failed one is the opposite case: the user now believes the clipboard holds something it does not, and the next thing they do is paste. That belief has to be corrected out loud.
+
+One button copies **one destination field** — no label prefix, no em-dash a reading layout added, no siblings joined because they happened to share a row. Where the layout composes several atoms into one line for reading, split the line rather than teaching the button to un-compose it, so a copy never silently corrects what the reader saw. The unit is the field the value is going *into*, not the element it is displayed as: a group of reported conditions is one such field the way a message body is, so it takes one button rather than one per badge, and it copies the conditions that were reported. Where the value is absent the button stays, disabled, per the Buttons section's disabled rule. `CopyButton` in `packages/ui/src/blocks/` is the one implementation.
+
+The public site's share-link card still announces its copy with a success toast and is deliberately **not** migrated. It copies a URL for a visitor to send somewhere else, not a field for a staff member to re-key, and it carries the WCAG 2.1 AA obligation and the strict CSP that the staff screens do not — a change worth reviewing on its own terms rather than folding into this one.
+
+**The Count Opens Its Queue Rule.** A number on the **work half** of a staff dashboard opens the records it counts, in place. A count that only links somewhere else is a statistic, and a statistic is not the work — see Signal Band.
+
+One deliberate exemption: a **confirming register**, like the dashboard's "What the public sees right now" strip. Its numbers are facts about the published record rather than queues of work — nobody triages "12 Documents published" — so they answer a question instead of starting a task, and a plain link to the index is the honest affordance. The exemption is narrow: it holds only where the register reports the *public's* state and repeats nothing the work half already shows. A count of outstanding work, anywhere on the screen, opens its queue.
+
+## Do's and Don'ts
+
+### Do:
+
+- **Do** keep every neutral on hue 150 at low chroma so surfaces read as one warm material.
+- **Do** let borders in Rule (`oklch(0.8 0.02 150)`) carry structure. Reach for a border before a shadow, every time.
+- **Do** spell out record state as a word inside the badge, with color as reinforcement only.
+- **Do** compose staff screens from `mcmec-layout` and `packages/ui`. A pattern solved once is solved for all five frontends and every one added later.
+- **Do** use the `CONTEXT.md` vocabulary in visible copy — "Spray Mission," "Public Request," "Notice" — regardless of what a legacy route path says.
+- **Do** cap reading measure at 65–75ch on the public site and keep `max-w-7xl` as the outer bound everywhere.
+- **Do** preserve the opaque `3px` focus ring on every interactive element, inverted to the pale foreground on Commission Green. It is the only focus treatment in the system, and it must be measured against the ground it lands on.
+- **Do** keep uppercase and letterspacing structural — the public footer's identity block and column headings, and the staff rail's group labels, nothing else.
+- **Do** cap a content region at `max-w-7xl` even inside a full-bleed frame. The frame may reach the viewport edge — it is the edge of the page, not content — but a rule drawn 2500px across a wide office display is a different design, not a longer one. The exception is a band that **divides** the viewport: there the gutter scales symmetrically and the measure is capped on the text itself, because a fixed inset against a `50vw` split makes the two halves visibly unequal — see Home Hero.
+- **Do** decide staff layouts at desktop widths, then confirm nothing is unreachable or clipped at `375px`. Survivable, not optimised.
+
+### Don't:
+
+- **Don't** add a second type family. Roboto sets everything until the system says otherwise.
+- **Don't** consume `--font-serif` or `--font-mono` while Lora and Fira Code remain unloaded.
+- **Don't** put a shadow on a resting surface. Cards, tables, panels, and inputs are flat.
+- **Don't** use Commission Green decoratively. It marks the agency, the primary action, and the active state — nothing else.
+- **Don't** let `chart-1`–`chart-5` out of the Weekly Mosquito Activity chart. They are a series palette, not a UI palette.
+- **Don't** plot a series in a colour that has not been measured against the ground it sits on. A chart line is a graphical object under WCAG 1.4.11 and needs 3:1, which is why the series palette is no longer pastel.
+- **Don't** use a pill radius for anything that isn't a status badge.
+- **Don't** render a lifecycle action as a switch, checkbox, or status dropdown.
+- **Don't** hide a disabled action. Show it disabled so staff can see the action exists.
+- **Don't** let a staff screen scroll horizontally at the page level, or strand a primary action outside a narrow viewport. Wide content scrolls inside its own container; the rail becomes a sheet rather than losing destinations.
+- **Don't** spend design effort on phone-optimised staff layouts — thumb-zone bars, mobile-only flows. The floor is that narrow works, not that narrow is the target.
+- **Don't** bury, paginate, collapse, or lazily defer a statutorily required posting — a legal Notice within its seven-day Retention Period, a meeting agenda, or a cancelled meeting. Layout may never obstruct the public record.
+- **Don't** put a card on the auth screens. They were four copies of a centered card and are now one frame; a card inside that frame is a container inside a container.
+- **Don't** animate content. Motion belongs to rules being drawn — see The Motion Is A Rule Being Drawn Rule. The home hero's crossfade is the single stated exception, and it is timed by a drawn rule.
+- **Don't** reach for gradient meshes, glassmorphism, or marketing-hero patterns. Equally, don't accept clip-art seals, unstyled link lists, or PDFs standing in for an interface.
+- **Don't** lay type, a scrim, or a gradient over a photograph. The system has two photographs in it — the auth frame's plate and the home hero's — and no content sits on either. A photograph is a plate beside the content, never a ground beneath it. A **control** may sit on one, but only on an opaque plaque of its own, so its contrast is measured against a colour the system chose.

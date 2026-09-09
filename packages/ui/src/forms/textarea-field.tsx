@@ -18,6 +18,7 @@ export function TextAreaField({
 		>
 			<TextAreaInput
 				aria-invalid={!field.state.meta.isValid}
+				aria-required={formFieldProps.required}
 				id={field.name}
 				name={field.name}
 				onBlur={field.handleBlur}

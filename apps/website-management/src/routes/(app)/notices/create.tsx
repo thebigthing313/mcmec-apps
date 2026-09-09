@@ -1,24 +1,30 @@
-import type { NoticesRowType } from "@mcmec/supabase/db/notices";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute } from "@tanstack/react-router";
-import { NoticeForm } from "@/src/components/notice-form";
-import { notices, noticeTypes } from "@/src/lib/db";
-import { toastOnError } from "@/src/lib/toast-on-error";
+import {
+	NoticeForm,
+	type NoticeFormValues,
+} from "@/src/components/notice-form";
+import { intents, notices, noticeTypes } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/notices/create")({
 	component: RouteComponent,
 	loader: () => {
-		return { crumb: "Create New Notice" };
+		return { crumb: "Create" };
 	},
 });
 
 function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const { data: categories } = useLiveQuery((q) =>
-		q.from({ notice_type: noticeTypes }).select(({ notice_type }) => ({
-			id: notice_type.id,
-			name: notice_type.name,
-		})),
+		q
+			.from({ notice_type: noticeTypes })
+			.orderBy(({ notice_type }) => notice_type.name)
+			.select(({ notice_type }) => ({
+				id: notice_type.id,
+				name: notice_type.name,
+			})),
 	);
 
 	const items = categories.map((category) => ({
@@ -26,29 +32,41 @@ function RouteComponent() {
 		value: category.id,
 	}));
 
-	const handleSubmit = async (value: NoticesRowType) => {
-		const tx = notices.insert(value);
+	const handleSubmit = async (value: NoticeFormValues) => {
+		const now = new Date();
+		// The id we mint here is the id the row will have: the envelope carries it and the
+		// handler honours it, so the optimistic row and the committed row share a key — which
+		// is also what lets this navigate straight to the detail route.
+		const id = crypto.randomUUID();
+		const tx = notices.insert(
+			{
+				...value,
+				created_at: now,
+				id,
+				is_archived: false,
+				updated_at: now,
+			},
+			intents("website.createNotice"),
+		);
 		toastOnError(tx, "Failed to create notice.");
-		navigate({ to: "/notices" });
+		navigate({ params: { noticeId: id }, to: "/notices/$noticeId" });
 	};
 
 	return (
-		<NoticeForm
-			categories={items}
-			defaultValues={{
-				content: "",
-				created_at: new Date(),
-				id: crypto.randomUUID(),
-				is_archived: false,
-				is_published: true,
-				notice_date: new Date(),
-				notice_type_id: "",
-				title: "",
-				updated_at: new Date(),
-			}}
-			formLabel="Create New Notice"
-			onSubmit={handleSubmit}
-			submitLabel="Create"
-		/>
+		<div>
+			<PageHeader title="Create Notice" />
+			<NoticeForm
+				categories={items}
+				defaultValues={{
+					content: "",
+					notice_date: new Date(),
+					notice_type_id: "",
+					title: "",
+				}}
+				mode="create"
+				onSubmit={handleSubmit}
+				submitLabel="Create as Draft"
+			/>
+		</div>
 	);
 }

@@ -1,39 +1,24 @@
 import { formatDateShort } from "@mcmec/lib/functions/date-fns";
-import {
-	type RequestStatus,
-	RequestStatusEnum,
-} from "@mcmec/supabase/db/public-requests";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@mcmec/ui/components/alert-dialog";
+import type { RequestStatus } from "@mcmec/schemas/db/public-requests";
+import { CopyButton } from "@mcmec/ui/blocks/copy-button";
+import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
+import { LifecycleButton } from "@mcmec/ui/blocks/lifecycle-button";
+import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { Badge } from "@mcmec/ui/components/badge";
 import { Button } from "@mcmec/ui/components/button";
-import { Label } from "@mcmec/ui/components/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@mcmec/ui/components/select";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, RotateCcw } from "lucide-react";
+import { intents } from "@/src/lib/db";
+import { runLifecycle } from "@/src/lib/lifecycle";
 import {
+	displayStatus,
 	humanizeDetailKey,
 	REQUEST_STATUS_LABELS,
 	REQUEST_STATUS_VARIANTS,
 	requestTypeLabel,
 } from "@/src/lib/public-requests";
-import { toastOnError } from "@/src/lib/toast-on-error";
 
 export const Route = createFileRoute("/(app)/public-requests/$requestId")({
 	component: RouteComponent,
@@ -56,11 +41,22 @@ function DetailsPanel({ details }: { details: unknown }) {
 		([, v]) => typeof v !== "boolean" && v !== null && v !== "",
 	);
 
+	// The whole group is one destination field, the way a message body is — a form on the other
+	// system asks "what was reported," not one checkbox per flag. So the group gets one button
+	// and the badges get none; a button per badge would be eight clicks to fill one box.
+	const reported = flags
+		.filter(([, value]) => value)
+		.map(([key]) => humanizeDetailKey(key))
+		.join(", ");
+
 	return (
 		<div className="space-y-4">
 			{flags.length > 0 && (
 				<div className="rounded-lg border p-4">
-					<h3 className="mb-2 font-semibold">Reported</h3>
+					<div className="mb-2 flex items-center gap-1">
+						<h3 className="font-semibold">Reported</h3>
+						<CopyButton label="reported details" text={reported} />
+					</div>
 					<div className="flex flex-wrap gap-2">
 						{flags.map(([key, value]) => (
 							<Badge key={key} variant={value ? "default" : "outline"}>
@@ -74,7 +70,13 @@ function DetailsPanel({ details }: { details: unknown }) {
 
 			{values.map(([key, value]) => (
 				<div className="rounded-lg border p-4" key={key}>
-					<h3 className="mb-2 font-semibold">{humanizeDetailKey(key)}</h3>
+					<div className="mb-2 flex items-center gap-1">
+						<h3 className="font-semibold">{humanizeDetailKey(key)}</h3>
+						<CopyButton
+							label={humanizeDetailKey(key).toLowerCase()}
+							text={String(value)}
+						/>
+					</div>
 					<p className="whitespace-pre-wrap">{String(value)}</p>
 				</div>
 			))}
@@ -111,122 +113,143 @@ function RouteComponent() {
 
 	const status = request.status as RequestStatus;
 
-	const handleStatusChange = (next: string) => {
-		const parsed = RequestStatusEnum.safeParse(next);
-		if (!parsed.success) return;
-		const tx = db.publicRequests.update(requestId, (draft) => {
-			draft.status = parsed.data;
-		});
-		toastOnError(tx, "Failed to update the request status.");
-	};
+	// One button per legal transition, not a dropdown of states (ADR 0001). The dropdown this
+	// replaces offered `in_progress` as a third equal choice, which `CONTEXT.md` rejects — a
+	// request is either New or Resolved. So no command mints it, and the only thing that can be
+	// done to a request that already holds it is resolve it.
+	//
+	// No form under this, so no `isDirty` and no relabel: a detail-view lifecycle button always
+	// sends exactly one intent. The page stays put — the badge above is live, so the result of
+	// the click shows where the click was.
+	const triage =
+		status === "resolved"
+			? {
+					icon: <RotateCcw />,
+					label: "Reopen Request",
+					onAct: () =>
+						runLifecycle(db.publicRequests, requestId, {
+							apply: (draft) => {
+								draft.status = "new";
+							},
+							command: "website.reopenRequest",
+							failure: "Failed to reopen the request.",
+						}),
+				}
+			: {
+					icon: <CheckCircle2 />,
+					label: "Resolve Request",
+					onAct: () =>
+						runLifecycle(db.publicRequests, requestId, {
+							apply: (draft) => {
+								draft.status = "resolved";
+							},
+							command: "website.resolveRequest",
+							failure: "Failed to resolve the request.",
+						}),
+				};
 
+	// Delete is the one action whose placement is not free — detail page only, danger zone,
+	// behind a confirm (ADR 0001). It leaves the page because the record it was showing is gone.
 	const handleDelete = () => {
-		const tx = db.publicRequests.delete(requestId);
+		const tx = db.publicRequests.delete(
+			requestId,
+			intents("website.deleteRequest"),
+		);
 		toastOnError(tx, "Failed to delete the request.");
 		navigate({ to: "/public-requests" });
 	};
 
 	return (
-		<div className="max-w-2xl space-y-6">
-			<nav className="flex items-center justify-between rounded-lg border bg-card p-4">
+		<RecordDetail
+			actions={
+				<LifecycleButton
+					icon={triage.icon}
+					label={triage.label}
+					onAct={triage.onAct}
+					size="sm"
+				/>
+			}
+			backLink={
 				<Button asChild size="sm" variant="outline">
-					<Link to="/public-requests">
+					<Link search={true} to="/public-requests">
 						<ArrowLeft />
-						Back to Requests
+						Back to Public Requests
 					</Link>
 				</Button>
-			</nav>
-
-			<article className="space-y-4">
-				<div className="flex items-baseline gap-2">
-					<h2 className="font-bold text-2xl">
-						{requestTypeLabel(request.request_type)}
-					</h2>
-					<Badge variant={REQUEST_STATUS_VARIANTS[status]}>
-						{REQUEST_STATUS_LABELS[status]}
-					</Badge>
-				</div>
-
-				<div className="flex max-w-xs flex-col gap-2">
-					<Label htmlFor="status">Status</Label>
-					<Select onValueChange={handleStatusChange} value={status}>
-						<SelectTrigger id="status">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{Object.entries(REQUEST_STATUS_LABELS).map(([value, label]) => (
-								<SelectItem key={value} value={value}>
-									{label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-
-				<div className="grid grid-cols-2 gap-4 rounded-lg border p-4">
-					<div>
-						<p className="text-muted-foreground text-sm">Name</p>
-						<p className="font-medium">{request.name}</p>
-					</div>
-					<div>
-						<p className="text-muted-foreground text-sm">Phone</p>
-						<p className="font-medium">{request.phone || "—"}</p>
-					</div>
-					<div>
-						<p className="text-muted-foreground text-sm">Email</p>
-						<p className="font-medium">{request.email || "—"}</p>
-					</div>
-					<div>
-						<p className="text-muted-foreground text-sm">Submitted</p>
-						<p className="font-medium">{formatDateShort(request.created_at)}</p>
-					</div>
-					{request.address_line_1 && (
-						<div className="col-span-2">
-							<p className="text-muted-foreground text-sm">Address</p>
-							<p className="font-medium">
-								{request.address_line_1}
-								{request.address_line_2 && <>, {request.address_line_2}</>}
-							</p>
-						</div>
-					)}
-					{request.zip_code_id && (
-						<div>
-							<p className="text-muted-foreground text-sm">Zip Code</p>
-							<p className="font-medium">
-								{zipCode
-									? `${zipCode.code} — ${zipCode.city}, ${zipCode.state}`
-									: "—"}
-							</p>
-						</div>
-					)}
-				</div>
-
-				<DetailsPanel details={request.details} />
-
-				<AlertDialog>
-					<AlertDialogTrigger asChild>
-						<Button variant="destructive">
-							<Trash2 />
-							Delete Request
-						</Button>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Delete this request?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This permanently removes the submission, including the
-								submitter's contact details. This cannot be undone.
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={handleDelete}>
-								Delete
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</article>
-		</div>
+			}
+			badge={
+				<Badge variant={REQUEST_STATUS_VARIANTS[displayStatus(status)]}>
+					{REQUEST_STATUS_LABELS[displayStatus(status)]}
+				</Badge>
+			}
+			danger={
+				<DangerZoneCard
+					description={`This permanently removes ${request.name}'s ${requestTypeLabel(request.request_type).toLowerCase()} request, including their contact details. This cannot be undone.`}
+					label="Delete Request"
+					onConfirm={handleDelete}
+					recordName={request.name}
+				/>
+			}
+			// One row is one copyable value. The address used to join its two lines with ", " and
+			// the zip code read "<code> — <city>, <state>"; both are composed for reading and wrong
+			// for a clipboard, and a button that quietly copied something other than the words
+			// beside it would be worse than no button. Splitting them means what is displayed and
+			// what is copied are the same string. "Submitted" carries no button — a formatted date
+			// is not re-keyed into anything.
+			fields={[
+				{
+					copyText: request.phone ?? "",
+					label: "Phone",
+					value: request.phone || "Not given",
+				},
+				{
+					copyText: request.email ?? "",
+					label: "Email",
+					value: request.email || "Not given",
+				},
+				{ label: "Submitted", value: formatDateShort(request.created_at) },
+				...(request.address_line_1
+					? [
+							{
+								copyText: request.address_line_1,
+								label: "Address line 1",
+								value: request.address_line_1,
+							},
+							{
+								copyText: request.address_line_2 ?? "",
+								label: "Address line 2",
+								value: request.address_line_2 || "Not given",
+							},
+						]
+					: []),
+				...(request.zip_code_id
+					? [
+							{
+								copyText: zipCode?.code ?? "",
+								label: "Zip code",
+								value: zipCode?.code ?? "Unknown",
+							},
+							{
+								copyText: zipCode?.city ?? "",
+								label: "City",
+								value: zipCode?.city ?? "Unknown",
+							},
+							{
+								copyText: zipCode?.state ?? "",
+								label: "State",
+								value: zipCode?.state ?? "Unknown",
+							},
+						]
+					: []),
+			]}
+			// The person leads, not the category. The dashboard's aging queue already names the
+			// resident and puts their address beneath — and then the page it links to titled itself
+			// "Water Management" and demoted the person to a grey sub-label.
+			subtitle={requestTypeLabel(request.request_type)}
+			title={request.name}
+			titleCopyText={request.name}
+		>
+			<DetailsPanel details={request.details} />
+		</RecordDetail>
 	);
 }
