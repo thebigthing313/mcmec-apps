@@ -149,20 +149,35 @@ const furtherDestinations: Destination[] = [
 function RouteComponent() {
 	return (
 		/*
-		 * `--bleed` is the inset that keeps the left half's *content* on the site's `max-w-7xl`
-		 * measure while its *ground* runs to the viewport edge. DESIGN.md's rule survives the
-		 * full-bleed band intact: the frame reaches the edge because it is the edge of the page,
-		 * and the reading column does not grow with the display.
+		 * `--band-inset` is one symmetric gutter, shared by the left half and the record strip
+		 * below it, so everything in the band starts on the same vertical line.
+		 *
+		 * It replaces an inset pinned to the site's `max-w-7xl` measure, which was wrong here
+		 * for a reason worth keeping: the split sits at `50vw`, and `(100vw - 80rem)/2 + 40rem`
+		 * *is* `50vw`. Pinning content to the 7xl grid therefore gave the left half exactly the
+		 * left half of a 1280px box — 640px of register inside a 953px column at 1920, and 640
+		 * inside 1280 at 2560 — while the photograph filled 100% of its own half at every width.
+		 * The halves were visibly unequal, and got more unequal the wider the display.
+		 *
+		 * A gutter that scales with the viewport keeps both halves full and both edges even.
+		 * The reading measure is still capped, just not by this: the heading balances and the
+		 * standfirst holds `46ch`, which is where the "don't grow a column with the display"
+		 * rule actually belongs.
 		 *
 		 * `-my-8` cancels the shell's `main` margin so the band meets the navigation above it
 		 * and the footer below with no Paper gap. A hero that floats in the page is a section;
 		 * one that touches both edges is a band.
 		 */
 		<section
-			className="-my-8 w-full"
-			style={
-				{ "--bleed": "max(1.5rem, calc((100vw - 80rem) / 2))" } as CSSProperties
-			}
+			/*
+			 * The band owns the fold. `main` is `flex-1` inside a `min-h-screen` column, so on a
+			 * tall display it stretched and the band did not — leaving a strip of dead Paper
+			 * between the record cells and the footer, on the one page that is supposed to run
+			 * edge to edge. A column with the halves growing puts that height into the
+			 * photograph instead. `4rem` is the sticky bar's own height.
+			 */
+			className="-my-8 flex w-full flex-col xl:min-h-[calc(100svh-4rem)]"
+			style={{ "--band-inset": "clamp(1.5rem, 5vw, 7rem)" } as CSSProperties}
 		>
 			<script
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD structured data
@@ -185,8 +200,8 @@ function RouteComponent() {
 			 * then the photographs. Below `lg` that also puts the six answers above the imagery,
 			 * which is the right way round for someone who arrived with one urgent question.
 			 */}
-			<div className="grid items-stretch xl:grid-cols-2">
-				<div className="flex flex-col justify-center gap-8 border-b bg-muted px-6 py-10 md:px-12 xl:border-r xl:border-b-0 xl:py-16 xl:pr-12 xl:pl-[var(--bleed)]">
+			<div className="grid flex-1 items-stretch xl:grid-cols-2">
+				<div className="flex flex-col justify-center gap-8 border-b bg-muted px-[var(--band-inset)] py-10 xl:border-r xl:border-b-0 xl:py-16">
 					<div>
 						<h1 className="text-balance font-bold text-[clamp(1.75rem,3.4vw,2.5rem)] text-foreground leading-[1.12] tracking-[-0.025em]">
 							Middlesex County Mosquito Extermination Commission

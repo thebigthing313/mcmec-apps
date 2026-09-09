@@ -99,11 +99,21 @@ export function CurrentRecord() {
 		: undefined;
 
 	return (
-		<section aria-labelledby="current-record-heading" className="border-t">
+		/*
+		 * `--band-inset` is the hero's own gutter, and it sits on the section rather than on
+		 * the grid: the grid's ground is the Rule colour that draws the dividers, so padding
+		 * the grid would paint that colour into the gutter. Carried here, the strip's outer
+		 * cell edges land on the same line the register panel's border takes in the half
+		 * above, and the band reads as one composition instead of two left margins.
+		 */
+		<section
+			aria-labelledby="current-record-heading"
+			className="border-t px-[var(--band-inset)]"
+		>
 			<h2 className="sr-only" id="current-record-heading">
 				What the Commission has published
 			</h2>
-			<div className="mx-auto grid max-w-7xl gap-px bg-border md:grid-cols-3">
+			<div className="grid gap-px bg-border md:grid-cols-3">
 				<Cell
 					heading="Next spray mission"
 					to="/mosquito-control/spray-schedule"
