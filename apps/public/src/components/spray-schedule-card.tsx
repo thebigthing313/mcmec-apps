@@ -9,7 +9,15 @@ import {
 } from "@mcmec/ui/components/card";
 import { ExternalLink, MapPin } from "lucide-react";
 
+/*
+ * Every mission on this schedule is applied the same way, so the method is a constant rather
+ * than a stored field. If the Commission ever sprays by another method, this moves to the
+ * mission record — the card already reads it as one line either way.
+ */
+const SPRAY_METHOD = "Ultralow Volume Spraying by Truck";
+
 interface SprayScheduleCardProps {
+	insecticideActiveIngredient: string;
 	missionDate: Date;
 	startTime: string;
 	endTime: string;
@@ -55,6 +63,7 @@ function formatTimeDisplay(time: string): string {
 }
 
 export function SprayScheduleCard({
+	insecticideActiveIngredient,
 	missionDate,
 	startTime,
 	endTime,
@@ -101,7 +110,12 @@ export function SprayScheduleCard({
 							Insecticide
 						</dt>
 						<dd className="flex flex-wrap items-center gap-x-3 gap-y-1">
-							<span>{insecticideName}</span>
+							<span>
+								{insecticideName}
+								{insecticideActiveIngredient
+									? ` (${insecticideActiveIngredient})`
+									: ""}
+							</span>
 							{insecticideLabelUrl && (
 								<a
 									className="inline-flex items-center gap-1 text-primary text-xs underline hover:no-underline"
@@ -125,6 +139,12 @@ export function SprayScheduleCard({
 								</a>
 							)}
 						</dd>
+					</div>
+					<div className="flex items-start gap-2">
+						<dt className="min-w-32 font-semibold text-muted-foreground">
+							Method
+						</dt>
+						<dd>{SPRAY_METHOD}</dd>
 					</div>
 					{rainDate && (
 						<div className="flex items-start gap-2">

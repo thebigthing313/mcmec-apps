@@ -159,6 +159,7 @@ function SprayMissionGroup({
 					<SprayScheduleCard
 						areaDescription={schedule.area_description}
 						endTime={schedule.end_time}
+						insecticideActiveIngredient={schedule.insecticideActiveIngredient}
 						insecticideLabelUrl={schedule.insecticideLabelUrl}
 						insecticideMsdsUrl={schedule.insecticideMsdsUrl}
 						insecticideName={schedule.insecticideName}
