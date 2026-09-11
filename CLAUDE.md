@@ -195,6 +195,15 @@ unconsumed changeset is still in `.changeset/`, because merging one would promot
 silently discarding its changelog. (The check is the mirror image on the other side — a PR into
 `develop` fails if changed packages *lack* a changeset.)
 
+**Merge the promotion PR with a merge commit, not a squash.** Feature PRs into `develop` are
+squashed as usual, but squashing `develop` into `main` writes a commit that `develop` never
+sees, so the two branches stop sharing a recent ancestor. The next release PR then three-way
+merges against a stale base and reports the version and CHANGELOG files as *conflicting*,
+even though the content is identical. A merge commit keeps `develop`'s head as a parent of
+`main`, so the base stays current. If it has already happened, recover with
+`git merge origin/main -X ours` on `develop` — verify `git diff origin/develop` is empty —
+and push.
+
 The version commit has to land on `develop` rather than being added to the PR by a bot: the
 `main` ruleset has no bypass actors, so nothing can push to it directly, and the PR's head branch
 *is* `develop`. Pushing straight to `develop` works because that ruleset grants the Admin role a
