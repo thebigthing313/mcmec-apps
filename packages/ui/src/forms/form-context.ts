@@ -8,6 +8,7 @@ import { FormWrapper } from "./form-wrapper";
 import { MultiComboboxField } from "./multi-combobox-field";
 import { PasswordField } from "./password-field";
 import { PhoneField } from "./phone-field";
+import { RadioGroupField } from "./radio-group-field";
 import { ResetFormButton } from "./reset-form-button";
 import { SubmitFormButton } from "./submit-form-button";
 import { SwitchField } from "./switch-field";
@@ -28,6 +29,7 @@ export const { useAppForm, withFieldGroup } = createFormHook({
 		MultiComboboxField,
 		PasswordField,
 		PhoneField,
+		RadioGroupField,
 		SwitchField,
 		TextAreaField,
 		TextField,

@@ -287,12 +287,23 @@ function RouteComponent() {
 						</FieldSet>
 						<form.AppField name="is_accessible">
 							{(field) => (
-								<field.SwitchField
-									description="Inspections run 7am–3:30pm and you do not need to be home for one. May an inspector enter your yard while nobody is home? Turn this on only if you want to allow that — either answer is fine, and choosing no does not delay your request."
+								<field.RadioGroupField
+									description="Inspections run 7am–3:30pm and you do not need to be home for one. May an inspector enter your yard while nobody is home?"
 									label="Access to Premises"
-									labelWhenFalse="No — an inspector will contact you to arrange a time. Choose this if a gate is locked or a pet is outside."
-									labelWhenTrue="Yes — an inspector may enter the property while nobody is home."
-									orientation="vertical"
+									options={[
+										{
+											value: true,
+											label: "Yes",
+											description:
+												"An inspector may enter the property while nobody is home.",
+										},
+										{
+											value: false,
+											label: "No",
+											description:
+												"An inspector will contact you to arrange a time. Choose this if a gate is locked or a pet is outside.",
+										},
+									]}
 								/>
 							)}
 						</form.AppField>
