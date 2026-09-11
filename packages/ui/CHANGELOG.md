@@ -1,5 +1,11 @@
 # @mcmec/ui
 
+## 1.7.1
+
+### Patch Changes
+
+- 59c86a6: Ask "Access to Premises" on the service request form as a Yes/No choice instead of a toggle. Residents were unsure which way the switch meant yes; two labelled options make the answer explicit. Adds a `RadioGroupField` to the shared form fields.
+
 ## 1.7.0
 
 ### Minor Changes
