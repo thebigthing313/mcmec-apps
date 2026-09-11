@@ -205,6 +205,10 @@ function buildPrBody(releases, plan) {
 		"> [!IMPORTANT]",
 		"> Merging this deploys production. Check the Railway `api` service and the Vercel projects",
 		"> after the merge — see `docs/railway-deployment.md`.",
+		">",
+		"> **Use a merge commit, not squash.** Squashing leaves `main` with a commit `develop` never",
+		"> sees, and the next release PR shows the version files as conflicting (see CLAUDE.md,",
+		'> "Releasing").',
 	].join("\n");
 }
 
