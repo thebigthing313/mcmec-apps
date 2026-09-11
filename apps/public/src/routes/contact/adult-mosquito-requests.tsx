@@ -73,9 +73,10 @@ function RouteComponent() {
 		address_line_2: null,
 		email: null,
 		full_name: "",
-		// Consent to enter a private yard while nobody is home is never a default. The
-		// resident turns this on deliberately or an inspector calls ahead instead.
-		is_accessible: false,
+		// Defaults to yes: most residents want the inspection done without having to be
+		// home, and both answers sit side by side as labelled options so switching to no
+		// is one click.
+		is_accessible: true,
 		is_daytime: false,
 		is_dusk_dawn: false,
 		is_front_of_property: false,
