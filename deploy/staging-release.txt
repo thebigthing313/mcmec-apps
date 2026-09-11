@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-09T19:56:41.822Z
-commit: 3a51dd6 fix: header leading (#227)
+released: 2026-09-11T15:29:32.353Z
+commit: 59c86a6 fix(public): ask Access to Premises as a Yes/No choice, not a toggle (#229)
