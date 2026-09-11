@@ -73,9 +73,10 @@ function RouteComponent() {
 		address_line_2: null,
 		email: null,
 		full_name: "",
-		// Consent to enter a private yard while nobody is home is never a default. The
-		// resident turns this on deliberately or an inspector calls ahead instead.
-		is_accessible: false,
+		// Defaults to yes: most residents want the inspection done without having to be
+		// home, and both answers sit side by side as labelled options so switching to no
+		// is one click.
+		is_accessible: true,
 		is_daytime: false,
 		is_dusk_dawn: false,
 		is_front_of_property: false,
@@ -287,12 +288,23 @@ function RouteComponent() {
 						</FieldSet>
 						<form.AppField name="is_accessible">
 							{(field) => (
-								<field.SwitchField
-									description="Inspections run 7am–3:30pm and you do not need to be home for one. May an inspector enter your yard while nobody is home? Turn this on only if you want to allow that — either answer is fine, and choosing no does not delay your request."
+								<field.RadioGroupField
+									description="Inspections run 7am–3:30pm and you do not need to be home for one. May an inspector enter your yard while nobody is home?"
 									label="Access to Premises"
-									labelWhenFalse="No — an inspector will contact you to arrange a time. Choose this if a gate is locked or a pet is outside."
-									labelWhenTrue="Yes — an inspector may enter the property while nobody is home."
-									orientation="vertical"
+									options={[
+										{
+											value: true,
+											label: "Yes",
+											description:
+												"An inspector may enter the property while nobody is home.",
+										},
+										{
+											value: false,
+											label: "No",
+											description:
+												"An inspector will contact you to arrange a time. Choose this if a gate is locked or a pet is outside.",
+										},
+									]}
 								/>
 							)}
 						</form.AppField>
