@@ -57,7 +57,7 @@ claim.
 
 - The work is **seasonal**. Spray Missions, Weekly Mosquito Activity, and public attention all
   concentrate in mosquito season; the same screens sit near-idle the rest of the year.
-- Public content flows one way: staff author in `website-management`, and `apps/public` renders
+- Public content flows one way: staff author in Website Management, and `apps/public` renders
   what was Published. There is no second authoring path.
 - The Commission's four domains — Website, Employees, Users, Reference — are bounded contexts
   named for the work, not for the app the work happens in. `CONTEXT.md` is the ubiquitous
@@ -76,7 +76,7 @@ catalogue, Weekly Mosquito Activity, mosquito source checklist and municipal pac
 and mission pages, Job Postings, and four kinds of Public Request intake (general inquiry, adult
 mosquito nuisance, water management, mosquitofish) protected by Cloudflare Turnstile.
 
-Website Management (`apps/website-management`): authoring and lifecycle for Notices and their
+Website Management (`central`'s `/website-management`): authoring and lifecycle for Notices and their
 Categories, Meetings, Documents and their Categories, Insecticides, Spray Missions, Job Postings,
 Weekly Mosquito Activity season loads, and Public Request triage.
 

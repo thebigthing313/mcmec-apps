@@ -6,17 +6,17 @@ and the `vercel.json` files and the `scripts/vercel-ignore.sh` build gate have b
 
 ## Service topology
 
-Six services per environment, in one Railway project (`mcmec`):
+Five services per environment, in one Railway project (`mcmec`):
 
 | Service | Kind | Serves | Sleeps when idle |
 | --- | --- | --- | --- |
 | `Postgres` | Docker image | database | no |
 | `electric` | Docker image | ElectricSQL sync | no |
 | `api` | git → repo | Hono API + shape proxy | no |
-| `central`, `website-management` | git → repo | static SPA (`dist/`) | yes |
+| `central` | git → repo | static SPA (`dist/`) | yes |
 | `public` | git → repo | SSR (Nitro) | **no** |
 
-The staff apps are **Serverless (app sleep)** — they are low-traffic internal tools, and
+The staff app is **Serverless (app sleep)** — it is a low-traffic internal tool, and
 Railway zeroes idle cost regardless of how many services exist. `public` stays always-on so
 search engines never hit a cold boot.
 
@@ -29,10 +29,10 @@ served to the internet; privacy lives in the Better Auth session and permission 
 
 > [!NOTE]
 > `hr` and `admin` are folded into `central` (`/hr`, `/admin`) and were deleted from the repo in
-> #248. Their staging services must be deleted no later than the next `pnpm stage`, or those
-> builds fail. **Production still runs its `hr` and `admin` services**
-> until the consolidation release (#254), which deletes them with their custom domains, DNS
-> records and `TRUSTED_ORIGINS` entries.
+> #248; `website-management` followed (`/website-management`) in #250. Their staging services
+> must be deleted no later than the next `pnpm stage`, or those builds fail. **Production still
+> runs its `hr`, `admin` and `website-management` services** until the consolidation release
+> (#254), which deletes them with their custom domains, DNS records and `TRUSTED_ORIGINS` entries.
 
 ## Branch mapping
 
@@ -73,7 +73,7 @@ pnpm stage              # or: pnpm stage --dry-run
 ```
 
 `scripts/stage.mjs` writes a timestamp into `deploy/staging-release.txt`, commits it and pushes
-`develop`. That one changed path matches every service's staging watch pattern, so all four
+`develop`. That one changed path matches every service's staging watch pattern, so all three
 rebuild together from the latest `develop`.
 
 Two things make this work the way it does:
@@ -264,8 +264,7 @@ indexed, which shows up in Search Console instead of silently.
 
 ### Staff apps
 
-`central` and `website-management` carry `<meta name="robots" content="noindex,
-nofollow">` in `index.html` and a `public/robots.txt` of `Disallow: /`, in **every** environment
+`central` carries `<meta name="robots" content="noindex, nofollow">` in `index.html` and a `public/robots.txt` of `Disallow: /`, in **every** environment
 — they have no public audience anywhere. This is not gated on environment, so there is nothing
 to configure and nothing to forget.
 
@@ -299,7 +298,7 @@ a bundle pointing at the wrong API.
 
 | Variable | Services | Notes |
 | --- | --- | --- |
-| `VITE_API_URL` | central, website-management | API origin, build-time |
+| `VITE_API_URL` | central | API origin, build-time |
 | `API_URL` | public | server-side only, never exposed to the browser |
 | `VITE_CLOUDFLARE_TURNSTILE_SITEKEY` | public | build-time |
 | `PUBLIC_ENV` | public | `production` or `staging`, runtime — see [Search indexing](#search-indexing) |
@@ -316,17 +315,15 @@ browser calls fail CORS.
 > `website-management-staging.…` while the origin list carried `website-staging.…`, and again in
 > production as `website-management.…` against an origin list carrying `website.…`.
 
-The same hostname has to satisfy three places at once, and only one of them complains when it is
+The same hostname has to satisfy two places at once, and only one of them complains when it is
 wrong:
 
 1. the **custom domain** on the Railway service,
-2. the API's **`TRUSTED_ORIGINS`** — fails closed and silently,
-3. **`appUrl()`** in `@mcmec/lib`'s app registry, which builds the app-switcher links.
+2. the API's **`TRUSTED_ORIGINS`** — fails closed and silently.
 
-`appUrl` takes the subdomain *label* and appends `-staging` outside production, so the label must
-be the production host minus the root domain, and the staging host must be exactly that label
-plus `-staging`. `website-management` / `website-management-staging` satisfies this; `website`
-matched neither environment, so the switcher pointed at a host that has never existed.
+The staging host must also be exactly the production label plus `-staging` (`central` /
+`central-staging`): `@mcmec/lib`'s app registry reads the environment off that label to link the
+right environment's public site.
 
 ## Domains and the session cookie
 
@@ -338,7 +335,6 @@ would need its own login.
 | Service | production host | staging host |
 | --- | --- | --- |
 | `central` | `central.middlesexmosquito.org` | `central-staging.middlesexmosquito.org` |
-| `website-management` | `website-management.middlesexmosquito.org` | `website-management-staging.middlesexmosquito.org` |
 | `api` | `api.middlesexmosquito.org` | `api-staging.middlesexmosquito.org` |
 | `public` | `www.middlesexmosquito.org` | `staging.middlesexmosquito.org` |
 

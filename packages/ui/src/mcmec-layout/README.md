@@ -1,6 +1,6 @@
 # MCMEC Layout
 
-The chrome every staff application wears: `central` and `website-management`.
+The chrome the staff application, `central`, wears.
 
 An application supplies its identity, its user, its navigation data and its breadcrumbs. The
 shell supplies everything else — the rail, the app switcher, the user menu, the header, the
@@ -14,7 +14,7 @@ stop looking like one.
 ```tsx
 <Layout value={/* LayoutContextData, minus the brand */}>
   <Layout.Sidebar>
-    <Layout.Sidebar.Header><Layout.AppSwitcher /></Layout.Sidebar.Header>
+    <Layout.Sidebar.Header><Layout.AppSwitcher LinkComponent={Link} /></Layout.Sidebar.Header>
     <Layout.Sidebar.Content><AppSidebar /></Layout.Sidebar.Content>
     <Layout.Sidebar.Footer><Layout.NavUser /></Layout.Sidebar.Footer>
   </Layout.Sidebar>
@@ -25,8 +25,8 @@ stop looking like one.
 </Layout>
 ```
 
-`Layout.Sidebar` also exposes `.Nav`, covered below. `Layout.AppSwitcher` and `Layout.NavUser`
-take no props — both read the context.
+`Layout.Sidebar` also exposes `.Nav`, covered below. `Layout.AppSwitcher` takes only the router's
+`LinkComponent`, and `Layout.NavUser` takes no props — both read the context.
 
 ## The context value
 
