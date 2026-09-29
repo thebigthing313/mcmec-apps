@@ -323,6 +323,27 @@ describe("Admin's Users grid", () => {
 	});
 });
 
+describe("Self Service Portal dashboard", () => {
+	const SWITCHER_POINTER =
+		"Your Apps are in the switcher at the top of the sidebar.";
+	const PORTAL_ONLY =
+		"The Commission's public meetings and notices are in the sidebar.";
+
+	it("does not point a User with no App Role at the switcher", async () => {
+		await renderAt("/", employeeWith([]));
+
+		expect(await screen.findByText(PORTAL_ONLY)).toBeTruthy();
+		expect(screen.queryByText(SWITCHER_POINTER)).toBeNull();
+	});
+
+	it("points a User holding an App Role at the switcher", async () => {
+		await renderAt("/", employeeWith(["manage_employees"]));
+
+		expect(await screen.findByText(SWITCHER_POINTER)).toBeTruthy();
+		expect(screen.queryByText(PORTAL_ONLY)).toBeNull();
+	});
+});
+
 /** The switcher's menu trigger, in the sidebar header (NavUser's menu is in the footer). */
 const SWITCHER_MENU = "[data-sidebar='header'] [aria-haspopup='menu']";
 
