@@ -2,9 +2,9 @@
  * Electric collection builder for central's tables.
  *
  * Moved here from the shared sync package's factories (#243), a package since removed (#251).
- * Nothing here imports a table: each table module under
- * `./tables/` calls `createEagerCollection` itself, and the registry imports that module the
- * first time a route asks for the table.
+ * Nothing here imports a table: each table module under `./tables/` calls
+ * `createEagerCollection` itself, and the registry imports that module the first time a route
+ * asks for the table.
  *
  * Reads: `electricCollectionOptions` streams the server-narrowed shape from the API proxy
  * (`/api/shapes/:table`). The proxy sets `table`/`where`/`columns` server-side (authorization);

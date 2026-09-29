@@ -2,6 +2,9 @@
  * `shapePathFor` and `electricParser` are kept twice on purpose (#239): once here in central,
  * once in `apps/public/src/lib/electric-shape.ts`. This pins both copies to the same known
  * answers, so drift fails here rather than as a 404 or as dates arriving as strings.
+ *
+ * Reaching into `apps/public` by relative path is deliberate and confined to this test: public
+ * has no test runner, and a shared package is exactly what #239 decided these lines don't need.
  */
 import { describe, expect, it } from "vitest";
 import * as publicShape from "../../../../public/src/lib/electric-shape";

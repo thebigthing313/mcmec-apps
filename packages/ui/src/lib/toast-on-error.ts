@@ -3,6 +3,9 @@ import { toast } from "sonner";
 /** The part of central's `CommandRefusedError` this file reads. */
 type CommandRefusal = Error & { name: "CommandRefusedError" };
 
+/** Deep enough for the collection's own wrapping; short enough that a cycle cannot hang it. */
+const MAX_CAUSE_DEPTH = 5;
+
 /**
  * Finds the refusal inside whatever a collection handler's rejection was wrapped in.
  *
@@ -26,9 +29,6 @@ function findCommandRefusal(error: unknown): CommandRefusal | undefined {
 	return undefined;
 }
 
-/** Deep enough for the collection's own wrapping; short enough that a cycle cannot hang it. */
-const MAX_CAUSE_DEPTH = 5;
-
 /**
  * The sentence a Save-and-X refusal owes the user.
  *
@@ -43,9 +43,9 @@ const ROLLED_BACK_TOGETHER =
 /**
  * Attaches an error toast to a TanStack DB transaction's `isPersisted` promise.
  *
- * Lives here rather than in each app because #165 was the first slice to need it in more than
- * one — `employees` is written by `hr` and by `admin`, and a third hand-rolled copy is how the
- * three drift. The refusal it looks for is matched by name (see `findCommandRefusal` above), and
+ * It came here when `employees` was written by two separate apps (#165); central is its only
+ * caller now that those apps are folded in. The refusal it looks for is matched by name (see
+ * `findCommandRefusal` above), and
  * the transaction is typed structurally, so this file knows neither what a collection is nor
  * where writes are sent.
  *
