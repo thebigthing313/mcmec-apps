@@ -326,8 +326,7 @@ describe("Admin's Users grid", () => {
 describe("Self Service Portal dashboard", () => {
 	const SWITCHER_POINTER =
 		"Your Apps are in the switcher at the top of the sidebar.";
-	const PORTAL_ONLY =
-		"The Commission's public meetings and notices are in the sidebar.";
+	const PORTAL_ONLY = "Public Meetings and Public Notices are in the sidebar.";
 
 	it("does not point a User with no App Role at the switcher", async () => {
 		await renderAt("/", employeeWith([]));

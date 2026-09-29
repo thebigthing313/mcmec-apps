@@ -16,7 +16,7 @@ function Index() {
 			description={
 				apps.length > 1
 					? "Your Apps are in the switcher at the top of the sidebar."
-					: "The Commission's public meetings and notices are in the sidebar."
+					: "Public Meetings and Public Notices are in the sidebar."
 			}
 			title="Self Service Portal"
 		/>
