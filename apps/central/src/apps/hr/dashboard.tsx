@@ -4,7 +4,7 @@ import { PageHeader } from "@mcmec/ui/blocks/page-header";
 export function HrDashboard() {
 	return (
 		<PageHeader
-			description="Employee records and their access to the staff applications."
+			description="Employee records, and the Invites that give Employees a login."
 			title="Dashboard"
 		/>
 	);
