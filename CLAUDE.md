@@ -204,8 +204,8 @@ bypass; without it, PR the version commit into `develop` first, then re-run.
 ### Release freeze (staff SPA consolidation)
 
 **Production releases are frozen.** Do not run `pnpm release`, and do not open any `develop` →
-`main` PR, until the whole staff SPA consolidation (#233) is on `develop`: the shell, HR and
-Admin folded into `central`, Website Management folded in, the old apps retired, and
+`main` PR, until the whole staff SPA consolidation (#233) is on `develop`: `central`'s new shell
+and App Role gates, HR and Admin folded into it, Website Management folded in, the old apps retired, and
 `@mcmec/sync` removed. It then ships to production in one release (#254), which ends the freeze
 (decision: #240).
 
@@ -220,9 +220,10 @@ the freeze are not released separately**: they ride along with the consolidation
 
 1. Branch from `main`, not `develop`: `git fetch origin && git checkout -b hotfix/<name> origin/main`.
 2. Make the fix and add its own changeset (`pnpm change`). Then consume it on the same branch with
-   `pnpm version-pkgs` and commit the version bump and CHANGELOG. The Changeset Check rejects a
-   PR into `main` that still has unconsumed changesets, and a branch cut from `main` has no other
-   changesets to consume.
+   `pnpm version-pkgs` and commit the version bump and CHANGELOG. The Changeset Check fails a PR
+   into `main` that still has unconsumed changesets, and a branch cut from `main` has no other
+   changesets to consume. Keep schema migrations out of a hotfix: it skips staging, and a
+   migration must be tested there first (see Database changes).
 3. Open a PR into `main` (`gh pr create --base main`). CI runs as usual, and merging deploys
    production.
 4. Merge `main` back into `develop` so the fix and its version bump are not lost and the next
@@ -231,7 +232,8 @@ the freeze are not released separately**: they ride along with the consolidation
    commits become ancestors of `develop`. If `package.json` versions or CHANGELOGs conflict,
    keep `main`'s. `develop`'s pending changesets bump from there at release time.
 
-This section is temporary. The post-cutover docs issue (#253) removes it.
+This section is temporary. The post-cutover docs issue (#253) removes it, along with the freeze
+pointer in step 7 above and the freeze warning in `docs/railway-deployment.md`.
 
 ### Staging deploys (Railway)
 
