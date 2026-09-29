@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-29T19:11:13.207Z
-commit: 276f4fe fix(central): clear the router's cached matches on sign-out (#266) (#269)
+released: 2026-09-29T20:28:56.593Z
+commit: 3e2f522 docs: a single staff SPA (#253) (#273)
