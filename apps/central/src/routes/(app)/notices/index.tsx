@@ -3,9 +3,12 @@ import { PublicNoticeBadge } from "@mcmec/ui/blocks/public-notice-badge";
 import {
 	RecordIndex,
 	type RecordIndexColumn,
+} from "@mcmec/ui/blocks/record-index";
+// validateSearch is never code-split, so it imports the component-free half.
+import {
 	type RecordIndexSearch,
 	validateRecordIndexSearch,
-} from "@mcmec/ui/blocks/record-index";
+} from "@mcmec/ui/blocks/record-index-search";
 import {
 	Select,
 	SelectContent,

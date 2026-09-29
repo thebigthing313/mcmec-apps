@@ -5,7 +5,7 @@
 			"dependsOn": ["^build"],
 			"env": ["API_URL", "VITE_API_URL", "VITE_CLOUDFLARE_TURNSTILE_SITEKEY"],
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": ["dist/**", ".output/**"]
+			"outputs": ["dist/**", ".output/**", ".bundle/**"]
 		},
 		"check-types": {
 			"dependsOn": ["^check-types"]

@@ -2,6 +2,8 @@
 .env
 .turbo/
 dist/
+# central's chunk membership, written by its build for `pnpm check-bundle`.
+.bundle/
 .tanstack/
 settings.local.json
 *.tsbuildinfo
