@@ -52,22 +52,31 @@ function environmentSuffix(hostname: string): string {
 
 const HOSTNAME = typeof window !== "undefined" ? window.location.hostname : "";
 
-const IS_DEPLOYED =
-	HOSTNAME === ROOT_DOMAIN || HOSTNAME.endsWith(`.${ROOT_DOMAIN}`);
-
-const SUFFIX = environmentSuffix(HOSTNAME);
+/**
+ * The public website's origin, as seen from a staff page served on `hostname`.
+ *
+ * The public site is `www.` in production and `staging.` in staging — the reason
+ * `environmentSuffix` treats a bare `staging` label as the staging suffix. Never the bare apex:
+ * that is a registrar forward that redirects `/` and 404s every other path (#256), so a link to
+ * a specific page there is a dead link.
+ *
+ * Twin of `SITE_URL` in `apps/public/src/lib/site.ts`, the public site's own canonical origin;
+ * change the production host there (and in the `public/sitemap.xml` it names) too. It is not
+ * imported from there because `@mcmec/lib` must not depend on an app.
+ */
+export function publicSiteUrl(hostname: string): string {
+	const isDeployed =
+		hostname === ROOT_DOMAIN || hostname.endsWith(`.${ROOT_DOMAIN}`);
+	if (!isDeployed) return "https://localhost:3448";
+	return `https://${environmentSuffix(hostname) ? "staging" : "www"}.${ROOT_DOMAIN}`;
+}
 
 /**
- * The public website's origin.
- *
- * The public site is the apex in production and `staging.` in staging — the reason
- * `environmentSuffix` treats a bare `staging` label as the staging suffix. Staff screens that show what the public sees link out to the page itself with
- * it, and a link into the wrong environment's public record is exactly the mistake
- * `IS_DEPLOYED`/`SUFFIX` exist to prevent.
+ * The public website's origin for this page (see `publicSiteUrl`). Staff screens that show what
+ * the public sees link out to the page itself with it, and a link into the wrong environment's
+ * public record is exactly the mistake `environmentSuffix` exists to prevent.
  */
-export const PUBLIC_SITE_URL = IS_DEPLOYED
-	? `https://${SUFFIX ? "staging." : ""}${ROOT_DOMAIN}`
-	: "https://localhost:3448";
+export const PUBLIC_SITE_URL = publicSiteUrl(HOSTNAME);
 
 export const AVAILABLE_APPS: App[] = [
 	{
