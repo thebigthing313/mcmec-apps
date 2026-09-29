@@ -235,8 +235,7 @@ gates, which shapes load, and sign-out.
   fails CI instead of drifting silently
 - **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas`, `api` (against a
   Postgres service container) and `central`
-- **Changeset check** — fails a PR into `develop` whose changed packages lack a changeset, and a
-  PR into `main` that still carries unconsumed ones (see Releasing)
+- **Changeset check** — blocking in both directions; see Releasing
 - CI runs on PRs to both `develop` and `main`
 
 ### Branch protection

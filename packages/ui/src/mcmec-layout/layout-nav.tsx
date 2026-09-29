@@ -79,7 +79,7 @@ export function LayoutNav<TLinkProps extends { to: string }>({
 		 *
 		 * The rail was `div > div > ul` all the way down, so the only `nav` on a staff screen was
 		 * the breadcrumb. A screen-reader user had no way to jump to the navigation or past it, and
-		 * the rail is the primary means of moving around all four applications.
+		 * the rail is the primary means of moving around an App.
 		 *
 		 * Labelled with the application name because a staff screen has two landmarks of this type
 		 * and "navigation" twice tells nobody which is which.
@@ -131,8 +131,8 @@ export function LayoutNav<TLinkProps extends { to: string }>({
 											 * rule would otherwise drop the active row back to pale green
 											 * under the cursor.
 											 *
-											 * Light theme only, which is all the staff applications
-											 * render — none of them mounts a theme provider. Wiring dark
+											 * Light theme only, which is all `central` renders — it
+											 * mounts no theme provider. Wiring dark
 											 * mode means revisiting this, because `.dark` resolves
 											 * `--sidebar-primary` to a blue with nothing to do with this
 											 * palette.

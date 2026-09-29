@@ -39,7 +39,7 @@ in its meta description — and it is the Commission's only claim to longevity. 
 round it, embellish it, or pair it with invented milestones.
 
 This monorepo is both halves of that sentence: the public website that discharges the Commission's duty to inform, and
-the staff applications that produce what the website publishes.
+the staff app (`central`) that produces what the website publishes.
 
 Success on the public side is a resident who gets a correct answer fast and, when they need
 something done, files a Public Request that reaches staff. Success on the staff side is that the
@@ -65,8 +65,8 @@ claim.
 - Lifecycle Actions (publish, archive, cancel, close, resolve) are deliberate acts performed on a
   record, never a status field someone edits and saves. ADR 0001 fixes them as buttons.
 - Every write is a named Command carrying its Intent, and every change writes an Audit Entry.
-- Environments are siblings under `middlesexmosquito.org` so one SSO cookie spans them; the app
-  switcher derives staging vs. production from the hostname.
+- Hosts are siblings under `middlesexmosquito.org` so one session cookie spans `central` and `api`;
+  the app switcher derives staging vs. production from the hostname.
 
 ## Capabilities and Constraints
 
@@ -133,10 +133,10 @@ on a published Insecticide label or SDS.
    a request form is the public site's whole job; everything else defers to it.
 3. **Speak the Commission's language.** `CONTEXT.md` governs interface copy across every app.
    Consistent naming is a correctness requirement, not a style preference.
-4. **One design system, five frontends.** `packages/ui` is the single visual authority. A pattern
+4. **One design system, every frontend.** `packages/ui` is the single visual authority. A pattern
    solved once is solved for every MCMEC frontend that exists now and every one added later;
    app-local styling is the exception that must justify itself.
-5. **Staff apps are instruments, not brochures.** Density, consistency, and expert speed win;
+5. **Staff Apps are instruments, not brochures.** Density, consistency, and expert speed win;
    brand lives in precise detail, not in decoration.
 
 ## Accessibility & Inclusion
@@ -144,7 +144,7 @@ on a published Insecticide label or SDS.
 - `apps/public` must meet **WCAG 2.1 AA**. This is a firm requirement: semantic landmarks, full
   keyboard operability, meaningful alt text and accessible names, 4.5:1 contrast for normal text
   and 3:1 for large, labeled form inputs, and a correct heading hierarchy.
-- Staff apps carry no formal external standard, but inherit the same shared components and should
+- `central` carries no formal external standard, but inherit the same shared components and should
   not regress below them.
 - **NJ statutory posting obligations constrain the design, not just the content.** The Open
   Public Meetings Act and P.L. 2025 c.72 govern what must be publicly visible and for how long —

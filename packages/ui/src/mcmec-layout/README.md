@@ -142,7 +142,7 @@ The cookie is written `path=/` with no `domain=`, so it is scoped to the host. E
 
 ## Notes
 
-- `SidebarProvider` already supplies a `TooltipProvider`. Applications do not need to add one.
+- `SidebarProvider` already supplies a `TooltipProvider`. Apps do not need to add one.
 - `central` renders light theme only; it mounts no theme provider. The `.dark`
   sidebar tokens have known drift — see `DESIGN.md` — so wiring dark mode means revisiting the
   active-row colour.

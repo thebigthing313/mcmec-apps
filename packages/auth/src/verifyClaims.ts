@@ -51,7 +51,7 @@ export const readClaims = async (input: {
 };
 
 /**
- * `readClaims` plus the policy the single-purpose staff apps share. Mirrors the old
+ * `readClaims` plus the policy the retired single-purpose staff apps shared. Mirrors the old
  * Supabase-JWT `verifyClaims` semantics:
  *   - no session / fetch error  -> UnauthenticatedError
  *   - session but no employeeId  -> NoEmployeeError
