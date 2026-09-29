@@ -17,6 +17,16 @@ afterEach(cleanup);
 
 const NO_EMPLOYEE_HEADING = "Your account is not linked to an employee record";
 
+it("opens only the Self Service Portal without an App Role", () => {
+	// The refusal row below is generated only for Apps with a role, so an App folded in with
+	// `requiredPermission: null` by mistake would skip it. This catches that instead.
+	expect(
+		CENTRAL_APPS.filter((app) => !app.requiredPermission).map(
+			(app) => app.name,
+		),
+	).toEqual(["Self Service Portal"]);
+});
+
 /**
  * The gate rows, generated from the App list the switcher reads: every App folded into central
  * gets them, so an App added without a gate fails here rather than shipping open.
@@ -106,10 +116,10 @@ describe("app switcher", () => {
 		await renderAt("/", employeeWith([]));
 
 		expect(await screen.findByText(EMPLOYEE_NAME)).toBeTruthy();
-		// The row stays: it is the identity mark.
-		expect(
-			screen.getByText("Self Service Portal", { selector: "span" }),
-		).toBeTruthy();
+		// The row stays: it is the identity mark, and a link home so it can take focus.
+		const row = document.querySelector("[data-sidebar='header'] a");
+		expect(row?.getAttribute("href")).toBe("/");
+		expect(row?.textContent).toContain("Self Service Portal");
 		expect(document.querySelector(SWITCHER_MENU)).toBeNull();
 	});
 

@@ -18,6 +18,7 @@ import {
 	useRouter,
 } from "@tanstack/react-router";
 import type { CentralCollections } from "./lib/collections";
+import { refusedAppOf } from "./lib/shell";
 import { signOutOfCentral } from "./lib/sign-out";
 import { routeTree } from "./routeTree.gen";
 
@@ -84,13 +85,27 @@ function useSignOut() {
 function ErrorComponent({ error }: { error: Error }) {
 	const router = useRouter();
 	const signOut = useSignOut();
+	// The refused App is named from the matches, and its App Role from the App list the switcher
+	// reads, so the copy cannot drift from the gate.
+	const refused = useMatches({ select: refusedAppOf });
+	const refusedApp = AVAILABLE_APPS.find((app) => app.name === refused);
 
 	if (error instanceof NoEmployeeError) {
 		return <EmployeeRequired onSignOut={signOut} />;
 	}
 
-	if (error instanceof ForbiddenError) {
-		return <AppRoleRefusal onSignOut={signOut} />;
+	// A `ForbiddenError` with no gated App above it is a wiring mistake, not a refusal anyone can
+	// act on, so it falls through to the generic display rather than inventing an App and a role.
+	if (error instanceof ForbiddenError && refusedApp?.requiredPermission) {
+		return (
+			<AppRoleRequired
+				appName={refusedApp.name}
+				LinkComponent={Link}
+				onSignOut={signOut}
+				roleLabel={APP_ROLE_LABELS[refusedApp.requiredPermission]}
+				to="/"
+			/>
+		);
 	}
 
 	return (
@@ -98,32 +113,6 @@ function ErrorComponent({ error }: { error: Error }) {
 			message={error.message}
 			onBack={() => router.history.back()}
 			onRetry={() => router.invalidate()}
-		/>
-	);
-}
-
-/**
- * Names the App that refused, from the refused route's `activeApp`, and its App Role from the
- * App list the switcher reads, so the copy cannot drift from the gate.
- */
-function AppRoleRefusal({ onSignOut }: { onSignOut: () => Promise<void> }) {
-	const refused = useMatches({
-		select: (matches) =>
-			matches.find(
-				(match) =>
-					match.status === "error" && match.error instanceof ForbiddenError,
-			)?.staticData.activeApp,
-	});
-	const app = AVAILABLE_APPS.find((candidate) => candidate.name === refused);
-	const role = app?.requiredPermission;
-
-	return (
-		<AppRoleRequired
-			appName={app?.name ?? "This App"}
-			LinkComponent={Link}
-			onSignOut={onSignOut}
-			roleLabel={role ? APP_ROLE_LABELS[role] : "required"}
-			to="/"
 		/>
 	);
 }

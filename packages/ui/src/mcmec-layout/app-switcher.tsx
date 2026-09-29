@@ -16,13 +16,48 @@ import {
 } from "@mcmec/ui/components/sidebar";
 import { useLayoutContext } from "@mcmec/ui/mcmec-layout/layout-context.js";
 import { Check, ChevronsUpDown } from "lucide-react";
-import type { ComponentType, ReactNode } from "react";
+import type { AnchorHTMLAttributes, ComponentType, ReactNode } from "react";
 
 type SwitcherLinkProps = {
 	to: string;
 	children?: ReactNode;
 	className?: string;
 };
+
+/**
+ * One App's link. Forwards whatever props the `asChild` parent slots onto it (class, handlers,
+ * ref, ARIA), so it can sit under a menu item or a sidebar button alike.
+ */
+function AppLink({
+	children,
+	href,
+	LinkComponent,
+	...slotted
+}: AnchorHTMLAttributes<HTMLAnchorElement> & {
+	children: ReactNode;
+	href: string;
+	LinkComponent?: ComponentType<SwitcherLinkProps>;
+}) {
+	if (!isCentralPath(href)) {
+		return (
+			<a {...slotted} href={href}>
+				{children}
+			</a>
+		);
+	}
+	if (LinkComponent) {
+		return (
+			<LinkComponent {...(slotted as SwitcherLinkProps)} to={href}>
+				{children}
+			</LinkComponent>
+		);
+	}
+	return (
+		<a {...slotted} href={`${CENTRAL_URL}${href === "/" ? "" : href}`}>
+			{children}
+		</a>
+	);
+}
 
 /**
  * `LinkComponent` is the router's link, injected the way `LayoutBreadcrumb` injects it. An App
@@ -59,20 +94,19 @@ export function AppSwitcher({
 
 	/*
 	 * One accessible App: nothing to switch to, so no chevron and no menu. The row stays, because
-	 * it is the identity mark and the collapsed rail's tooltip hangs off it. It is not a button: a
-	 * control that opens nothing is a promise the chrome cannot keep.
+	 * it is the identity mark and the collapsed rail's tooltip hangs off it. It is not a menu
+	 * button — a control that opens nothing is a promise the chrome cannot keep — but a link to
+	 * the App's home, so it can still take focus and a keyboard user still gets the tooltip.
 	 */
-	if (apps.length <= 1) {
+	const [onlyApp] = apps;
+	if (apps.length === 1 && onlyApp) {
 		return (
 			<SidebarMenu>
 				<SidebarMenuItem>
-					<SidebarMenuButton
-						asChild
-						className="hover:bg-transparent active:bg-transparent"
-						size="lg"
-						tooltip={tooltip}
-					>
-						<div>{identity}</div>
+					<SidebarMenuButton asChild size="lg" tooltip={tooltip}>
+						<AppLink href={onlyApp.href} LinkComponent={LinkComponent}>
+							{identity}
+						</AppLink>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
 			</SidebarMenu>
@@ -157,17 +191,9 @@ export function AppSwitcher({
 									className="items-start gap-2 p-2"
 									key={app.name}
 								>
-									{!isCentralPath(app.href) ? (
-										<a href={app.href}>{body}</a>
-									) : LinkComponent ? (
-										<LinkComponent to={app.href}>{body}</LinkComponent>
-									) : (
-										<a
-											href={`${CENTRAL_URL}${app.href === "/" ? "" : app.href}`}
-										>
-											{body}
-										</a>
-									)}
+									<AppLink href={app.href} LinkComponent={LinkComponent}>
+										{body}
+									</AppLink>
 								</DropdownMenuItem>
 							);
 						})}

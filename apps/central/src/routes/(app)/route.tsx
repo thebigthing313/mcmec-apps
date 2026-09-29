@@ -13,7 +13,7 @@ import {
 	useMatches,
 	useNavigate,
 } from "@tanstack/react-router";
-import { PORTAL_SIDEBAR } from "@/src/components/portal-sidebar";
+import { PORTAL_SHELL } from "@/src/components/portal-sidebar";
 import { requireEmployee } from "@/src/lib/gates";
 import { shellAppOf } from "@/src/lib/shell";
 import { signOutOfCentral } from "@/src/lib/sign-out";
@@ -56,10 +56,7 @@ export const Route = createFileRoute("/(app)")({
 		await context.employees.preload();
 		return { crumb: "Dashboard" };
 	},
-	staticData: {
-		activeApp: "Self Service Portal",
-		sidebar: PORTAL_SIDEBAR,
-	},
+	staticData: PORTAL_SHELL,
 });
 
 function LayoutComponent() {
@@ -69,10 +66,7 @@ function LayoutComponent() {
 	const accessibleApps = filterAppsByPermissions(permissions);
 	const location = useLocation();
 	const matches = useMatches();
-	const { activeApp, sidebar } = shellAppOf(matches, {
-		activeApp: "Self Service Portal",
-		sidebar: PORTAL_SIDEBAR,
-	});
+	const { activeApp, sidebar } = shellAppOf(matches, PORTAL_SHELL);
 	const breadcrumbParts = matches
 		.filter((match) => isMatch(match, "loaderData.crumb"))
 		.map((match) => ({

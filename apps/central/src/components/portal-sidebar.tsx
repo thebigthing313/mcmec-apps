@@ -1,5 +1,5 @@
 import { CalendarDays, FileText, Home } from "lucide-react";
-import type { AppSidebar } from "@/src/lib/shell";
+import type { AppSidebar, ShellApp } from "@/src/lib/shell";
 
 /**
  * The Self Service Portal's rail. The shell shows it on the portal's own routes, and in place of
@@ -11,7 +11,7 @@ import type { AppSidebar } from "@/src/lib/shell";
  * The Dashboard group stays unlabelled, per DESIGN.md's rule that a label is not invented for a
  * lone destination.
  */
-export const PORTAL_SIDEBAR: AppSidebar = [
+const PORTAL_SIDEBAR: AppSidebar = [
 	{
 		items: [{ icon: <Home />, label: "Dashboard", linkProps: { to: "/" } }],
 	},
@@ -31,3 +31,12 @@ export const PORTAL_SIDEBAR: AppSidebar = [
 		label: "Commission",
 	},
 ];
+
+/**
+ * The Self Service Portal as the shell sees it: the root signed-in layout's `staticData`, and the
+ * shell's fallback wherever no App has taken over.
+ */
+export const PORTAL_SHELL: ShellApp = {
+	activeApp: "Self Service Portal",
+	sidebar: PORTAL_SIDEBAR,
+};

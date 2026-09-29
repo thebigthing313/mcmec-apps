@@ -44,7 +44,7 @@ export function shellAppOf(
 ): ShellApp {
 	let shell = fallback;
 	for (const match of matches) {
-		if (match.status === "error" && match.error instanceof ForbiddenError) {
+		if (isRefusal(match)) {
 			break;
 		}
 		const { activeApp, sidebar } = match.staticData;
@@ -53,4 +53,26 @@ export function shellAppOf(
 		}
 	}
 	return shell;
+}
+
+/**
+ * The App that refused the User, if one did: the deepest `activeApp` declared at or above the
+ * match whose gate threw `ForbiddenError`. Read from the matches rather than carried on the
+ * error, so a gate on a route nested inside an App still names that App.
+ */
+export function refusedAppOf(
+	matches: readonly ShellMatch[],
+): AppName | undefined {
+	let app: AppName | undefined;
+	for (const match of matches) {
+		app = match.staticData.activeApp ?? app;
+		if (isRefusal(match)) {
+			return app;
+		}
+	}
+	return undefined;
+}
+
+function isRefusal(match: ShellMatch): boolean {
+	return match.status === "error" && match.error instanceof ForbiddenError;
 }
