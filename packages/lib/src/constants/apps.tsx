@@ -94,14 +94,14 @@ export const AVAILABLE_APPS: App[] = [
 		requiredPermission: "manage_website",
 	},
 	{
-		description: "Manage employees and user accounts.",
+		description: "Add, edit, invite and delete Employees.",
 		href: "/hr",
 		logo: <Users />,
 		name: "HR",
 		requiredPermission: "manage_employees",
 	},
 	{
-		description: "Manage user permission assignments.",
+		description: "Grant and revoke App Roles for Users.",
 		href: "/admin",
 		logo: <Shield />,
 		name: "Admin",
