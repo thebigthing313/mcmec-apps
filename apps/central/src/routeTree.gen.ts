@@ -18,10 +18,19 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
 import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
+import { Route as appHrRouteRouteImport } from './routes/(app)/hr/route'
+import { Route as appAdminRouteRouteImport } from './routes/(app)/admin/route'
 import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
 import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/index'
+import { Route as appHrIndexRouteImport } from './routes/(app)/hr/index'
+import { Route as appAdminIndexRouteImport } from './routes/(app)/admin/index'
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
 import { Route as appMeetingsMeetingIdRouteImport } from './routes/(app)/meetings/$meetingId'
+import { Route as appHrEmployeesRouteRouteImport } from './routes/(app)/hr/employees/route'
+import { Route as appHrEmployeesIndexRouteImport } from './routes/(app)/hr/employees/index'
+import { Route as appAdminUsersIndexRouteImport } from './routes/(app)/admin/users/index'
+import { Route as appHrEmployeesEmployeeIdRouteImport } from './routes/(app)/hr/employees/$employeeId'
+import { Route as appHrEmployeesEmployeeIdEditRouteImport } from './routes/(app)/hr/employees/$employeeId_.edit'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -66,6 +75,16 @@ const appMeetingsRouteRoute = appMeetingsRouteRouteImport.update({
   path: '/meetings',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appHrRouteRoute = appHrRouteRouteImport.update({
+  id: '/hr',
+  path: '/hr',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appAdminRouteRoute = appAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appNoticesIndexRoute = appNoticesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -75,6 +94,16 @@ const appMeetingsIndexRoute = appMeetingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => appMeetingsRouteRoute,
+} as any)
+const appHrIndexRoute = appHrIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appHrRouteRoute,
+} as any)
+const appAdminIndexRoute = appAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appAdminRouteRoute,
 } as any)
 const appNoticesNoticeIdRoute = appNoticesNoticeIdRouteImport.update({
   id: '/$noticeId',
@@ -86,8 +115,37 @@ const appMeetingsMeetingIdRoute = appMeetingsMeetingIdRouteImport.update({
   path: '/$meetingId',
   getParentRoute: () => appMeetingsRouteRoute,
 } as any)
+const appHrEmployeesRouteRoute = appHrEmployeesRouteRouteImport.update({
+  id: '/employees',
+  path: '/employees',
+  getParentRoute: () => appHrRouteRoute,
+} as any)
+const appHrEmployeesIndexRoute = appHrEmployeesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appHrEmployeesRouteRoute,
+} as any)
+const appAdminUsersIndexRoute = appAdminUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => appAdminRouteRoute,
+} as any)
+const appHrEmployeesEmployeeIdRoute =
+  appHrEmployeesEmployeeIdRouteImport.update({
+    id: '/$employeeId',
+    path: '/$employeeId',
+    getParentRoute: () => appHrEmployeesRouteRoute,
+  } as any)
+const appHrEmployeesEmployeeIdEditRoute =
+  appHrEmployeesEmployeeIdEditRouteImport.update({
+    id: '/$employeeId_/edit',
+    path: '/$employeeId/edit',
+    getParentRoute: () => appHrEmployeesRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
+  '/admin': typeof appAdminRouteRouteWithChildren
+  '/hr': typeof appHrRouteRouteWithChildren
   '/meetings': typeof appMeetingsRouteRouteWithChildren
   '/notices': typeof appNoticesRouteRouteWithChildren
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -95,10 +153,17 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/set-password': typeof AuthSetPasswordRoute
   '/': typeof appIndexRoute
+  '/hr/employees': typeof appHrEmployeesRouteRouteWithChildren
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/admin/': typeof appAdminIndexRoute
+  '/hr/': typeof appHrIndexRoute
   '/meetings/': typeof appMeetingsIndexRoute
   '/notices/': typeof appNoticesIndexRoute
+  '/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/admin/users': typeof appAdminUsersIndexRoute
+  '/hr/employees/': typeof appHrEmployeesIndexRoute
+  '/hr/employees/$employeeId/edit': typeof appHrEmployeesEmployeeIdEditRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -108,13 +173,21 @@ export interface FileRoutesByTo {
   '/': typeof appIndexRoute
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/admin': typeof appAdminIndexRoute
+  '/hr': typeof appHrIndexRoute
   '/meetings': typeof appMeetingsIndexRoute
   '/notices': typeof appNoticesIndexRoute
+  '/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/admin/users': typeof appAdminUsersIndexRoute
+  '/hr/employees': typeof appHrEmployeesIndexRoute
+  '/hr/employees/$employeeId/edit': typeof appHrEmployeesEmployeeIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appRouteRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/(app)/admin': typeof appAdminRouteRouteWithChildren
+  '/(app)/hr': typeof appHrRouteRouteWithChildren
   '/(app)/meetings': typeof appMeetingsRouteRouteWithChildren
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -122,14 +195,23 @@ export interface FileRoutesById {
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/set-password': typeof AuthSetPasswordRoute
   '/(app)/': typeof appIndexRoute
+  '/(app)/hr/employees': typeof appHrEmployeesRouteRouteWithChildren
   '/(app)/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
+  '/(app)/admin/': typeof appAdminIndexRoute
+  '/(app)/hr/': typeof appHrIndexRoute
   '/(app)/meetings/': typeof appMeetingsIndexRoute
   '/(app)/notices/': typeof appNoticesIndexRoute
+  '/(app)/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/(app)/admin/users/': typeof appAdminUsersIndexRoute
+  '/(app)/hr/employees/': typeof appHrEmployeesIndexRoute
+  '/(app)/hr/employees/$employeeId_/edit': typeof appHrEmployeesEmployeeIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/admin'
+    | '/hr'
     | '/meetings'
     | '/notices'
     | '/forgot-password'
@@ -137,10 +219,17 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/set-password'
     | '/'
+    | '/hr/employees'
     | '/meetings/$meetingId'
     | '/notices/$noticeId'
+    | '/admin/'
+    | '/hr/'
     | '/meetings/'
     | '/notices/'
+    | '/hr/employees/$employeeId'
+    | '/admin/users'
+    | '/hr/employees/'
+    | '/hr/employees/$employeeId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -150,12 +239,20 @@ export interface FileRouteTypes {
     | '/'
     | '/meetings/$meetingId'
     | '/notices/$noticeId'
+    | '/admin'
+    | '/hr'
     | '/meetings'
     | '/notices'
+    | '/hr/employees/$employeeId'
+    | '/admin/users'
+    | '/hr/employees'
+    | '/hr/employees/$employeeId/edit'
   id:
     | '__root__'
     | '/(app)'
     | '/_auth'
+    | '/(app)/admin'
+    | '/(app)/hr'
     | '/(app)/meetings'
     | '/(app)/notices'
     | '/_auth/forgot-password'
@@ -163,10 +260,17 @@ export interface FileRouteTypes {
     | '/_auth/reset-password'
     | '/_auth/set-password'
     | '/(app)/'
+    | '/(app)/hr/employees'
     | '/(app)/meetings/$meetingId'
     | '/(app)/notices/$noticeId'
+    | '/(app)/admin/'
+    | '/(app)/hr/'
     | '/(app)/meetings/'
     | '/(app)/notices/'
+    | '/(app)/hr/employees/$employeeId'
+    | '/(app)/admin/users/'
+    | '/(app)/hr/employees/'
+    | '/(app)/hr/employees/$employeeId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -239,6 +343,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appMeetingsRouteRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/hr': {
+      id: '/(app)/hr'
+      path: '/hr'
+      fullPath: '/hr'
+      preLoaderRoute: typeof appHrRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/admin': {
+      id: '/(app)/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof appAdminRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/notices/': {
       id: '/(app)/notices/'
       path: '/'
@@ -252,6 +370,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/meetings/'
       preLoaderRoute: typeof appMeetingsIndexRouteImport
       parentRoute: typeof appMeetingsRouteRoute
+    }
+    '/(app)/hr/': {
+      id: '/(app)/hr/'
+      path: '/'
+      fullPath: '/hr/'
+      preLoaderRoute: typeof appHrIndexRouteImport
+      parentRoute: typeof appHrRouteRoute
+    }
+    '/(app)/admin/': {
+      id: '/(app)/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof appAdminIndexRouteImport
+      parentRoute: typeof appAdminRouteRoute
     }
     '/(app)/notices/$noticeId': {
       id: '/(app)/notices/$noticeId'
@@ -267,8 +399,86 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appMeetingsMeetingIdRouteImport
       parentRoute: typeof appMeetingsRouteRoute
     }
+    '/(app)/hr/employees': {
+      id: '/(app)/hr/employees'
+      path: '/employees'
+      fullPath: '/hr/employees'
+      preLoaderRoute: typeof appHrEmployeesRouteRouteImport
+      parentRoute: typeof appHrRouteRoute
+    }
+    '/(app)/hr/employees/': {
+      id: '/(app)/hr/employees/'
+      path: '/'
+      fullPath: '/hr/employees/'
+      preLoaderRoute: typeof appHrEmployeesIndexRouteImport
+      parentRoute: typeof appHrEmployeesRouteRoute
+    }
+    '/(app)/admin/users/': {
+      id: '/(app)/admin/users/'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof appAdminUsersIndexRouteImport
+      parentRoute: typeof appAdminRouteRoute
+    }
+    '/(app)/hr/employees/$employeeId': {
+      id: '/(app)/hr/employees/$employeeId'
+      path: '/$employeeId'
+      fullPath: '/hr/employees/$employeeId'
+      preLoaderRoute: typeof appHrEmployeesEmployeeIdRouteImport
+      parentRoute: typeof appHrEmployeesRouteRoute
+    }
+    '/(app)/hr/employees/$employeeId_/edit': {
+      id: '/(app)/hr/employees/$employeeId_/edit'
+      path: '/$employeeId/edit'
+      fullPath: '/hr/employees/$employeeId/edit'
+      preLoaderRoute: typeof appHrEmployeesEmployeeIdEditRouteImport
+      parentRoute: typeof appHrEmployeesRouteRoute
+    }
   }
 }
+
+interface appAdminRouteRouteChildren {
+  appAdminIndexRoute: typeof appAdminIndexRoute
+  appAdminUsersIndexRoute: typeof appAdminUsersIndexRoute
+}
+
+const appAdminRouteRouteChildren: appAdminRouteRouteChildren = {
+  appAdminIndexRoute: appAdminIndexRoute,
+  appAdminUsersIndexRoute: appAdminUsersIndexRoute,
+}
+
+const appAdminRouteRouteWithChildren = appAdminRouteRoute._addFileChildren(
+  appAdminRouteRouteChildren,
+)
+
+interface appHrEmployeesRouteRouteChildren {
+  appHrEmployeesEmployeeIdRoute: typeof appHrEmployeesEmployeeIdRoute
+  appHrEmployeesIndexRoute: typeof appHrEmployeesIndexRoute
+  appHrEmployeesEmployeeIdEditRoute: typeof appHrEmployeesEmployeeIdEditRoute
+}
+
+const appHrEmployeesRouteRouteChildren: appHrEmployeesRouteRouteChildren = {
+  appHrEmployeesEmployeeIdRoute: appHrEmployeesEmployeeIdRoute,
+  appHrEmployeesIndexRoute: appHrEmployeesIndexRoute,
+  appHrEmployeesEmployeeIdEditRoute: appHrEmployeesEmployeeIdEditRoute,
+}
+
+const appHrEmployeesRouteRouteWithChildren =
+  appHrEmployeesRouteRoute._addFileChildren(appHrEmployeesRouteRouteChildren)
+
+interface appHrRouteRouteChildren {
+  appHrEmployeesRouteRoute: typeof appHrEmployeesRouteRouteWithChildren
+  appHrIndexRoute: typeof appHrIndexRoute
+}
+
+const appHrRouteRouteChildren: appHrRouteRouteChildren = {
+  appHrEmployeesRouteRoute: appHrEmployeesRouteRouteWithChildren,
+  appHrIndexRoute: appHrIndexRoute,
+}
+
+const appHrRouteRouteWithChildren = appHrRouteRoute._addFileChildren(
+  appHrRouteRouteChildren,
+)
 
 interface appMeetingsRouteRouteChildren {
   appMeetingsMeetingIdRoute: typeof appMeetingsMeetingIdRoute
@@ -298,12 +508,16 @@ const appNoticesRouteRouteWithChildren = appNoticesRouteRoute._addFileChildren(
 )
 
 interface appRouteRouteChildren {
+  appAdminRouteRoute: typeof appAdminRouteRouteWithChildren
+  appHrRouteRoute: typeof appHrRouteRouteWithChildren
   appMeetingsRouteRoute: typeof appMeetingsRouteRouteWithChildren
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appIndexRoute: typeof appIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
+  appAdminRouteRoute: appAdminRouteRouteWithChildren,
+  appHrRouteRoute: appHrRouteRouteWithChildren,
   appMeetingsRouteRoute: appMeetingsRouteRouteWithChildren,
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appIndexRoute: appIndexRoute,

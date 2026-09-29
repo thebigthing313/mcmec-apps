@@ -8,7 +8,11 @@
  *
  * Adding a table is one line here plus a module under ./tables that exports `create(apiUrl)`.
  */
-import { type CollectionRegistry, createCollectionRegistry } from "./registry";
+import {
+	type CollectionRegistry,
+	type CollectionsOf,
+	createCollectionRegistry,
+} from "./registry";
 
 function centralTables(apiUrl: string) {
 	return {
@@ -20,9 +24,16 @@ function centralTables(apiUrl: string) {
 	};
 }
 
-export type CentralCollections = CollectionRegistry<
-	ReturnType<typeof centralTables>
->;
+type CentralTables = ReturnType<typeof centralTables>;
+
+export type CentralCollections = CollectionRegistry<CentralTables>;
+
+/**
+ * One table's collection, by the name routes ask for it by. For a component handed a collection
+ * as a prop by the route that received it; a type only, so it imports no table.
+ */
+export type CentralCollection<K extends keyof CentralTables> =
+	CollectionsOf<CentralTables>[K];
 
 /** One per session: `main.tsx` puts it in the router's context as `collections`. */
 export function createCentralCollections(apiUrl: string): CentralCollections {

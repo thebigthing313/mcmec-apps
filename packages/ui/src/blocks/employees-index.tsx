@@ -127,7 +127,7 @@ export function EmployeesIndex({
 			search={search}
 			searchPlaceholder="Search employees"
 			state={state}
-			title="Manage Employees"
+			title="Employees"
 		/>
 	);
 }

@@ -1,16 +1,20 @@
 // @vitest-environment happy-dom
-import { APP_ROLES } from "@mcmec/lib/constants/roles";
+import { APP_ROLE_LABELS, APP_ROLES } from "@mcmec/lib/constants/roles";
 import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
 	CENTRAL_APPS,
+	EMPLOYEE_ID,
 	EMPLOYEE_NAME,
+	EMPLOYEE_TITLE,
 	employeeWith,
+	type ListedUser,
 	MEETING_ID,
 	NOTICE_ID,
 	noEmployeeWith,
 	renderAt,
 	signedOut,
+	USER_ID,
 } from "./harness";
 
 afterEach(cleanup);
@@ -66,10 +70,26 @@ describe.each(CENTRAL_APPS)("$name", (app) => {
 				}),
 			).toBeTruthy();
 			expect(
+				screen.getByText(
+					`${app.name} requires the ${APP_ROLE_LABELS[role]} App Role, and your account does not have it.`,
+				),
+			).toBeTruthy();
+			const back = screen.getByRole("link", {
+				name: "Go to the Self Service Portal",
+			});
+			expect(back.getAttribute("href")).toBe("/");
+			expect(screen.getByRole("button", { name: "Sign out" })).toBeTruthy();
+
+			// Inside the shell: the signed-in Employee, and the portal's rail rather than the App's.
+			expect(screen.getByText(EMPLOYEE_NAME)).toBeTruthy();
+			expect(
 				screen.getByRole("navigation", {
 					name: "Self Service Portal sections",
 				}),
 			).toBeTruthy();
+			expect(
+				screen.queryByRole("navigation", { name: `${app.name} sections` }),
+			).toBeNull();
 			expect(asked()).toEqual(["employees"]);
 		});
 	}
@@ -99,12 +119,98 @@ describe("tables each route asks for", () => {
 		[`/notices/${NOTICE_ID}`, ["employees", "noticeTypes", "notices"]],
 		["/meetings", ["employees", "meetings"]],
 		[`/meetings/${MEETING_ID}`, ["employees", "meetings"]],
+		// HR and Admin read only the root's `employees`: they share the shell's instance.
+		["/hr", ["employees"]],
+		["/hr/employees", ["employees"]],
+		[`/hr/employees/${EMPLOYEE_ID}`, ["employees"]],
+		[`/hr/employees/${EMPLOYEE_ID}/edit`, ["employees"]],
+		["/admin", ["employees"]],
+		["/admin/users", ["employees"]],
 	])("%s asks for %j", async (path, tables) => {
-		const { asked, router } = await renderAt(path, employeeWith([]));
+		// Every App Role, so each route renders rather than refusing; the gates have their own rows.
+		const { asked, router } = await renderAt(
+			path,
+			employeeWith([...APP_ROLES]),
+		);
 
 		expect(router.state.location.pathname).toBe(path);
 		expect(router.state.statusCode).toBe(200);
+		// A path no route matches still settles on 200 in the browser, with no table asked for
+		// beyond the shell's, so the row would pass on a route that does not exist. Every match
+		// must have loaded, and none may be the not-found fallback.
+		expect(
+			router.state.matches.map((match) => ({
+				globalNotFound: match.globalNotFound ?? false,
+				routeId: match.routeId,
+				status: match.status,
+			})),
+		).toEqual(
+			router.state.matches.map((match) => ({
+				globalNotFound: false,
+				routeId: match.routeId,
+				status: "success",
+			})),
+		);
 		expect(asked()).toEqual(tables);
+	});
+});
+
+describe("Admin's Users grid", () => {
+	const ADMIN = employeeWith(["manage_users"]);
+	const linked: ListedUser = {
+		email: "pat@example.com",
+		id: USER_ID,
+		name: "pat",
+		role: "manage_users",
+	};
+	const unlinked: ListedUser = {
+		email: "orphan@example.com",
+		id: "123e4567-e89b-12d3-a456-426614174099",
+		name: "orphan",
+		role: null,
+	};
+
+	/** The Employee cell of the row for `email`, found by the column's header. */
+	async function employeeCellFor(email: string) {
+		const header = await screen.findByRole("columnheader", {
+			name: "Employee",
+		});
+		const column = within(header.closest("tr") as HTMLElement)
+			.getAllByRole("columnheader")
+			.indexOf(header);
+		const row = screen.getByText(email).closest("tr") as HTMLElement;
+		return within(row).getAllByRole("cell")[column] as HTMLElement;
+	}
+
+	it("shows the linked Employee's display name and title", async () => {
+		await renderAt("/admin/users", ADMIN, { users: [linked, unlinked] });
+
+		const cell = await employeeCellFor(linked.email);
+		expect(within(cell).getByText(EMPLOYEE_NAME)).toBeTruthy();
+		expect(within(cell).getByText(EMPLOYEE_TITLE)).toBeTruthy();
+		// Read-only, and no way into HR from here (#238).
+		expect(within(cell).queryByRole("link")).toBeNull();
+	});
+
+	it("shows a dash for a User with no linked Employee", async () => {
+		await renderAt("/admin/users", ADMIN, { users: [linked, unlinked] });
+
+		const cell = await employeeCellFor(unlinked.email);
+		expect(cell.textContent).toBe("—");
+	});
+
+	it("names HR in plain text when there is no User to list", async () => {
+		await renderAt("/admin/users", ADMIN, { users: [] });
+
+		const empty = await screen.findByText(/Invite Employees in HR first\./);
+		expect(empty.closest("a")).toBeNull();
+		expect(within(empty).queryByRole("link")).toBeNull();
+	});
+
+	it("is titled Users", async () => {
+		await renderAt("/admin/users", ADMIN, { users: [linked] });
+
+		expect(await screen.findByRole("heading", { name: "Users" })).toBeTruthy();
 	});
 });
 

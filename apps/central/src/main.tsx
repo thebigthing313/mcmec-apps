@@ -22,7 +22,12 @@ if (faviconLink) {
 // first time a route asks for it, and sign-out empties it for the next User.
 const collections = createCentralCollections(API_URL);
 
-const router = createCentralRouter({ authClient, collections, queryClient });
+const router = createCentralRouter({
+	apiUrl: API_URL,
+	authClient,
+	collections,
+	queryClient,
+});
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error(ErrorMessages.BROWSER.ROOT_ELEMENT_NOT_FOUND);
