@@ -5,6 +5,11 @@
 > `packages/collections`, which has since been renamed and absorbed into `packages/sync`.
 > Both the pinned versions and that package layout have moved on — check the current
 > `pnpm-lock.yaml` before relying on any version-specific claim below.
+>
+> **Where the code lives now.** `packages/sync` was removed in #251 (PR #272). The collections
+> and their write handlers moved into `central`, under `apps/central/src/lib/collections/`
+> (`command-write.ts` for the command path, `tables/` for each table), and `readMutationMetadata`
+> is now `readCommandMetadata` in `command-write.ts`. The paths below are left as they were written.
 
 # TanStack DB mutation semantics at MCMEC's installed versions
 

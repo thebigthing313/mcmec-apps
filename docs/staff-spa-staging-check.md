@@ -1,6 +1,7 @@
 # Staff SPA staging check
 
-The manual check each App passes on staging before its old app is retired. `central`'s Vitest
+The manual check each App passed on staging before its old app was retired. #254 runs its
+sign-in and gate steps against production `central`. `central`'s Vitest
 suite covers the App Role gates and which tables each route asks for (#242). This check covers
 what only a real browser against real staging shows: which shapes actually go over the wire,
 whether the session cookie survives a refresh, and whether one User's data reaches the next.

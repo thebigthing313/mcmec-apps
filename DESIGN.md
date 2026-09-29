@@ -1,6 +1,6 @@
 ---
 name: MCMEC
-description: The shared visual system behind the Middlesex County Mosquito Extermination Commission's public website and its staff applications.
+description: The shared visual system behind the Middlesex County Mosquito Extermination Commission's public website and its staff app.
 colors:
   commission-green: "oklch(0.5364 0.1457 150.5842)"
   commission-green-contrast: "oklch(0.985 0.0199 112.9333)"
@@ -258,14 +258,14 @@ This rule exists because the system shipped the opposite for a long time. The ri
 ### Hierarchy
 
 - **Display** (700, `clamp(1.5rem, 4vw, 2.25rem)`, 1.25, tracking `-0.025em`): The hero headline on the public home page, set in white over the green scrim. One per page, and only where a photograph backs it.
-- **Headline** (600, `clamp(1.125rem, 2vw, 1.25rem)`, 1.4): Section headings on public pages — "How Can We Help You Today?" Also the page title in staff applications.
+- **Headline** (600, `clamp(1.125rem, 2vw, 1.25rem)`, 1.4): Section headings on public pages — "How Can We Help You Today?" Also the page title in staff Apps.
 - **Title** (600, `1.25rem`, 1.0): Card titles, including notice titles in the public feed. The 1.0 line-height is deliberate: titles are one or two lines and should sit tight against their date line.
 - **Body** (400, `1rem`, 1.5): All reading text, including Tiptap-rendered notice bodies. Cap the measure at 65–75ch — `TiptapRenderer` and `TiptapEditor` both set `max-w-[70ch]`, and the editor matches the renderer so an author lays out the line breaks a reader will actually get. Prose paragraphs take a `0.5rem` vertical margin and normal leading so a rendered notice stays dense enough to scan.
 
   **The `.prose` overrides must stay unlayered.** `@tailwindcss/typography` emits into the `utilities` layer, and layer order beats specificity, so the same rules written inside `@layer base` lose to the plugin no matter how specific they are. They were written that way once and silently did nothing for as long as they existed: paragraphs shipped at the plugin's `1.25em` while this line claimed `0.5rem`. The rules now sit unlayered at the end of `globals.css`, which outranks every layer.
 
   **A list item's paragraph is the item.** TipTap's StarterKit wraps each `<li>`'s content in its own `<p>`, so a paragraph rule fires inside every bullet: a 26px item occupied 46px of pitch and a thirteen-item list ran 600px. `.prose li > p` therefore takes no margin at all, and only a *second* paragraph inside one item is treated as a paragraph.
-- **Label** (500, `0.875rem`, 1.25): Buttons, form labels, table cells, badges, metadata. The workhorse size across all staff applications.
+- **Label** (500, `0.875rem`, 1.25): Buttons, form labels, table cells, badges, metadata. The workhorse size across every staff App.
 - **Overline** (700, tracking `0.025em`, uppercase): The agency's name in the public footer and the footer's column headings at `0.875rem`; the staff sidebar's group labels at `0.75rem`, a step below the destinations they cover. Structural only.
 
 - **Auth heading** (600, `1.5rem`, `1.875rem` from `sm`, 1.25, tracking `-0.025em`): The single heading on a sign-in, password-reset or invite screen. It is the one step between Headline and Display, and it exists because those screens hold one heading and nothing competing with it: the staff Headline is sized for a page title inside a dense shell, and inside a full-viewport frame it reads undersized. It does not travel — no other staff screen may use it, and it never appears twice on a page.
@@ -282,7 +282,7 @@ The masthead is the widest tracking in the system at `0.16em`, against `0.025em`
 
 ## Layout
 
-The public site and the staff applications use two different spatial models over one spacing scale.
+The public site and the staff Apps use two different spatial models over one spacing scale.
 
 **Public (`apps/public`).** A single centered column, `max-w-7xl` (80rem), with `1.5rem` gutters rising to `3rem` at `md`. Sections breathe at `2.5rem` vertical padding, `3.5rem` at `md`. The home page is the sole exception: it breaks the container to run the hero full-bleed at `60vh` (minimum `20rem`), then returns to the container for everything below. Every other route mounts inside a `max-w-7xl` wrapper with `1rem` padding and `2rem` of vertical margin around `<main>`.
 
@@ -296,9 +296,9 @@ The public site and the staff applications use two different spatial models over
 
 **The Eighty-Rem Rule.** No content region exceeds `max-w-7xl` (80rem). The hero photograph may bleed past it; nothing readable may.
 
-**The Shell Owns The Chrome Rule.** Staff applications import `mcmec-layout` and fill it. An app that defines its own sidebar, header, or breadcrumb has forked the system, and four forks is how five applications stop looking like one.
+**The Shell Owns The Chrome Rule.** Each of `central`'s Apps imports `mcmec-layout` and fills it. An App that defines its own sidebar, header, or breadcrumb has forked the system.
 
-**The Desktop-First, Mobile-Survivable Rule.** The staff applications are designed for the screen they are actually used on: a desk, a large display, a considered edit. Density, column count, keyboard reach, and information-per-screen are decided at desktop widths and are not compromised to suit a phone.
+**The Desktop-First, Mobile-Survivable Rule.** The staff Apps are designed for the screen they are actually used on: a desk, a large display, a considered edit. Density, column count, keyboard reach, and information-per-screen are decided at desktop widths and are not compromised to suit a phone.
 
 But narrow is a state they must *survive*, because the job occasionally follows someone out of the building — a meeting cancelled from a car, a spray mission delayed from the field. On a phone every staff screen must therefore: fit the viewport with no horizontal page scroll; keep wide content (tables, toolbars, date ranges) scrolling inside its own `overflow-x: auto` container rather than pushing the page; keep every primary action reachable without a hover; and lose no destination — the rail becomes a sheet, never a truncation.
 
@@ -494,7 +494,7 @@ One row vocabulary for every queue a Signal Band opens, whatever domain the reco
 - **Row target:** the whole row is a typed route link. Hover takes Pale Green; focus takes the standard `3px` ring and raises the row above its siblings.
 - **Empty:** the queue states its own empty case — an icon, a short title, a line of description — rather than leaving the panel blank. An empty signal is a legitimate answer and should read as one.
 
-It lives in `apps/central/src/apps/website-management/components/signal-queue.tsx` and is app-local today. If a second staff application grows a queue, promote it to `packages/ui` beside the band rather than copying it.
+It lives in `apps/central/src/apps/website-management/components/signal-queue.tsx` and is app-local today. If a second App grows a queue, promote it to `packages/ui` beside the band rather than copying it.
 
 ### Named Rules
 

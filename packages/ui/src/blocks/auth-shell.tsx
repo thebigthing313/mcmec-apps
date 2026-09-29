@@ -124,8 +124,8 @@ function Frontispiece() {
 interface AuthShellProps {
 	/**
 	 * Which application this door opens. It rides the top rule opposite the Commission's name
-	 * rather than heading the page: one SSO cookie spans all four applications, so the app is
-	 * where you are, not what you are doing.
+	 * rather than heading the page: one sign-in covers every App, so the app is where you are, not
+	 * what you are doing.
 	 */
 	destination: AppName;
 	children: React.ReactNode;

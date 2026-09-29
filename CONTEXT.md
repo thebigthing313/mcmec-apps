@@ -38,8 +38,8 @@ permission. One per Domain: `manage_website`, `manage_employees`, `manage_users`
 _Avoid_: permission (when the granting is meant), group, access level
 
 **App**:
-One of the staff apps an Employee opens from the app switcher: the Self Service Portal,
-Website Management, HR and Admin. Each has its own navigation. Every App but the Self Service
+What an Employee opens from `central`'s app switcher: the Self Service Portal, Website
+Management, HR or Admin. Each has its own navigation. Every App but the Self Service
 Portal is entered only by holders of one App Role.
 _Avoid_: section, module, workspace, area
 
@@ -137,7 +137,7 @@ _Public label_: **Service Request** — pluralised where it names a destination 
 is a call to action ("Request Service" on the home-page button and the footer quick link), and
 spelled out in running prose where a sentence needs it ("Request for Service form"). The
 general-inquiry kind is **General Inquiries**. Public Request is the internal name for the
-concept and belongs in code, schemas, staff apps and these docs; it is deliberately not what a
+concept and belongs in code, schemas, `central` and these docs; it is deliberately not what a
 resident reads. The mismatch is a decision, not drift: do not "correct" the public site to
 match this entry.
 
@@ -158,7 +158,7 @@ from unpublished — a Closed posting was advertised and the advertisement ended
 
 ### Employees domain
 
-The people who work for the Commission, and their access to the staff applications. Requires
+The people who work for the Commission, and whether they can sign in to `central`. Requires
 `manage_employees`.
 
 **Employee**:
@@ -180,7 +180,7 @@ _Avoid_: onboard, provision, register
 
 ### Users domain
 
-Who may do what across the staff applications. Requires `manage_users`.
+Which App Roles each User holds. Requires `manage_users`.
 
 **Grant** / **Revoke**:
 Giving or taking away one App Role from one User. Always one role at a time — the set is

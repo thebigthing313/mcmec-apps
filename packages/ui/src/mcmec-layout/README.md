@@ -2,12 +2,11 @@
 
 The chrome the staff application, `central`, wears.
 
-An application supplies its identity, its user, its navigation data and its breadcrumbs. The
-shell supplies everything else — the rail, the app switcher, the user menu, the header, the
-collapsed-state tooltips, the active state, and the persistence of whether the rail was left
-open. `DESIGN.md` calls this The Shell Owns The Chrome Rule: an application that hand-builds a
-sidebar, header or breadcrumb has forked the system, and four forks is how five applications
-stop looking like one.
+Each of `central`'s Apps supplies its identity, its user, its navigation data and its
+breadcrumbs. The shell supplies everything else — the rail, the app switcher, the user menu, the
+header, the collapsed-state tooltips, the active state, and the persistence of whether the rail
+was left open. `DESIGN.md` calls this The Shell Owns The Chrome Rule: an App that hand-builds a
+sidebar, header or breadcrumb has forked the system.
 
 ## The shape
 
@@ -138,21 +137,13 @@ Seed the trail with a crumb on the `(app)` route so it always reaches the dashbo
 on mount, so a collapsed rail survives a reload. Expanded is the fallback when the cookie is
 absent or unreadable.
 
-It does **not** survive an app switch in production. The cookie is written `path=/` with no
-`domain=`, which makes it host-scoped, and the four applications are served from four subdomains
-of `middlesexmosquito.org`. Someone who works collapsed gets an expanded rail every time they move
-between applications. Local development hides this, because all four are `localhost` and share one
-host — so the behaviour you see in dev is the behaviour you will not get in production.
-
-Making it true would mean writing the cookie with `domain=.middlesexmosquito.org`, the way the
-session cookie is already scoped so SSO can span the subdomains. That write lives in
-`packages/ui/src/components/sidebar.tsx`, which is generated shadcn and excluded from linting, so
-it is a deliberate fork rather than a tweak — hence documented here rather than done quietly.
+The cookie is written `path=/` with no `domain=`, so it is scoped to the host. Every App lives on
+`central`'s host, so the rail's state carries across App switches.
 
 ## Notes
 
-- `SidebarProvider` already supplies a `TooltipProvider`. Applications do not need to add one.
-- The staff applications render light theme only; none mounts a theme provider. The `.dark`
+- `SidebarProvider` already supplies a `TooltipProvider`. Apps do not need to add one.
+- `central` renders light theme only; it mounts no theme provider. The `.dark`
   sidebar tokens have known drift — see `DESIGN.md` — so wiring dark mode means revisiting the
   active-row colour.
 - Staff layouts are decided at desktop widths but must survive narrow ones. Below the `md`
