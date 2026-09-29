@@ -1,7 +1,10 @@
 import { NoticeTypesRowSchema } from "@mcmec/schemas/db/notice-types";
 import { createEagerCollection } from "../electric-collection";
 
-/** The Notice Categories the notices screens name each notice by. Read-only in central. */
+/**
+ * Notice Categories: the portal's notices screens name each notice by one, and Website
+ * Management writes them.
+ */
 export function create(apiUrl: string) {
 	return createEagerCollection({
 		apiUrl,

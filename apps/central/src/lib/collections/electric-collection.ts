@@ -274,3 +274,33 @@ export function createEagerCollection<
 >(options: ElectricCollectionOptions<TTable, TSchema>) {
 	return createElectricCollection(options, "eager", false);
 }
+
+/**
+ * On-demand: for the tables that only grow (`public_requests`, `mosquito_activity_data`). It
+ * syncs no snapshot; each live query's `where`/`orderBy` is sent to the shape proxy as
+ * `subset__where` / `subset__order_by` / `subset__params` (with `log=changes_only`), and only
+ * that slice comes back.
+ *
+ * That makes it depend on the proxy forwarding `log` and every `subset__*` param
+ * (apps/api/src/shapes.ts). If they are dropped nothing fails loudly: the collection syncs zero
+ * rows. Forwarding them is safe because Electric intersects a subset with the shape's own
+ * server-side `where` rather than replacing it.
+ *
+ * Two differences from `@mcmec/sync`'s copy, both because of the registry:
+ *
+ * - `startSync: false`, like the eager tables, so building one opens no stream. The first live
+ *   query subscribing starts it, and `gcTime` stops it after the last one leaves. The sync
+ *   package started these at construction, which was harmless in an app that built every table
+ *   once and never stopped any.
+ * - `collection.preload()` is a no-op here (TanStack DB warns and returns). A loader therefore
+ *   preloads nothing for an on-demand table; the screen's own live query loads its slice and
+ *   reports `isReady` when it has.
+ */
+export function createOnDemandCollection<
+	TTable extends TableName,
+	TSchema extends ZodObject<z.ZodRawShape> & {
+		_zod: { output: { id: string } };
+	},
+>(options: ElectricCollectionOptions<TTable, TSchema>) {
+	return createElectricCollection(options, "on-demand", false);
+}

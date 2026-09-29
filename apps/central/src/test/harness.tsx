@@ -26,6 +26,15 @@ export const USER_ID = "123e4567-e89b-12d3-a456-426614174000";
 export const EMPLOYEE_ID = "123e4567-e89b-12d3-a456-426614174002";
 export const NOTICE_ID = "123e4567-e89b-12d3-a456-426614174010";
 export const MEETING_ID = "123e4567-e89b-12d3-a456-426614174020";
+export const NOTICE_TYPE_ID = "123e4567-e89b-12d3-a456-426614174011";
+export const DOCUMENT_ID = "123e4567-e89b-12d3-a456-426614174030";
+export const DOCUMENT_TYPE_ID = "123e4567-e89b-12d3-a456-426614174031";
+export const INSECTICIDE_ID = "123e4567-e89b-12d3-a456-426614174040";
+export const JOB_POSTING_ID = "123e4567-e89b-12d3-a456-426614174050";
+export const SPRAY_MISSION_ID = "123e4567-e89b-12d3-a456-426614174060";
+export const MUNICIPALITY_ID = "123e4567-e89b-12d3-a456-426614174061";
+export const PUBLIC_REQUEST_ID = "123e4567-e89b-12d3-a456-426614174070";
+export const ZIP_CODE_ID = "123e4567-e89b-12d3-a456-426614174071";
 export const EMPLOYEE_NAME = "Pat Example";
 export const EMPLOYEE_TITLE = "Inspector";
 
@@ -116,7 +125,7 @@ function fakeCollections() {
 			},
 		]),
 		noticeTypes: localTable("notice_types", [
-			{ id: "notice-type", name: "Legal Notice" },
+			{ description: null, id: NOTICE_TYPE_ID, name: "Legal Notice" },
 		]),
 		notices: localTable("notices", [
 			{
@@ -125,9 +134,85 @@ function fakeCollections() {
 				is_archived: false,
 				is_published: true,
 				notice_date: new Date("2026-01-05T00:00:00Z"),
-				notice_type_id: "notice-type",
+				notice_type_id: NOTICE_TYPE_ID,
 				title: "Budget Hearing",
 			},
+		]),
+		// Website Management's tables. The two on-demand ones are local here like the rest: what
+		// these tests check is which tables a route asks for, not how each one syncs.
+		documents: localTable("documents", [
+			{
+				document_type_id: DOCUMENT_TYPE_ID,
+				fiscal_year: 2026,
+				id: DOCUMENT_ID,
+				is_published: true,
+				url: "https://example.com/budget.pdf",
+			},
+		]),
+		documentTypes: localTable("document_types", [
+			{ description: null, id: DOCUMENT_TYPE_ID, name: "Budget" },
+		]),
+		insecticides: localTable("insecticides", [
+			{
+				active_ingredient: "Etofenprox",
+				active_ingredient_url: "https://example.com/ai",
+				id: INSECTICIDE_ID,
+				label_url: "https://example.com/label.pdf",
+				msds_url: "https://example.com/sds.pdf",
+				trade_name: "Zenivex E20",
+				type_name: "Adulticide",
+			},
+		]),
+		jobPostings: localTable("job_postings", [
+			{
+				content: {},
+				id: JOB_POSTING_ID,
+				is_closed: false,
+				published_at: null,
+				title: "Field Inspector",
+			},
+		]),
+		mosquitoActivityData: localTable("mosquito_activity_data", []),
+		municipalities: localTable("municipalities", [
+			{ id: MUNICIPALITY_ID, name: "Edison" },
+		]),
+		publicRequests: localTable("public_requests", [
+			{
+				address_line_1: "1 Main St",
+				address_line_2: null,
+				created_at: new Date("2026-01-02T00:00:00Z"),
+				details: {},
+				email: "resident@example.com",
+				id: PUBLIC_REQUEST_ID,
+				name: "Sam Resident",
+				phone: "555-0100",
+				request_type: "general_inquiry",
+				status: "new",
+				zip_code_id: ZIP_CODE_ID,
+			},
+		]),
+		sprayScheduleMunicipalities: localTable("spray_schedule_municipalities", [
+			{
+				id: "123e4567-e89b-12d3-a456-426614174062",
+				municipality_id: MUNICIPALITY_ID,
+				spray_schedule_id: SPRAY_MISSION_ID,
+			},
+		]),
+		spraySchedules: localTable("spray_schedules", [
+			{
+				area_description: "North Edison",
+				end_time: "23:00:00",
+				id: SPRAY_MISSION_ID,
+				insecticide_id: INSECTICIDE_ID,
+				map_url: null,
+				mission_date: new Date("2026-07-01T00:00:00Z"),
+				rain_date: null,
+				start_time: "19:00:00",
+				status: "scheduled",
+			},
+		]),
+		zipCodes: localTable("zip_codes", [
+			{ city: "Edison", code: "08817", id: ZIP_CODE_ID, state: "NJ" },
 		]),
 	});
 	const use = vi.spyOn(registry, "use");
