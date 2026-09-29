@@ -12,12 +12,11 @@ import {
 	redirect,
 	useLocation,
 	useMatches,
-	useNavigate,
 } from "@tanstack/react-router";
 import { PORTAL_SHELL } from "@/src/components/portal-sidebar";
 import { requireEmployee } from "@/src/lib/gates";
 import { shellAppOf } from "@/src/lib/shell";
-import { signOutOfCentral } from "@/src/lib/sign-out";
+import { useSignOutOfCentral } from "@/src/lib/sign-out";
 
 /**
  * The root signed-in layout: the one shell every App renders inside.
@@ -61,8 +60,7 @@ export const Route = createFileRoute("/(app)")({
 });
 
 function LayoutComponent() {
-	const { authClient, claims, collections, employees } =
-		Route.useRouteContext();
+	const { claims, employees } = Route.useRouteContext();
 	const { permissions, userId } = claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 	const location = useLocation();
@@ -75,13 +73,7 @@ function LayoutComponent() {
 			label: match.loaderData?.crumb as string,
 		}));
 
-	const navigate = useNavigate();
-	const handleLogout = () =>
-		signOutOfCentral({
-			authClient,
-			collections,
-			toLogin: () => navigate({ to: "/login" }),
-		});
+	const handleLogout = useSignOutOfCentral();
 
 	const { data: employee } = useLiveQuery(
 		(q) =>

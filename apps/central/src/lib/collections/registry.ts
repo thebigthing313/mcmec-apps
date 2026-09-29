@@ -50,9 +50,11 @@
  * reach the next User on a shared workstation. The registry object itself survives (it lives
  * in the router's context); only its contents are discarded.
  *
- * The router may still hold the old instances in cached match contexts. That is harmless
- * because `beforeLoad` runs on every navigation, so the next User's routes ask again and get
- * fresh ones; nothing may keep a collection from context beyond the route that received it.
+ * A cleaned-up collection is not dead: TanStack DB restarts its sync the moment anything
+ * subscribes to it again. So every reference to the old instances has to go with them: the
+ * router's cached matches hold some in their context, which is why `signOutOfCentral` (see
+ * src/lib/sign-out.ts, #266) clears the router's cache alongside `endSession()`. Beyond that,
+ * nothing may keep a collection from context beyond the route that received it.
  */
 
 /** What the registry needs from a collection: a way to stop it. */
