@@ -5,9 +5,6 @@
 #
 #   https://localhost:3443  ->  :3543  api (Hono)
 #   https://localhost:3444  ->  :3544  central
-#   https://localhost:3445  ->  :3545  hr
-#   https://localhost:3446  ->  :3546  admin
-#   https://localhost:3447  ->  :3547  website-management
 #   https://localhost:3448  ->  :3548  public
 #
 # Why HTTPS for everything, not just the API:
@@ -61,24 +58,6 @@ https://localhost:3443 {
 https://localhost:3444 {
 	reverse_proxy localhost:3544 {
 		header_up Host localhost:3544
-	}
-}
-
-https://localhost:3445 {
-	reverse_proxy localhost:3545 {
-		header_up Host localhost:3545
-	}
-}
-
-https://localhost:3446 {
-	reverse_proxy localhost:3546 {
-		header_up Host localhost:3546
-	}
-}
-
-https://localhost:3447 {
-	reverse_proxy localhost:3547 {
-		header_up Host localhost:3547
 	}
 }
 

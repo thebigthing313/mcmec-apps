@@ -4,12 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MCMEC (Middlesex County Mosquito Extermination Commission) monorepo with three web apps and six shared packages, managed with **pnpm workspaces** and **Turborepo**.
+MCMEC (Middlesex County Mosquito Extermination Commission) monorepo with two web apps, the `api` service and six shared packages, managed with **pnpm workspaces** and **Turborepo**.
 
 ### Apps
-- **central** (`apps/central`) — Admin management interface (Vite SPA, port 3544)
-- **website-management** (`apps/website-management`) — Public-website content management: notices, meetings, insecticides, documents, spray schedules, service requests (Vite SPA, port 3547)
+- **central** (`apps/central`) — the only staff SPA (Vite, port 3544). It holds four Apps behind
+  the app switcher: the Self Service Portal at `/`, and Website Management, HR and Admin at
+  `/website-management`, `/hr` and `/admin`, each gated by one App Role
 - **public** (`apps/public`) — Public-facing website with SSR (TanStack Start + Nitro, port 3548)
+- **api** (`apps/api`) — Hono API: Better Auth sessions, the Electric shape proxy, `central`'s
+  writes (as named commands) and `public`'s request intake (port 3543)
 
 ### Dev ports
 
@@ -20,12 +23,9 @@ and shouldn't be opened directly.
 | -------------- | --------------- | --- |
 | 3443 | 3543 | api (Hono) |
 | 3444 | 3544 | central |
-| 3445 | 3545 | hr |
-| 3446 | 3546 | admin |
-| 3447 | 3547 | website-management |
 | 3448 | 3548 | public |
 
-**Upstream = browse port + 100.** Every MCMEC port is one of these twelve plus 2020, and the
+**Upstream = browse port + 100.** Every MCMEC port is one of these six plus 2020, and the
 two columns carry the same last two digits, so a URL in the address bar names the port behind
 it without a lookup.
 
@@ -72,8 +72,7 @@ defaults would take 2019 and 80.
 - **ui** (`packages/ui`) — Shared component library (Radix UI + Tailwind CSS v4 + shadcn pattern)
 - **lib** (`packages/lib`) — Business logic, constants, validation schemas (Zod)
 - **schemas** (`packages/schemas`) — Zod row/insert/update schemas (`db/*`); a pure Zod leaf with no React or TanStack dependency
-- **sync** (`packages/sync`) — Electric collection factories, the per-app collection sets (`collections/*`), API write handlers, `fetchShapeSnapshot`, and the shared route paths (`@mcmec/sync/routes`)
-- **domain** (`packages/domain`) — the command vocabulary: what a write is called, what payload it takes and which permission it needs. Defines only; `apps/api` implements the handlers
+- **domain** (`packages/domain`) — the command vocabulary: what a write is called, what payload it takes and which permission it needs. Defines only; `apps/api` implements the handlers. Also home to `COMMAND_PATH` (`@mcmec/domain/routes`)
 - **auth** (`packages/auth`) — Better Auth client, `signIn`/`signOut`, `verifyClaims`
 - **typescript-config** (`packages/typescript-config`) — Shared TS configs (base, react-library, tanstack-start)
 
@@ -89,7 +88,6 @@ pnpm dev
 
 # Run a single app dev server
 pnpm --filter central dev
-pnpm --filter website-management dev
 pnpm --filter public dev
 
 # Build all apps
@@ -104,10 +102,13 @@ pnpm check-types
 # Lint (Biome)
 pnpm lint
 
-# Run tests — @mcmec/auth, @mcmec/lib, @mcmec/schemas and api each have a suite
+# Check central's entry bundle (needs a central build first)
+pnpm check-bundle
+
+# Run tests — @mcmec/auth, @mcmec/lib, @mcmec/schemas, api and central each have a suite
 pnpm --filter @mcmec/schemas test        # watch mode
 pnpm --filter @mcmec/schemas test:run     # single run
-pnpm --filter api test:run                # any of the four, same scripts —
+pnpm --filter api test:run                # any of the five, same scripts —
                                           # api needs a Postgres, see apps/api/README.md
 
 # Changesets (versioning)
@@ -130,8 +131,15 @@ pnpm version-pkgs
 
 ## Architecture Notes
 
-- Apps import shared packages via workspace protocol (`@mcmec/ui`, `@mcmec/lib`, `@mcmec/schemas`)
-- `central` and `website-management` are client-side SPAs; `public` is SSR with TanStack Start outputting to `.output/public/`
+- Apps import shared packages via workspace protocol (`@mcmec/ui`, `@mcmec/lib`, `@mcmec/schemas`, `@mcmec/domain`, `@mcmec/auth`)
+- `central` is a client-side SPA; `public` is SSR with TanStack Start outputting to `.output/public/`
+- `central` loads each App's code and data only when the App is entered. Routes ask the session
+  collection registry for tables in `beforeLoad`, and **a loader preloads only what its route's
+  components subscribe to** — the rule and its traps are in the header of
+  `apps/central/src/lib/collections/registry.ts`
+- `pnpm check-bundle` fails CI if `central`'s entry closure holds a module under `src/apps/<app>/`
+  or a table other than `employees`, or outgrows the gzip ceiling in
+  `apps/central/bundle/budget.json`. Raise the ceiling only in a PR that says why in one line
 - Shared brand images live in `apps/api/assets/` and are served by the `api` service at `/assets/*`; apps reference them through `@mcmec/lib/constants/assets`
 - Route trees are auto-generated by TanStack Router plugin (`routeTree.gen.ts` — do not edit)
 - The database schema is owned by Drizzle in `apps/api/src/db/schema.ts`, with migrations generated into `apps/api/drizzle/` — do not hand-edit generated migrations
@@ -182,9 +190,11 @@ All changes go through branches and pull requests — never commit directly to `
 5. **CI runs automatically** — lint, type-check, build, and tests must all pass
 6. **Review, resolve conversations, and squash merge** into `develop`
 7. **When ready to release**, run `pnpm release` on `develop` — see below
-8. **Vercel deploys only affected apps** to production on merge to `main`
+8. **Railway deploys production** on merge to `main` — see Deployment below
 
 ### Releasing (`develop` → `main`)
+
+**Production releases stay frozen until #254 ships the staff SPA consolidation.**
 
 Run `pnpm release` on a clean, up-to-date `develop`. It consumes the pending changesets
 (bumping versions and writing CHANGELOGs), commits `chore: version packages`, pushes, and opens
@@ -200,18 +210,18 @@ The version commit has to land on `develop` rather than being added to the PR by
 *is* `develop`. Pushing straight to `develop` works because that ruleset grants the Admin role a
 bypass; without it, PR the version commit into `develop` first, then re-run.
 
-### Preview deployments
-Vercel preview deploys are **off by default** on all branches (including `develop`). To trigger one, include `[deploy-preview]` in a commit message.
-
 ### Staging deploys (Railway)
 
 Railway's **staging** environment does *not* rebuild on every merge to `develop`. Each
 `railway.json` has an `environments.staging` block watching one file, `deploy/staging-release.txt`,
 so pushes to `develop` build nothing. When you are ready to browser-test, run `pnpm stage` on a
-clean, up-to-date `develop` — it stamps that file, commits and pushes, and all six staging
+clean, up-to-date `develop` — it stamps that file, commits and pushes, and all three staging
 services rebuild from the latest `develop`. `pnpm stage --dry-run` prints the plan.
 
 Production is unaffected: `main` still deploys on every merge. See `docs/railway-deployment.md`.
+
+`docs/staff-spa-staging-check.md` is the browser check for `central`'s Apps on staging: App Role
+gates, which shapes load, and sign-out.
 
 ### Database changes
 - The schema lives in `apps/api/src/db/schema.ts`; migrations are generated into `apps/api/drizzle/`
@@ -220,11 +230,12 @@ Production is unaffected: `main` still deploys on every merge. See `docs/railway
 - Always apply and test a migration against staging before promoting to `main`
 
 ### CI checks on every PR
-- **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build` — the same root scripts
-  you run locally, so a deleted or broken root script fails CI instead of drifting silently
-- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas` and `api` (the last
-  against a Postgres service container)
-- **Changeset check** — warns (non-blocking) if no changeset is included
+- **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build`, then
+  `pnpm check-bundle` — the same root scripts you run locally, so a deleted or broken root script
+  fails CI instead of drifting silently
+- **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas`, `api` (against a
+  Postgres service container) and `central`
+- **Changeset check** — blocking in both directions; see Releasing
 - CI runs on PRs to both `develop` and `main`
 
 ### Branch protection
@@ -242,17 +253,30 @@ Production is unaffected: `main` still deploys on every merge. See `docs/railway
 
 ## Deployment
 
-All apps deploy to **Vercel** with Turborepo filtering:
-- `central` and `website-management`: SPA output to `dist/`, rewrites `/* → /index.html`
-- `public`: SSR output to `.output/public/`, has strict CSP headers and Cloudflare Turnstile integration
+Every app deploys to **Railway**, one service per app plus `Postgres` and `electric`, in a
+`production` environment (← `main`) and a `staging` environment (← `develop`, rebuilt only by
+`pnpm stage`). Each app's build and start commands live in `apps/<app>/railway.json`; the
+repo-root `railway.json` belongs to `api`.
+
+- `central`: static SPA in `dist/`, served by `sirv --single` (the SPA fallback), on Serverless
+  (sleeps when idle)
+- `public`: SSR (Nitro), started from `.output/server/index.mjs`, always-on. Its CSP and
+  `X-Robots-Tag` headers are set in `apps/public/server/plugins/`
+- `public`'s canonical host is `www.middlesexmosquito.org` (`SITE_URL` in
+  `apps/public/src/lib/site.ts`); the bare apex is a registrar forward, not a Railway domain
+- Staging runs `api`, `central` and `public`. **Production still also runs the retired `hr`,
+  `admin` and `website-management` services** until the consolidation release (#254) deletes them
+
+The apps moved here from Vercel on 2026-08-13 (#122) and nothing deploys to Vercel any more.
+See `docs/railway-deployment.md`.
 
 ## Environment Variables
 
 Required (set via `.env` files per app — see each app's `.env.example`):
-- `VITE_API_URL` — admin, central, hr, website-management; the `api` origin they read shapes and write data through
+- `VITE_API_URL` — central; the `api` origin it reads shapes and writes data through
 - `VITE_APP_NAME`, `VITE_DOMAIN_NAME` — central app
 - `VITE_CLOUDFLARE_TURNSTILE_SITEKEY` — public app
-- `VITE_ASSETS_ORIGIN` — all five web apps; optional origin for the brand images at `/assets`. Unset, they come from production; set it to your own api to see images a branch adds before that branch reaches `main`
+- `VITE_ASSETS_ORIGIN` — both web apps; optional origin for the brand images at `/assets`. Unset, they come from production; set it to your own api to see images a branch adds before that branch reaches `main`
 - `API_URL` — public app; it reaches the api server-side only, so this is not a `VITE_` var (stays plain http in local dev)
 
 Server-side, on the `api` service only:

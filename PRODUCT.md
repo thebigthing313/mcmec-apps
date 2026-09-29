@@ -15,8 +15,8 @@ in my yard* — and they leave as soon as it is answered. A second, smaller set 
 the statutory record: Notices, Meeting agendas and minutes, and published budget and audit
 Documents. Public Requests are submitted **anonymously**; the public has no login and no account.
 
-**Commission staff** are the users of the four internal surfaces (`central`, `website-management`,
-`hr`, `admin`). Confirmed operating profile:
+**Commission staff** are the users of `central`'s four Apps (the Self Service Portal, Website
+Management, HR and Admin). Confirmed operating profile:
 
 - Office desktop, deliberate work. Large screens; considered data entry rather than hurried
   capture. Density and keyboard efficiency outrank oversized touch targets.
@@ -39,7 +39,7 @@ in its meta description — and it is the Commission's only claim to longevity. 
 round it, embellish it, or pair it with invented milestones.
 
 This monorepo is both halves of that sentence: the public website that discharges the Commission's duty to inform, and
-the staff applications that produce what the website publishes.
+the staff app (`central`) that produces what the website publishes.
 
 Success on the public side is a resident who gets a correct answer fast and, when they need
 something done, files a Public Request that reaches staff. Success on the staff side is that the
@@ -57,7 +57,7 @@ claim.
 
 - The work is **seasonal**. Spray Missions, Weekly Mosquito Activity, and public attention all
   concentrate in mosquito season; the same screens sit near-idle the rest of the year.
-- Public content flows one way: staff author in `website-management`, and `apps/public` renders
+- Public content flows one way: staff author in Website Management, and `apps/public` renders
   what was Published. There is no second authoring path.
 - The Commission's four domains — Website, Employees, Users, Reference — are bounded contexts
   named for the work, not for the app the work happens in. `CONTEXT.md` is the ubiquitous
@@ -65,8 +65,8 @@ claim.
 - Lifecycle Actions (publish, archive, cancel, close, resolve) are deliberate acts performed on a
   record, never a status field someone edits and saves. ADR 0001 fixes them as buttons.
 - Every write is a named Command carrying its Intent, and every change writes an Audit Entry.
-- Environments are siblings under `middlesexmosquito.org` so one SSO cookie spans them; the app
-  switcher derives staging vs. production from the hostname.
+- Hosts are siblings under `middlesexmosquito.org` so one session cookie spans `central` and `api`;
+  the app switcher derives staging vs. production from the hostname.
 
 ## Capabilities and Constraints
 
@@ -76,11 +76,11 @@ catalogue, Weekly Mosquito Activity, mosquito source checklist and municipal pac
 and mission pages, Job Postings, and four kinds of Public Request intake (general inquiry, adult
 mosquito nuisance, water management, mosquitofish) protected by Cloudflare Turnstile.
 
-Website Management (`apps/website-management`): authoring and lifecycle for Notices and their
+Website Management (`central`'s `/website-management`): authoring and lifecycle for Notices and their
 Categories, Meetings, Documents and their Categories, Insecticides, Spray Missions, Job Postings,
 Weekly Mosquito Activity season loads, and Public Request triage.
 
-HR (`apps/hr`) and Admin (`apps/admin`): Employee records and Invites; User accounts and the
+HR (`central`'s `/hr`) and Admin (`central`'s `/admin`): Employee records and Invites; User accounts and the
 Grant/Revoke of App Roles one at a time. `central` is the signed-in home and app switcher.
 
 Constraints:
@@ -133,10 +133,10 @@ on a published Insecticide label or SDS.
    a request form is the public site's whole job; everything else defers to it.
 3. **Speak the Commission's language.** `CONTEXT.md` governs interface copy across every app.
    Consistent naming is a correctness requirement, not a style preference.
-4. **One design system, five frontends.** `packages/ui` is the single visual authority. A pattern
+4. **One design system, every frontend.** `packages/ui` is the single visual authority. A pattern
    solved once is solved for every MCMEC frontend that exists now and every one added later;
    app-local styling is the exception that must justify itself.
-5. **Staff apps are instruments, not brochures.** Density, consistency, and expert speed win;
+5. **Staff Apps are instruments, not brochures.** Density, consistency, and expert speed win;
    brand lives in precise detail, not in decoration.
 
 ## Accessibility & Inclusion
@@ -144,7 +144,7 @@ on a published Insecticide label or SDS.
 - `apps/public` must meet **WCAG 2.1 AA**. This is a firm requirement: semantic landmarks, full
   keyboard operability, meaningful alt text and accessible names, 4.5:1 contrast for normal text
   and 3:1 for large, labeled form inputs, and a correct heading hierarchy.
-- Staff apps carry no formal external standard, but inherit the same shared components and should
+- `central` carries no formal external standard, but inherit the same shared components and should
   not regress below them.
 - **NJ statutory posting obligations constrain the design, not just the content.** The Open
   Public Meetings Act and P.L. 2025 c.72 govern what must be publicly visible and for how long —

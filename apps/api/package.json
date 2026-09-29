@@ -5,7 +5,6 @@
 		"@hono/node-server": "^2.0.12",
 		"@mcmec/domain": "workspace:*",
 		"@mcmec/lib": "workspace:*",
-		"@mcmec/sync": "workspace:*",
 		"better-auth": "^1.6.25",
 		"drizzle-kit": "^0.31.10",
 		"drizzle-orm": "^0.45.2",
@@ -37,5 +36,5 @@
 		"test:run": "vitest run"
 	},
 	"type": "module",
-	"version": "1.0.0"
+	"version": "1.0.1"
 }

@@ -1,0 +1,4 @@
+{
+	"$comment": "Ceiling on central's entry closure (entry chunk + its static imports), gzip kB (1 kB = 1000 B). Set by #245 at 186.8 kB measured + ~10%, rounded up to 5 kB. Raise it only in a PR that says why in one line. See #241.",
+	"entryClosureGzipKB": 210
+}

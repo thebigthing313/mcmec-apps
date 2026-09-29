@@ -3,12 +3,8 @@ import type { NitroAppPlugin, NitroRuntimeHooks } from "nitro/types";
 /**
  * The site's Content-Security-Policy.
  *
- * This lived in `apps/public/vercel.json` and moved here because Railway does not read that
- * file — a header configured only there silently disappears the moment the app is served from
- * Railway instead of Vercel. Until the Vercel project is retired, production is still served
- * from there, so the two policies must be changed together; the only permitted difference is
- * `vercel.live` / `*.vercel.com`, which Vercel's preview toolbar needs and Railway has no use
- * for. After the cutover this file is the only copy.
+ * This used to live in `apps/public/vercel.json` and moved here when the site moved to Railway,
+ * which does not read that file. This is now the only copy.
  *
  * Only the CSP moved. `vercel.json` also long-cached the build output, but Nitro already sends
  * `public, max-age=31536000, immutable` with an ETag on the content-hashed files it emits under
@@ -32,8 +28,7 @@ import type { NitroAppPlugin, NitroRuntimeHooks } from "nitro/types";
  *   Read from `VITE_ASSETS_ORIGIN` so it tracks `@mcmec/lib/constants/assets`, which resolves the
  *   same variable to build those URLs. A policy naming the production origin while the page
  *   requests a local one blocks every image, so the two cannot be allowed to disagree. Unset —
- *   which is how production runs — both sides fall back to production and this header is
- *   byte-for-byte what `vercel.json` still sends.
+ *   which is how production runs — both sides fall back to production.
  *
  * Dropped in the move: `vercel.live` and `*.vercel.com`, which existed only for Vercel's
  * preview toolbar.
@@ -67,7 +62,7 @@ const setCspHeader: NitroRuntimeHooks["response"] = (response) => {
  * Set from the `response` hook, so it covers everything the server emits — SSR pages, static
  * assets, errors — rather than only the routes that render the shared document head. That is the
  * same reason `robots.ts` uses this hook, and it is what the `source: "/(.*)"` rule in
- * `vercel.json` did.
+ * `vercel.json` used to do.
  */
 const csp: NitroAppPlugin = (nitro) => {
 	nitro.hooks.hook("response", setCspHeader);

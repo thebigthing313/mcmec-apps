@@ -24,9 +24,9 @@ export class ForbiddenError extends AuthError {
 	}
 }
 
-export class NotOnboardedError extends AuthError {
-	constructor(message: string = ErrorMessages.AUTH.NOT_ONBOARDED) {
-		super(message, "NOT_ONBOARDED");
-		this.name = "NotOnboardedError";
+export class NoEmployeeError extends AuthError {
+	constructor(message: string = ErrorMessages.AUTH.NO_EMPLOYEE) {
+		super(message, "NO_EMPLOYEE");
+		this.name = "NoEmployeeError";
 	}
 }

@@ -1,8 +1,8 @@
 /**
  * @mcmec/domain — the command vocabulary.
  *
- * Defines; does not execute. `apps/api` implements the handlers, `packages/sync` carries the
- * intent names on the wire, and the SPAs name the intent at the call site.
+ * Defines; does not execute. `apps/api` implements the handlers, `apps/central` carries the
+ * intent names on the wire and names the intent at the call site.
  */
 // Re-exported so a consumer of the vocabulary gets the table union from the same place it
 // gets the commands keyed on it — `apps/api` needs both and depends only on this package.

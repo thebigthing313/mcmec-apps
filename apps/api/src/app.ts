@@ -1,4 +1,4 @@
-import { COMMAND_PATH } from "@mcmec/sync/routes";
+import { COMMAND_PATH } from "@mcmec/domain/routes";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";

@@ -3,7 +3,7 @@ import z from "zod";
 import type { AuthClient } from "./client";
 import {
 	ForbiddenError,
-	NotOnboardedError,
+	NoEmployeeError,
 	UnauthenticatedError,
 } from "./errors";
 import type { Claims, SessionData } from "./types";
@@ -16,20 +16,17 @@ const ClaimsSchema = z.object({
 });
 
 /**
- * Resolves the current Better Auth session into our `Claims` shape.
+ * Reads the current Better Auth session into our `Claims` shape, and applies no policy.
  *
- * Reads `GET /api/auth/get-session` via the client (cookie-authenticated), then maps
- * the `customSession` fields. Mirrors the old Supabase-JWT `verifyClaims` semantics:
- *   - no session / fetch error  -> UnauthenticatedError
- *   - session but no employeeId  -> NotOnboardedError
- *   - required permission absent -> ForbiddenError
+ * Reads `GET /api/auth/get-session` via the client (cookie-authenticated), then maps the
+ * `customSession` fields. The only refusal here is having no session at all
+ * (`UnauthenticatedError`). A User with no linked Employee comes back with `employeeId: null`
+ * for the caller to decide about: `central` refuses that case at its root with its own gate.
  */
-export const verifyClaims = async (input: {
+export const readClaims = async (input: {
 	client: AuthClient;
-	permission?: string;
 }): Promise<Claims> => {
-	const { client, permission } = input;
-	const { data, error } = await client.getSession();
+	const { data, error } = await input.client.getSession();
 
 	if (error) {
 		throw new UnauthenticatedError(ErrorMessages.AUTH.UNABLE_TO_FETCH_CLAIMS);
@@ -50,10 +47,25 @@ export const verifyClaims = async (input: {
 		permissions: Array.isArray(session.permissions) ? session.permissions : [],
 	};
 
-	const parsedClaims = ClaimsSchema.parse(returnedClaims);
+	return ClaimsSchema.parse(returnedClaims);
+};
+
+/**
+ * `readClaims` plus the policy the retired single-purpose staff apps shared. Mirrors the old
+ * Supabase-JWT `verifyClaims` semantics:
+ *   - no session / fetch error  -> UnauthenticatedError
+ *   - session but no employeeId  -> NoEmployeeError
+ *   - required permission absent -> ForbiddenError
+ */
+export const verifyClaims = async (input: {
+	client: AuthClient;
+	permission?: string;
+}): Promise<Claims> => {
+	const { client, permission } = input;
+	const parsedClaims = await readClaims({ client });
 
 	if (!parsedClaims.employeeId) {
-		throw new NotOnboardedError();
+		throw new NoEmployeeError();
 	}
 
 	if (permission && !parsedClaims.permissions.includes(permission)) {

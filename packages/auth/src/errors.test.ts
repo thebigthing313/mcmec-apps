@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	AuthError,
 	ForbiddenError,
-	NotOnboardedError,
+	NoEmployeeError,
 	UnauthenticatedError,
 } from "./errors";
 
@@ -47,12 +47,12 @@ describe("ForbiddenError", () => {
 	});
 });
 
-describe("NotOnboardedError", () => {
+describe("NoEmployeeError", () => {
 	it("should have correct defaults", () => {
-		const error = new NotOnboardedError();
+		const error = new NoEmployeeError();
 		expect(error).toBeInstanceOf(AuthError);
-		expect(error.name).toBe("NotOnboardedError");
-		expect(error.code).toBe("NOT_ONBOARDED");
-		expect(error.message).toBe("User has not properly onboarded.");
+		expect(error.name).toBe("NoEmployeeError");
+		expect(error.code).toBe("NO_EMPLOYEE");
+		expect(error.message).toBe("This account is not linked to an Employee.");
 	});
 });

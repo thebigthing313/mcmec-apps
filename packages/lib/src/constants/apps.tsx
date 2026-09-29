@@ -2,7 +2,7 @@ import { Home, Newspaper, Shield, Users } from "lucide-react";
 import type { AppRole } from "./roles";
 
 /**
- * The four staff applications, by name.
+ * The four staff Apps, by name.
  *
  * `activeApp` on the layout context carried a documented invariant — "must match an
  * AVAILABLE_APPS name" — and no type to hold it, which made it the one field in that context a
@@ -10,12 +10,17 @@ import type { AppRole } from "./roles";
  * nothing, and the switcher's answer to that was to render nothing at all: no mark, no name, no
  * way out of the application.
  */
-export type AppName = "Admin" | "Central" | "HR" | "Website Management";
+export type AppName =
+	| "Admin"
+	| "HR"
+	| "Self Service Portal"
+	| "Website Management";
 
 export type App = {
 	name: AppName;
 	logo: React.ReactNode;
 	description: string;
+	/** Where the App lives in `central`: a path (`/`, `/hr`) the switcher links to with the router. */
 	href: string;
 	requiredPermission: AppRole | null;
 };
@@ -26,7 +31,7 @@ const ROOT_DOMAIN = "middlesexmosquito.org";
  * The environment's subdomain suffix: `""` in production, `"-staging"` on staging.
  *
  * Staging hosts are siblings of production under the same parent domain
- * (`hr-staging.middlesexmosquito.org` beside `hr.middlesexmosquito.org`) because the SSO
+ * (`central-staging.middlesexmosquito.org` beside `central.middlesexmosquito.org`) because the SSO
  * cookie is scoped to that shared parent and can't span two unrelated domains. So the
  * environment is readable off the current hostname: take the label immediately left of the
  * root domain and see whether it carries the suffix.
@@ -39,7 +44,7 @@ function environmentSuffix(hostname: string): string {
 	if (hostname !== ROOT_DOMAIN && !hostname.endsWith(`.${ROOT_DOMAIN}`)) {
 		return "";
 	}
-	// "" on the apex, "hr" in production, "hr-staging" on staging, "staging" for the public site.
+	// "" on the apex, "central" in production, "central-staging" on staging, "staging" for the public site.
 	const label =
 		hostname.slice(0, -`.${ROOT_DOMAIN}`.length).split(".").pop() ?? "";
 	return label === "staging" || label.endsWith("-staging") ? "-staging" : "";
@@ -47,85 +52,57 @@ function environmentSuffix(hostname: string): string {
 
 const HOSTNAME = typeof window !== "undefined" ? window.location.hostname : "";
 
-const IS_DEPLOYED =
-	HOSTNAME === ROOT_DOMAIN || HOSTNAME.endsWith(`.${ROOT_DOMAIN}`);
-
-const SUFFIX = environmentSuffix(HOSTNAME);
-
 /**
- * `devPort` is the app's **Caddy** port, not its Vite port. Both the scheme and the port
- * matter: an `http://` page calling the `https://` API is cross-site under schemeful
- * same-site, so the session cookie is withheld and the app bounces straight to `/login`.
- * Linking at the Vite upstream would hand every switcher click that dead end.
- */
-function appUrl(subdomain: string, devPort: number): string {
-	return IS_DEPLOYED
-		? `https://${subdomain}${SUFFIX}.${ROOT_DOMAIN}`
-		: `https://localhost:${devPort}`;
-}
-
-export const CENTRAL_URL = appUrl("central", 3444);
-
-/**
- * The public website's origin.
+ * The public website's origin, as seen from a staff page served on `hostname`.
  *
- * Not `appUrl`: the public site is the apex in production and `staging.` in staging, so it is
- * the one origin whose host is not `<name><suffix>.` — the same reason `environmentSuffix`
- * treats a bare `staging` label as the staging suffix. Staff screens that show what the public
- * sees link out to the page itself with it, and a link into the wrong environment's public
- * record is exactly the mistake `IS_DEPLOYED`/`SUFFIX` exist to prevent.
+ * The public site is `www.` in production and `staging.` in staging — the reason
+ * `environmentSuffix` treats a bare `staging` label as the staging suffix. Never the bare apex:
+ * that is a registrar forward that redirects `/` and 404s every other path (#256), so a link to
+ * a specific page there is a dead link.
+ *
+ * Twin of `SITE_URL` in `apps/public/src/lib/site.ts`, the public site's own canonical origin;
+ * change the production host there (and in the `public/sitemap.xml` it names) too. It is not
+ * imported from there because `@mcmec/lib` must not depend on an app.
  */
-export const PUBLIC_SITE_URL = IS_DEPLOYED
-	? `https://${SUFFIX ? "staging." : ""}${ROOT_DOMAIN}`
-	: "https://localhost:3448";
-
-export function getCentralLoginUrl(redirect?: string): string {
-	const base = `${CENTRAL_URL}/login`;
-	if (redirect) {
-		return `${base}?redirect=${encodeURIComponent(redirect)}`;
-	}
-	return base;
+export function publicSiteUrl(hostname: string): string {
+	const isDeployed =
+		hostname === ROOT_DOMAIN || hostname.endsWith(`.${ROOT_DOMAIN}`);
+	if (!isDeployed) return "https://localhost:3448";
+	return `https://${environmentSuffix(hostname) ? "staging" : "www"}.${ROOT_DOMAIN}`;
 }
 
 /**
- * Password recovery lives in Central only, and deliberately.
- *
- * Central is the one application every signed-in employee has, so it is the only front door that
- * cannot be a dead end. Reset mail also lands on whichever origin asked for it, so hosting the
- * request in four places would scatter the same flow across four hostnames for no gain — HR,
- * Admin and Website Management link here instead.
+ * The public website's origin for this page (see `publicSiteUrl`). Staff screens that show what
+ * the public sees link out to the page itself with it, and a link into the wrong environment's
+ * public record is exactly the mistake `environmentSuffix` exists to prevent.
  */
-export const CENTRAL_FORGOT_PASSWORD_URL = `${CENTRAL_URL}/forgot-password`;
+export const PUBLIC_SITE_URL = publicSiteUrl(HOSTNAME);
 
 export const AVAILABLE_APPS: App[] = [
 	{
-		description: "Employee self-service portal.",
-		href: appUrl("central", 3444),
+		description: "Where staff land, and the Commission's public record.",
+		href: "/",
 		logo: <Home />,
-		name: "Central",
+		name: "Self Service Portal",
 		requiredPermission: null,
 	},
 	{
 		description: "Manage the content published on the public website.",
-		// "website-management", not "website": the subdomain has to match the host actually
-		// provisioned on Railway in BOTH environments — `website-management` in production and
-		// `website-management-staging` in staging, the latter of which the `-staging` suffix is
-		// appended to. "website" resolved in neither.
-		href: appUrl("website-management", 3447),
+		href: "/website-management",
 		logo: <Newspaper />,
 		name: "Website Management",
 		requiredPermission: "manage_website",
 	},
 	{
-		description: "Manage employees and user accounts.",
-		href: appUrl("hr", 3445),
+		description: "Add, edit, invite and delete Employees.",
+		href: "/hr",
 		logo: <Users />,
 		name: "HR",
 		requiredPermission: "manage_employees",
 	},
 	{
-		description: "Manage user permission assignments.",
-		href: appUrl("admin", 3446),
+		description: "Grant and revoke App Roles for Users.",
+		href: "/admin",
 		logo: <Shield />,
 		name: "Admin",
 		requiredPermission: "manage_users",

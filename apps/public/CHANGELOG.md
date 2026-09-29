@@ -1,5 +1,30 @@
 # public
 
+## 2.1.2
+
+### Patch Changes
+
+- 836b045: Declare `www.middlesexmosquito.org` as the canonical host. The canonical link, `og:url`, JSON-LD, robots.txt `Sitemap:` line and sitemap now name `www`, the host that actually serves the site. The bare apex is a registrar forward that 404s every path but `/`.
+- ad126cf: Remove the `@mcmec/sync` package (#251). Nothing behaves differently; each piece that was still in use now lives with the code that uses it.
+
+  `@mcmec/domain` exports `COMMAND_PATH` from a new dependency-free `@mcmec/domain/routes` subpath. `api` serves the command route from it and `central` posts to it.
+
+  `public` reads its SSR shapes with its own `fetchShapeSnapshot`, and keeps its own copy of the shape path and the Electric row parser. Central keeps the other copy, and a test in central pins the two to the same answers.
+
+  `@mcmec/ui`'s `toastOnError` finds a command refusal itself instead of importing the helper from `@mcmec/sync`.
+
+- Updated dependencies [8b4cf5c]
+- Updated dependencies [05d64c3]
+- Updated dependencies [0e59af0]
+- Updated dependencies [fa28784]
+- Updated dependencies [e6c8ad5]
+- Updated dependencies [ad126cf]
+- Updated dependencies [afc64ff]
+- Updated dependencies [50c8b1f]
+  - @mcmec/ui@1.8.0
+  - @mcmec/lib@0.11.0
+  - @mcmec/schemas@3.0.1
+
 ## 2.1.1
 
 ### Patch Changes

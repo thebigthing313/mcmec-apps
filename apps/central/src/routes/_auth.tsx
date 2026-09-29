@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_auth")({
 
 function AuthLayout() {
 	return (
-		<AuthShell destination="Central">
+		<AuthShell destination="Self Service Portal">
 			<Outlet />
 		</AuthShell>
 	);

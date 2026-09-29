@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	ForbiddenError,
-	NotOnboardedError,
+	NoEmployeeError,
 	UnauthenticatedError,
 } from "./errors";
 
@@ -10,7 +10,7 @@ const mockClient = {
 	getSession: mockGetSession,
 };
 
-import { verifyClaims } from "./verifyClaims";
+import { readClaims, verifyClaims } from "./verifyClaims";
 
 // Builds a Better Auth get-session payload (the shape our customSession returns).
 function sessionPayload(overrides: {
@@ -59,7 +59,7 @@ describe("verifyClaims", () => {
 		});
 	});
 
-	it("should throw NotOnboardedError when employeeId is null", async () => {
+	it("should throw NoEmployeeError when employeeId is null", async () => {
 		mockGetSession.mockResolvedValue(
 			sessionPayload({
 				id: "123e4567-e89b-12d3-a456-426614174000",
@@ -72,7 +72,7 @@ describe("verifyClaims", () => {
 		await expect(
 			// biome-ignore lint/suspicious/noExplicitAny: structural mock
 			verifyClaims({ client: mockClient as any }),
-		).rejects.toThrow(NotOnboardedError);
+		).rejects.toThrow(NoEmployeeError);
 	});
 
 	it("should throw ForbiddenError when permission is required but not present", async () => {
@@ -204,7 +204,7 @@ describe("verifyClaims", () => {
 		).rejects.toThrow();
 	});
 
-	it("should treat non-string employeeId as null and throw NotOnboardedError", async () => {
+	it("should treat non-string employeeId as null and throw NoEmployeeError", async () => {
 		mockGetSession.mockResolvedValue(
 			sessionPayload({
 				id: "123e4567-e89b-12d3-a456-426614174000",
@@ -217,7 +217,7 @@ describe("verifyClaims", () => {
 		await expect(
 			// biome-ignore lint/suspicious/noExplicitAny: structural mock
 			verifyClaims({ client: mockClient as any }),
-		).rejects.toThrow(NotOnboardedError);
+		).rejects.toThrow(NoEmployeeError);
 	});
 
 	it("should coerce non-array permissions to an empty array", async () => {
@@ -300,5 +300,39 @@ describe("verifyClaims", () => {
 			// biome-ignore lint/suspicious/noExplicitAny: structural mock
 			verifyClaims({ client: mockClient as any, permission: "read" }),
 		).rejects.toThrow(ForbiddenError);
+	});
+});
+
+describe("readClaims", () => {
+	it("returns a session with no linked Employee instead of refusing it", async () => {
+		// The caller decides what a missing Employee means: central refuses it at its root with
+		// its own gate, and the refusal is App policy rather than something the session read does.
+		mockGetSession.mockResolvedValue(
+			sessionPayload({
+				id: "123e4567-e89b-12d3-a456-426614174000",
+				email: "user@example.com",
+				employeeId: null,
+				permissions: ["manage_users"],
+			}),
+		);
+
+		// biome-ignore lint/suspicious/noExplicitAny: structural mock
+		const result = await readClaims({ client: mockClient as any });
+
+		expect(result).toEqual({
+			userId: "123e4567-e89b-12d3-a456-426614174000",
+			userEmail: "user@example.com",
+			employeeId: null,
+			permissions: ["manage_users"],
+		});
+	});
+
+	it("throws UnauthenticatedError when there is no session", async () => {
+		mockGetSession.mockResolvedValue({ data: null, error: null });
+
+		await expect(
+			// biome-ignore lint/suspicious/noExplicitAny: structural mock
+			readClaims({ client: mockClient as any }),
+		).rejects.toThrow(UnauthenticatedError);
 	});
 });

@@ -85,35 +85,52 @@ function AccessNotice({
  * detail the person reading this cannot act on. It also names who can grant it: a refusal that
  * does not say who to ask is a dead end with better manners.
  *
- * The primary action goes to Central rather than offering a retry, because Central is the one
- * application every employee has, and it carries the switcher that lists the ones they can
+ * The primary action goes to the Self Service Portal rather than offering a retry, because it is
+ * the one App every employee has, and it carries the switcher that lists the ones they can
  * actually open.
+ *
+ * The link is injected the way `Layout.Breadcrumb` injects it, so `@mcmec/ui` stays free of a
+ * router: `central` passes its router `Link` and `to="/"`, and an app on another origin passes
+ * no `LinkComponent` and an absolute `to`, which renders as a plain anchor.
  */
-export function AppRoleRequired({
+export function AppRoleRequired<
+	TLinkProps extends { to: string; children?: React.ReactNode } = {
+		to: string;
+		children?: React.ReactNode;
+	},
+>({
 	appName,
-	centralUrl,
+	LinkComponent,
 	onSignOut,
 	roleLabel,
+	to,
 }: {
-	/** The application that refused, e.g. "Website Management". */
+	/** The App that refused, e.g. "Website Management". */
 	appName: string;
-	/** Absolute URL of the Central app, from `@mcmec/lib/constants/apps`. */
-	centralUrl: string;
+	/** The router's link component. Omitted, the action is a plain `<a href={to}>`. */
+	LinkComponent?: React.ComponentType<TLinkProps>;
 	/**
-	 * Offered alongside Central because the likeliest cause of this screen is the wrong account.
-	 * Without it the only exit was Central, which the same account also lands in — so someone
-	 * signed in as the wrong person had no way back to a sign-in form from inside the app.
+	 * Offered alongside the Self Service Portal because the likeliest cause of this screen is the
+	 * wrong account. Without it the only exit was the portal, which the same account also lands
+	 * in — so someone signed in as the wrong person had no way back to a sign-in form.
 	 */
 	onSignOut?: () => void | Promise<void>;
 	/** The App Role's user-facing label, e.g. "Website" — never the permission string. */
 	roleLabel: string;
+	/** Where the Self Service Portal is: `/` inside `central`, an absolute URL elsewhere. */
+	to: string;
 }) {
+	const label = "Go to the Self Service Portal";
 	return (
 		<AccessNotice
 			actions={
 				<>
 					<Button asChild>
-						<a href={centralUrl}>Go to Central</a>
+						{LinkComponent ? (
+							<LinkComponent {...({ to } as TLinkProps)}>{label}</LinkComponent>
+						) : (
+							<a href={to}>{label}</a>
+						)}
 					</Button>
 					{onSignOut ? (
 						<Button onClick={() => runSignOut(onSignOut)} variant="outline">
@@ -125,7 +142,7 @@ export function AppRoleRequired({
 			explanation={`${appName} requires the ${roleLabel} App Role, and your account does not have it.`}
 			heading={`You do not have access to ${appName}`}
 			icon={<Lock />}
-			remedy="Someone with the Users App Role can grant it to you in the Admin application."
+			remedy="Someone with the Users App Role can grant it to you in Admin."
 		/>
 	);
 }
@@ -133,12 +150,12 @@ export function AppRoleRequired({
 /**
  * Shown when a sign-in succeeds but the account is not linked to an Employee record.
  *
- * Distinct from a missing App Role and worth its own screen: no role would help, because the
- * applications read a person's name, title and permissions off the Employee, so there is nothing
- * to sign in as. Signing out is the only action that can change the outcome from this side —
- * the account may simply be the wrong one — so it is the only action offered.
+ * Distinct from a missing App Role and worth its own screen: no role would help, because every
+ * App reads the signed-in person off their Employee, so there is nothing to sign in as. Signing
+ * out is the only action that can change the outcome from this side — the account may simply be
+ * the wrong one — so it is the only action offered.
  */
-export function OnboardingRequired({
+export function EmployeeRequired({
 	onSignOut,
 }: {
 	onSignOut?: () => void | Promise<void>;
@@ -152,10 +169,10 @@ export function OnboardingRequired({
 					</Button>
 				) : null
 			}
-			explanation="Your sign-in worked, but the account is not linked to an employee record yet. The staff applications read your name, title and permissions from that record."
+			explanation="Your sign-in worked, but the account is not linked to an employee record yet, and nothing here can be opened without one."
 			heading="Your account is not linked to an employee record"
 			icon={<UserRoundX />}
-			remedy="Someone with the Employees App Role can link it to you in the HR application."
+			remedy="Someone with the Employees App Role can link it to you in HR."
 		/>
 	);
 }

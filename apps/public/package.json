@@ -1,9 +1,9 @@
 {
 	"author": "Adrian Kabigting",
 	"dependencies": {
+		"@electric-sql/client": "^1.5.12",
 		"@mcmec/lib": "workspace:*",
 		"@mcmec/schemas": "workspace:*",
-		"@mcmec/sync": "workspace:*",
 		"@mcmec/ui": "workspace:*",
 		"@radix-ui/react-label": "^2.1.8",
 		"@radix-ui/react-separator": "^1.1.8",
@@ -49,5 +49,5 @@
 		"start": "node .output/server/index.mjs"
 	},
 	"type": "module",
-	"version": "2.1.1"
+	"version": "2.1.2"
 }

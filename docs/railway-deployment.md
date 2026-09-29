@@ -1,30 +1,37 @@
 # Railway deployment
 
-How the apps run on Railway. The backend (`api`) already deploys this way; the five frontends
-are being moved off Vercel to join it.
+How the apps run on Railway. Every service deploys this way: `api` started here, and the five
+frontends moved off Vercel to join it on 2026-08-13 (#122). Nothing deploys to Vercel any more,
+and the `vercel.json` files and the `scripts/vercel-ignore.sh` build gate have been deleted.
 
 ## Service topology
 
-Six services per environment, in one Railway project (`mcmec`):
+Five services per environment, in one Railway project (`mcmec`):
 
 | Service | Kind | Serves | Sleeps when idle |
 | --- | --- | --- | --- |
 | `Postgres` | Docker image | database | no |
 | `electric` | Docker image | ElectricSQL sync | no |
 | `api` | git → repo | Hono API + shape proxy | no |
-| `central`, `admin`, `hr`, `website-management` | git → repo | static SPA (`dist/`) | yes |
+| `central` | git → repo | static SPA (`dist/`) | yes |
 | `public` | git → repo | SSR (Nitro) | **no** |
 
-The four staff apps are **Serverless (app sleep)** — they are low-traffic internal tools, and
+The staff app is **Serverless (app sleep)** — it is a low-traffic internal tool, and
 Railway zeroes idle cost regardless of how many services exist. `public` stays always-on so
 search engines never hit a cold boot.
 
-They are four separate services rather than one combined static server so each app deploys
+They are separate services rather than one combined static server so each app deploys
 independently: a Railway service is one build producing one container, so bundling them would
 mean any change redeploys all of them and one bad build blocks the lot.
 
 "Private" here means auth-gated at the API, **not** network-isolated. The static bundles are
 served to the internet; privacy lives in the Better Auth session and permission checks.
+
+> [!NOTE]
+> Staging runs exactly these five. **Production still also runs `hr`, `admin` and
+> `website-management`** until the consolidation release (#254) deletes them with their custom
+> domains, DNS records and `TRUSTED_ORIGINS` entries. Their code left the repo in #248 and #250
+> and lives on in `central` at `/hr`, `/admin` and `/website-management`.
 
 ## Branch mapping
 
@@ -34,9 +41,12 @@ served to the internet; privacy lives in the Better Auth session and permission 
 Production deploys on every merge to `main`. **Staging does not deploy on every merge to
 `develop`** — see below.
 
+> [!WARNING]
+> **Production releases stay frozen until #254 ships the staff SPA consolidation.**
+
 ## Staging deploys on demand (`pnpm stage`)
 
-Staging is only worth rebuilding when someone is about to browser-test it. Six services
+Staging is only worth rebuilding when someone is about to browser-test it. Every service
 rebuilding on every merged PR is build minutes and churn spent on a copy nobody is looking at,
 and it means the environment moves under you mid-test.
 
@@ -60,7 +70,7 @@ pnpm stage              # or: pnpm stage --dry-run
 ```
 
 `scripts/stage.mjs` writes a timestamp into `deploy/staging-release.txt`, commits it and pushes
-`develop`. That one changed path matches every service's staging watch pattern, so all six
+`develop`. That one changed path matches every service's staging watch pattern, so all three
 rebuild together from the latest `develop`.
 
 Two things make this work the way it does:
@@ -161,8 +171,8 @@ reference them by path; they import the URLs from `@mcmec/lib/constants/assets`.
 
 They previously sat in a public Supabase Storage bucket. `api` inherits that job because it is
 the only always-on service present in both environments, and keeping **one** origin is the point:
-the six apps share a single copy and a single browser cache entry, and a logo change is one
-commit rather than six.
+every app shares a single copy and a single browser cache entry, and a logo change is one
+commit rather than one per app.
 
 `apps/api/src/assets.ts` reads the directory once at boot into memory (~2 MB) and serves from
 there. That is not just a speed trick — a request never carries a caller-supplied path to the
@@ -197,12 +207,9 @@ Because of that hardcoding, the staging API's own `/assets/*` is served but neve
 
 The CSP lives in `server/plugins/csp.ts`, set from Nitro's `response` hook so it covers SSR
 pages, static assets and errors alike. It was previously configured in
-`apps/public/vercel.json`, which **Railway does not read** — a header defined only there
-disappears the moment the app is served from Railway.
-
-Both copies exist until the Vercel project is retired, because Vercel still serves production.
-Change them together. The one permitted difference is `vercel.live` / `*.vercel.com`, which
-Vercel's preview toolbar needs and Railway has no use for.
+`apps/public/vercel.json`, which **Railway does not read** — a header defined only there would
+have disappeared the moment the app was served from Railway. The move dropped `vercel.live` /
+`*.vercel.com`, which only Vercel's preview toolbar needed. `csp.ts` is now the only copy.
 
 > [!IMPORTANT]
 > The policy must allow `fonts.googleapis.com` in `style-src` and `fonts.gstatic.com` in
@@ -224,14 +231,14 @@ the same way on either host.
 ## Search indexing
 
 Exactly one origin belongs in search results: `public` in **production**. Everything else —
-the whole staging environment, and the four staff apps in production as well as staging — is
+the whole staging environment, and `central` in production as well as staging — is
 `noindex`.
 
 The stakes are higher than ordinary SEO hygiene. This site is the Commission's official channel
 for legal notices under P.L. 2025, c.72, and staging serves the same pages from a database that
 gets truncated and reloaded during testing. An indexed staging copy could surface a throwaway
 notice as though it were the statutory posting. Staging hosts are ordinary publicly-resolvable
-subdomains — they have to be, so the SSO cookie can span them — so nothing about the topology
+subdomains — they have to be, so the session cookie can span them — so nothing about the topology
 hides them from a crawler.
 
 ### `public`
@@ -252,14 +259,14 @@ environment added later under a name nobody thought to check — would be indexe
 it is production fails closed, and the worst an unconfigured service can do is decline to be
 indexed, which shows up in Search Console instead of silently.
 
-### Staff apps
+### `central`
 
-`central`, `admin`, `hr` and `website-management` carry `<meta name="robots" content="noindex,
-nofollow">` in `index.html` and a `public/robots.txt` of `Disallow: /`, in **every** environment
-— they have no public audience anywhere. This is not gated on environment, so there is nothing
+`central` carries `<meta name="robots" content="noindex, nofollow">` in `index.html` and a
+`public/robots.txt` of `Disallow: /`, in **every** environment — it has no public audience
+anywhere. This is not gated on environment, so there is nothing
 to configure and nothing to forget.
 
-They get a meta tag rather than a header because `sirv-cli` cannot set response headers. The
+It gets a meta tag rather than a header because `sirv-cli` cannot set response headers. The
 coverage is equivalent here: `--single` serves that one document for every path, so every URL a
 crawler can reach carries the tag. It would not be equivalent on `public`, which serves PDFs and
 XML.
@@ -277,8 +284,8 @@ add it in `server/plugins/`, gated on the same `PUBLIC_ENV` check.
 ```bash
 curl -sI https://staging.middlesexmosquito.org/ | grep -i x-robots-tag
 curl -s  https://staging.middlesexmosquito.org/robots.txt
-curl -sI https://middlesexmosquito.org/ | grep -i x-robots-tag   # must print nothing
-curl -s  https://middlesexmosquito.org/robots.txt                # must still allow crawling
+curl -sI https://www.middlesexmosquito.org/ | grep -i x-robots-tag   # must print nothing
+curl -s  https://www.middlesexmosquito.org/robots.txt                # must still allow crawling
 ```
 
 ## Environment variables
@@ -289,7 +296,7 @@ a bundle pointing at the wrong API.
 
 | Variable | Services | Notes |
 | --- | --- | --- |
-| `VITE_API_URL` | central, admin, hr, website-management | API origin, build-time |
+| `VITE_API_URL` | central | API origin, build-time |
 | `API_URL` | public | server-side only, never exposed to the browser |
 | `VITE_CLOUDFLARE_TURNSTILE_SITEKEY` | public | build-time |
 | `PUBLIC_ENV` | public | `production` or `staging`, runtime — see [Search indexing](#search-indexing) |
@@ -302,37 +309,32 @@ browser calls fail CORS.
 > planned. These are compared as exact strings, so a near miss fails closed and silently: the
 > app loads, then every API call is blocked by CORS. Read the real hostnames back from Railway
 > (`RAILWAY_PUBLIC_DOMAIN`, or the service's custom domains) rather than trusting a doc. This
-> already bit once in each environment — `website-management` was provisioned as
+> already bit once in each environment — the since-retired `website-management` was provisioned as
 > `website-management-staging.…` while the origin list carried `website-staging.…`, and again in
 > production as `website-management.…` against an origin list carrying `website.…`.
 
-The same hostname has to satisfy three places at once, and only one of them complains when it is
+The same hostname has to satisfy two places at once, and only one of them complains when it is
 wrong:
 
 1. the **custom domain** on the Railway service,
-2. the API's **`TRUSTED_ORIGINS`** — fails closed and silently,
-3. **`appUrl()`** in `@mcmec/lib`'s app registry, which builds the app-switcher links.
+2. the API's **`TRUSTED_ORIGINS`** — fails closed and silently.
 
-`appUrl` takes the subdomain *label* and appends `-staging` outside production, so the label must
-be the production host minus the root domain, and the staging host must be exactly that label
-plus `-staging`. `website-management` / `website-management-staging` satisfies this; `website`
-matched neither environment, so the switcher pointed at a host that has never existed.
+The staging host must also be exactly the production label plus `-staging` (`central` /
+`central-staging`): `@mcmec/lib`'s app registry reads the environment off that label to link the
+right environment's public site.
 
 ## Domains and the session cookie
 
-Cross-app SSO is a single Better Auth cookie shared across subdomains, so **the apps must sit
-under a shared parent domain**. Railway's generated `*.up.railway.app` hosts cannot do this —
-they are distinct sites under the public suffix list, so no cookie can span them, and each app
-would need its own login.
+The session is a single Better Auth cookie that `api` sets and `central` sends back, so **the two
+must sit under a shared parent domain**. Railway's generated `*.up.railway.app` hosts cannot do
+this — they are distinct sites under the public suffix list, so no cookie can span them, and
+`central`'s calls to `api` would arrive without the session.
 
 | Service | production host | staging host |
 | --- | --- | --- |
 | `central` | `central.middlesexmosquito.org` | `central-staging.middlesexmosquito.org` |
-| `admin` | `admin.middlesexmosquito.org` | `admin-staging.middlesexmosquito.org` |
-| `hr` | `hr.middlesexmosquito.org` | `hr-staging.middlesexmosquito.org` |
-| `website-management` | `website-management.middlesexmosquito.org` | `website-management-staging.middlesexmosquito.org` |
 | `api` | `api.middlesexmosquito.org` | `api-staging.middlesexmosquito.org` |
-| `public` | `middlesexmosquito.org` (apex) | `staging.middlesexmosquito.org` |
+| `public` | `www.middlesexmosquito.org` | `staging.middlesexmosquito.org` |
 
 | Environment | `COOKIE_DOMAIN` | `COOKIE_PREFIX` |
 | --- | --- | --- |
@@ -346,34 +348,29 @@ Its host still lives under the same parent for consistency and TLS convenience.
 
 ### `www` and the apex
 
-**The apex is canonical. `www` redirects to it.** Every URL the app declares about itself is
-built from `SITE_URL` in `apps/public/src/lib/seo.ts`, which is the bare apex — that is what
-goes into the `rel="canonical"` link and `og:url` on every page, what `public/sitemap.xml`
-lists, and what the `Sitemap:` line of robots.txt points at.
-
-> [!WARNING]
-> **Vercel currently redirects the other way**, and the cutover has to flip it. Today
-> `https://middlesexmosquito.org/` returns a 307 to `https://www.middlesexmosquito.org/`, while
-> the page served at `www` carries `<link rel="canonical" href="https://middlesexmosquito.org/">`.
-> Crawlers are being bounced away from the exact URL the page then nominates as canonical, and
-> every `<loc>` in the sitemap is a URL that redirects. It resolves today because Google leans on
-> the canonical tag, but it is a conflicting signal that costs nothing to remove.
-
-At cutover, add **both** hosts and make `www` the one that redirects:
-
-1. Add `middlesexmosquito.org` to the production `public` service and point the apex DNS record
-   at it.
-2. Add `www.middlesexmosquito.org` too, and serve a 308 from `www` to the same path on the apex.
-   Do this wherever the redirect is cheapest — at the DNS/CDN provider if it offers host
-   redirects, otherwise in `apps/public/server/plugins/`, which already exists for the
-   `X-Robots-Tag` header and has the request hook to do it.
-3. Leave `www` resolving. It has been the served host for years, so it is what external links
-   and existing search results point at; dropping it turns those into hard failures instead of
-   redirects.
-
-If the decision ever goes the other way and `www` becomes canonical, `SITE_URL` and
-`public/sitemap.xml` have to change with it. Do not leave the app declaring one host while the
+**`www` is canonical.** Every URL the app declares about itself is built from `SITE_URL` in
+`apps/public/src/lib/site.ts` — the `rel="canonical"` link and `og:url` on every page, the JSON-LD
+`url`, and the `Sitemap:` line of robots.txt. `public/sitemap.xml` is a static file and names the
+same host by hand, so **change the two together**. The app must never declare one host while the
 edge serves another.
+
+`www.middlesexmosquito.org` is the custom domain on the production `public` service. The bare
+apex is **not** a Railway domain: its DNS points at the registrar's forwarding service (AWS
+addresses, `Server: ip-….ec2.internal`), which 301s `/` to `www` and **404s every other path**
+(`/about`, `/sitemap.xml`). This used to be backwards: until #232 the app declared the apex
+canonical, so every canonical tag and sitemap `<loc>` named a URL that did not load. Moving the
+app to `www` was a change to the repo alone, and it matched what was already being served.
+
+The apex forward is still worth fixing at the registrar. It should keep the path, so that a link
+to `https://middlesexmosquito.org/about` lands on `www`'s `/about` instead of a 404. That is a
+convenience for old links, not an SEO problem any more, because nothing the site publishes names
+the apex.
+
+> [!NOTE]
+> Before the cutover the plan was the reverse: apex canonical, served by Railway, with `www`
+> 308ing to it. That needs the apex record pointed at Railway (an ALIAS / flattened CNAME) and
+> the redirect built. If anyone revives that plan, `SITE_URL` and `public/sitemap.xml` flip back
+> in the same change that makes the apex serve.
 
 `BETTER_AUTH_URL` must match the host actually serving the API. Change it in the same step as
 adding the custom domain, never before — pointing it at a domain that does not resolve yet
@@ -409,7 +406,7 @@ For each service:
 4. Confirm the build variables (the CLI can set these ahead of time). On `public`, that includes
    `PUBLIC_ENV`. Never create `NIXPACKS_NODE_VERSION` — Railpack ignores it and its presence
    invites someone to "fix" a build by changing it.
-5. Enable Serverless on the four staff apps; leave `public` always-on.
+5. Enable Serverless on `central`; leave `public` always-on.
 6. Add the custom domain and the matching DNS CNAME.
 7. Add the new origin to the `api` service's `TRUSTED_ORIGINS` (not needed for `public`).
 8. Once the API's own domain resolves, update `BETTER_AUTH_URL` to match and redeploy.

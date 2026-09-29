@@ -1,5 +1,63 @@
 # central
 
+## 1.2.0
+
+### Minor Changes
+
+- 688d524: Replace central's eager `getDb()` with a session collection registry. Routes ask for the tables they need in `beforeLoad` and receive them, typed, through route context. Each table's code downloads the first time a route asks for it, and sign-out cleans up every collection and throws the set away so nothing reaches the next User. The screens look and work the same. Central also gets its own Vitest suite, which runs in CI.
+- 05d64c3: HR and Admin move into central. HR (`/hr`, gated by `manage_employees`) holds the one Employees area: `/hr/employees`, `/hr/employees/$employeeId` and `/hr/employees/$employeeId/edit`, where whoever enters HR can view, add, edit, invite and delete. Admin (`/admin`, gated by `manage_users`) holds only the Grant grid, now `/admin/users` and titled "Users", which gains a read-only Employee column showing the linked Employee's display name and title, or "—" for a User with none. The nav reads "Employees" and "Users", and HR and Admin name each other in plain text rather than linking. Both Apps read the root's `employees`, so entering them loads no extra shape.
+
+  `@mcmec/lib`: the App list's HR and Admin entries are now the paths `/hr` and `/admin`, so central's switcher links to them with the router. From the retiring `hr` and `admin` apps, those entries now open central's `/hr` and `/admin`.
+
+  `@mcmec/ui`: the Employees index is titled "Employees" instead of "Manage Employees".
+
+- 0e59af0: Central becomes the shell for every staff App. Its root signed-in layout owns the frame, the app switcher, NavUser and the breadcrumb, and reads the claims and the Employee row once. Each App's layout route supplies only its `activeApp` and rail in `staticData`, plus a synchronous `requireAppRole(context.claims, role)` gate. A deep link into an App the User lacks keeps its URL and shows `AppRoleRequired` inside the shell, with the Self Service Portal's rail. A User with no linked Employee is refused full-page at the root. `/`, `/notices` and `/meetings` are now the Self Service Portal, and central gets route tests that are table-driven over the App list.
+
+  `@mcmec/lib`: the App list names the Self Service Portal (the `Central` AppName is gone), and an App folded into central has a path as its `href`.
+
+  `@mcmec/ui`: `AppRoleRequired` drops `centralUrl` for `to` plus an optional `LinkComponent`, and its action reads "Go to the Self Service Portal". `OnboardingRequired` is renamed `EmployeeRequired`, and both notices' remedy copy names Admin and HR as Apps. The app switcher takes an optional `LinkComponent` for in-app Apps and drops its dropdown when only one App is accessible.
+
+  `@mcmec/auth`: `NotOnboardedError` is renamed `NoEmployeeError` (code `NO_EMPLOYEE`), and the new `readClaims` reads the session without applying policy. `verifyClaims` behaves as before.
+
+- fa28784: Website Management moves into central at `/website-management`, gated by `manage_website`. Its index is the Signal Strip dashboard, and every screen moves over with its path unchanged under the new prefix, apart from two renames: `spray-schedule` is now `spray-missions` and `categories` is now `notice-categories`. The editable notices and meetings are at `/website-management/notices` and `/website-management/meetings`; the Self Service Portal keeps its read-only `/notices` and `/meetings`, and both read the same collections.
+
+  Each screen asks the session registry for only the tables it reads, so entering the App loads nothing until a screen needs it. The two tables that only grow, Public Requests and Weekly Mosquito Activity, join the registry as on-demand collections: they open no stream until a screen's live query asks for its slice. A User without `manage_website` who deep-links into the App keeps the URL, sees the refusal, and loads none of its tables.
+
+  Central now shows toasts: write failures, refusals in the server's own words, and confirmations such as "is now on the public site". It had never mounted a toaster, so HR's error toasts were also invisible until now.
+
+  `@mcmec/lib`: the App list's Website Management entry is now the path `/website-management`, so central's switcher links to it with the router.
+
+### Patch Changes
+
+- 8b4cf5c: Central's first download drops from 225.5 kB to 186.8 kB gzip. Its notices and meetings routes pass `validateRecordIndexSearch` to `validateSearch`, which is never code-split, and importing it from `record-index` pulled the whole table, Select and row-actions menu into the entry chunk. A central build now also records which modules each chunk holds, and `pnpm check-bundle` (run in CI after the build) fails if App code or a table other than `employees` reaches central's entry closure, or if that closure grows past the ceiling in `apps/central/bundle/budget.json`.
+
+  `@mcmec/ui`: the record index's search helpers (`RecordIndexSearch`, `validateRecordIndexSearch`, `parseRecordIndexSearch` and the page-size constants) live in a component-free `blocks/record-index-search` module. `blocks/record-index` still re-exports them, so existing imports keep working. Central's routes now import from the new module.
+
+- 276f4fe: Signing out now also clears the router's cached route matches, so the next User in the same tab no longer revives the previous session's `employees` stream (or any other table a cached screen held) alongside their own (#266).
+- 5e94791: The Self Service Portal points at the app switcher only for Users who have another App to open. Users with no App Role are told that Public Meetings and Public Notices are in the sidebar instead. HR's dashboard no longer mentions "staff applications".
+- e6c8ad5: Staff links out to the public website now use `www.middlesexmosquito.org` in production (#274). `PUBLIC_SITE_URL` used to build the bare apex, a registrar forward that 404s every path except `/`, so links from a notice or meeting to its public page broke in production. Staging and local links are unchanged. `@mcmec/lib` also exports the pure `publicSiteUrl(hostname)` that `PUBLIC_SITE_URL` is computed from.
+- ad126cf: Remove the `@mcmec/sync` package (#251). Nothing behaves differently; each piece that was still in use now lives with the code that uses it.
+
+  `@mcmec/domain` exports `COMMAND_PATH` from a new dependency-free `@mcmec/domain/routes` subpath. `api` serves the command route from it and `central` posts to it.
+
+  `public` reads its SSR shapes with its own `fetchShapeSnapshot`, and keeps its own copy of the shape path and the Electric row parser. Central keeps the other copy, and a test in central pins the two to the same answers.
+
+  `@mcmec/ui`'s `toastOnError` finds a command refusal itself instead of importing the helper from `@mcmec/sync`.
+
+- Updated dependencies [8b4cf5c]
+- Updated dependencies [05d64c3]
+- Updated dependencies [0e59af0]
+- Updated dependencies [fa28784]
+- Updated dependencies [e6c8ad5]
+- Updated dependencies [ad126cf]
+- Updated dependencies [afc64ff]
+- Updated dependencies [50c8b1f]
+  - @mcmec/ui@1.8.0
+  - @mcmec/lib@0.11.0
+  - @mcmec/auth@0.5.0
+  - @mcmec/domain@0.2.0
+  - @mcmec/schemas@3.0.1
+
 ## 1.1.1
 
 ### Patch Changes

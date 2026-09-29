@@ -2,7 +2,7 @@ export const ErrorMessages = {
 	AUTH: {
 		FORBIDDEN: "You do not have permission for this action or resource.",
 		INVALID_JWT: "The provided authentication token is invalid.",
-		NOT_ONBOARDED: "User has not properly onboarded.",
+		NO_EMPLOYEE: "This account is not linked to an Employee.",
 		SESSION_EXPIRED: "Your session has expired. Please log in again.",
 		UNABLE_TO_FETCH_CLAIMS: "Unable to fetch user claims. Please try again.",
 		UNABLE_TO_RETRIEVE_SESSION: "Unable to retrieve session. Please try again.",

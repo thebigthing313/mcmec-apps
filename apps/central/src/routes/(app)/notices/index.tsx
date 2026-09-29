@@ -3,9 +3,12 @@ import { PublicNoticeBadge } from "@mcmec/ui/blocks/public-notice-badge";
 import {
 	RecordIndex,
 	type RecordIndexColumn,
+} from "@mcmec/ui/blocks/record-index";
+// validateSearch is never code-split, so it imports the component-free half.
+import {
 	type RecordIndexSearch,
 	validateRecordIndexSearch,
-} from "@mcmec/ui/blocks/record-index";
+} from "@mcmec/ui/blocks/record-index-search";
 import {
 	Select,
 	SelectContent,
@@ -16,7 +19,6 @@ import {
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { FileText } from "lucide-react";
-import { notices, noticeTypes } from "@/src/lib/db";
 
 type NoticeRow = {
 	id: string;
@@ -33,7 +35,11 @@ type NoticesSearch = Partial<RecordIndexSearch> & { placement?: Placement };
 
 export const Route = createFileRoute("/(app)/notices/")({
 	component: RouteComponent,
-	loader: () => {
+	loader: async ({ context }) => {
+		await Promise.all([
+			context.notices.preload(),
+			context.noticeTypes.preload(),
+		]);
 		return { crumb: "Public Notices" };
 	},
 	validateSearch: (raw: Record<string, unknown>): NoticesSearch =>
@@ -47,20 +53,23 @@ export const Route = createFileRoute("/(app)/notices/")({
 function RouteComponent() {
 	const navigate = useNavigate();
 	const search = Route.useSearch();
-	const { data, collection } = useLiveQuery((q) =>
-		q
-			.from({ notice: notices })
-			.innerJoin({ notice_type: noticeTypes }, ({ notice, notice_type }) =>
-				eq(notice.notice_type_id, notice_type.id),
-			)
-			.select(({ notice, notice_type }) => ({
-				id: notice.id,
-				isArchived: notice.is_archived,
-				isPublished: notice.is_published,
-				noticeDate: notice.notice_date,
-				noticeType: notice_type?.name,
-				title: notice.title,
-			})),
+	const { notices, noticeTypes } = Route.useRouteContext();
+	const { data, collection } = useLiveQuery(
+		(q) =>
+			q
+				.from({ notice: notices })
+				.innerJoin({ notice_type: noticeTypes }, ({ notice, notice_type }) =>
+					eq(notice.notice_type_id, notice_type.id),
+				)
+				.select(({ notice, notice_type }) => ({
+					id: notice.id,
+					isArchived: notice.is_archived,
+					isPublished: notice.is_published,
+					noticeDate: notice.notice_date,
+					noticeType: notice_type?.name,
+					title: notice.title,
+				})),
+		[notices, noticeTypes],
 	);
 
 	// The one rule this screen exists to keep: Central shows what the public sees, and nothing

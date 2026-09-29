@@ -21,7 +21,7 @@ export type CommandDefinition<
 	readonly name: TName;
 	/**
 	 * The row this command is about. Inherited from the module's `.table()` binding, so a
-	 * module cannot disagree with itself, and `packages/sync` derives a collection's write
+	 * module cannot disagree with itself, and central's collection builder derives a write
 	 * path from the union of these (#174). Naming a table is not touching a database — the
 	 * definition still holds no query, no column types and no drizzle import.
 	 */

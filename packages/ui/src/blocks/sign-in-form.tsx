@@ -25,7 +25,7 @@ interface SignInFormProps {
 }
 
 /**
- * The sign-in screen, shared by all four staff applications.
+ * The staff sign-in screen.
  *
  * This used to be four near-identical copies — three hand-rolled `useState` forms plus central's
  * TanStack one — which is how four applications that share an account, a cookie and a design
