@@ -61,8 +61,8 @@ const HOSTNAME = typeof window !== "undefined" ? window.location.hostname : "";
  * a specific page there is a dead link.
  *
  * Twin of `SITE_URL` in `apps/public/src/lib/site.ts`, the public site's own canonical origin;
- * change the production host in both. It is not imported from there because `@mcmec/lib` must
- * not depend on an app.
+ * change the production host there (and in the `public/sitemap.xml` it names) too. It is not
+ * imported from there because `@mcmec/lib` must not depend on an app.
  */
 export function publicSiteUrl(hostname: string): string {
 	const isDeployed =
