@@ -7,11 +7,10 @@ import { Button } from "@mcmec/ui/components/button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import { meetings } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/meetings/$meetingId")({
 	component: RouteComponent,
-	loader: async ({ params }) => {
+	loader: async ({ context: { meetings }, params }) => {
 		await meetings.preload();
 		const meeting = meetings.get(params.meetingId);
 		if (!meeting) {
@@ -34,6 +33,7 @@ export const Route = createFileRoute("/(app)/meetings/$meetingId")({
 function RouteComponent() {
 	const { meeting: loadedMeeting } = Route.useLoaderData();
 	const { meetingId } = Route.useParams();
+	const { meetings } = Route.useRouteContext();
 
 	// Read live rather than from the loader's one-shot read, which can land on the shape
 	// snapshot before the change log applies — see @mcmec/ui/hooks/use-form-seed.
@@ -42,7 +42,7 @@ function RouteComponent() {
 			q
 				.from({ meeting: meetings })
 				.where(({ meeting }) => eq(meeting.id, meetingId)),
-		[meetingId],
+		[meetings, meetingId],
 	);
 	const meeting = liveMeetings[0] ?? loadedMeeting;
 	const { name, location, meeting_at, is_cancelled, minutes_url, notice_url } =

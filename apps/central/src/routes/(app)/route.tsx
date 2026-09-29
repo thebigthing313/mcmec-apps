@@ -1,5 +1,4 @@
 import { UnauthenticatedError } from "@mcmec/auth/errors";
-import { signOut } from "@mcmec/auth/signOut";
 import type { Claims } from "@mcmec/auth/types";
 import { verifyClaims } from "@mcmec/auth/verifyClaims";
 import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
@@ -16,29 +15,39 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { CentralSidebar } from "@/src/components/central-sidebar";
+import { signOutOfCentral } from "@/src/lib/sign-out";
 
 export const Route = createFileRoute("/(app)")({
 	beforeLoad: async ({ context, location }) => {
-		try {
-			const claims = await verifyClaims({ client: context.authClient });
-			return { claims };
-		} catch (error) {
-			if (error instanceof UnauthenticatedError) {
-				throw redirect({
-					search: { redirect: location.href },
-					to: "/login",
-				});
-			}
-			throw error;
-		}
+		const claims = await verifyClaims({ client: context.authClient }).catch(
+			(error: unknown) => {
+				if (error instanceof UnauthenticatedError) {
+					throw redirect({
+						search: { redirect: location.href },
+						to: "/login",
+					});
+				}
+				throw error;
+			},
+		);
+		// `employees` belongs to the shell: every screen shows the signed-in User's Employee name
+		// and title. Asked for here, after the claims check, so a signed-out visitor builds
+		// nothing, and every child route shares this one instance.
+		const { employees } = await context.collections.use("employees");
+		return { claims, employees };
 	},
 	component: LayoutComponent,
-	// Seeds the breadcrumb so every trail reaches the dashboard.
-	loader: () => ({ crumb: "Dashboard" }),
+	// Seeds the breadcrumb so every trail reaches the dashboard. `employees` is preloaded because
+	// this route's own component subscribes to it — the rule in src/lib/collections/registry.ts.
+	loader: async ({ context }) => {
+		await context.employees.preload();
+		return { crumb: "Dashboard" };
+	},
 });
 
 function LayoutComponent() {
-	const { authClient, claims, db } = Route.useRouteContext();
+	const { authClient, claims, collections, employees } =
+		Route.useRouteContext();
 	const { permissions, userId } = claims as Claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 	const location = useLocation();
@@ -51,16 +60,20 @@ function LayoutComponent() {
 		}));
 
 	const navigate = useNavigate();
-	const handleLogout = async () => {
-		await signOut({ client: authClient });
-		navigate({ to: "/login" });
-	};
+	const handleLogout = () =>
+		signOutOfCentral({
+			authClient,
+			collections,
+			toLogin: () => navigate({ to: "/login" }),
+		});
 
-	const { data: employee } = useLiveQuery((q) =>
-		q
-			.from({ employee: db.employees })
-			.where(({ employee }) => eq(employee.user_id, userId))
-			.findOne(),
+	const { data: employee } = useLiveQuery(
+		(q) =>
+			q
+				.from({ employee: employees })
+				.where(({ employee }) => eq(employee.user_id, userId))
+				.findOne(),
+		[employees, userId],
 	);
 
 	return (

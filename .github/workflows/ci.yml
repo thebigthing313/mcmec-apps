@@ -79,6 +79,7 @@ jobs:
           pnpm --filter @mcmec/lib test:run
           pnpm --filter @mcmec/schemas test:run
           pnpm --filter api test:run
+          pnpm --filter central test:run
         env:
           # Same URL the local docker one-liner produces, so a failure here reproduces locally
           # with no extra configuration. Migrations are applied by the suite's global setup.

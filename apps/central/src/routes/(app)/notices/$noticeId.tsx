@@ -7,11 +7,10 @@ import { Button } from "@mcmec/ui/components/button";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import { notices, noticeTypes } from "@/src/lib/db";
 
 export const Route = createFileRoute("/(app)/notices/$noticeId")({
 	component: RouteComponent,
-	loader: async ({ params }) => {
+	loader: async ({ context: { notices, noticeTypes }, params }) => {
 		await Promise.all([notices.preload(), noticeTypes.preload()]);
 		const notice = notices.get(params.noticeId);
 		// A draft is on this app's shape but not on the public website, so it is not here
@@ -35,6 +34,7 @@ export const Route = createFileRoute("/(app)/notices/$noticeId")({
 function RouteComponent() {
 	const { notice: loadedNotice } = Route.useLoaderData();
 	const { noticeId } = Route.useParams();
+	const { notices, noticeTypes } = Route.useRouteContext();
 
 	// Read live rather than from the loader's one-shot read, which can land on the shape
 	// snapshot before the change log applies — see @mcmec/ui/hooks/use-form-seed.
@@ -43,11 +43,22 @@ function RouteComponent() {
 			q
 				.from({ notice: notices })
 				.where(({ notice }) => eq(notice.id, noticeId)),
-		[noticeId],
+		[notices, noticeId],
 	);
 	const notice = liveNotices[0] ?? loadedNotice;
 	const { title, notice_type_id, notice_date, content, is_archived } = notice;
-	const type = noticeTypes.get(notice_type_id)?.name;
+
+	// A subscription, not a one-shot `noticeTypes.get()`: the loader preloads `noticeTypes`,
+	// and a preloaded collection nobody subscribes to never starts its GC clock, so it would
+	// sync for the rest of the session (src/lib/collections/registry.ts).
+	const { data: liveTypes } = useLiveQuery(
+		(q) =>
+			q
+				.from({ notice_type: noticeTypes })
+				.where(({ notice_type }) => eq(notice_type.id, notice_type_id)),
+		[noticeTypes, notice_type_id],
+	);
+	const type = liveTypes[0]?.name;
 
 	return (
 		<RecordDetail
