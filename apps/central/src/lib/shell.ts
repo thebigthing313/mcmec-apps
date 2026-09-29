@@ -4,7 +4,7 @@
  * The root signed-in layout renders the one shell (frame, switcher, NavUser, breadcrumb). An App
  * contributes only its name and its rail, declared on its layout route:
  *
- *   staticData: { activeApp: "HR", sidebar: HR_SIDEBAR },
+ *   staticData: HR_SHELL, // { activeApp: "HR", sidebar: [...] }
  *   beforeLoad: ({ context }) => requireAppRole(context.claims, "manage_employees"),
  *
  * The shell reads the deepest match that declares an `activeApp`. The Self Service Portal

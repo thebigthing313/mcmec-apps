@@ -27,11 +27,13 @@ import { routeTree } from "./routeTree.gen";
  * exercise the real route tree, context and error handling rather than a copy of them.
  */
 export function createCentralRouter({
+	apiUrl,
 	authClient,
 	collections,
 	history,
 	queryClient,
 }: {
+	apiUrl: string;
 	authClient: AuthClient;
 	collections: CentralCollections;
 	/** Omitted in the browser; the tests pass a memory history. */
@@ -40,6 +42,7 @@ export function createCentralRouter({
 }) {
 	return createRouter({
 		context: {
+			apiUrl,
 			authClient,
 			collections,
 			queryClient,

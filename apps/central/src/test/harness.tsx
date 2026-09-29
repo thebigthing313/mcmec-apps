@@ -6,7 +6,7 @@
 import type { AuthClient } from "@mcmec/auth/client";
 import { AVAILABLE_APPS, isCentralPath } from "@mcmec/lib/constants/apps";
 import { createCollection, localOnlyCollectionOptions } from "@tanstack/db";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createMemoryHistory, RouterProvider } from "@tanstack/react-router";
 import { render } from "@testing-library/react";
 import { vi } from "vitest";
@@ -27,6 +27,7 @@ export const EMPLOYEE_ID = "123e4567-e89b-12d3-a456-426614174002";
 export const NOTICE_ID = "123e4567-e89b-12d3-a456-426614174010";
 export const MEETING_ID = "123e4567-e89b-12d3-a456-426614174020";
 export const EMPLOYEE_NAME = "Pat Example";
+export const EMPLOYEE_TITLE = "Inspector";
 
 /** Who is signed in: nobody, or a User with an optional linked Employee and some App Roles. */
 export type Session =
@@ -44,8 +45,19 @@ export function noEmployeeWith(permissions: string[]): Session {
 	return { employeeId: null, permissions, signedIn: true };
 }
 
-function fakeAuthClient(session: Session): AuthClient {
+/** A login as Better Auth's admin plugin lists it for the Users grid. */
+export type ListedUser = {
+	id: string;
+	email: string;
+	name: string | null;
+	role: string | null;
+};
+
+function fakeAuthClient(session: Session, users: ListedUser[]): AuthClient {
 	const client = {
+		admin: {
+			listUsers: async () => ({ data: { users }, error: null }),
+		},
 		getSession: async () =>
 			session.signedIn
 				? {
@@ -82,9 +94,12 @@ function fakeCollections() {
 	const registry = createCollectionRegistry({
 		employees: localTable("employees", [
 			{
+				created_at: new Date("2025-02-01T00:00:00Z"),
 				display_name: EMPLOYEE_NAME,
-				display_title: "Inspector",
+				display_title: EMPLOYEE_TITLE,
+				email: "pat@example.com",
 				id: EMPLOYEE_ID,
+				updated_at: new Date("2025-02-01T00:00:00Z"),
 				user_id: USER_ID,
 			},
 		]),
@@ -123,16 +138,32 @@ function fakeCollections() {
 	};
 }
 
-/** Opens `path` as `session`, and waits for the router to settle. */
-export async function renderAt(path: string, session: Session) {
+/**
+ * Opens `path` as `session`, and waits for the router to settle. `users` is what the admin
+ * plugin lists, for the Users grid; it defaults to none.
+ */
+export async function renderAt(
+	path: string,
+	session: Session,
+	{ users = [] }: { users?: ListedUser[] } = {},
+) {
 	const { asked, registry } = fakeCollections();
+	const queryClient = new QueryClient({
+		defaultOptions: { queries: { retry: false } },
+	});
 	const router = createCentralRouter({
-		authClient: fakeAuthClient(session),
+		apiUrl: "https://api.test",
+		authClient: fakeAuthClient(session, users),
 		collections: registry,
 		history: createMemoryHistory({ initialEntries: [path] }),
-		queryClient: new QueryClient(),
+		queryClient,
 	});
 	await router.load();
-	const view = render(<RouterProvider router={router} />);
+	// As in main.tsx, which wraps the router in the same provider.
+	const view = render(
+		<QueryClientProvider client={queryClient}>
+			<RouterProvider router={router} />
+		</QueryClientProvider>,
+	);
 	return { asked, router, view };
 }

@@ -138,14 +138,14 @@ export const AVAILABLE_APPS: App[] = [
 	},
 	{
 		description: "Manage employees and user accounts.",
-		href: appUrl("hr", 3445),
+		href: "/hr",
 		logo: <Users />,
 		name: "HR",
 		requiredPermission: "manage_employees",
 	},
 	{
 		description: "Manage user permission assignments.",
-		href: appUrl("admin", 3446),
+		href: "/admin",
 		logo: <Shield />,
 		name: "Admin",
 		requiredPermission: "manage_users",
