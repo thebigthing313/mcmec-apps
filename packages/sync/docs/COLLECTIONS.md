@@ -208,21 +208,6 @@ signal. Worst case after a timeout is a brief flicker, not a lost edit.
 
 ---
 
-## Registering collections
-
-Collections are created once per app by the sets in `@mcmec/sync/collections/*`
-(`packages/sync/src/collections/*`), which take `{ apiUrl }` and return the app's
-collection map. Apps expose it through a `getDb()` / `useDb()` singleton in
-`src/lib/db.ts` and hand it to the router context.
-
-```ts
-import { createNoticesCollections } from "@mcmec/sync/collections/notices";
-
-const db = createNoticesCollections({ apiUrl: API_URL });
-```
-
----
-
 ## Known TanStack DB quirks
 
 - **`useLiveSuspenseQuery` + `leftJoin` + `findOne()`** causes infinite Suspense. Use base

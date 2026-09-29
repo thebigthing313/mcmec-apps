@@ -286,7 +286,7 @@ The public site and the staff applications use two different spatial models over
 
 **Public (`apps/public`).** A single centered column, `max-w-7xl` (80rem), with `1.5rem` gutters rising to `3rem` at `md`. Sections breathe at `2.5rem` vertical padding, `3.5rem` at `md`. The home page is the sole exception: it breaks the container to run the hero full-bleed at `60vh` (minimum `20rem`), then returns to the container for everything below. Every other route mounts inside a `max-w-7xl` wrapper with `1rem` padding and `2rem` of vertical margin around `<main>`.
 
-**Staff (`central`, `website-management`).** A persistent icon-collapsible sidebar rail against a content pane, provided by the shared `mcmec-layout` shell — root, sidebar, breadcrumb, content, app switcher, and user menu. Every staff application composes the same shell; none of them define their own chrome. The breadcrumb is the only wayfinding above the page title.
+**Staff (`central`).** A persistent icon-collapsible sidebar rail against a content pane, provided by the shared `mcmec-layout` shell — root, sidebar, breadcrumb, content, app switcher, and user menu. Every App composes the same shell; none of them define their own chrome. The breadcrumb is the only wayfinding above the page title.
 
 **Rhythm.** A `4px` base unit. The recurring steps are `8px` (inline gaps), `16px` (form-field stacks), `24px` (card padding and card-to-card gaps), `40px` and `56px` (section separation). Card internals are uniformly `24px` horizontal with a `24px` vertical block, and cards stack their sections with a `24px` gap.
 
@@ -494,7 +494,7 @@ One row vocabulary for every queue a Signal Band opens, whatever domain the reco
 - **Row target:** the whole row is a typed route link. Hover takes Pale Green; focus takes the standard `3px` ring and raises the row above its siblings.
 - **Empty:** the queue states its own empty case — an icon, a short title, a line of description — rather than leaving the panel blank. An empty signal is a legitimate answer and should read as one.
 
-It lives in `apps/website-management/src/components/signal-queue.tsx` and is app-local today. If a second staff application grows a queue, promote it to `packages/ui` beside the band rather than copying it.
+It lives in `apps/central/src/apps/website-management/components/signal-queue.tsx` and is app-local today. If a second staff application grows a queue, promote it to `packages/ui` beside the band rather than copying it.
 
 ### Named Rules
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { CENTRAL_URL, isCentralPath } from "@mcmec/lib/constants/apps";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -36,40 +35,24 @@ function AppLink({
 }: AnchorHTMLAttributes<HTMLAnchorElement> & {
 	children: ReactNode;
 	href: string;
-	LinkComponent?: ComponentType<SwitcherLinkProps>;
+	LinkComponent: ComponentType<SwitcherLinkProps>;
 }) {
-	if (!isCentralPath(href)) {
-		return (
-			<a {...slotted} href={href}>
-				{children}
-			</a>
-		);
-	}
-	if (LinkComponent) {
-		return (
-			<LinkComponent {...(slotted as SwitcherLinkProps)} to={href}>
-				{children}
-			</LinkComponent>
-		);
-	}
 	return (
-		<a {...slotted} href={`${CENTRAL_URL}${href === "/" ? "" : href}`}>
+		<LinkComponent {...(slotted as SwitcherLinkProps)} to={href}>
 			{children}
-		</a>
+		</LinkComponent>
 	);
 }
 
 /**
- * `LinkComponent` is the router's link, injected the way `LayoutBreadcrumb` injects it. An App
- * whose `href` is a path lives in `central`, so with a `LinkComponent` it is an in-app router
- * link (no reload); without one — the retiring apps on their own origins — the path is resolved
- * against `CENTRAL_URL`. An App whose `href` is absolute is always a plain cross-origin anchor.
+ * `LinkComponent` is the router's link, injected the way `LayoutBreadcrumb` injects it. Every
+ * App lives in `central` at a path, so each switcher entry is an in-app router link (no reload).
  */
 export function AppSwitcher({
 	LinkComponent,
 }: {
-	LinkComponent?: ComponentType<SwitcherLinkProps>;
-} = {}) {
+	LinkComponent: ComponentType<SwitcherLinkProps>;
+}) {
 	const { companyLogoUrl, companyName, activeApp, apps } = useLayoutContext();
 	const { isMobile } = useSidebar();
 

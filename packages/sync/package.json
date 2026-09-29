@@ -7,8 +7,7 @@
 	"exports": {
 		".": "./src/index.ts",
 		"./command-write": "./src/command-write.ts",
-		"./routes": "./src/routes.ts",
-		"./collections/*": "./src/collections/*.ts"
+		"./routes": "./src/routes.ts"
 	},
 	"scripts": {
 		"check-types": "tsc --noEmit"

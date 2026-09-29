@@ -4,7 +4,7 @@
  * without a network. Used by the route tests (#242).
  */
 import type { AuthClient } from "@mcmec/auth/client";
-import { AVAILABLE_APPS, isCentralPath } from "@mcmec/lib/constants/apps";
+import { AVAILABLE_APPS } from "@mcmec/lib/constants/apps";
 import { createCollection, localOnlyCollectionOptions } from "@tanstack/db";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createMemoryHistory, RouterProvider } from "@tanstack/react-router";
@@ -15,12 +15,10 @@ import { createCollectionRegistry } from "../lib/collections/registry";
 import { createCentralRouter } from "../router";
 
 /**
- * The Apps folded into central, read from the App list the switcher reads. The route tests
- * generate their gate rows from it, so an App gets them the moment its `href` becomes a path.
+ * The Apps in central, read from the App list the switcher reads. The route tests generate their
+ * gate rows from it, so every App gets them.
  */
-export const CENTRAL_APPS = AVAILABLE_APPS.filter((app) =>
-	isCentralPath(app.href),
-);
+export const CENTRAL_APPS = AVAILABLE_APPS;
 
 export const USER_ID = "123e4567-e89b-12d3-a456-426614174000";
 export const EMPLOYEE_ID = "123e4567-e89b-12d3-a456-426614174002";

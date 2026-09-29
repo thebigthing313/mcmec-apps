@@ -2,10 +2,6 @@
   - changed-files:
       - any-glob-to-any-file: "apps/central/**"
 
-"app:website-management":
-  - changed-files:
-      - any-glob-to-any-file: "apps/website-management/**"
-
 "app:public":
   - changed-files:
       - any-glob-to-any-file: "apps/public/**"

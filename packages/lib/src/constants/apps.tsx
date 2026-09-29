@@ -2,7 +2,7 @@ import { Home, Newspaper, Shield, Users } from "lucide-react";
 import type { AppRole } from "./roles";
 
 /**
- * The four staff applications, by name.
+ * The four staff Apps, by name.
  *
  * `activeApp` on the layout context carried a documented invariant — "must match an
  * AVAILABLE_APPS name" — and no type to hold it, which made it the one field in that context a
@@ -20,25 +20,10 @@ export type App = {
 	name: AppName;
 	logo: React.ReactNode;
 	description: string;
-	/**
-	 * Where the App lives. A path (`/`, `/hr`) for an App folded into `central`, which the
-	 * switcher links to with the router; an absolute URL for an App still served from its own
-	 * origin, until its fold-in PR swaps the URL for its path. See `isCentralPath`.
-	 */
+	/** Where the App lives in `central`: a path (`/`, `/hr`) the switcher links to with the router. */
 	href: string;
 	requiredPermission: AppRole | null;
 };
-
-/**
- * True for an App `href` that is a path inside `central`, false for another origin.
- *
- * `central` renders a path as an in-app router link, and its route tests gate every App whose
- * `href` is a path. The retiring website-management app has no such route, so its switcher
- * resolves a path against `CENTRAL_URL` instead.
- */
-export function isCentralPath(href: string): boolean {
-	return href.startsWith("/");
-}
 
 const ROOT_DOMAIN = "middlesexmosquito.org";
 
@@ -73,49 +58,16 @@ const IS_DEPLOYED =
 const SUFFIX = environmentSuffix(HOSTNAME);
 
 /**
- * `devPort` is the app's **Caddy** port, not its Vite port. Both the scheme and the port
- * matter: an `http://` page calling the `https://` API is cross-site under schemeful
- * same-site, so the session cookie is withheld and the app bounces straight to `/login`.
- * Linking at the Vite upstream would hand every switcher click that dead end.
- */
-function appUrl(subdomain: string, devPort: number): string {
-	return IS_DEPLOYED
-		? `https://${subdomain}${SUFFIX}.${ROOT_DOMAIN}`
-		: `https://localhost:${devPort}`;
-}
-
-export const CENTRAL_URL = appUrl("central", 3444);
-
-/**
  * The public website's origin.
  *
- * Not `appUrl`: the public site is the apex in production and `staging.` in staging, so it is
- * the one origin whose host is not `<name><suffix>.` — the same reason `environmentSuffix`
- * treats a bare `staging` label as the staging suffix. Staff screens that show what the public
- * sees link out to the page itself with it, and a link into the wrong environment's public
- * record is exactly the mistake `IS_DEPLOYED`/`SUFFIX` exist to prevent.
+ * The public site is the apex in production and `staging.` in staging — the reason
+ * `environmentSuffix` treats a bare `staging` label as the staging suffix. Staff screens that show what the public sees link out to the page itself with
+ * it, and a link into the wrong environment's public record is exactly the mistake
+ * `IS_DEPLOYED`/`SUFFIX` exist to prevent.
  */
 export const PUBLIC_SITE_URL = IS_DEPLOYED
 	? `https://${SUFFIX ? "staging." : ""}${ROOT_DOMAIN}`
 	: "https://localhost:3448";
-
-export function getCentralLoginUrl(redirect?: string): string {
-	const base = `${CENTRAL_URL}/login`;
-	if (redirect) {
-		return `${base}?redirect=${encodeURIComponent(redirect)}`;
-	}
-	return base;
-}
-
-/**
- * Password recovery lives in Central only, and deliberately.
- *
- * Central is the one application every signed-in employee has, so it is the only front door that
- * cannot be a dead end. Reset mail also lands on whichever origin asked for it, so hosting the
- * request in several places would scatter the same flow across several hostnames for no gain —
- * Website Management links here instead.
- */
-export const CENTRAL_FORGOT_PASSWORD_URL = `${CENTRAL_URL}/forgot-password`;
 
 export const AVAILABLE_APPS: App[] = [
 	{
