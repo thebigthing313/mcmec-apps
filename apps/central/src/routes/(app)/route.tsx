@@ -1,6 +1,5 @@
 import { UnauthenticatedError } from "@mcmec/auth/errors";
-import type { Claims } from "@mcmec/auth/types";
-import { verifyClaims } from "@mcmec/auth/verifyClaims";
+import { readClaims } from "@mcmec/auth/verifyClaims";
 import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -14,18 +13,26 @@ import {
 	useMatches,
 	useNavigate,
 } from "@tanstack/react-router";
-import { CentralSidebar } from "@/src/components/central-sidebar";
+import { PORTAL_SHELL } from "@/src/components/portal-sidebar";
+import { requireEmployee } from "@/src/lib/gates";
+import { shellAppOf } from "@/src/lib/shell";
 import { signOutOfCentral } from "@/src/lib/sign-out";
 
+/**
+ * The root signed-in layout: the one shell every App renders inside.
+ *
+ * It resolves the claims and the signed-in Employee once, for every App. A User with no linked
+ * Employee is refused here, so every App refuses them — full-page, with no shell. An App's own
+ * layout route adds only its App Role gate, its `activeApp` and its rail (see src/lib/shell.ts).
+ *
+ * Its own `staticData` is the Self Service Portal's: the portal needs no App Role, so it has no
+ * layout route of its own, and it is what the shell shows wherever no App has taken over.
+ */
 export const Route = createFileRoute("/(app)")({
 	beforeLoad: async ({ context, location }) => {
+		let session: Awaited<ReturnType<typeof readClaims>>;
 		try {
-			const claims = await verifyClaims({ client: context.authClient });
-			// `employees` belongs to the shell: every screen shows the signed-in User's Employee
-			// name and title. Asked for here, after the claims check, so a signed-out visitor
-			// builds nothing, and every child route shares this one instance.
-			const { employees } = await context.collections.use("employees");
-			return { claims, employees };
+			session = await readClaims({ client: context.authClient });
 		} catch (error) {
 			if (error instanceof UnauthenticatedError) {
 				throw redirect({
@@ -35,6 +42,12 @@ export const Route = createFileRoute("/(app)")({
 			}
 			throw error;
 		}
+		const claims = requireEmployee(session);
+		// `employees` belongs to the shell: every screen shows the signed-in User's Employee
+		// name and title. Asked for here, after both checks, so a signed-out visitor or a User
+		// with no Employee builds nothing, and every child route shares this one instance.
+		const { employees } = await context.collections.use("employees");
+		return { claims, employees };
 	},
 	component: LayoutComponent,
 	// Seeds the breadcrumb so every trail reaches the dashboard. `employees` is preloaded because
@@ -43,15 +56,17 @@ export const Route = createFileRoute("/(app)")({
 		await context.employees.preload();
 		return { crumb: "Dashboard" };
 	},
+	staticData: PORTAL_SHELL,
 });
 
 function LayoutComponent() {
 	const { authClient, claims, collections, employees } =
 		Route.useRouteContext();
-	const { permissions, userId } = claims as Claims;
+	const { permissions, userId } = claims;
 	const accessibleApps = filterAppsByPermissions(permissions);
 	const location = useLocation();
 	const matches = useMatches();
+	const { activeApp, sidebar } = shellAppOf(matches, PORTAL_SHELL);
 	const breadcrumbParts = matches
 		.filter((match) => isMatch(match, "loaderData.crumb"))
 		.map((match) => ({
@@ -79,7 +94,7 @@ function LayoutComponent() {
 	return (
 		<Layout
 			value={{
-				activeApp: "Central",
+				activeApp,
 				apps: accessibleApps,
 				currentPath: location.pathname,
 				onLogout: handleLogout,
@@ -92,10 +107,10 @@ function LayoutComponent() {
 		>
 			<Layout.Sidebar>
 				<Layout.Sidebar.Header>
-					<Layout.AppSwitcher />
+					<Layout.AppSwitcher LinkComponent={Link} />
 				</Layout.Sidebar.Header>
 				<Layout.Sidebar.Content>
-					<CentralSidebar />
+					<Layout.Sidebar.Nav groups={sidebar} LinkComponent={Link} />
 				</Layout.Sidebar.Content>
 				<Layout.Sidebar.Footer>
 					<Layout.NavUser />

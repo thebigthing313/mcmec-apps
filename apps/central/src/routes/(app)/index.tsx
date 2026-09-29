@@ -9,8 +9,8 @@ export const Route = createFileRoute("/(app)/")({
 function Index() {
 	return (
 		<PageHeader
-			description="Your applications are in the switcher at the top of the sidebar."
-			title="Central"
+			description="Your Apps are in the switcher at the top of the sidebar."
+			title="Self Service Portal"
 		/>
 	);
 }

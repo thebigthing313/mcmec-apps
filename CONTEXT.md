@@ -33,9 +33,20 @@ _Avoid_: status change, toggle, flag
 
 **App Role**:
 A capability granted to a person's login, and the same string a command names as its
-permission. One per staff surface: `manage_website`, `manage_employees`, `manage_users`,
+permission. One per Domain: `manage_website`, `manage_employees`, `manage_users`,
 `manage_reference_data`.
 _Avoid_: permission (when the granting is meant), group, access level
+
+**App**:
+One of the staff apps an Employee opens from the app switcher: the Self Service Portal,
+Website Management, HR and Admin. Each has its own navigation. Every App but the Self Service
+Portal is entered only by holders of one App Role.
+_Avoid_: section, module, workspace, area
+
+**Self Service Portal**:
+The App every signed-in Employee can enter, with no App Role required. It is where staff land
+and where they read the Commission's public record.
+_Avoid_: Central (the address, not an App), dashboard, home
 
 **Audit Entry**:
 The immutable record of a single change — who made it, when, from where, what the row was
