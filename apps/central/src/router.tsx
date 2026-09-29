@@ -19,7 +19,7 @@ import {
 } from "@tanstack/react-router";
 import type { CentralCollections } from "./lib/collections";
 import { refusedAppOf } from "./lib/shell";
-import { signOutOfCentral } from "./lib/sign-out";
+import { useSignOutOfCentral } from "./lib/sign-out";
 import { routeTree } from "./routeTree.gen";
 
 /**
@@ -65,12 +65,6 @@ function NotFoundComponent() {
 	return <NotFound onAction={() => navigate({ to: "/" })} />;
 }
 
-function useSignOut() {
-	const router = useRouter();
-	const { authClient, collections } = router.options.context;
-	return () => signOutOfCentral({ authClient, collections, router });
-}
-
 /**
  * Central's error boundary. Two refusals are pulled out before the generic display gets them,
  * because a refusal is the system working, not a failure to retry:
@@ -82,7 +76,7 @@ function useSignOut() {
  */
 function ErrorComponent({ error }: { error: Error }) {
 	const router = useRouter();
-	const signOut = useSignOut();
+	const signOut = useSignOutOfCentral();
 	// The refused App is named from the matches, and its App Role from the App list the switcher
 	// reads, so the copy cannot drift from the gate.
 	const refused = useMatches({ select: refusedAppOf });

@@ -195,6 +195,8 @@ describe("signing out and back in in the same tab", () => {
 		await waitFor(() =>
 			expect(app.router.state.location.pathname).toBe("/login"),
 		);
+		await settle();
+		expect(app.running()).toEqual({ employees: [0] });
 
 		await app.signInAgain();
 		await settle();
