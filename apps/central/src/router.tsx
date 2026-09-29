@@ -68,12 +68,7 @@ function NotFoundComponent() {
 function useSignOut() {
 	const router = useRouter();
 	const { authClient, collections } = router.options.context;
-	return () =>
-		signOutOfCentral({
-			authClient,
-			collections,
-			toLogin: () => router.navigate({ to: "/login" }),
-		});
+	return () => signOutOfCentral({ authClient, collections, router });
 }
 
 /**

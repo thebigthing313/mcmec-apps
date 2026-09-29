@@ -12,7 +12,7 @@ import {
 	redirect,
 	useLocation,
 	useMatches,
-	useNavigate,
+	useRouter,
 } from "@tanstack/react-router";
 import { PORTAL_SHELL } from "@/src/components/portal-sidebar";
 import { requireEmployee } from "@/src/lib/gates";
@@ -75,13 +75,9 @@ function LayoutComponent() {
 			label: match.loaderData?.crumb as string,
 		}));
 
-	const navigate = useNavigate();
+	const router = useRouter();
 	const handleLogout = () =>
-		signOutOfCentral({
-			authClient,
-			collections,
-			toLogin: () => navigate({ to: "/login" }),
-		});
+		signOutOfCentral({ authClient, collections, router });
 
 	const { data: employee } = useLiveQuery(
 		(q) =>
