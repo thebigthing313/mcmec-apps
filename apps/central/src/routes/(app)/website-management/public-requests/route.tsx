@@ -6,7 +6,7 @@ export const Route = createFileRoute(
 	// Asks for its children's tables and preloads none: this component is a bare `<Outlet />`
 	// that subscribes to nothing, so each child's loader preloads what its screen reads.
 	beforeLoad: ({ context }) =>
-		context.websiteManagement.use("publicRequests", "zipCodes"),
+		context.websiteManagementTables.use("publicRequests", "zipCodes"),
 	component: Outlet,
 	loader: () => ({ crumb: "Public Requests" }),
 });

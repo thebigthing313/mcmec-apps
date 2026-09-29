@@ -5,7 +5,7 @@ export const Route = createFileRoute(
 	"/(app)/website-management/weekly-activity/",
 )({
 	beforeLoad: ({ context }) =>
-		context.websiteManagement.use("mosquitoActivityData"),
+		context.websiteManagementTables.use("mosquitoActivityData"),
 	component: WeeklyActivityPage,
 	// Preloads nothing: `mosquitoActivityData` is on demand, so the chart's own live query loads
 	// its slice.

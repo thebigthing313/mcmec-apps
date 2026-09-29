@@ -9,7 +9,7 @@ import { WebsiteManagementDashboard } from "@/src/apps/website-management/dashbo
  */
 export const Route = createFileRoute("/(app)/website-management/")({
 	beforeLoad: ({ context }) =>
-		context.websiteManagement.use(
+		context.websiteManagementTables.use(
 			"notices",
 			"publicRequests",
 			"meetings",

@@ -7,7 +7,7 @@ export const Route = createFileRoute(
 	// that subscribes to nothing, so each child's loader preloads what its screen reads.
 	// `notices` is here for the count of what a category holds, which decides whether its Delete is offered.
 	beforeLoad: ({ context }) =>
-		context.websiteManagement.use("noticeTypes", "notices"),
+		context.websiteManagementTables.use("noticeTypes", "notices"),
 	component: Outlet,
 	loader: () => ({ crumb: "Notice Categories" }),
 });

@@ -117,6 +117,27 @@ describe.each(CENTRAL_APPS)("$name", (app) => {
 	});
 });
 
+describe("a deep link into Website Management without its App Role", () => {
+	// TanStack Router runs every `beforeLoad` in a match even after the App's gate has thrown, so
+	// a screen below the gate must not reach the registry for a refused User. The App's own row
+	// above opens `/website-management`; this one opens a screen beneath it.
+	it("keeps the URL, refuses, and loads none of the App's tables", async () => {
+		const path = `${WM}/notices/${NOTICE_ID}`;
+		const { asked, router } = await renderAt(
+			path,
+			employeeWith(["manage_employees"]),
+		);
+
+		expect(router.state.location.pathname).toBe(path);
+		expect(
+			await screen.findByRole("heading", {
+				name: "You do not have access to Website Management",
+			}),
+		).toBeTruthy();
+		expect(asked()).toEqual(["employees"]);
+	});
+});
+
 /**
  * Which tables each route asks the registry for. Written out rather than derived: the point is
  * that a route asking for one table too many — the next App's, say — shows up as a diff here.
