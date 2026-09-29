@@ -1,4 +1,5 @@
 import { defineHandler } from "nitro/h3";
+import { SITE_URL } from "../../src/lib/site";
 import { isProductionSite } from "../environment";
 
 /**
@@ -11,7 +12,7 @@ const PRODUCTION_ROBOTS = `User-agent: *
 Allow: /
 Disallow: /contact/request-success
 
-Sitemap: https://middlesexmosquito.org/sitemap.xml
+Sitemap: ${SITE_URL}/sitemap.xml
 `;
 
 /** Everywhere that is not production: nothing here is meant to be found. */

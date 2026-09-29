@@ -1,7 +1,8 @@
 # Railway deployment
 
-How the apps run on Railway. The backend (`api`) already deploys this way; the five frontends
-are being moved off Vercel to join it.
+How the apps run on Railway. Every service deploys this way: `api` started here, and the five
+frontends moved off Vercel to join it on 2026-08-13 (#122). Nothing deploys to Vercel any more,
+and the `vercel.json` files and the `scripts/vercel-ignore.sh` build gate have been deleted.
 
 ## Service topology
 
@@ -197,12 +198,9 @@ Because of that hardcoding, the staging API's own `/assets/*` is served but neve
 
 The CSP lives in `server/plugins/csp.ts`, set from Nitro's `response` hook so it covers SSR
 pages, static assets and errors alike. It was previously configured in
-`apps/public/vercel.json`, which **Railway does not read** — a header defined only there
-disappears the moment the app is served from Railway.
-
-Both copies exist until the Vercel project is retired, because Vercel still serves production.
-Change them together. The one permitted difference is `vercel.live` / `*.vercel.com`, which
-Vercel's preview toolbar needs and Railway has no use for.
+`apps/public/vercel.json`, which **Railway does not read** — a header defined only there would
+have disappeared the moment the app was served from Railway. The move dropped `vercel.live` /
+`*.vercel.com`, which only Vercel's preview toolbar needed. `csp.ts` is now the only copy.
 
 > [!IMPORTANT]
 > The policy must allow `fonts.googleapis.com` in `style-src` and `fonts.gstatic.com` in
@@ -277,8 +275,8 @@ add it in `server/plugins/`, gated on the same `PUBLIC_ENV` check.
 ```bash
 curl -sI https://staging.middlesexmosquito.org/ | grep -i x-robots-tag
 curl -s  https://staging.middlesexmosquito.org/robots.txt
-curl -sI https://middlesexmosquito.org/ | grep -i x-robots-tag   # must print nothing
-curl -s  https://middlesexmosquito.org/robots.txt                # must still allow crawling
+curl -sI https://www.middlesexmosquito.org/ | grep -i x-robots-tag   # must print nothing
+curl -s  https://www.middlesexmosquito.org/robots.txt                # must still allow crawling
 ```
 
 ## Environment variables
@@ -332,7 +330,7 @@ would need its own login.
 | `hr` | `hr.middlesexmosquito.org` | `hr-staging.middlesexmosquito.org` |
 | `website-management` | `website-management.middlesexmosquito.org` | `website-management-staging.middlesexmosquito.org` |
 | `api` | `api.middlesexmosquito.org` | `api-staging.middlesexmosquito.org` |
-| `public` | `middlesexmosquito.org` (apex) | `staging.middlesexmosquito.org` |
+| `public` | `www.middlesexmosquito.org` | `staging.middlesexmosquito.org` |
 
 | Environment | `COOKIE_DOMAIN` | `COOKIE_PREFIX` |
 | --- | --- | --- |
@@ -346,34 +344,29 @@ Its host still lives under the same parent for consistency and TLS convenience.
 
 ### `www` and the apex
 
-**The apex is canonical. `www` redirects to it.** Every URL the app declares about itself is
-built from `SITE_URL` in `apps/public/src/lib/seo.ts`, which is the bare apex — that is what
-goes into the `rel="canonical"` link and `og:url` on every page, what `public/sitemap.xml`
-lists, and what the `Sitemap:` line of robots.txt points at.
-
-> [!WARNING]
-> **Vercel currently redirects the other way**, and the cutover has to flip it. Today
-> `https://middlesexmosquito.org/` returns a 307 to `https://www.middlesexmosquito.org/`, while
-> the page served at `www` carries `<link rel="canonical" href="https://middlesexmosquito.org/">`.
-> Crawlers are being bounced away from the exact URL the page then nominates as canonical, and
-> every `<loc>` in the sitemap is a URL that redirects. It resolves today because Google leans on
-> the canonical tag, but it is a conflicting signal that costs nothing to remove.
-
-At cutover, add **both** hosts and make `www` the one that redirects:
-
-1. Add `middlesexmosquito.org` to the production `public` service and point the apex DNS record
-   at it.
-2. Add `www.middlesexmosquito.org` too, and serve a 308 from `www` to the same path on the apex.
-   Do this wherever the redirect is cheapest — at the DNS/CDN provider if it offers host
-   redirects, otherwise in `apps/public/server/plugins/`, which already exists for the
-   `X-Robots-Tag` header and has the request hook to do it.
-3. Leave `www` resolving. It has been the served host for years, so it is what external links
-   and existing search results point at; dropping it turns those into hard failures instead of
-   redirects.
-
-If the decision ever goes the other way and `www` becomes canonical, `SITE_URL` and
-`public/sitemap.xml` have to change with it. Do not leave the app declaring one host while the
+**`www` is canonical.** Every URL the app declares about itself is built from `SITE_URL` in
+`apps/public/src/lib/site.ts` — the `rel="canonical"` link and `og:url` on every page, the JSON-LD
+`url`, and the `Sitemap:` line of robots.txt. `public/sitemap.xml` is a static file and names the
+same host by hand, so **change the two together**. The app must never declare one host while the
 edge serves another.
+
+`www.middlesexmosquito.org` is the custom domain on the production `public` service. The bare
+apex is **not** a Railway domain: its DNS points at the registrar's forwarding service (AWS
+addresses, `Server: ip-….ec2.internal`), which 301s `/` to `www` and **404s every other path**
+(`/about`, `/sitemap.xml`). This used to be backwards: until #232 the app declared the apex
+canonical, so every canonical tag and sitemap `<loc>` named a URL that did not load. Moving the
+app to `www` was a change to the repo alone, and it matched what was already being served.
+
+The apex forward is still worth fixing at the registrar. It should keep the path, so that a link
+to `https://middlesexmosquito.org/about` lands on `www`'s `/about` instead of a 404. That is a
+convenience for old links, not an SEO problem any more, because nothing the site publishes names
+the apex.
+
+> [!NOTE]
+> Before the cutover the plan was the reverse: apex canonical, served by Railway, with `www`
+> 308ing to it. That needs the apex record pointed at Railway (an ALIAS / flattened CNAME) and
+> the redirect built. If anyone revives that plan, `SITE_URL` and `public/sitemap.xml` flip back
+> in the same change that makes the apex serve.
 
 `BETTER_AUTH_URL` must match the host actually serving the API. Change it in the same step as
 adding the custom domain, never before — pointing it at a domain that does not resolve yet

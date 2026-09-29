@@ -1,4 +1,4 @@
-const SITE_URL = "https://middlesexmosquito.org";
+import { SITE_URL } from "./site";
 
 export const seo = ({
 	title,

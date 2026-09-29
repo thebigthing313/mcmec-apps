@@ -182,7 +182,7 @@ All changes go through branches and pull requests — never commit directly to `
 5. **CI runs automatically** — lint, type-check, build, and tests must all pass
 6. **Review, resolve conversations, and squash merge** into `develop`
 7. **When ready to release**, run `pnpm release` on `develop` — see below
-8. **Vercel deploys only affected apps** to production on merge to `main`
+8. **Railway deploys production** on merge to `main` — see Deployment below
 
 ### Releasing (`develop` → `main`)
 
@@ -199,9 +199,6 @@ The version commit has to land on `develop` rather than being added to the PR by
 `main` ruleset has no bypass actors, so nothing can push to it directly, and the PR's head branch
 *is* `develop`. Pushing straight to `develop` works because that ruleset grants the Admin role a
 bypass; without it, PR the version commit into `develop` first, then re-run.
-
-### Preview deployments
-Vercel preview deploys are **off by default** on all branches (including `develop`). To trigger one, include `[deploy-preview]` in a commit message.
 
 ### Staging deploys (Railway)
 
@@ -242,9 +239,20 @@ Production is unaffected: `main` still deploys on every merge. See `docs/railway
 
 ## Deployment
 
-All apps deploy to **Vercel** with Turborepo filtering:
-- `central` and `website-management`: SPA output to `dist/`, rewrites `/* → /index.html`
-- `public`: SSR output to `.output/public/`, has strict CSP headers and Cloudflare Turnstile integration
+Every app deploys to **Railway**, one service per app plus `Postgres` and `electric`, in a
+`production` environment (← `main`) and a `staging` environment (← `develop`, rebuilt only by
+`pnpm stage`). Each app's build and start commands live in `apps/<app>/railway.json`; the
+repo-root `railway.json` belongs to `api`.
+
+- `central`, `admin`, `hr`, `website-management`: static SPA in `dist/`, served by
+  `sirv --single` (the SPA fallback), on Serverless (sleeps when idle)
+- `public`: SSR (Nitro), started from `.output/server/index.mjs`, always-on. Its CSP and
+  `X-Robots-Tag` headers are set in `apps/public/server/plugins/`
+- `public`'s canonical host is `www.middlesexmosquito.org` (`SITE_URL` in
+  `apps/public/src/lib/site.ts`); the bare apex is a registrar forward, not a Railway domain
+
+The apps moved here from Vercel on 2026-08-13 (#122) and nothing deploys to Vercel any more.
+See `docs/railway-deployment.md`.
 
 ## Environment Variables
 
