@@ -1,4 +1,10 @@
-const SITE_URL = "https://middlesexmosquito.org";
+/**
+ * The canonical origin: every URL the site declares about itself — `rel="canonical"`, `og:url`,
+ * the JSON-LD `url`, the `Sitemap:` line of robots.txt — is built from this. It is `www` because
+ * `www` is the host Railway serves; the bare apex is a registrar forward that only redirects `/`.
+ * `public/sitemap.xml` is static and names the same host, so change the two together.
+ */
+export const SITE_URL = "https://www.middlesexmosquito.org";
 
 export const seo = ({
 	title,

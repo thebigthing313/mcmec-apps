@@ -8,7 +8,7 @@ import { Button } from "@mcmec/ui/components/button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { jobPostingsQueryOptions } from "@/src/lib/queries";
-import { canonical, seo } from "@/src/lib/seo";
+import { canonical, SITE_URL, seo } from "@/src/lib/seo";
 
 export const Route = createFileRoute("/job-opportunities/$postingId")({
 	component: RouteComponent,
@@ -48,7 +48,7 @@ function RouteComponent() {
 		hiringOrganization: {
 			"@type": "GovernmentOrganization",
 			name: "Middlesex County Mosquito Extermination Commission",
-			sameAs: "https://middlesexmosquito.org",
+			sameAs: SITE_URL,
 		},
 		jobLocation: {
 			"@type": "Place",

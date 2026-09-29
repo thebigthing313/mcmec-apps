@@ -15,7 +15,7 @@ import {
 	noticesQueryOptions,
 	spraySchedulesQueryOptions,
 } from "../lib/queries";
-import { canonical, seo } from "../lib/seo";
+import { canonical, SITE_URL, seo } from "../lib/seo";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
@@ -65,7 +65,7 @@ const organizationJsonLd = JSON.stringify({
 	"@type": "GovernmentOrganization",
 	name: "Middlesex County Mosquito Extermination Commission",
 	alternateName: "MCMEC",
-	url: "https://middlesexmosquito.org",
+	url: SITE_URL,
 	telephone: "+1-732-549-0665",
 	faxNumber: "+1-732-603-0280",
 	address: {
