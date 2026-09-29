@@ -2,11 +2,16 @@ import type { AuthClient } from "@mcmec/auth/client";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import type { Db } from "@/src/lib/db";
+import type { CentralCollections } from "@/src/lib/collections";
 
 export interface MyRouterContext {
 	authClient: AuthClient;
-	db: Db;
+	/**
+	 * The session's collection registry. Routes ask it for tables in `beforeLoad`
+	 * (`context.collections.use("notices")`) and pass what it returns down through context —
+	 * see src/lib/collections/registry.ts.
+	 */
+	collections: CentralCollections;
 	queryClient: QueryClient;
 }
 

@@ -25,7 +25,7 @@ Two further subpaths:
 
 | Subpath | Purpose |
 |---|---|
-| `@mcmec/sync/collections/*` | The per-app collection sets — `admin`, `central`, `hr`, `notices` (website-management). An app imports the one set it reads. |
+| `@mcmec/sync/collections/*` | The per-app collection sets — `admin`, `hr`, `notices` (website-management). An app imports the one set it reads. `central` no longer has one: its tables live in `apps/central/src/lib/collections` behind a session registry (#243). |
 | `@mcmec/sync/routes` | Every URL the client and the API agree on. **Imports nothing**, deliberately: the Hono server takes the paths without the TanStack stack behind them. |
 
 ---

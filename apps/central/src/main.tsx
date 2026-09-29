@@ -8,7 +8,6 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "@mcmec/ui/styles/globals.css";
 import { NotOnboardedError } from "@mcmec/auth/errors";
-import { signOut } from "@mcmec/auth/signOut";
 import { favicon } from "@mcmec/lib/constants/assets";
 import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { OnboardingRequired } from "@mcmec/ui/blocks/access-notice";
@@ -16,8 +15,9 @@ import { ErrorDisplay } from "@mcmec/ui/blocks/error";
 import { NotFound } from "@mcmec/ui/blocks/not-found";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { getDb } from "./lib/db";
-import { authClient, queryClient } from "./lib/queryClient";
+import { createCentralCollections } from "./lib/collections";
+import { API_URL, authClient, queryClient } from "./lib/queryClient";
+import { signOutOfCentral } from "./lib/sign-out";
 import { routeTree } from "./routeTree.gen";
 
 // Set favicon
@@ -28,10 +28,14 @@ if (faviconLink) {
 	faviconLink.href = favicon;
 }
 
+// One registry for the session. It builds nothing yet: each table is imported and built the
+// first time a route asks for it, and sign-out empties it for the next User.
+const collections = createCentralCollections(API_URL);
+
 const router = createRouter({
 	context: {
 		authClient,
-		db: getDb(),
+		collections,
 		queryClient,
 	},
 	defaultErrorComponent: (error) => <ErrorComponent {...error} />,
@@ -82,10 +86,13 @@ function ErrorComponent({ error }: ErrorComponentProps) {
 	if (error instanceof NotOnboardedError) {
 		return (
 			<OnboardingRequired
-				onSignOut={async () => {
-					await signOut({ client: authClient });
-					router.navigate({ to: "/login" });
-				}}
+				onSignOut={() =>
+					signOutOfCentral({
+						authClient,
+						collections,
+						toLogin: () => router.navigate({ to: "/login" }),
+					})
+				}
 			/>
 		);
 	}

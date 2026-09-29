@@ -17,7 +17,6 @@ import {
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { CalendarDays } from "lucide-react";
-import { meetings } from "@/src/lib/db";
 
 type MeetingRow = {
 	id: string;
@@ -35,7 +34,8 @@ type MeetingsSearch = Partial<RecordIndexSearch> & { year?: string };
 
 export const Route = createFileRoute("/(app)/meetings/")({
 	component: RouteComponent,
-	loader: () => {
+	loader: async ({ context }) => {
+		await context.meetings.preload();
 		return { crumb: "Public Meetings" };
 	},
 	validateSearch: (raw: Record<string, unknown>): MeetingsSearch =>
@@ -49,8 +49,10 @@ export const Route = createFileRoute("/(app)/meetings/")({
 function RouteComponent() {
 	const navigate = useNavigate();
 	const search = Route.useSearch();
-	const { data, collection } = useLiveQuery((q) =>
-		q.from({ meeting: meetings }),
+	const { meetings } = Route.useRouteContext();
+	const { data, collection } = useLiveQuery(
+		(q) => q.from({ meeting: meetings }),
+		[meetings],
 	);
 
 	const rows: MeetingRow[] = (data ?? []).map((meeting) => ({
