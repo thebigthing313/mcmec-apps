@@ -20,12 +20,10 @@ and shouldn't be opened directly.
 | -------------- | --------------- | --- |
 | 3443 | 3543 | api (Hono) |
 | 3444 | 3544 | central |
-| 3445 | 3545 | hr |
-| 3446 | 3546 | admin |
 | 3447 | 3547 | website-management |
 | 3448 | 3548 | public |
 
-**Upstream = browse port + 100.** Every MCMEC port is one of these twelve plus 2020, and the
+**Upstream = browse port + 100.** Every MCMEC port is one of these eight plus 2020, and the
 two columns carry the same last two digits, so a URL in the address bar names the port behind
 it without a lookup.
 
@@ -240,7 +238,7 @@ pointer in step 7 above and the freeze warning in `docs/railway-deployment.md`.
 Railway's **staging** environment does *not* rebuild on every merge to `develop`. Each
 `railway.json` has an `environments.staging` block watching one file, `deploy/staging-release.txt`,
 so pushes to `develop` build nothing. When you are ready to browser-test, run `pnpm stage` on a
-clean, up-to-date `develop` — it stamps that file, commits and pushes, and all six staging
+clean, up-to-date `develop` — it stamps that file, commits and pushes, and all four staging
 services rebuild from the latest `develop`. `pnpm stage --dry-run` prints the plan.
 
 Production is unaffected: `main` still deploys on every merge. See `docs/railway-deployment.md`.
@@ -282,8 +280,10 @@ Every app deploys to **Railway**, one service per app plus `Postgres` and `elect
 `pnpm stage`). Each app's build and start commands live in `apps/<app>/railway.json`; the
 repo-root `railway.json` belongs to `api`.
 
-- `central`, `admin`, `hr`, `website-management`: static SPA in `dist/`, served by
-  `sirv --single` (the SPA fallback), on Serverless (sleeps when idle)
+- `central`, `website-management`: static SPA in `dist/`, served by
+  `sirv --single` (the SPA fallback), on Serverless (sleeps when idle). `hr` and `admin` were
+  folded into `central` and deleted from the repo (#248); their production services stay up until
+  the consolidation release (#254)
 - `public`: SSR (Nitro), started from `.output/server/index.mjs`, always-on. Its CSP and
   `X-Robots-Tag` headers are set in `apps/public/server/plugins/`
 - `public`'s canonical host is `www.middlesexmosquito.org` (`SITE_URL` in
@@ -295,10 +295,10 @@ See `docs/railway-deployment.md`.
 ## Environment Variables
 
 Required (set via `.env` files per app — see each app's `.env.example`):
-- `VITE_API_URL` — admin, central, hr, website-management; the `api` origin they read shapes and write data through
+- `VITE_API_URL` — central, website-management; the `api` origin they read shapes and write data through
 - `VITE_APP_NAME`, `VITE_DOMAIN_NAME` — central app
 - `VITE_CLOUDFLARE_TURNSTILE_SITEKEY` — public app
-- `VITE_ASSETS_ORIGIN` — all five web apps; optional origin for the brand images at `/assets`. Unset, they come from production; set it to your own api to see images a branch adds before that branch reaches `main`
+- `VITE_ASSETS_ORIGIN` — all three web apps; optional origin for the brand images at `/assets`. Unset, they come from production; set it to your own api to see images a branch adds before that branch reaches `main`
 - `API_URL` — public app; it reaches the api server-side only, so this is not a `VITE_` var (stays plain http in local dev)
 
 Server-side, on the `api` service only:

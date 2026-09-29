@@ -88,7 +88,7 @@ const stamp = new Date().toISOString();
 
 console.log(`\nStaging \`${BRANCH}\` @ ${sha} — ${subject}`);
 console.log(`  marker: ${MARKER}`);
-console.log("  rebuilds: api, central, admin, hr, website-management, public");
+console.log("  rebuilds: api, central, website-management, public");
 
 if (dryRun) {
 	console.log("\n--dry-run: nothing written, nothing pushed.");

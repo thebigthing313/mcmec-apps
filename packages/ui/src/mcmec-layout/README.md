@@ -1,6 +1,6 @@
 # MCMEC Layout
 
-The chrome every staff application wears: `central`, `website-management`, `hr`, `admin`.
+The chrome every staff application wears: `central` and `website-management`.
 
 An application supplies its identity, its user, its navigation data and its breadcrumbs. The
 shell supplies everything else — the rail, the app switcher, the user menu, the header, the

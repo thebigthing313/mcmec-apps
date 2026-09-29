@@ -13,19 +13,26 @@ Six services per environment, in one Railway project (`mcmec`):
 | `Postgres` | Docker image | database | no |
 | `electric` | Docker image | ElectricSQL sync | no |
 | `api` | git → repo | Hono API + shape proxy | no |
-| `central`, `admin`, `hr`, `website-management` | git → repo | static SPA (`dist/`) | yes |
+| `central`, `website-management` | git → repo | static SPA (`dist/`) | yes |
 | `public` | git → repo | SSR (Nitro) | **no** |
 
-The four staff apps are **Serverless (app sleep)** — they are low-traffic internal tools, and
+The staff apps are **Serverless (app sleep)** — they are low-traffic internal tools, and
 Railway zeroes idle cost regardless of how many services exist. `public` stays always-on so
 search engines never hit a cold boot.
 
-They are four separate services rather than one combined static server so each app deploys
+They are separate services rather than one combined static server so each app deploys
 independently: a Railway service is one build producing one container, so bundling them would
 mean any change redeploys all of them and one bad build blocks the lot.
 
 "Private" here means auth-gated at the API, **not** network-isolated. The static bundles are
 served to the internet; privacy lives in the Better Auth session and permission checks.
+
+> [!NOTE]
+> `hr` and `admin` are folded into `central` (`/hr`, `/admin`) and were deleted from the repo in
+> #248. Their staging services must be deleted no later than the next `pnpm stage`, or those
+> builds fail. **Production still runs its `hr` and `admin` services**
+> until the consolidation release (#254), which deletes them with their custom domains, DNS
+> records and `TRUSTED_ORIGINS` entries.
 
 ## Branch mapping
 
@@ -66,7 +73,7 @@ pnpm stage              # or: pnpm stage --dry-run
 ```
 
 `scripts/stage.mjs` writes a timestamp into `deploy/staging-release.txt`, commits it and pushes
-`develop`. That one changed path matches every service's staging watch pattern, so all six
+`develop`. That one changed path matches every service's staging watch pattern, so all four
 rebuild together from the latest `develop`.
 
 Two things make this work the way it does:
@@ -167,8 +174,8 @@ reference them by path; they import the URLs from `@mcmec/lib/constants/assets`.
 
 They previously sat in a public Supabase Storage bucket. `api` inherits that job because it is
 the only always-on service present in both environments, and keeping **one** origin is the point:
-the six apps share a single copy and a single browser cache entry, and a logo change is one
-commit rather than six.
+every app shares a single copy and a single browser cache entry, and a logo change is one
+commit rather than one per app.
 
 `apps/api/src/assets.ts` reads the directory once at boot into memory (~2 MB) and serves from
 there. That is not just a speed trick — a request never carries a caller-supplied path to the
@@ -227,7 +234,7 @@ the same way on either host.
 ## Search indexing
 
 Exactly one origin belongs in search results: `public` in **production**. Everything else —
-the whole staging environment, and the four staff apps in production as well as staging — is
+the whole staging environment, and the staff apps in production as well as staging — is
 `noindex`.
 
 The stakes are higher than ordinary SEO hygiene. This site is the Commission's official channel
@@ -257,7 +264,7 @@ indexed, which shows up in Search Console instead of silently.
 
 ### Staff apps
 
-`central`, `admin`, `hr` and `website-management` carry `<meta name="robots" content="noindex,
+`central` and `website-management` carry `<meta name="robots" content="noindex,
 nofollow">` in `index.html` and a `public/robots.txt` of `Disallow: /`, in **every** environment
 — they have no public audience anywhere. This is not gated on environment, so there is nothing
 to configure and nothing to forget.
@@ -292,7 +299,7 @@ a bundle pointing at the wrong API.
 
 | Variable | Services | Notes |
 | --- | --- | --- |
-| `VITE_API_URL` | central, admin, hr, website-management | API origin, build-time |
+| `VITE_API_URL` | central, website-management | API origin, build-time |
 | `API_URL` | public | server-side only, never exposed to the browser |
 | `VITE_CLOUDFLARE_TURNSTILE_SITEKEY` | public | build-time |
 | `PUBLIC_ENV` | public | `production` or `staging`, runtime — see [Search indexing](#search-indexing) |
@@ -331,8 +338,6 @@ would need its own login.
 | Service | production host | staging host |
 | --- | --- | --- |
 | `central` | `central.middlesexmosquito.org` | `central-staging.middlesexmosquito.org` |
-| `admin` | `admin.middlesexmosquito.org` | `admin-staging.middlesexmosquito.org` |
-| `hr` | `hr.middlesexmosquito.org` | `hr-staging.middlesexmosquito.org` |
 | `website-management` | `website-management.middlesexmosquito.org` | `website-management-staging.middlesexmosquito.org` |
 | `api` | `api.middlesexmosquito.org` | `api-staging.middlesexmosquito.org` |
 | `public` | `www.middlesexmosquito.org` | `staging.middlesexmosquito.org` |
@@ -407,7 +412,7 @@ For each service:
 4. Confirm the build variables (the CLI can set these ahead of time). On `public`, that includes
    `PUBLIC_ENV`. Never create `NIXPACKS_NODE_VERSION` — Railpack ignores it and its presence
    invites someone to "fix" a build by changing it.
-5. Enable Serverless on the four staff apps; leave `public` always-on.
+5. Enable Serverless on the staff apps; leave `public` always-on.
 6. Add the custom domain and the matching DNS CNAME.
 7. Add the new origin to the `api` service's `TRUSTED_ORIGINS` (not needed for `public`).
 8. Once the API's own domain resolves, update `BETTER_AUTH_URL` to match and redeploy.
