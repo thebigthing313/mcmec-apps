@@ -28,10 +28,10 @@ mean any change redeploys all of them and one bad build blocks the lot.
 served to the internet; privacy lives in the Better Auth session and permission checks.
 
 > [!NOTE]
-> Staging runs exactly these five. **Production still also runs `hr`, `admin` and
-> `website-management`** until the consolidation release (#254) deletes them with their custom
-> domains, DNS records and `TRUSTED_ORIGINS` entries. Their code left the repo in #248 and #250
-> and lives on in `central` at `/hr`, `/admin` and `/website-management`.
+> Both environments run exactly these five. The old `hr`, `admin` and `website-management`
+> services, their custom domains, DNS records and `TRUSTED_ORIGINS` entries were deleted from
+> staging (#248, #250) and then production (#254). They live on in `central` at `/hr`, `/admin`
+> and `/website-management`, with no redirects from the old hosts.
 
 ## Branch mapping
 
@@ -40,9 +40,6 @@ served to the internet; privacy lives in the Better Auth session and permission 
 
 Production deploys on every merge to `main`. **Staging does not deploy on every merge to
 `develop`** — see below.
-
-> [!WARNING]
-> **Production releases stay frozen until #254 ships the staff SPA consolidation.**
 
 ## Staging deploys on demand (`pnpm stage`)
 
