@@ -296,7 +296,7 @@ The public site and the staff applications use two different spatial models over
 
 **The Eighty-Rem Rule.** No content region exceeds `max-w-7xl` (80rem). The hero photograph may bleed past it; nothing readable may.
 
-**The Shell Owns The Chrome Rule.** Staff applications import `mcmec-layout` and fill it. An app that defines its own sidebar, header, or breadcrumb has forked the system, and four forks is how five applications stop looking like one.
+**The Shell Owns The Chrome Rule.** Each of `central`'s Apps imports `mcmec-layout` and fills it. An App that defines its own sidebar, header, or breadcrumb has forked the system.
 
 **The Desktop-First, Mobile-Survivable Rule.** The staff applications are designed for the screen they are actually used on: a desk, a large display, a considered edit. Density, column count, keyboard reach, and information-per-screen are decided at desktop widths and are not compromised to suit a phone.
 
@@ -494,7 +494,7 @@ One row vocabulary for every queue a Signal Band opens, whatever domain the reco
 - **Row target:** the whole row is a typed route link. Hover takes Pale Green; focus takes the standard `3px` ring and raises the row above its siblings.
 - **Empty:** the queue states its own empty case — an icon, a short title, a line of description — rather than leaving the panel blank. An empty signal is a legitimate answer and should read as one.
 
-It lives in `apps/central/src/apps/website-management/components/signal-queue.tsx` and is app-local today. If a second staff application grows a queue, promote it to `packages/ui` beside the band rather than copying it.
+It lives in `apps/central/src/apps/website-management/components/signal-queue.tsx` and is app-local today. If a second App grows a queue, promote it to `packages/ui` beside the band rather than copying it.
 
 ### Named Rules
 

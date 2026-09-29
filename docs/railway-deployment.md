@@ -28,11 +28,10 @@ mean any change redeploys all of them and one bad build blocks the lot.
 served to the internet; privacy lives in the Better Auth session and permission checks.
 
 > [!NOTE]
-> `hr` and `admin` are folded into `central` (`/hr`, `/admin`) and were deleted from the repo in
-> #248; `website-management` followed (`/website-management`) in #250. Their staging services
-> must be deleted no later than the next `pnpm stage`, or those builds fail. **Production still
-> runs its `hr`, `admin` and `website-management` services** until the consolidation release
-> (#254), which deletes them with their custom domains, DNS records and `TRUSTED_ORIGINS` entries.
+> Staging runs exactly these five. **Production still also runs `hr`, `admin` and
+> `website-management`** until the consolidation release (#254) deletes them with their custom
+> domains, DNS records and `TRUSTED_ORIGINS` entries. Their code left the repo in #248 and #250
+> and lives on in `central` at `/hr`, `/admin` and `/website-management`.
 
 ## Branch mapping
 
@@ -43,13 +42,11 @@ Production deploys on every merge to `main`. **Staging does not deploy on every 
 `develop`** — see below.
 
 > [!WARNING]
-> **Production releases are frozen** until the staff SPA consolidation (#233) is all on
-> `develop` and ships in one release (#254). Nothing merges to `main` in the meantime except an
-> emergency hotfix branched from `main`. See "Release freeze" in `CLAUDE.md` for the hotfix path.
+> **Production releases stay frozen until #254 ships the staff SPA consolidation.**
 
 ## Staging deploys on demand (`pnpm stage`)
 
-Staging is only worth rebuilding when someone is about to browser-test it. Six services
+Staging is only worth rebuilding when someone is about to browser-test it. Every service
 rebuilding on every merged PR is build minutes and churn spent on a copy nobody is looking at,
 and it means the environment moves under you mid-test.
 
@@ -234,14 +231,14 @@ the same way on either host.
 ## Search indexing
 
 Exactly one origin belongs in search results: `public` in **production**. Everything else —
-the whole staging environment, and the staff apps in production as well as staging — is
+the whole staging environment, and `central` in production as well as staging — is
 `noindex`.
 
 The stakes are higher than ordinary SEO hygiene. This site is the Commission's official channel
 for legal notices under P.L. 2025, c.72, and staging serves the same pages from a database that
 gets truncated and reloaded during testing. An indexed staging copy could surface a throwaway
 notice as though it were the statutory posting. Staging hosts are ordinary publicly-resolvable
-subdomains — they have to be, so the SSO cookie can span them — so nothing about the topology
+subdomains — they have to be, so the session cookie can span them — so nothing about the topology
 hides them from a crawler.
 
 ### `public`
@@ -262,14 +259,14 @@ environment added later under a name nobody thought to check — would be indexe
 it is production fails closed, and the worst an unconfigured service can do is decline to be
 indexed, which shows up in Search Console instead of silently.
 
-### Staff apps
+### `central`
 
 `central` carries `<meta name="robots" content="noindex, nofollow">` in `index.html` and a
 `public/robots.txt` of `Disallow: /`, in **every** environment — it has no public audience
 anywhere. This is not gated on environment, so there is nothing
 to configure and nothing to forget.
 
-They get a meta tag rather than a header because `sirv-cli` cannot set response headers. The
+It gets a meta tag rather than a header because `sirv-cli` cannot set response headers. The
 coverage is equivalent here: `--single` serves that one document for every path, so every URL a
 crawler can reach carries the tag. It would not be equivalent on `public`, which serves PDFs and
 XML.
@@ -312,7 +309,7 @@ browser calls fail CORS.
 > planned. These are compared as exact strings, so a near miss fails closed and silently: the
 > app loads, then every API call is blocked by CORS. Read the real hostnames back from Railway
 > (`RAILWAY_PUBLIC_DOMAIN`, or the service's custom domains) rather than trusting a doc. This
-> already bit once in each environment — `website-management` was provisioned as
+> already bit once in each environment — the since-retired `website-management` was provisioned as
 > `website-management-staging.…` while the origin list carried `website-staging.…`, and again in
 > production as `website-management.…` against an origin list carrying `website.…`.
 
@@ -328,10 +325,10 @@ right environment's public site.
 
 ## Domains and the session cookie
 
-Cross-app SSO is a single Better Auth cookie shared across subdomains, so **the apps must sit
-under a shared parent domain**. Railway's generated `*.up.railway.app` hosts cannot do this —
-they are distinct sites under the public suffix list, so no cookie can span them, and each app
-would need its own login.
+The session is a single Better Auth cookie that `api` sets and `central` sends back, so **the two
+must sit under a shared parent domain**. Railway's generated `*.up.railway.app` hosts cannot do
+this — they are distinct sites under the public suffix list, so no cookie can span them, and
+`central`'s calls to `api` would arrive without the session.
 
 | Service | production host | staging host |
 | --- | --- | --- |
@@ -409,7 +406,7 @@ For each service:
 4. Confirm the build variables (the CLI can set these ahead of time). On `public`, that includes
    `PUBLIC_ENV`. Never create `NIXPACKS_NODE_VERSION` — Railpack ignores it and its presence
    invites someone to "fix" a build by changing it.
-5. Enable Serverless on the staff apps; leave `public` always-on.
+5. Enable Serverless on `central`; leave `public` always-on.
 6. Add the custom domain and the matching DNS CNAME.
 7. Add the new origin to the `api` service's `TRUSTED_ORIGINS` (not needed for `public`).
 8. Once the API's own domain resolves, update `BETTER_AUTH_URL` to match and redeploy.
