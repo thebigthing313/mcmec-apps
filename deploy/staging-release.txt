@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-29T17:32:24.469Z
-commit: 0e59af0 feat(central): shell, App Role gates and the Self Service Portal (#244) (#262)
+released: 2026-09-29T18:20:44.487Z
+commit: 05d64c3 feat(central): fold HR and Admin into central (#247) (#264)
