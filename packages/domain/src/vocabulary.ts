@@ -58,8 +58,8 @@ export function isCommandName(value: string): value is CommandName {
 /**
  * The tables the vocabulary names.
  *
- * `packages/sync` refuses, at the call site, a collection whose `commands` flag disagrees
- * with this — which is now the whole of whether a table can be written at all, since #140
+ * Central's collection builder refuses, at the call site, a collection whose `commands` flag
+ * disagrees with this — which is now the whole of whether a table can be written at all, since #140
  * deleted the generic door a mismatch used to route back to. Derived, never hand-written, so
  * the pair that broke the documents slice (#160) cannot be spelled.
  *
@@ -67,7 +67,7 @@ export function isCommandName(value: string): value is CommandName {
  * to refuse a `WRITABLE` entry for a commanded table. `WRITABLE` is gone, so there is nothing
  * left to assert against and the set went with it.
  *
- * Exported for a type-only import: `packages/sync` erases it at build, so the three apps that
- * name no intent (`hr`, `admin`, `central`) pay nothing at runtime for it.
+ * Exported for a type-only import: central's collection builder erases it at build, so central
+ * pays nothing at runtime for it.
  */
 export type CommandedTable = (typeof ALL)[number]["table"];

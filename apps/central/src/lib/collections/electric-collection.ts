@@ -1,10 +1,10 @@
 /**
  * Electric collection builder for central's tables.
  *
- * Moved here from `@mcmec/sync/factories` (#243); the other staff apps keep using that copy until
- * `@mcmec/sync` is removed (#251). Nothing here imports a table: each table module under
- * `./tables/` calls `createEagerCollection` itself, and the registry imports that module the
- * first time a route asks for the table.
+ * Moved here from the shared sync package's factories (#243), a package since removed (#251).
+ * Nothing here imports a table: each table module under `./tables/` calls
+ * `createEagerCollection` itself, and the registry imports that module the first time a route
+ * asks for the table.
  *
  * Reads: `electricCollectionOptions` streams the server-narrowed shape from the API proxy
  * (`/api/shapes/:table`). The proxy sets `table`/`where`/`columns` server-side (authorization);
@@ -41,12 +41,13 @@ import {
 /**
  * The shape proxy's path for a table.
  *
- * A copy, on purpose (#239): its twin is `shapePathFor` in `packages/sync/src/routes.ts`, which
- * `apps/api` serves from, and `apps/public` gets its own copy when `@mcmec/sync` goes (#251). Six
- * lines are cheaper to keep twice than a package is to keep once, and drift is loud — a 404 on
- * every shape request.
+ * A copy, on purpose (#239): its twin is `shapePathFor` in `apps/public/src/lib/electric-shape.ts`,
+ * and `apps/api` serves the path at `/api/shapes/:table`. Six lines are cheaper to keep twice
+ * than a package is to keep once, and drift is loud — a 404 on every shape request.
+ * `./shape-twins.test.ts` pins both copies to the same answers; that is the only reason this is
+ * exported.
  */
-function shapePathFor(table: string): string {
+export function shapePathFor(table: string): string {
 	return `/api/shapes/${table}`;
 }
 
@@ -56,11 +57,11 @@ function shapePathFor(table: string): string {
  * outputs (Date / number) so synced and mutated rows agree.
  *
  * A copy, like `shapePathFor`: its twin is `electricParser` in
- * `packages/sync/src/factories/electric-collection.ts`. Drift is loud here too — dates arriving
- * as strings.
+ * `apps/public/src/lib/electric-shape.ts`, and `./shape-twins.test.ts` pins both. Drift is loud
+ * here too — dates arriving as strings.
  */
 const toDate = (value: string) => new Date(value);
-const electricParser = {
+export const electricParser = {
 	date: toDate,
 	numeric: (value: string) => Number(value),
 	timestamp: toDate,
@@ -286,7 +287,8 @@ export function createEagerCollection<
  * rows. Forwarding them is safe because Electric intersects a subset with the shape's own
  * server-side `where` rather than replacing it.
  *
- * Two differences from `@mcmec/sync`'s copy, both because of the registry:
+ * Two differences from the shared sync package's copy (removed in #251), both because of the
+ * registry:
  *
  * - `startSync: false`, like the eager tables, so building one opens no stream. The first live
  *   query subscribing starts it, and `gcTime` stops it after the last one leaves. The sync

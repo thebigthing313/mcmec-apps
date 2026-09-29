@@ -1,16 +1,16 @@
 /**
  * The client half of the command path, for central's collections.
  *
- * Moved here from `@mcmec/sync/command-write` (#243), which the other staff apps still use until
- * `@mcmec/sync` is removed (#251). It keeps only what a collection's write handlers need —
- * `findCommandRefusal` stays with `@mcmec/ui`'s `toastOnError`, and it matches the refusal by
- * `name` rather than `instanceof`, so a refusal thrown from this copy still reads as one.
+ * Moved here from the shared sync package (#243), which has since been removed (#251). It keeps
+ * only what a collection's write handlers need — `findCommandRefusal` lives with `@mcmec/ui`'s
+ * `toastOnError`, and it matches the refusal by `name` rather than `instanceof`, so a refusal
+ * thrown from here still reads as one.
  *
  * `COMMAND_PATH` is imported rather than copied, unlike `shapePathFor` and `electricParser` in
  * ./electric-collection: #239 gives it a shared home in `@mcmec/domain`, which `api` and central
- * both depend on, and moves it there with #251. Until then `@mcmec/sync/routes` is that home.
+ * both depend on. The `/routes` subpath imports nothing, so taking it costs no vocabulary.
  */
-import { COMMAND_PATH } from "@mcmec/sync/routes";
+import { COMMAND_PATH } from "@mcmec/domain/routes";
 
 /**
  * What a mutation must carry to say what it meant.

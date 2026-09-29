@@ -7,8 +7,8 @@
  * works the way it does, is in `apps/api/README.md`.
  */
 import { randomUUID } from "node:crypto";
+import { COMMAND_PATH } from "@mcmec/domain/routes";
 import type { AppRole } from "@mcmec/lib/constants/roles";
-import { COMMAND_PATH } from "@mcmec/sync/routes";
 import { getCookies } from "better-auth/cookies";
 import { makeSignature } from "better-auth/crypto";
 import { sql } from "drizzle-orm";

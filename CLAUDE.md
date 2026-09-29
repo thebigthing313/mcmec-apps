@@ -68,8 +68,7 @@ defaults would take 2019 and 80.
 - **ui** (`packages/ui`) — Shared component library (Radix UI + Tailwind CSS v4 + shadcn pattern)
 - **lib** (`packages/lib`) — Business logic, constants, validation schemas (Zod)
 - **schemas** (`packages/schemas`) — Zod row/insert/update schemas (`db/*`); a pure Zod leaf with no React or TanStack dependency
-- **sync** (`packages/sync`) — Electric collection factories, API write handlers, `fetchShapeSnapshot`, and the shared route paths (`@mcmec/sync/routes`)
-- **domain** (`packages/domain`) — the command vocabulary: what a write is called, what payload it takes and which permission it needs. Defines only; `apps/api` implements the handlers
+- **domain** (`packages/domain`) — the command vocabulary: what a write is called, what payload it takes and which permission it needs. Defines only; `apps/api` implements the handlers. Also home to `COMMAND_PATH` (`@mcmec/domain/routes`)
 - **auth** (`packages/auth`) — Better Auth client, `signIn`/`signOut`, `verifyClaims`
 - **typescript-config** (`packages/typescript-config`) — Shared TS configs (base, react-library, tanstack-start)
 

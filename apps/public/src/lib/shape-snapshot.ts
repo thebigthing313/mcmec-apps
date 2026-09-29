@@ -6,12 +6,13 @@
  * the data once, in the response. This subscribes, waits for the shape to report
  * up-to-date, then aborts the stream so no long-poll outlives the request.
  *
- * Runs anywhere `fetch` exists, and carries no session — the shape proxy applies its
- * anonymous policy (published-only rows for notices, documents, and job postings).
+ * Moved here from `@mcmec/sync` (#251): the public site was its only consumer.
+ *
+ * Carries no session — the shape proxy applies its anonymous policy (published-only rows for
+ * notices, documents, and job postings).
  */
 import { type Row, Shape, ShapeStream } from "@electric-sql/client";
-import { electricParser } from "./factories";
-import { shapePathFor } from "./routes";
+import { electricParser, shapePathFor } from "./electric-shape";
 
 export interface FetchShapeSnapshotOptions {
 	/** Table name — the `/api/shapes/:table` segment. */
@@ -36,7 +37,7 @@ export async function fetchShapeSnapshot<T extends Row = Row>({
 	try {
 		const stream = new ShapeStream<T>({
 			url: `${apiUrl}${shapePathFor(table)}`,
-			// Same coercions the collections use, so SSR and client rows agree.
+			// Same coercions central's collections use, so SSR and staff-app rows agree.
 			parser: electricParser as never,
 			signal: controller.signal,
 		});
