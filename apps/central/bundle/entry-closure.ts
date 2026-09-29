@@ -28,10 +28,12 @@ export type EntryClosureResult = {
 };
 
 const APP_MODULE = /^apps\/central\/src\/apps\/[^/]+\//;
+// A table is `tables/<name>.ts` or a folder `tables/<name>/...`.
 const TABLE_MODULE =
-	/^apps\/central\/src\/lib\/collections\/tables\/([^/.]+)\./;
+	/^apps\/central\/src\/lib\/collections\/tables\/([^/.]+)[./]/;
 
-function forbidden(moduleId: string): string | null {
+/** Why a module may not be in the entry closure, or null when it may. */
+function forbiddenReason(moduleId: string): string | null {
 	if (APP_MODULE.test(moduleId)) return "App code";
 	const table = TABLE_MODULE.exec(moduleId)?.[1];
 	if (table && table !== "employees") return `the "${table}" table`;
@@ -86,11 +88,18 @@ export function checkEntryClosure(
 	membership: BundleMembership,
 	{ ceilingBytes }: { ceilingBytes: number },
 ): EntryClosureResult {
+	// A NaN ceiling would compare false against everything and pass any size silently.
+	if (!Number.isFinite(ceilingBytes) || ceilingBytes <= 0)
+		throw new Error(
+			`the ceiling must be a positive number of bytes, got ${ceilingBytes}`,
+		);
 	const closure = walkClosure(membership);
 	const violations: Violation[] = [];
 	for (const c of closure) {
 		for (const m of c.modules) {
-			const reason = forbidden(m.id);
+			// Rollup lists a module it tree-shook to nothing with renderedLength 0: it ships no code.
+			if (m.renderedLength === 0) continue;
+			const reason = forbiddenReason(m.id);
 			if (reason)
 				violations.push({
 					chunk: c.fileName,

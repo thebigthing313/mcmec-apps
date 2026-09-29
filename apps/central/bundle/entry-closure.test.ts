@@ -141,6 +141,56 @@ describe("checkEntryClosure", () => {
 		]);
 	});
 
+	it("refuses a table defined as a folder, not only as a single file", () => {
+		const membership: BundleMembership = {
+			chunks: [
+				chunk("assets/index.js", {
+					isEntry: true,
+					modules: [
+						mod("apps/central/src/lib/collections/tables/employees/index.ts"),
+						mod(
+							"apps/central/src/lib/collections/tables/insecticides/index.ts",
+						),
+					],
+				}),
+			],
+		};
+
+		const result = checkEntryClosure(membership, { ceilingBytes: CEILING });
+
+		expect(result.violations.map((v) => v.module)).toEqual([
+			"apps/central/src/lib/collections/tables/insecticides/index.ts",
+		]);
+	});
+
+	it("ignores a module Rollup kept none of, since it ships no code", () => {
+		const membership: BundleMembership = {
+			chunks: [
+				chunk("assets/index.js", {
+					isEntry: true,
+					modules: [mod("apps/central/src/apps/hr/constants.ts", 0)],
+				}),
+			],
+		};
+
+		const result = checkEntryClosure(membership, { ceilingBytes: CEILING });
+
+		expect(result.violations).toEqual([]);
+	});
+
+	it("refuses a ceiling that is not a positive number rather than passing everything", () => {
+		const membership: BundleMembership = {
+			chunks: [chunk("assets/index.js", { isEntry: true })],
+		};
+
+		expect(() =>
+			checkEntryClosure(membership, { ceilingBytes: Number.NaN }),
+		).toThrow(/ceiling/);
+		expect(() => checkEntryClosure(membership, { ceilingBytes: 0 })).toThrow(
+			/ceiling/,
+		);
+	});
+
 	it("allows routes, the shell and the shared packages", () => {
 		const membership: BundleMembership = {
 			chunks: [
