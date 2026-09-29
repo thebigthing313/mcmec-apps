@@ -19,22 +19,22 @@ import { signOutOfCentral } from "@/src/lib/sign-out";
 
 export const Route = createFileRoute("/(app)")({
 	beforeLoad: async ({ context, location }) => {
-		const claims = await verifyClaims({ client: context.authClient }).catch(
-			(error: unknown) => {
-				if (error instanceof UnauthenticatedError) {
-					throw redirect({
-						search: { redirect: location.href },
-						to: "/login",
-					});
-				}
-				throw error;
-			},
-		);
-		// `employees` belongs to the shell: every screen shows the signed-in User's Employee name
-		// and title. Asked for here, after the claims check, so a signed-out visitor builds
-		// nothing, and every child route shares this one instance.
-		const { employees } = await context.collections.use("employees");
-		return { claims, employees };
+		try {
+			const claims = await verifyClaims({ client: context.authClient });
+			// `employees` belongs to the shell: every screen shows the signed-in User's Employee
+			// name and title. Asked for here, after the claims check, so a signed-out visitor
+			// builds nothing, and every child route shares this one instance.
+			const { employees } = await context.collections.use("employees");
+			return { claims, employees };
+		} catch (error) {
+			if (error instanceof UnauthenticatedError) {
+				throw redirect({
+					search: { redirect: location.href },
+					to: "/login",
+				});
+			}
+			throw error;
+		}
 	},
 	component: LayoutComponent,
 	// Seeds the breadcrumb so every trail reaches the dashboard. `employees` is preloaded because

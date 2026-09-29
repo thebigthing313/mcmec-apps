@@ -6,8 +6,9 @@
  * `findCommandRefusal` stays with `@mcmec/ui`'s `toastOnError`, and it matches the refusal by
  * `name` rather than `instanceof`, so a refusal thrown from this copy still reads as one.
  *
- * `COMMAND_PATH` is the one URL both halves agree on, so it is imported rather than copied: a
- * second spelling of it is a second place to forget. It moves to `@mcmec/domain` with #251.
+ * `COMMAND_PATH` is imported rather than copied, unlike `shapePathFor` and `electricParser` in
+ * ./electric-collection: #239 gives it a shared home in `@mcmec/domain`, which `api` and central
+ * both depend on, and moves it there with #251. Until then `@mcmec/sync/routes` is that home.
  */
 import { COMMAND_PATH } from "@mcmec/sync/routes";
 

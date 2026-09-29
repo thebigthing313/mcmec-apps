@@ -9,7 +9,8 @@ import type { CentralCollections } from "./collections";
  *
  * The collections go last. Leaving first unmounts every screen that subscribes to them, so
  * `cleanup()` stops streams nobody is reading rather than pulling rows out from under a mounted
- * live query. If signing out fails, nothing is thrown away — the User is still signed in.
+ * live query. If signing out fails, nothing is thrown away — the User is still signed in. Once it
+ * has succeeded, the collections go even if the navigation does not.
  */
 export async function signOutOfCentral({
 	authClient,
@@ -21,6 +22,9 @@ export async function signOutOfCentral({
 	toLogin: () => Promise<unknown>;
 }): Promise<void> {
 	await signOut({ client: authClient });
-	await toLogin();
-	await collections.endSession();
+	try {
+		await toLogin();
+	} finally {
+		await collections.endSession();
+	}
 }

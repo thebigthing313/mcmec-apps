@@ -33,12 +33,26 @@
  * instead was considered and rejected (#239): it races the next route's subscribers, and a
  * table both routes use would fetch all over again.
  *
+ * Two ways to break the rule without meaning to:
+ *
+ * - A loader that preloads and then throws `notFound()` leaves nothing subscribed. Central's two
+ *   record routes do this for a missing or unpublished id; the table then syncs until the next
+ *   screen that reads it comes and goes, or sign-out. It is one table, not a growing set, and it
+ *   is the table the User was about to read anyway.
+ * - Router preloading (`defaultPreload: "intent"`, or `preload` on a `<Link>`) runs loaders on
+ *   hover with no component to subscribe. Central leaves it off; turning it on means revisiting
+ *   this rule first.
+ *
  * ## Sign-out
  *
  * `endSession()` runs `cleanup()` on every collection built so far — including one whose
  * import was still in flight — and throws the whole set away, so nothing one User loaded can
  * reach the next User on a shared workstation. The registry object itself survives (it lives
  * in the router's context); only its contents are discarded.
+ *
+ * The router may still hold the old instances in cached match contexts. That is harmless
+ * because `beforeLoad` runs on every navigation, so the next User's routes ask again and get
+ * fresh ones; nothing may keep a collection from context beyond the route that received it.
  */
 
 /** What the registry needs from a collection: a way to stop it. */
