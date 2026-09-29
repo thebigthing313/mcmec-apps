@@ -181,7 +181,8 @@ All changes go through branches and pull requests — never commit directly to `
 4. **Push and open a PR to `develop`** — the PR template pre-fills a checklist; auto-labeler tags the PR by affected area
 5. **CI runs automatically** — lint, type-check, build, and tests must all pass
 6. **Review, resolve conversations, and squash merge** into `develop`
-7. **When ready to release**, run `pnpm release` on `develop` — see below
+7. **When ready to release**, run `pnpm release` on `develop` — see below. **Production releases
+   are frozen right now** — see "Release freeze" below
 8. **Railway deploys production** on merge to `main` — see Deployment below
 
 ### Releasing (`develop` → `main`)
@@ -199,6 +200,40 @@ The version commit has to land on `develop` rather than being added to the PR by
 `main` ruleset has no bypass actors, so nothing can push to it directly, and the PR's head branch
 *is* `develop`. Pushing straight to `develop` works because that ruleset grants the Admin role a
 bypass; without it, PR the version commit into `develop` first, then re-run.
+
+### Release freeze (staff SPA consolidation)
+
+**Production releases are frozen.** Do not run `pnpm release`, and do not open any `develop` →
+`main` PR, until the whole staff SPA consolidation (#233) is on `develop`: `central`'s new shell
+and App Role gates, HR and Admin folded into it, Website Management folded in, the old apps retired, and
+`@mcmec/sync` removed. It then ships to production in one release (#254), which ends the freeze
+(decision: #240).
+
+While the work is in progress, `develop` holds a half-consolidated staff surface. A release
+partway through would put that in production: for example, an old app deleted from the repo while
+its production service, custom domain and `TRUSTED_ORIGINS` entry still exist.
+
+Everything else keeps flowing into `develop` as normal. **`public` and `api` fixes merged during
+the freeze are not released separately**: they ride along with the consolidation release.
+
+**Emergency hotfix** (only when production cannot wait for the consolidation release):
+
+1. Branch from `main`, not `develop`: `git fetch origin && git checkout -b hotfix/<name> origin/main`.
+2. Make the fix and add its own changeset (`pnpm change`). Then consume it on the same branch with
+   `pnpm version-pkgs` and commit the version bump and CHANGELOG. The Changeset Check fails a PR
+   into `main` that still has unconsumed changesets, and a branch cut from `main` has no other
+   changesets to consume. Keep schema migrations out of a hotfix: it skips staging, and a
+   migration must be tested there first (see Database changes).
+3. Open a PR into `main` (`gh pr create --base main`). CI runs as usual, and merging deploys
+   production.
+4. Merge `main` back into `develop` so the fix and its version bump are not lost and the next
+   release PR does not conflict with them. Branch from `origin/develop`, run `git merge origin/main`,
+   PR that into `develop`, and merge it with **Create a merge commit**, not squash, so `main`'s
+   commits become ancestors of `develop`. If `package.json` versions or CHANGELOGs conflict,
+   keep `main`'s. `develop`'s pending changesets bump from there at release time.
+
+This section is temporary. The post-cutover docs issue (#253) removes it, along with the freeze
+pointer in step 7 above and the freeze warning in `docs/railway-deployment.md`.
 
 ### Staging deploys (Railway)
 
