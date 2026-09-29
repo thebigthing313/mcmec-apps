@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-29T18:20:44.487Z
-commit: 05d64c3 feat(central): fold HR and Admin into central (#247) (#264)
+released: 2026-09-29T19:11:13.207Z
+commit: 276f4fe fix(central): clear the router's cached matches on sign-out (#266) (#269)
