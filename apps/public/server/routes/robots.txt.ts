@@ -1,5 +1,5 @@
 import { defineHandler } from "nitro/h3";
-import { SITE_URL } from "../../src/lib/seo";
+import { SITE_URL } from "../../src/lib/site";
 import { isProductionSite } from "../environment";
 
 /**

@@ -8,7 +8,8 @@ import { Button } from "@mcmec/ui/components/button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { jobPostingsQueryOptions } from "@/src/lib/queries";
-import { canonical, SITE_URL, seo } from "@/src/lib/seo";
+import { canonical, seo } from "@/src/lib/seo";
+import { SITE_URL } from "@/src/lib/site";
 
 export const Route = createFileRoute("/job-opportunities/$postingId")({
 	component: RouteComponent,

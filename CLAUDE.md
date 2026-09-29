@@ -249,7 +249,7 @@ repo-root `railway.json` belongs to `api`.
 - `public`: SSR (Nitro), started from `.output/server/index.mjs`, always-on. Its CSP and
   `X-Robots-Tag` headers are set in `apps/public/server/plugins/`
 - `public`'s canonical host is `www.middlesexmosquito.org` (`SITE_URL` in
-  `apps/public/src/lib/seo.ts`); the bare apex is a registrar forward, not a Railway domain
+  `apps/public/src/lib/site.ts`); the bare apex is a registrar forward, not a Railway domain
 
 The apps moved here from Vercel on 2026-08-13 (#122) and nothing deploys to Vercel any more.
 See `docs/railway-deployment.md`.

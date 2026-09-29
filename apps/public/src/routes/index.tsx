@@ -15,7 +15,8 @@ import {
 	noticesQueryOptions,
 	spraySchedulesQueryOptions,
 } from "../lib/queries";
-import { canonical, SITE_URL, seo } from "../lib/seo";
+import { canonical, seo } from "../lib/seo";
+import { SITE_URL } from "../lib/site";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,

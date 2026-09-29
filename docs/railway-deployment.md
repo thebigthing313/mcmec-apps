@@ -345,7 +345,7 @@ Its host still lives under the same parent for consistency and TLS convenience.
 ### `www` and the apex
 
 **`www` is canonical.** Every URL the app declares about itself is built from `SITE_URL` in
-`apps/public/src/lib/seo.ts` — the `rel="canonical"` link and `og:url` on every page, the JSON-LD
+`apps/public/src/lib/site.ts` — the `rel="canonical"` link and `og:url` on every page, the JSON-LD
 `url`, and the `Sitemap:` line of robots.txt. `public/sitemap.xml` is a static file and names the
 same host by hand, so **change the two together**. The app must never declare one host while the
 edge serves another.
