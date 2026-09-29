@@ -33,8 +33,8 @@ export type App = {
  * True for an App `href` that is a path inside `central`, false for another origin.
  *
  * `central` renders a path as an in-app router link, and its route tests gate every App whose
- * `href` is a path. The retiring apps have no such route, so their switcher resolves a path
- * against `CENTRAL_URL` instead.
+ * `href` is a path. The retiring website-management app has no such route, so its switcher
+ * resolves a path against `CENTRAL_URL` instead.
  */
 export function isCentralPath(href: string): boolean {
 	return href.startsWith("/");

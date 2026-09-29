@@ -1,6 +1,6 @@
 ---
 name: MCMEC
-description: The shared visual system behind the Middlesex County Mosquito Extermination Commission's public website and its four staff applications.
+description: The shared visual system behind the Middlesex County Mosquito Extermination Commission's public website and its staff applications.
 colors:
   commission-green: "oklch(0.5364 0.1457 150.5842)"
   commission-green-contrast: "oklch(0.985 0.0199 112.9333)"
@@ -265,7 +265,7 @@ This rule exists because the system shipped the opposite for a long time. The ri
   **The `.prose` overrides must stay unlayered.** `@tailwindcss/typography` emits into the `utilities` layer, and layer order beats specificity, so the same rules written inside `@layer base` lose to the plugin no matter how specific they are. They were written that way once and silently did nothing for as long as they existed: paragraphs shipped at the plugin's `1.25em` while this line claimed `0.5rem`. The rules now sit unlayered at the end of `globals.css`, which outranks every layer.
 
   **A list item's paragraph is the item.** TipTap's StarterKit wraps each `<li>`'s content in its own `<p>`, so a paragraph rule fires inside every bullet: a 26px item occupied 46px of pitch and a thirteen-item list ran 600px. `.prose li > p` therefore takes no margin at all, and only a *second* paragraph inside one item is treated as a paragraph.
-- **Label** (500, `0.875rem`, 1.25): Buttons, form labels, table cells, badges, metadata. The workhorse size across all four staff applications.
+- **Label** (500, `0.875rem`, 1.25): Buttons, form labels, table cells, badges, metadata. The workhorse size across all staff applications.
 - **Overline** (700, tracking `0.025em`, uppercase): The agency's name in the public footer and the footer's column headings at `0.875rem`; the staff sidebar's group labels at `0.75rem`, a step below the destinations they cover. Structural only.
 
 - **Auth heading** (600, `1.5rem`, `1.875rem` from `sm`, 1.25, tracking `-0.025em`): The single heading on a sign-in, password-reset or invite screen. It is the one step between Headline and Display, and it exists because those screens hold one heading and nothing competing with it: the staff Headline is sized for a page title inside a dense shell, and inside a full-viewport frame it reads undersized. It does not travel — no other staff screen may use it, and it never appears twice on a page.
@@ -298,7 +298,7 @@ The public site and the staff applications use two different spatial models over
 
 **The Shell Owns The Chrome Rule.** Staff applications import `mcmec-layout` and fill it. An app that defines its own sidebar, header, or breadcrumb has forked the system, and four forks is how five applications stop looking like one.
 
-**The Desktop-First, Mobile-Survivable Rule.** The four staff applications are designed for the screen they are actually used on: a desk, a large display, a considered edit. Density, column count, keyboard reach, and information-per-screen are decided at desktop widths and are not compromised to suit a phone.
+**The Desktop-First, Mobile-Survivable Rule.** The staff applications are designed for the screen they are actually used on: a desk, a large display, a considered edit. Density, column count, keyboard reach, and information-per-screen are decided at desktop widths and are not compromised to suit a phone.
 
 But narrow is a state they must *survive*, because the job occasionally follows someone out of the building — a meeting cancelled from a car, a spray mission delayed from the field. On a phone every staff screen must therefore: fit the viewport with no horizontal page scroll; keep wide content (tables, toolbars, date ranges) scrolling inside its own `overflow-x: auto` container rather than pushing the page; keep every primary action reachable without a hover; and lose no destination — the rail becomes a sheet, never a truncation.
 
@@ -483,7 +483,7 @@ A band of named signals across the top of a staff screen, each opening its own q
 - **Motion:** the swap settles rather than cuts — a `200ms` fade and one-step slide keyed to the selected signal, `motion-reduce` honoured. It is the screen's one authored moment; nothing else on it moves.
 - **Copy:** an optional panel label overrides the cell's label in the header, where there is room the cell does not have. A five-across cell fits "Missions tonight"; the header says "Spray Missions tonight," which is the word the rest of the product uses.
 
-It lives in `packages/ui/src/blocks/signal-band.tsx`, so it is available to all four staff frontends, not only the one that uses it today.
+It lives in `packages/ui/src/blocks/signal-band.tsx`, so it is available to every staff frontend, not only the one that uses it today.
 
 ### Signal Queue Row
 

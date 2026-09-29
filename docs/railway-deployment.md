@@ -29,7 +29,8 @@ served to the internet; privacy lives in the Better Auth session and permission 
 
 > [!NOTE]
 > `hr` and `admin` are folded into `central` (`/hr`, `/admin`) and were deleted from the repo in
-> #248, along with their staging services. **Production still runs its `hr` and `admin` services**
+> #248. Their staging services must be deleted no later than the next `pnpm stage`, or those
+> builds fail. **Production still runs its `hr` and `admin` services**
 > until the consolidation release (#254), which deletes them with their custom domains, DNS
 > records and `TRUSTED_ORIGINS` entries.
 
@@ -173,8 +174,8 @@ reference them by path; they import the URLs from `@mcmec/lib/constants/assets`.
 
 They previously sat in a public Supabase Storage bucket. `api` inherits that job because it is
 the only always-on service present in both environments, and keeping **one** origin is the point:
-the six apps share a single copy and a single browser cache entry, and a logo change is one
-commit rather than six.
+every app shares a single copy and a single browser cache entry, and a logo change is one
+commit rather than one per app.
 
 `apps/api/src/assets.ts` reads the directory once at boot into memory (~2 MB) and serves from
 there. That is not just a speed trick — a request never carries a caller-supplied path to the
