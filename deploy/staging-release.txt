@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-11T15:29:32.353Z
-commit: 59c86a6 fix(public): ask Access to Premises as a Yes/No choice, not a toggle (#229)
+released: 2026-09-29T17:32:24.469Z
+commit: 0e59af0 feat(central): shell, App Role gates and the Self Service Portal (#244) (#262)
