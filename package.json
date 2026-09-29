@@ -31,6 +31,7 @@
 	"scripts": {
 		"build": "turbo run build",
 		"change": "changeset",
+		"check-bundle": "tsx apps/central/bundle/check-bundle.ts",
 		"check-pkgs": "manypkg check",
 		"check-types": "turbo run check-types",
 		"dev": "turbo run dev",

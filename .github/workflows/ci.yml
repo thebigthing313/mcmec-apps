@@ -40,6 +40,12 @@ jobs:
           API_URL: http://localhost:3543
           VITE_CLOUDFLARE_TURNSTILE_SITEKEY: placeholder
 
+      # Reads the chunk membership central's build just wrote. Fails when App code or a table
+      # other than `employees` reaches central's entry closure, or it outgrows
+      # apps/central/bundle/budget.json (#241).
+      - name: Check central bundle budget
+        run: pnpm check-bundle
+
   test:
     name: Tests
     runs-on: ubuntu-latest
