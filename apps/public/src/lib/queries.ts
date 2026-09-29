@@ -22,11 +22,11 @@ import { NoticesRowSchema } from "@mcmec/schemas/db/notices";
 import { SprayScheduleMunicipalitiesRowSchema } from "@mcmec/schemas/db/spray-schedule-municipalities";
 import { SpraySchedulesRowSchema } from "@mcmec/schemas/db/spray-schedules";
 import { ZipCodesRowSchema } from "@mcmec/schemas/db/zip-codes";
-import { fetchShapeSnapshot } from "@mcmec/sync";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import type z from "zod";
 import type { ZodObject } from "zod";
+import { fetchShapeSnapshot } from "./shape-snapshot";
 
 function apiUrl(): string {
 	const url = process.env.API_URL;
