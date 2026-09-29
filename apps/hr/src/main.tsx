@@ -7,7 +7,7 @@ import {
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "@mcmec/ui/styles/globals.css";
-import { ForbiddenError, NotOnboardedError } from "@mcmec/auth/errors";
+import { ForbiddenError, NoEmployeeError } from "@mcmec/auth/errors";
 import { signOut } from "@mcmec/auth/signOut";
 import { CENTRAL_URL } from "@mcmec/lib/constants/apps";
 import { favicon } from "@mcmec/lib/constants/assets";
@@ -15,7 +15,7 @@ import { ErrorMessages } from "@mcmec/lib/constants/errors";
 import { APP_ROLE_LABELS, type AppRole } from "@mcmec/lib/constants/roles";
 import {
 	AppRoleRequired,
-	OnboardingRequired,
+	EmployeeRequired,
 } from "@mcmec/ui/blocks/access-notice";
 import { ErrorDisplay } from "@mcmec/ui/blocks/error";
 import { NotFound } from "@mcmec/ui/blocks/not-found";
@@ -92,9 +92,9 @@ interface ErrorComponentProps {
 function ErrorComponent({ error }: ErrorComponentProps) {
 	const router = useRouter();
 
-	if (error instanceof NotOnboardedError) {
+	if (error instanceof NoEmployeeError) {
 		return (
-			<OnboardingRequired
+			<EmployeeRequired
 				onSignOut={async () => {
 					await signOut({ client: authClient });
 					router.navigate({ to: "/login" });
@@ -107,12 +107,12 @@ function ErrorComponent({ error }: ErrorComponentProps) {
 		return (
 			<AppRoleRequired
 				appName={APP_NAME}
-				centralUrl={CENTRAL_URL}
 				onSignOut={async () => {
 					await signOut({ client: authClient });
 					router.navigate({ to: "/login" });
 				}}
 				roleLabel={APP_ROLE_LABELS[REQUIRED_ROLE]}
+				to={CENTRAL_URL}
 			/>
 		);
 	}

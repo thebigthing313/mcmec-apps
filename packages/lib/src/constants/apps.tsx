@@ -10,15 +10,35 @@ import type { AppRole } from "./roles";
  * nothing, and the switcher's answer to that was to render nothing at all: no mark, no name, no
  * way out of the application.
  */
-export type AppName = "Admin" | "Central" | "HR" | "Website Management";
+export type AppName =
+	| "Admin"
+	| "HR"
+	| "Self Service Portal"
+	| "Website Management";
 
 export type App = {
 	name: AppName;
 	logo: React.ReactNode;
 	description: string;
+	/**
+	 * Where the App lives. A path (`/`, `/hr`) for an App folded into `central`, which the
+	 * switcher links to with the router; an absolute URL for an App still served from its own
+	 * origin, until its fold-in PR swaps the URL for its path. See `isCentralPath`.
+	 */
 	href: string;
 	requiredPermission: AppRole | null;
 };
+
+/**
+ * True for an App `href` that is a path inside `central`, false for another origin.
+ *
+ * `central` renders a path as an in-app router link, and its route tests gate every App whose
+ * `href` is a path. The retiring apps have no such route, so their switcher resolves a path
+ * against `CENTRAL_URL` instead.
+ */
+export function isCentralPath(href: string): boolean {
+	return href.startsWith("/");
+}
 
 const ROOT_DOMAIN = "middlesexmosquito.org";
 
@@ -99,10 +119,10 @@ export const CENTRAL_FORGOT_PASSWORD_URL = `${CENTRAL_URL}/forgot-password`;
 
 export const AVAILABLE_APPS: App[] = [
 	{
-		description: "Employee self-service portal.",
-		href: appUrl("central", 3444),
+		description: "Where staff land, and the Commission's public record.",
+		href: "/",
 		logo: <Home />,
-		name: "Central",
+		name: "Self Service Portal",
 		requiredPermission: null,
 	},
 	{

@@ -27,7 +27,7 @@ export const Route = createFileRoute("/(app)")({
 			return { claims };
 		} catch (error) {
 			// Not signed in -> this app's own login (cookie SSO, no cross-app redirect).
-			// NotOnboarded / Forbidden fall through to the error boundary.
+			// NoEmployee / Forbidden fall through to the error boundary.
 			if (error instanceof UnauthenticatedError) {
 				throw redirect({
 					to: "/login",

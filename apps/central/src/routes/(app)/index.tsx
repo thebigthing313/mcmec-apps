@@ -10,7 +10,7 @@ function Index() {
 	return (
 		<PageHeader
 			description="Your applications are in the switcher at the top of the sidebar."
-			title="Central"
+			title="Self Service Portal"
 		/>
 	);
 }
