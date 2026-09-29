@@ -1,5 +1,17 @@
 # @mcmec/schemas
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [05d64c3]
+- Updated dependencies [0e59af0]
+- Updated dependencies [fa28784]
+- Updated dependencies [e6c8ad5]
+- Updated dependencies [afc64ff]
+- Updated dependencies [50c8b1f]
+  - @mcmec/lib@0.11.0
+
 ## 3.0.0
 
 ### Major Changes

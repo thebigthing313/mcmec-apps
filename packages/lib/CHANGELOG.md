@@ -1,5 +1,42 @@
 # @mcmec/lib
 
+## 0.11.0
+
+### Minor Changes
+
+- 05d64c3: HR and Admin move into central. HR (`/hr`, gated by `manage_employees`) holds the one Employees area: `/hr/employees`, `/hr/employees/$employeeId` and `/hr/employees/$employeeId/edit`, where whoever enters HR can view, add, edit, invite and delete. Admin (`/admin`, gated by `manage_users`) holds only the Grant grid, now `/admin/users` and titled "Users", which gains a read-only Employee column showing the linked Employee's display name and title, or "—" for a User with none. The nav reads "Employees" and "Users", and HR and Admin name each other in plain text rather than linking. Both Apps read the root's `employees`, so entering them loads no extra shape.
+
+  `@mcmec/lib`: the App list's HR and Admin entries are now the paths `/hr` and `/admin`, so central's switcher links to them with the router. From the retiring `hr` and `admin` apps, those entries now open central's `/hr` and `/admin`.
+
+  `@mcmec/ui`: the Employees index is titled "Employees" instead of "Manage Employees".
+
+- 0e59af0: Central becomes the shell for every staff App. Its root signed-in layout owns the frame, the app switcher, NavUser and the breadcrumb, and reads the claims and the Employee row once. Each App's layout route supplies only its `activeApp` and rail in `staticData`, plus a synchronous `requireAppRole(context.claims, role)` gate. A deep link into an App the User lacks keeps its URL and shows `AppRoleRequired` inside the shell, with the Self Service Portal's rail. A User with no linked Employee is refused full-page at the root. `/`, `/notices` and `/meetings` are now the Self Service Portal, and central gets route tests that are table-driven over the App list.
+
+  `@mcmec/lib`: the App list names the Self Service Portal (the `Central` AppName is gone), and an App folded into central has a path as its `href`.
+
+  `@mcmec/ui`: `AppRoleRequired` drops `centralUrl` for `to` plus an optional `LinkComponent`, and its action reads "Go to the Self Service Portal". `OnboardingRequired` is renamed `EmployeeRequired`, and both notices' remedy copy names Admin and HR as Apps. The app switcher takes an optional `LinkComponent` for in-app Apps and drops its dropdown when only one App is accessible.
+
+  `@mcmec/auth`: `NotOnboardedError` is renamed `NoEmployeeError` (code `NO_EMPLOYEE`), and the new `readClaims` reads the session without applying policy. `verifyClaims` behaves as before.
+
+- fa28784: Website Management moves into central at `/website-management`, gated by `manage_website`. Its index is the Signal Strip dashboard, and every screen moves over with its path unchanged under the new prefix, apart from two renames: `spray-schedule` is now `spray-missions` and `categories` is now `notice-categories`. The editable notices and meetings are at `/website-management/notices` and `/website-management/meetings`; the Self Service Portal keeps its read-only `/notices` and `/meetings`, and both read the same collections.
+
+  Each screen asks the session registry for only the tables it reads, so entering the App loads nothing until a screen needs it. The two tables that only grow, Public Requests and Weekly Mosquito Activity, join the registry as on-demand collections: they open no stream until a screen's live query asks for its slice. A User without `manage_website` who deep-links into the App keeps the URL, sees the refusal, and loads none of its tables.
+
+  Central now shows toasts: write failures, refusals in the server's own words, and confirmations such as "is now on the public site". It had never mounted a toaster, so HR's error toasts were also invisible until now.
+
+  `@mcmec/lib`: the App list's Website Management entry is now the path `/website-management`, so central's switcher links to it with the router.
+
+- afc64ff: The `website-management` app is retired now that Website Management lives in central at `/website-management` (#250). The shared code only it used goes with it.
+
+  `@mcmec/lib` drops `CENTRAL_URL`, `CENTRAL_FORGOT_PASSWORD_URL`, `getCentralLoginUrl` and `isCentralPath`. Every App's `href` is now a path in central, so nothing links to central from another origin.
+
+  `@mcmec/ui`: `AppSwitcher` requires its `LinkComponent`, and every entry is a router link. The fallback that resolved a path against central's origin is gone, along with the plain anchor for an App on another origin. Only the retired apps used either.
+
+### Patch Changes
+
+- e6c8ad5: Staff links out to the public website now use `www.middlesexmosquito.org` in production (#274). `PUBLIC_SITE_URL` used to build the bare apex, a registrar forward that 404s every path except `/`, so links from a notice or meeting to its public page broke in production. Staging and local links are unchanged. `@mcmec/lib` also exports the pure `publicSiteUrl(hostname)` that `PUBLIC_SITE_URL` is computed from.
+- 50c8b1f: The app switcher's HR description changes from "Manage employees and user accounts." to "Add, edit, invite and delete Employees." User accounts belong to Admin. Admin's changes from "Manage user permission assignments." to "Grant and revoke App Roles for Users."
+
 ## 0.10.0
 
 ### Minor Changes
