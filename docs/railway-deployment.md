@@ -35,6 +35,11 @@ served to the internet; privacy lives in the Better Auth session and permission 
 Production deploys on every merge to `main`. **Staging does not deploy on every merge to
 `develop`** — see below.
 
+> [!WARNING]
+> **Production releases are frozen** until the staff SPA consolidation (#233) is all on
+> `develop` and ships in one release (#254). Nothing merges to `main` in the meantime except an
+> emergency hotfix branched from `main`. See "Release freeze" in `CLAUDE.md` for the hotfix path.
+
 ## Staging deploys on demand (`pnpm stage`)
 
 Staging is only worth rebuilding when someone is about to browser-test it. Six services
