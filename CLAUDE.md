@@ -245,6 +245,9 @@ services rebuild from the latest `develop`. `pnpm stage --dry-run` prints the pl
 
 Production is unaffected: `main` still deploys on every merge. See `docs/railway-deployment.md`.
 
+Each staff SPA fold-in (#233) is checked on staging with `docs/staff-spa-staging-check.md`: the
+ticked result goes in a comment on the fold-in PR, and the App's retire PR links that comment.
+
 ### Database changes
 - The schema lives in `apps/api/src/db/schema.ts`; migrations are generated into `apps/api/drizzle/`
 - After changing the schema, generate a migration: `pnpm --filter api db:generate`
