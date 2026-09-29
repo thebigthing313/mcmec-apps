@@ -243,4 +243,27 @@ describe("app switcher", () => {
 			.map((item) => item.querySelector(".font-medium")?.textContent);
 		expect(names).toEqual(["Self Service Portal", "HR"]);
 	});
+
+	it("links to HR and Admin inside central, not on their old origins", async () => {
+		await renderAt("/", employeeWith(["manage_employees", "manage_users"]));
+		expect(await screen.findByText(EMPLOYEE_NAME)).toBeTruthy();
+
+		const trigger = document.querySelector(SWITCHER_MENU);
+		fireEvent.keyDown(trigger as Element, { key: "Enter" });
+
+		const menu = await screen.findByRole("menu");
+		const links = within(menu)
+			.getAllByRole("menuitem")
+			.map((item) => ({
+				href: (item.closest("a") ?? item.querySelector("a"))?.getAttribute(
+					"href",
+				),
+				name: item.querySelector(".font-medium")?.textContent,
+			}));
+		expect(links).toEqual([
+			{ href: "/", name: "Self Service Portal" },
+			{ href: "/hr", name: "HR" },
+			{ href: "/admin", name: "Admin" },
+		]);
+	});
 });

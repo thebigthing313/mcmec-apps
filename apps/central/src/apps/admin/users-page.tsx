@@ -1,7 +1,6 @@
 import {
 	APP_ROLE_LABELS,
 	APP_ROLES,
-	type AppRole,
 	parseRoles,
 } from "@mcmec/lib/constants/roles";
 import { PageHeader } from "@mcmec/ui/blocks/page-header";
@@ -17,7 +16,7 @@ import {
 import { isNull, not, useLiveQuery } from "@tanstack/react-db";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { setAppRole } from "./set-app-role";
+import { type AppRoleChange, grantOrRevokeAppRole } from "./set-app-role";
 
 const route = getRouteApi("/(app)/admin/users/");
 
@@ -81,8 +80,7 @@ export function UsersPage() {
 	// One checkbox, one role, one command, named for the gesture; the server applies it to
 	// whatever the row holds when it commits.
 	const setRole = useMutation({
-		mutationFn: (vars: { userId: string; role: AppRole; granted: boolean }) =>
-			setAppRole(apiUrl, vars),
+		mutationFn: (change: AppRoleChange) => grantOrRevokeAppRole(apiUrl, change),
 		onSuccess: () => queryClient.invalidateQueries({ queryKey: USERS_KEY }),
 	});
 

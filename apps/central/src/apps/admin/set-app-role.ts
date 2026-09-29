@@ -5,6 +5,9 @@ import {
 	sendCommand,
 } from "@/src/lib/collections/command-write";
 
+/** One tick or untick in the grid: Grant (`granted: true`) or Revoke one App Role for one User. */
+export type AppRoleChange = { userId: string; role: AppRole; granted: boolean };
+
 /**
  * Grants or revokes one App Role.
  *
@@ -17,13 +20,9 @@ import {
  * The server now does that read-modify-write inside the transaction, and neither `grantAppRole`
  * nor `revokeAppRole` has a shape in which a set could be sent.
  */
-export async function setAppRole(
+export async function grantOrRevokeAppRole(
 	apiUrl: string,
-	{
-		granted,
-		role,
-		userId,
-	}: { userId: string; role: AppRole; granted: boolean },
+	{ granted, role, userId }: AppRoleChange,
 ): Promise<void> {
 	const intent: CommandName = granted
 		? "users.grantAppRole"
@@ -34,7 +33,9 @@ export async function setAppRole(
 		throw new Error(
 			error instanceof CommandRefusedError
 				? error.message
-				: "Failed to update roles.",
+				: granted
+					? "Could not grant the App Role."
+					: "Could not revoke the App Role.",
 		);
 	}
 }
