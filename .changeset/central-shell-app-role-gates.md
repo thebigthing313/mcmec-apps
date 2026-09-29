@@ -3,8 +3,6 @@
 "@mcmec/ui": minor
 "@mcmec/lib": minor
 "@mcmec/auth": minor
-"admin": patch
-"hr": patch
 "website-management": patch
 ---
 
@@ -16,4 +14,4 @@ Central becomes the shell for every staff App. Its root signed-in layout owns th
 
 `@mcmec/auth`: `NotOnboardedError` is renamed `NoEmployeeError` (code `NO_EMPLOYEE`), and the new `readClaims` reads the session without applying policy. `verifyClaims` behaves as before.
 
-`admin`, `hr`, `website-management`: they pick up the renamed notices, and their switcher links the Self Service Portal at central.
+`website-management`: it picks up the renamed notices, and its switcher links the Self Service Portal at central.

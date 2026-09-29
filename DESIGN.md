@@ -286,7 +286,7 @@ The public site and the staff applications use two different spatial models over
 
 **Public (`apps/public`).** A single centered column, `max-w-7xl` (80rem), with `1.5rem` gutters rising to `3rem` at `md`. Sections breathe at `2.5rem` vertical padding, `3.5rem` at `md`. The home page is the sole exception: it breaks the container to run the hero full-bleed at `60vh` (minimum `20rem`), then returns to the container for everything below. Every other route mounts inside a `max-w-7xl` wrapper with `1rem` padding and `2rem` of vertical margin around `<main>`.
 
-**Staff (`central`, `website-management`, `hr`, `admin`).** A persistent icon-collapsible sidebar rail against a content pane, provided by the shared `mcmec-layout` shell — root, sidebar, breadcrumb, content, app switcher, and user menu. Every staff application composes the same shell; none of them define their own chrome. The breadcrumb is the only wayfinding above the page title.
+**Staff (`central`, `website-management`).** A persistent icon-collapsible sidebar rail against a content pane, provided by the shared `mcmec-layout` shell — root, sidebar, breadcrumb, content, app switcher, and user menu. Every staff application composes the same shell; none of them define their own chrome. The breadcrumb is the only wayfinding above the page title.
 
 **Rhythm.** A `4px` base unit. The recurring steps are `8px` (inline gaps), `16px` (form-field stacks), `24px` (card padding and card-to-card gaps), `40px` and `56px` (section separation). Card internals are uniformly `24px` horizontal with a `24px` vertical block, and cards stack their sections with a `24px` gap.
 

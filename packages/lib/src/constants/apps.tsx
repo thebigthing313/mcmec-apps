@@ -46,7 +46,7 @@ const ROOT_DOMAIN = "middlesexmosquito.org";
  * The environment's subdomain suffix: `""` in production, `"-staging"` on staging.
  *
  * Staging hosts are siblings of production under the same parent domain
- * (`hr-staging.middlesexmosquito.org` beside `hr.middlesexmosquito.org`) because the SSO
+ * (`central-staging.middlesexmosquito.org` beside `central.middlesexmosquito.org`) because the SSO
  * cookie is scoped to that shared parent and can't span two unrelated domains. So the
  * environment is readable off the current hostname: take the label immediately left of the
  * root domain and see whether it carries the suffix.
@@ -59,7 +59,7 @@ function environmentSuffix(hostname: string): string {
 	if (hostname !== ROOT_DOMAIN && !hostname.endsWith(`.${ROOT_DOMAIN}`)) {
 		return "";
 	}
-	// "" on the apex, "hr" in production, "hr-staging" on staging, "staging" for the public site.
+	// "" on the apex, "central" in production, "central-staging" on staging, "staging" for the public site.
 	const label =
 		hostname.slice(0, -`.${ROOT_DOMAIN}`.length).split(".").pop() ?? "";
 	return label === "staging" || label.endsWith("-staging") ? "-staging" : "";
@@ -112,8 +112,8 @@ export function getCentralLoginUrl(redirect?: string): string {
  *
  * Central is the one application every signed-in employee has, so it is the only front door that
  * cannot be a dead end. Reset mail also lands on whichever origin asked for it, so hosting the
- * request in four places would scatter the same flow across four hostnames for no gain — HR,
- * Admin and Website Management link here instead.
+ * request in several places would scatter the same flow across several hostnames for no gain —
+ * Website Management links here instead.
  */
 export const CENTRAL_FORGOT_PASSWORD_URL = `${CENTRAL_URL}/forgot-password`;
 

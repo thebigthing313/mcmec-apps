@@ -19,7 +19,7 @@ If any of these files don't exist, **proceed silently**. Don't flag their absenc
 ├── docs/adr/
 │   ├── 0001-....md
 │   └── 0002-....md
-├── apps/          ← central, notices, public, admin, hr, api
+├── apps/          ← central, website-management, public, api
 └── packages/      ← ui, lib, schemas, collections, auth, typescript-config, ...
 ```
 

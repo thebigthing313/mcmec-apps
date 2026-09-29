@@ -52,7 +52,7 @@ const roles: Record<AppRole, ReturnType<typeof ac.newRole>> = {
 	// Grants nothing yet — the `reference` domain has no commands. Reserved so the permissions
 	// grid can offer the column from the day the reference-data screen exists.
 	manage_reference_data: ac.newRole({ reference: ["manage"] }),
-	// Only what the admin app actually calls: it lists users, and writes roles through
+	// Only what central's Admin App actually calls: it lists users, and writes roles through
 	// `users.grantAppRole` / `users.revokeAppRole` rather than the plugin's set-role.
 	manage_users: ac.newRole({ users: ["manage"], user: ["list", "get"] }),
 	manage_website: ac.newRole({ website: ["manage"] }),
@@ -85,8 +85,8 @@ export const auth = betterAuth({
 	advanced: {
 		database: { generateId: () => randomUUID() },
 		// Namespace the cookie per environment. Staging sits on sibling subdomains of the same
-		// parent as production (`hr-staging.middlesexmosquito.org` beside
-		// `hr.middlesexmosquito.org`), and the SSO cookie is scoped to that shared parent — so
+		// parent as production (`central-staging.middlesexmosquito.org` beside
+		// `central.middlesexmosquito.org`), and the SSO cookie is scoped to that shared parent — so
 		// without a distinct prefix both environments write the SAME cookie name at the SAME
 		// scope. Signing into staging would clobber a production session and vice versa, and each
 		// API would then receive the other environment's token and reject it, which surfaces as

@@ -80,7 +80,7 @@ Website Management (`apps/website-management`): authoring and lifecycle for Noti
 Categories, Meetings, Documents and their Categories, Insecticides, Spray Missions, Job Postings,
 Weekly Mosquito Activity season loads, and Public Request triage.
 
-HR (`apps/hr`) and Admin (`apps/admin`): Employee records and Invites; User accounts and the
+HR (`central`'s `/hr`) and Admin (`central`'s `/admin`): Employee records and Invites; User accounts and the
 Grant/Revoke of App Roles one at a time. `central` is the signed-in home and app switcher.
 
 Constraints:
