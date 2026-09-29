@@ -264,8 +264,9 @@ indexed, which shows up in Search Console instead of silently.
 
 ### Staff apps
 
-`central` carries `<meta name="robots" content="noindex, nofollow">` in `index.html` and a `public/robots.txt` of `Disallow: /`, in **every** environment
-— they have no public audience anywhere. This is not gated on environment, so there is nothing
+`central` carries `<meta name="robots" content="noindex, nofollow">` in `index.html` and a
+`public/robots.txt` of `Disallow: /`, in **every** environment — it has no public audience
+anywhere. This is not gated on environment, so there is nothing
 to configure and nothing to forget.
 
 They get a meta tag rather than a header because `sirv-cli` cannot set response headers. The

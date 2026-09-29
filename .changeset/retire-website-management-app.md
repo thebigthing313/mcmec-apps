@@ -1,7 +1,7 @@
 ---
 "@mcmec/sync": patch
-"@mcmec/lib": patch
-"@mcmec/ui": patch
+"@mcmec/lib": minor
+"@mcmec/ui": minor
 ---
 
 The `website-management` app is retired now that Website Management lives in central at `/website-management` (#250). The shared code only it used goes with it.

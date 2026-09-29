@@ -15,8 +15,8 @@ in my yard* — and they leave as soon as it is answered. A second, smaller set 
 the statutory record: Notices, Meeting agendas and minutes, and published budget and audit
 Documents. Public Requests are submitted **anonymously**; the public has no login and no account.
 
-**Commission staff** are the users of the four internal surfaces (`central`, `website-management`,
-`hr`, `admin`). Confirmed operating profile:
+**Commission staff** are the users of `central`'s four Apps (the Self Service Portal, Website
+Management, HR and Admin). Confirmed operating profile:
 
 - Office desktop, deliberate work. Large screens; considered data entry rather than hurried
   capture. Density and keyboard efficiency outrank oversized touch targets.

@@ -60,9 +60,8 @@ const SUFFIX = environmentSuffix(HOSTNAME);
 /**
  * The public website's origin.
  *
- * The public site is the apex in production and `staging.` in staging, so its host is not
- * `<name><suffix>.` — the same reason `environmentSuffix` treats a bare `staging` label as the
- * staging suffix. Staff screens that show what the public sees link out to the page itself with
+ * The public site is the apex in production and `staging.` in staging — the reason
+ * `environmentSuffix` treats a bare `staging` label as the staging suffix. Staff screens that show what the public sees link out to the page itself with
  * it, and a link into the wrong environment's public record is exactly the mistake
  * `IS_DEPLOYED`/`SUFFIX` exist to prevent.
  */
