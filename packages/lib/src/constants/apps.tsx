@@ -127,11 +127,7 @@ export const AVAILABLE_APPS: App[] = [
 	},
 	{
 		description: "Manage the content published on the public website.",
-		// "website-management", not "website": the subdomain has to match the host actually
-		// provisioned on Railway in BOTH environments — `website-management` in production and
-		// `website-management-staging` in staging, the latter of which the `-staging` suffix is
-		// appended to. "website" resolved in neither.
-		href: appUrl("website-management", 3447),
+		href: "/website-management",
 		logo: <Newspaper />,
 		name: "Website Management",
 		requiredPermission: "manage_website",

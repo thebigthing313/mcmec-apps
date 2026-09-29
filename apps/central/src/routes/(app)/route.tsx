@@ -1,6 +1,7 @@
 import { UnauthenticatedError } from "@mcmec/auth/errors";
 import { readClaims } from "@mcmec/auth/verifyClaims";
 import { filterAppsByPermissions } from "@mcmec/lib/constants/apps";
+import { Toaster } from "@mcmec/ui/components/sonner";
 import { Layout } from "@mcmec/ui/mcmec-layout";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
@@ -132,6 +133,10 @@ function LayoutComponent() {
 			>
 				<Outlet />
 			</Layout.Content>
+			{/* Where every App's write feedback lands (`toastOnError`, a refusal's own sentence).
+			    Here rather than in the root route, whose component is not code-split: this one is,
+			    so sonner stays out of the entry chunk. */}
+			<Toaster />
 		</Layout>
 	);
 }

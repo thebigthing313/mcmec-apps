@@ -1,0 +1,64 @@
+import { COMPANY_INFO } from "@mcmec/lib/constants/company";
+import { PageHeader } from "@mcmec/ui/blocks/page-header";
+import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
+import { getRouteApi } from "@tanstack/react-router";
+import {
+	type MeetingFormValues,
+	MeetingsForm,
+} from "@/src/apps/website-management/components/meetings-form";
+import { intents } from "@/src/lib/intents";
+
+const route = getRouteApi("/(app)/website-management/meetings/create");
+
+export function CreateMeetingPage() {
+	const { meetings } = route.useRouteContext();
+	const navigate = route.useNavigate();
+
+	const handleSubmit = async (value: MeetingFormValues) => {
+		const now = new Date();
+		// The id we mint here is the id the row will have: the envelope carries it and the
+		// handler honours it, so the optimistic row and the committed row share a key — which
+		// is also what lets this navigate straight to the detail route.
+		const id = crypto.randomUUID();
+		const tx = meetings.insert(
+			{
+				...value,
+				created_at: now,
+				id,
+				// Not a field on the form and not in `createMeeting`'s payload: a meeting is born
+				// scheduled, and the only way out is `cancelMeeting`. The optimistic row still
+				// needs the column, because the collection holds whole rows.
+				is_cancelled: false,
+				updated_at: now,
+			},
+			intents("website.createMeeting"),
+		);
+		toastOnError(tx, "Failed to create meeting.");
+		navigate({
+			params: { meetingId: id },
+			to: "/website-management/meetings/$meetingId",
+		});
+	};
+
+	// Set default meeting_at to today at 12:00 PM local time
+	const defaultMeetingAt = new Date();
+	defaultMeetingAt.setHours(12, 0, 0, 0);
+
+	return (
+		<div>
+			<PageHeader title="Create Meeting" />
+			<MeetingsForm
+				defaultValues={{
+					location: COMPANY_INFO.address,
+					meeting_at: defaultMeetingAt,
+					minutes_url: null,
+					name: "",
+					notes: null,
+					notice_url: null,
+				}}
+				onSubmit={handleSubmit}
+				submitLabel="Create"
+			/>
+		</div>
+	);
+}

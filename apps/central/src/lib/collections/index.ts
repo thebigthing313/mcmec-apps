@@ -16,11 +16,31 @@ import {
 
 function centralTables(apiUrl: string) {
 	return {
+		documents: async () => (await import("./tables/documents")).create(apiUrl),
+		documentTypes: async () =>
+			(await import("./tables/document-types")).create(apiUrl),
 		employees: async () => (await import("./tables/employees")).create(apiUrl),
+		insecticides: async () =>
+			(await import("./tables/insecticides")).create(apiUrl),
+		jobPostings: async () =>
+			(await import("./tables/job-postings")).create(apiUrl),
 		meetings: async () => (await import("./tables/meetings")).create(apiUrl),
+		// On demand: see ./tables/mosquito-activity-data and `createOnDemandCollection`.
+		mosquitoActivityData: async () =>
+			(await import("./tables/mosquito-activity-data")).create(apiUrl),
+		municipalities: async () =>
+			(await import("./tables/municipalities")).create(apiUrl),
 		noticeTypes: async () =>
 			(await import("./tables/notice-types")).create(apiUrl),
 		notices: async () => (await import("./tables/notices")).create(apiUrl),
+		// On demand: see ./tables/public-requests and `createOnDemandCollection`.
+		publicRequests: async () =>
+			(await import("./tables/public-requests")).create(apiUrl),
+		sprayScheduleMunicipalities: async () =>
+			(await import("./tables/spray-schedule-municipalities")).create(apiUrl),
+		spraySchedules: async () =>
+			(await import("./tables/spray-schedules")).create(apiUrl),
+		zipCodes: async () => (await import("./tables/zip-codes")).create(apiUrl),
 	};
 }
 

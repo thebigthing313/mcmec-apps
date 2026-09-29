@@ -4,18 +4,27 @@ import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
 	CENTRAL_APPS,
+	DOCUMENT_ID,
+	DOCUMENT_TYPE_ID,
 	EMPLOYEE_ID,
 	EMPLOYEE_NAME,
 	EMPLOYEE_TITLE,
 	employeeWith,
+	INSECTICIDE_ID,
+	JOB_POSTING_ID,
 	type ListedUser,
 	MEETING_ID,
 	NOTICE_ID,
+	NOTICE_TYPE_ID,
 	noEmployeeWith,
+	PUBLIC_REQUEST_ID,
 	renderAt,
+	SPRAY_MISSION_ID,
 	signedOut,
 	USER_ID,
 } from "./harness";
+
+const WM = "/website-management";
 
 afterEach(cleanup);
 
@@ -108,6 +117,27 @@ describe.each(CENTRAL_APPS)("$name", (app) => {
 	});
 });
 
+describe("a deep link into Website Management without its App Role", () => {
+	// TanStack Router runs every `beforeLoad` in a match even after the App's gate has thrown, so
+	// a screen below the gate must not reach the registry for a refused User. The App's own row
+	// above opens `/website-management`; this one opens a screen beneath it.
+	it("keeps the URL, refuses, and loads none of the App's tables", async () => {
+		const path = `${WM}/notices/${NOTICE_ID}`;
+		const { asked, router } = await renderAt(
+			path,
+			employeeWith(["manage_employees"]),
+		);
+
+		expect(router.state.location.pathname).toBe(path);
+		expect(
+			await screen.findByRole("heading", {
+				name: "You do not have access to Website Management",
+			}),
+		).toBeTruthy();
+		expect(asked()).toEqual(["employees"]);
+	});
+});
+
 /**
  * Which tables each route asks the registry for. Written out rather than derived: the point is
  * that a route asking for one table too many — the next App's, say — shows up as a diff here.
@@ -126,6 +156,85 @@ describe("tables each route asks for", () => {
 		[`/hr/employees/${EMPLOYEE_ID}/edit`, ["employees"]],
 		["/admin", ["employees"]],
 		["/admin/users", ["employees"]],
+		// Website Management: each screen asks for what it reads, and nothing for the App itself.
+		// The Signal Strip reads across the App, so it is the one screen that asks for many.
+		[
+			WM,
+			[
+				"documents",
+				"employees",
+				"insecticides",
+				"jobPostings",
+				"meetings",
+				"notices",
+				"publicRequests",
+				"spraySchedules",
+			],
+		],
+		[`${WM}/notices`, ["employees", "noticeTypes", "notices"]],
+		[`${WM}/notices/create`, ["employees", "noticeTypes", "notices"]],
+		[`${WM}/notices/${NOTICE_ID}`, ["employees", "noticeTypes", "notices"]],
+		[
+			`${WM}/notices/${NOTICE_ID}/edit`,
+			["employees", "noticeTypes", "notices"],
+		],
+		[`${WM}/meetings`, ["employees", "meetings"]],
+		[`${WM}/meetings/create`, ["employees", "meetings"]],
+		[`${WM}/meetings/${MEETING_ID}`, ["employees", "meetings"]],
+		[`${WM}/meetings/${MEETING_ID}/edit`, ["employees", "meetings"]],
+		[`${WM}/documents`, ["documentTypes", "documents", "employees"]],
+		[`${WM}/documents/create`, ["documentTypes", "documents", "employees"]],
+		[
+			`${WM}/documents/${DOCUMENT_ID}`,
+			["documentTypes", "documents", "employees"],
+		],
+		[
+			`${WM}/documents/${DOCUMENT_ID}/edit`,
+			["documentTypes", "documents", "employees"],
+		],
+		[`${WM}/job-postings`, ["employees", "jobPostings"]],
+		[`${WM}/job-postings/create`, ["employees", "jobPostings"]],
+		[`${WM}/job-postings/${JOB_POSTING_ID}`, ["employees", "jobPostings"]],
+		[`${WM}/job-postings/${JOB_POSTING_ID}/edit`, ["employees", "jobPostings"]],
+		...["", "/create", `/${SPRAY_MISSION_ID}`, `/${SPRAY_MISSION_ID}/edit`].map(
+			(rest): [string, string[]] => [
+				`${WM}/spray-missions${rest}`,
+				[
+					"employees",
+					"insecticides",
+					"municipalities",
+					"sprayScheduleMunicipalities",
+					"spraySchedules",
+				],
+			],
+		),
+		[`${WM}/insecticides`, ["employees", "insecticides"]],
+		[`${WM}/insecticides/create`, ["employees", "insecticides"]],
+		[`${WM}/insecticides/${INSECTICIDE_ID}`, ["employees", "insecticides"]],
+		[
+			`${WM}/insecticides/${INSECTICIDE_ID}/edit`,
+			["employees", "insecticides"],
+		],
+		// The two on-demand tables are asked for like any other; only their sync differs.
+		[`${WM}/weekly-activity`, ["employees", "mosquitoActivityData"]],
+		[`${WM}/public-requests`, ["employees", "publicRequests", "zipCodes"]],
+		[
+			`${WM}/public-requests/${PUBLIC_REQUEST_ID}`,
+			["employees", "publicRequests", "zipCodes"],
+		],
+		// A category's screens read what it holds too: the count decides whether Delete is offered.
+		...["", "/create", `/${NOTICE_TYPE_ID}`, `/${NOTICE_TYPE_ID}/edit`].map(
+			(rest): [string, string[]] => [
+				`${WM}/notice-categories${rest}`,
+				["employees", "noticeTypes", "notices"],
+			],
+		),
+		...["", "/create", `/${DOCUMENT_TYPE_ID}`, `/${DOCUMENT_TYPE_ID}/edit`].map(
+			(rest): [string, string[]] => [
+				`${WM}/document-categories${rest}`,
+				["documentTypes", "documents", "employees"],
+			],
+		),
 	])("%s asks for %j", async (path, tables) => {
 		// Every App Role, so each route renders rather than refusing; the gates have their own rows.
 		const { asked, router } = await renderAt(
@@ -244,8 +353,11 @@ describe("app switcher", () => {
 		expect(names).toEqual(["Self Service Portal", "HR"]);
 	});
 
-	it("links to HR and Admin inside central, not on their old origins", async () => {
-		await renderAt("/", employeeWith(["manage_employees", "manage_users"]));
+	it("links to every App inside central, not on their old origins", async () => {
+		await renderAt(
+			"/",
+			employeeWith(["manage_website", "manage_employees", "manage_users"]),
+		);
 		expect(await screen.findByText(EMPLOYEE_NAME)).toBeTruthy();
 
 		const trigger = document.querySelector(SWITCHER_MENU);
@@ -262,6 +374,7 @@ describe("app switcher", () => {
 			}));
 		expect(links).toEqual([
 			{ href: "/", name: "Self Service Portal" },
+			{ href: "/website-management", name: "Website Management" },
 			{ href: "/hr", name: "HR" },
 			{ href: "/admin", name: "Admin" },
 		]);

@@ -16,20 +16,66 @@ import { Route as AuthSetPasswordRouteImport } from './routes/_auth/set-password
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as appWebsiteManagementRouteRouteImport } from './routes/(app)/website-management/route'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
 import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
 import { Route as appHrRouteRouteImport } from './routes/(app)/hr/route'
 import { Route as appAdminRouteRouteImport } from './routes/(app)/admin/route'
+import { Route as appWebsiteManagementIndexRouteImport } from './routes/(app)/website-management/index'
 import { Route as appNoticesIndexRouteImport } from './routes/(app)/notices/index'
 import { Route as appMeetingsIndexRouteImport } from './routes/(app)/meetings/index'
 import { Route as appHrIndexRouteImport } from './routes/(app)/hr/index'
 import { Route as appAdminIndexRouteImport } from './routes/(app)/admin/index'
 import { Route as appNoticesNoticeIdRouteImport } from './routes/(app)/notices/$noticeId'
 import { Route as appMeetingsMeetingIdRouteImport } from './routes/(app)/meetings/$meetingId'
+import { Route as appWebsiteManagementSprayMissionsRouteRouteImport } from './routes/(app)/website-management/spray-missions/route'
+import { Route as appWebsiteManagementPublicRequestsRouteRouteImport } from './routes/(app)/website-management/public-requests/route'
+import { Route as appWebsiteManagementNoticesRouteRouteImport } from './routes/(app)/website-management/notices/route'
+import { Route as appWebsiteManagementNoticeCategoriesRouteRouteImport } from './routes/(app)/website-management/notice-categories/route'
+import { Route as appWebsiteManagementMeetingsRouteRouteImport } from './routes/(app)/website-management/meetings/route'
+import { Route as appWebsiteManagementJobPostingsRouteRouteImport } from './routes/(app)/website-management/job-postings/route'
+import { Route as appWebsiteManagementInsecticidesRouteRouteImport } from './routes/(app)/website-management/insecticides/route'
+import { Route as appWebsiteManagementDocumentsRouteRouteImport } from './routes/(app)/website-management/documents/route'
+import { Route as appWebsiteManagementDocumentCategoriesRouteRouteImport } from './routes/(app)/website-management/document-categories/route'
 import { Route as appHrEmployeesRouteRouteImport } from './routes/(app)/hr/employees/route'
+import { Route as appWebsiteManagementWeeklyActivityIndexRouteImport } from './routes/(app)/website-management/weekly-activity/index'
+import { Route as appWebsiteManagementSprayMissionsIndexRouteImport } from './routes/(app)/website-management/spray-missions/index'
+import { Route as appWebsiteManagementPublicRequestsIndexRouteImport } from './routes/(app)/website-management/public-requests/index'
+import { Route as appWebsiteManagementNoticesIndexRouteImport } from './routes/(app)/website-management/notices/index'
+import { Route as appWebsiteManagementNoticeCategoriesIndexRouteImport } from './routes/(app)/website-management/notice-categories/index'
+import { Route as appWebsiteManagementMeetingsIndexRouteImport } from './routes/(app)/website-management/meetings/index'
+import { Route as appWebsiteManagementJobPostingsIndexRouteImport } from './routes/(app)/website-management/job-postings/index'
+import { Route as appWebsiteManagementInsecticidesIndexRouteImport } from './routes/(app)/website-management/insecticides/index'
+import { Route as appWebsiteManagementDocumentsIndexRouteImport } from './routes/(app)/website-management/documents/index'
+import { Route as appWebsiteManagementDocumentCategoriesIndexRouteImport } from './routes/(app)/website-management/document-categories/index'
 import { Route as appHrEmployeesIndexRouteImport } from './routes/(app)/hr/employees/index'
 import { Route as appAdminUsersIndexRouteImport } from './routes/(app)/admin/users/index'
+import { Route as appWebsiteManagementSprayMissionsCreateRouteImport } from './routes/(app)/website-management/spray-missions/create'
+import { Route as appWebsiteManagementSprayMissionsSprayScheduleIdRouteImport } from './routes/(app)/website-management/spray-missions/$sprayScheduleId'
+import { Route as appWebsiteManagementPublicRequestsRequestIdRouteImport } from './routes/(app)/website-management/public-requests/$requestId'
+import { Route as appWebsiteManagementNoticesCreateRouteImport } from './routes/(app)/website-management/notices/create'
+import { Route as appWebsiteManagementNoticesNoticeIdRouteImport } from './routes/(app)/website-management/notices/$noticeId'
+import { Route as appWebsiteManagementNoticeCategoriesCreateRouteImport } from './routes/(app)/website-management/notice-categories/create'
+import { Route as appWebsiteManagementNoticeCategoriesCategoryIdRouteImport } from './routes/(app)/website-management/notice-categories/$categoryId'
+import { Route as appWebsiteManagementMeetingsCreateRouteImport } from './routes/(app)/website-management/meetings/create'
+import { Route as appWebsiteManagementMeetingsMeetingIdRouteImport } from './routes/(app)/website-management/meetings/$meetingId'
+import { Route as appWebsiteManagementJobPostingsCreateRouteImport } from './routes/(app)/website-management/job-postings/create'
+import { Route as appWebsiteManagementJobPostingsPostingIdRouteImport } from './routes/(app)/website-management/job-postings/$postingId'
+import { Route as appWebsiteManagementInsecticidesCreateRouteImport } from './routes/(app)/website-management/insecticides/create'
+import { Route as appWebsiteManagementInsecticidesInsecticideIdRouteImport } from './routes/(app)/website-management/insecticides/$insecticideId'
+import { Route as appWebsiteManagementDocumentsCreateRouteImport } from './routes/(app)/website-management/documents/create'
+import { Route as appWebsiteManagementDocumentsDocumentIdRouteImport } from './routes/(app)/website-management/documents/$documentId'
+import { Route as appWebsiteManagementDocumentCategoriesCreateRouteImport } from './routes/(app)/website-management/document-categories/create'
+import { Route as appWebsiteManagementDocumentCategoriesCategoryIdRouteImport } from './routes/(app)/website-management/document-categories/$categoryId'
 import { Route as appHrEmployeesEmployeeIdRouteImport } from './routes/(app)/hr/employees/$employeeId'
+import { Route as appWebsiteManagementSprayMissionsSprayScheduleIdEditRouteImport } from './routes/(app)/website-management/spray-missions/$sprayScheduleId_.edit'
+import { Route as appWebsiteManagementNoticesNoticeIdEditRouteImport } from './routes/(app)/website-management/notices/$noticeId_.edit'
+import { Route as appWebsiteManagementNoticeCategoriesCategoryIdEditRouteImport } from './routes/(app)/website-management/notice-categories/$categoryId_.edit'
+import { Route as appWebsiteManagementMeetingsMeetingIdEditRouteImport } from './routes/(app)/website-management/meetings/$meetingId_.edit'
+import { Route as appWebsiteManagementJobPostingsPostingIdEditRouteImport } from './routes/(app)/website-management/job-postings/$postingId_.edit'
+import { Route as appWebsiteManagementInsecticidesInsecticideIdEditRouteImport } from './routes/(app)/website-management/insecticides/$insecticideId_.edit'
+import { Route as appWebsiteManagementDocumentsDocumentIdEditRouteImport } from './routes/(app)/website-management/documents/$documentId_.edit'
+import { Route as appWebsiteManagementDocumentCategoriesCategoryIdEditRouteImport } from './routes/(app)/website-management/document-categories/$categoryId_.edit'
 import { Route as appHrEmployeesEmployeeIdEditRouteImport } from './routes/(app)/hr/employees/$employeeId_.edit'
 
 const AuthRoute = AuthRouteImport.update({
@@ -65,6 +111,12 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const appWebsiteManagementRouteRoute =
+  appWebsiteManagementRouteRouteImport.update({
+    id: '/website-management',
+    path: '/website-management',
+    getParentRoute: () => appRouteRoute,
+  } as any)
 const appNoticesRouteRoute = appNoticesRouteRouteImport.update({
   id: '/notices',
   path: '/notices',
@@ -85,6 +137,12 @@ const appAdminRouteRoute = appAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appWebsiteManagementIndexRoute =
+  appWebsiteManagementIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
 const appNoticesIndexRoute = appNoticesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -115,11 +173,125 @@ const appMeetingsMeetingIdRoute = appMeetingsMeetingIdRouteImport.update({
   path: '/$meetingId',
   getParentRoute: () => appMeetingsRouteRoute,
 } as any)
+const appWebsiteManagementSprayMissionsRouteRoute =
+  appWebsiteManagementSprayMissionsRouteRouteImport.update({
+    id: '/spray-missions',
+    path: '/spray-missions',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementPublicRequestsRouteRoute =
+  appWebsiteManagementPublicRequestsRouteRouteImport.update({
+    id: '/public-requests',
+    path: '/public-requests',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementNoticesRouteRoute =
+  appWebsiteManagementNoticesRouteRouteImport.update({
+    id: '/notices',
+    path: '/notices',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementNoticeCategoriesRouteRoute =
+  appWebsiteManagementNoticeCategoriesRouteRouteImport.update({
+    id: '/notice-categories',
+    path: '/notice-categories',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementMeetingsRouteRoute =
+  appWebsiteManagementMeetingsRouteRouteImport.update({
+    id: '/meetings',
+    path: '/meetings',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementJobPostingsRouteRoute =
+  appWebsiteManagementJobPostingsRouteRouteImport.update({
+    id: '/job-postings',
+    path: '/job-postings',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementInsecticidesRouteRoute =
+  appWebsiteManagementInsecticidesRouteRouteImport.update({
+    id: '/insecticides',
+    path: '/insecticides',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentsRouteRoute =
+  appWebsiteManagementDocumentsRouteRouteImport.update({
+    id: '/documents',
+    path: '/documents',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentCategoriesRouteRoute =
+  appWebsiteManagementDocumentCategoriesRouteRouteImport.update({
+    id: '/document-categories',
+    path: '/document-categories',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
 const appHrEmployeesRouteRoute = appHrEmployeesRouteRouteImport.update({
   id: '/employees',
   path: '/employees',
   getParentRoute: () => appHrRouteRoute,
 } as any)
+const appWebsiteManagementWeeklyActivityIndexRoute =
+  appWebsiteManagementWeeklyActivityIndexRouteImport.update({
+    id: '/weekly-activity/',
+    path: '/weekly-activity/',
+    getParentRoute: () => appWebsiteManagementRouteRoute,
+  } as any)
+const appWebsiteManagementSprayMissionsIndexRoute =
+  appWebsiteManagementSprayMissionsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementSprayMissionsRouteRoute,
+  } as any)
+const appWebsiteManagementPublicRequestsIndexRoute =
+  appWebsiteManagementPublicRequestsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementPublicRequestsRouteRoute,
+  } as any)
+const appWebsiteManagementNoticesIndexRoute =
+  appWebsiteManagementNoticesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementNoticesRouteRoute,
+  } as any)
+const appWebsiteManagementNoticeCategoriesIndexRoute =
+  appWebsiteManagementNoticeCategoriesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementNoticeCategoriesRouteRoute,
+  } as any)
+const appWebsiteManagementMeetingsIndexRoute =
+  appWebsiteManagementMeetingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementMeetingsRouteRoute,
+  } as any)
+const appWebsiteManagementJobPostingsIndexRoute =
+  appWebsiteManagementJobPostingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementJobPostingsRouteRoute,
+  } as any)
+const appWebsiteManagementInsecticidesIndexRoute =
+  appWebsiteManagementInsecticidesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementInsecticidesRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentsIndexRoute =
+  appWebsiteManagementDocumentsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementDocumentsRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentCategoriesIndexRoute =
+  appWebsiteManagementDocumentCategoriesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
+  } as any)
 const appHrEmployeesIndexRoute = appHrEmployeesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -130,11 +302,161 @@ const appAdminUsersIndexRoute = appAdminUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => appAdminRouteRoute,
 } as any)
+const appWebsiteManagementSprayMissionsCreateRoute =
+  appWebsiteManagementSprayMissionsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appWebsiteManagementSprayMissionsRouteRoute,
+  } as any)
+const appWebsiteManagementSprayMissionsSprayScheduleIdRoute =
+  appWebsiteManagementSprayMissionsSprayScheduleIdRouteImport.update({
+    id: '/$sprayScheduleId',
+    path: '/$sprayScheduleId',
+    getParentRoute: () => appWebsiteManagementSprayMissionsRouteRoute,
+  } as any)
+const appWebsiteManagementPublicRequestsRequestIdRoute =
+  appWebsiteManagementPublicRequestsRequestIdRouteImport.update({
+    id: '/$requestId',
+    path: '/$requestId',
+    getParentRoute: () => appWebsiteManagementPublicRequestsRouteRoute,
+  } as any)
+const appWebsiteManagementNoticesCreateRoute =
+  appWebsiteManagementNoticesCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appWebsiteManagementNoticesRouteRoute,
+  } as any)
+const appWebsiteManagementNoticesNoticeIdRoute =
+  appWebsiteManagementNoticesNoticeIdRouteImport.update({
+    id: '/$noticeId',
+    path: '/$noticeId',
+    getParentRoute: () => appWebsiteManagementNoticesRouteRoute,
+  } as any)
+const appWebsiteManagementNoticeCategoriesCreateRoute =
+  appWebsiteManagementNoticeCategoriesCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appWebsiteManagementNoticeCategoriesRouteRoute,
+  } as any)
+const appWebsiteManagementNoticeCategoriesCategoryIdRoute =
+  appWebsiteManagementNoticeCategoriesCategoryIdRouteImport.update({
+    id: '/$categoryId',
+    path: '/$categoryId',
+    getParentRoute: () => appWebsiteManagementNoticeCategoriesRouteRoute,
+  } as any)
+const appWebsiteManagementMeetingsCreateRoute =
+  appWebsiteManagementMeetingsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appWebsiteManagementMeetingsRouteRoute,
+  } as any)
+const appWebsiteManagementMeetingsMeetingIdRoute =
+  appWebsiteManagementMeetingsMeetingIdRouteImport.update({
+    id: '/$meetingId',
+    path: '/$meetingId',
+    getParentRoute: () => appWebsiteManagementMeetingsRouteRoute,
+  } as any)
+const appWebsiteManagementJobPostingsCreateRoute =
+  appWebsiteManagementJobPostingsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appWebsiteManagementJobPostingsRouteRoute,
+  } as any)
+const appWebsiteManagementJobPostingsPostingIdRoute =
+  appWebsiteManagementJobPostingsPostingIdRouteImport.update({
+    id: '/$postingId',
+    path: '/$postingId',
+    getParentRoute: () => appWebsiteManagementJobPostingsRouteRoute,
+  } as any)
+const appWebsiteManagementInsecticidesCreateRoute =
+  appWebsiteManagementInsecticidesCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appWebsiteManagementInsecticidesRouteRoute,
+  } as any)
+const appWebsiteManagementInsecticidesInsecticideIdRoute =
+  appWebsiteManagementInsecticidesInsecticideIdRouteImport.update({
+    id: '/$insecticideId',
+    path: '/$insecticideId',
+    getParentRoute: () => appWebsiteManagementInsecticidesRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentsCreateRoute =
+  appWebsiteManagementDocumentsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appWebsiteManagementDocumentsRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentsDocumentIdRoute =
+  appWebsiteManagementDocumentsDocumentIdRouteImport.update({
+    id: '/$documentId',
+    path: '/$documentId',
+    getParentRoute: () => appWebsiteManagementDocumentsRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentCategoriesCreateRoute =
+  appWebsiteManagementDocumentCategoriesCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentCategoriesCategoryIdRoute =
+  appWebsiteManagementDocumentCategoriesCategoryIdRouteImport.update({
+    id: '/$categoryId',
+    path: '/$categoryId',
+    getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
+  } as any)
 const appHrEmployeesEmployeeIdRoute =
   appHrEmployeesEmployeeIdRouteImport.update({
     id: '/$employeeId',
     path: '/$employeeId',
     getParentRoute: () => appHrEmployeesRouteRoute,
+  } as any)
+const appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute =
+  appWebsiteManagementSprayMissionsSprayScheduleIdEditRouteImport.update({
+    id: '/$sprayScheduleId_/edit',
+    path: '/$sprayScheduleId/edit',
+    getParentRoute: () => appWebsiteManagementSprayMissionsRouteRoute,
+  } as any)
+const appWebsiteManagementNoticesNoticeIdEditRoute =
+  appWebsiteManagementNoticesNoticeIdEditRouteImport.update({
+    id: '/$noticeId_/edit',
+    path: '/$noticeId/edit',
+    getParentRoute: () => appWebsiteManagementNoticesRouteRoute,
+  } as any)
+const appWebsiteManagementNoticeCategoriesCategoryIdEditRoute =
+  appWebsiteManagementNoticeCategoriesCategoryIdEditRouteImport.update({
+    id: '/$categoryId_/edit',
+    path: '/$categoryId/edit',
+    getParentRoute: () => appWebsiteManagementNoticeCategoriesRouteRoute,
+  } as any)
+const appWebsiteManagementMeetingsMeetingIdEditRoute =
+  appWebsiteManagementMeetingsMeetingIdEditRouteImport.update({
+    id: '/$meetingId_/edit',
+    path: '/$meetingId/edit',
+    getParentRoute: () => appWebsiteManagementMeetingsRouteRoute,
+  } as any)
+const appWebsiteManagementJobPostingsPostingIdEditRoute =
+  appWebsiteManagementJobPostingsPostingIdEditRouteImport.update({
+    id: '/$postingId_/edit',
+    path: '/$postingId/edit',
+    getParentRoute: () => appWebsiteManagementJobPostingsRouteRoute,
+  } as any)
+const appWebsiteManagementInsecticidesInsecticideIdEditRoute =
+  appWebsiteManagementInsecticidesInsecticideIdEditRouteImport.update({
+    id: '/$insecticideId_/edit',
+    path: '/$insecticideId/edit',
+    getParentRoute: () => appWebsiteManagementInsecticidesRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentsDocumentIdEditRoute =
+  appWebsiteManagementDocumentsDocumentIdEditRouteImport.update({
+    id: '/$documentId_/edit',
+    path: '/$documentId/edit',
+    getParentRoute: () => appWebsiteManagementDocumentsRouteRoute,
+  } as any)
+const appWebsiteManagementDocumentCategoriesCategoryIdEditRoute =
+  appWebsiteManagementDocumentCategoriesCategoryIdEditRouteImport.update({
+    id: '/$categoryId_/edit',
+    path: '/$categoryId/edit',
+    getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
   } as any)
 const appHrEmployeesEmployeeIdEditRoute =
   appHrEmployeesEmployeeIdEditRouteImport.update({
@@ -148,22 +470,68 @@ export interface FileRoutesByFullPath {
   '/hr': typeof appHrRouteRouteWithChildren
   '/meetings': typeof appMeetingsRouteRouteWithChildren
   '/notices': typeof appNoticesRouteRouteWithChildren
+  '/website-management': typeof appWebsiteManagementRouteRouteWithChildren
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/set-password': typeof AuthSetPasswordRoute
   '/': typeof appIndexRoute
   '/hr/employees': typeof appHrEmployeesRouteRouteWithChildren
+  '/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesRouteRouteWithChildren
+  '/website-management/documents': typeof appWebsiteManagementDocumentsRouteRouteWithChildren
+  '/website-management/insecticides': typeof appWebsiteManagementInsecticidesRouteRouteWithChildren
+  '/website-management/job-postings': typeof appWebsiteManagementJobPostingsRouteRouteWithChildren
+  '/website-management/meetings': typeof appWebsiteManagementMeetingsRouteRouteWithChildren
+  '/website-management/notice-categories': typeof appWebsiteManagementNoticeCategoriesRouteRouteWithChildren
+  '/website-management/notices': typeof appWebsiteManagementNoticesRouteRouteWithChildren
+  '/website-management/public-requests': typeof appWebsiteManagementPublicRequestsRouteRouteWithChildren
+  '/website-management/spray-missions': typeof appWebsiteManagementSprayMissionsRouteRouteWithChildren
   '/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/admin/': typeof appAdminIndexRoute
   '/hr/': typeof appHrIndexRoute
   '/meetings/': typeof appMeetingsIndexRoute
   '/notices/': typeof appNoticesIndexRoute
+  '/website-management/': typeof appWebsiteManagementIndexRoute
   '/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
+  '/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
+  '/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
+  '/website-management/documents/create': typeof appWebsiteManagementDocumentsCreateRoute
+  '/website-management/insecticides/$insecticideId': typeof appWebsiteManagementInsecticidesInsecticideIdRoute
+  '/website-management/insecticides/create': typeof appWebsiteManagementInsecticidesCreateRoute
+  '/website-management/job-postings/$postingId': typeof appWebsiteManagementJobPostingsPostingIdRoute
+  '/website-management/job-postings/create': typeof appWebsiteManagementJobPostingsCreateRoute
+  '/website-management/meetings/$meetingId': typeof appWebsiteManagementMeetingsMeetingIdRoute
+  '/website-management/meetings/create': typeof appWebsiteManagementMeetingsCreateRoute
+  '/website-management/notice-categories/$categoryId': typeof appWebsiteManagementNoticeCategoriesCategoryIdRoute
+  '/website-management/notice-categories/create': typeof appWebsiteManagementNoticeCategoriesCreateRoute
+  '/website-management/notices/$noticeId': typeof appWebsiteManagementNoticesNoticeIdRoute
+  '/website-management/notices/create': typeof appWebsiteManagementNoticesCreateRoute
+  '/website-management/public-requests/$requestId': typeof appWebsiteManagementPublicRequestsRequestIdRoute
+  '/website-management/spray-missions/$sprayScheduleId': typeof appWebsiteManagementSprayMissionsSprayScheduleIdRoute
+  '/website-management/spray-missions/create': typeof appWebsiteManagementSprayMissionsCreateRoute
   '/admin/users': typeof appAdminUsersIndexRoute
   '/hr/employees/': typeof appHrEmployeesIndexRoute
+  '/website-management/document-categories/': typeof appWebsiteManagementDocumentCategoriesIndexRoute
+  '/website-management/documents/': typeof appWebsiteManagementDocumentsIndexRoute
+  '/website-management/insecticides/': typeof appWebsiteManagementInsecticidesIndexRoute
+  '/website-management/job-postings/': typeof appWebsiteManagementJobPostingsIndexRoute
+  '/website-management/meetings/': typeof appWebsiteManagementMeetingsIndexRoute
+  '/website-management/notice-categories/': typeof appWebsiteManagementNoticeCategoriesIndexRoute
+  '/website-management/notices/': typeof appWebsiteManagementNoticesIndexRoute
+  '/website-management/public-requests/': typeof appWebsiteManagementPublicRequestsIndexRoute
+  '/website-management/spray-missions/': typeof appWebsiteManagementSprayMissionsIndexRoute
+  '/website-management/weekly-activity': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/hr/employees/$employeeId/edit': typeof appHrEmployeesEmployeeIdEditRoute
+  '/website-management/document-categories/$categoryId/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
+  '/website-management/documents/$documentId/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
+  '/website-management/insecticides/$insecticideId/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
+  '/website-management/job-postings/$postingId/edit': typeof appWebsiteManagementJobPostingsPostingIdEditRoute
+  '/website-management/meetings/$meetingId/edit': typeof appWebsiteManagementMeetingsMeetingIdEditRoute
+  '/website-management/notice-categories/$categoryId/edit': typeof appWebsiteManagementNoticeCategoriesCategoryIdEditRoute
+  '/website-management/notices/$noticeId/edit': typeof appWebsiteManagementNoticesNoticeIdEditRoute
+  '/website-management/spray-missions/$sprayScheduleId/edit': typeof appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -177,10 +545,46 @@ export interface FileRoutesByTo {
   '/hr': typeof appHrIndexRoute
   '/meetings': typeof appMeetingsIndexRoute
   '/notices': typeof appNoticesIndexRoute
+  '/website-management': typeof appWebsiteManagementIndexRoute
   '/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
+  '/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
+  '/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
+  '/website-management/documents/create': typeof appWebsiteManagementDocumentsCreateRoute
+  '/website-management/insecticides/$insecticideId': typeof appWebsiteManagementInsecticidesInsecticideIdRoute
+  '/website-management/insecticides/create': typeof appWebsiteManagementInsecticidesCreateRoute
+  '/website-management/job-postings/$postingId': typeof appWebsiteManagementJobPostingsPostingIdRoute
+  '/website-management/job-postings/create': typeof appWebsiteManagementJobPostingsCreateRoute
+  '/website-management/meetings/$meetingId': typeof appWebsiteManagementMeetingsMeetingIdRoute
+  '/website-management/meetings/create': typeof appWebsiteManagementMeetingsCreateRoute
+  '/website-management/notice-categories/$categoryId': typeof appWebsiteManagementNoticeCategoriesCategoryIdRoute
+  '/website-management/notice-categories/create': typeof appWebsiteManagementNoticeCategoriesCreateRoute
+  '/website-management/notices/$noticeId': typeof appWebsiteManagementNoticesNoticeIdRoute
+  '/website-management/notices/create': typeof appWebsiteManagementNoticesCreateRoute
+  '/website-management/public-requests/$requestId': typeof appWebsiteManagementPublicRequestsRequestIdRoute
+  '/website-management/spray-missions/$sprayScheduleId': typeof appWebsiteManagementSprayMissionsSprayScheduleIdRoute
+  '/website-management/spray-missions/create': typeof appWebsiteManagementSprayMissionsCreateRoute
   '/admin/users': typeof appAdminUsersIndexRoute
   '/hr/employees': typeof appHrEmployeesIndexRoute
+  '/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesIndexRoute
+  '/website-management/documents': typeof appWebsiteManagementDocumentsIndexRoute
+  '/website-management/insecticides': typeof appWebsiteManagementInsecticidesIndexRoute
+  '/website-management/job-postings': typeof appWebsiteManagementJobPostingsIndexRoute
+  '/website-management/meetings': typeof appWebsiteManagementMeetingsIndexRoute
+  '/website-management/notice-categories': typeof appWebsiteManagementNoticeCategoriesIndexRoute
+  '/website-management/notices': typeof appWebsiteManagementNoticesIndexRoute
+  '/website-management/public-requests': typeof appWebsiteManagementPublicRequestsIndexRoute
+  '/website-management/spray-missions': typeof appWebsiteManagementSprayMissionsIndexRoute
+  '/website-management/weekly-activity': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/hr/employees/$employeeId/edit': typeof appHrEmployeesEmployeeIdEditRoute
+  '/website-management/document-categories/$categoryId/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
+  '/website-management/documents/$documentId/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
+  '/website-management/insecticides/$insecticideId/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
+  '/website-management/job-postings/$postingId/edit': typeof appWebsiteManagementJobPostingsPostingIdEditRoute
+  '/website-management/meetings/$meetingId/edit': typeof appWebsiteManagementMeetingsMeetingIdEditRoute
+  '/website-management/notice-categories/$categoryId/edit': typeof appWebsiteManagementNoticeCategoriesCategoryIdEditRoute
+  '/website-management/notices/$noticeId/edit': typeof appWebsiteManagementNoticesNoticeIdEditRoute
+  '/website-management/spray-missions/$sprayScheduleId/edit': typeof appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -190,22 +594,68 @@ export interface FileRoutesById {
   '/(app)/hr': typeof appHrRouteRouteWithChildren
   '/(app)/meetings': typeof appMeetingsRouteRouteWithChildren
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
+  '/(app)/website-management': typeof appWebsiteManagementRouteRouteWithChildren
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/set-password': typeof AuthSetPasswordRoute
   '/(app)/': typeof appIndexRoute
   '/(app)/hr/employees': typeof appHrEmployeesRouteRouteWithChildren
+  '/(app)/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesRouteRouteWithChildren
+  '/(app)/website-management/documents': typeof appWebsiteManagementDocumentsRouteRouteWithChildren
+  '/(app)/website-management/insecticides': typeof appWebsiteManagementInsecticidesRouteRouteWithChildren
+  '/(app)/website-management/job-postings': typeof appWebsiteManagementJobPostingsRouteRouteWithChildren
+  '/(app)/website-management/meetings': typeof appWebsiteManagementMeetingsRouteRouteWithChildren
+  '/(app)/website-management/notice-categories': typeof appWebsiteManagementNoticeCategoriesRouteRouteWithChildren
+  '/(app)/website-management/notices': typeof appWebsiteManagementNoticesRouteRouteWithChildren
+  '/(app)/website-management/public-requests': typeof appWebsiteManagementPublicRequestsRouteRouteWithChildren
+  '/(app)/website-management/spray-missions': typeof appWebsiteManagementSprayMissionsRouteRouteWithChildren
   '/(app)/meetings/$meetingId': typeof appMeetingsMeetingIdRoute
   '/(app)/notices/$noticeId': typeof appNoticesNoticeIdRoute
   '/(app)/admin/': typeof appAdminIndexRoute
   '/(app)/hr/': typeof appHrIndexRoute
   '/(app)/meetings/': typeof appMeetingsIndexRoute
   '/(app)/notices/': typeof appNoticesIndexRoute
+  '/(app)/website-management/': typeof appWebsiteManagementIndexRoute
   '/(app)/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/(app)/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
+  '/(app)/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
+  '/(app)/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
+  '/(app)/website-management/documents/create': typeof appWebsiteManagementDocumentsCreateRoute
+  '/(app)/website-management/insecticides/$insecticideId': typeof appWebsiteManagementInsecticidesInsecticideIdRoute
+  '/(app)/website-management/insecticides/create': typeof appWebsiteManagementInsecticidesCreateRoute
+  '/(app)/website-management/job-postings/$postingId': typeof appWebsiteManagementJobPostingsPostingIdRoute
+  '/(app)/website-management/job-postings/create': typeof appWebsiteManagementJobPostingsCreateRoute
+  '/(app)/website-management/meetings/$meetingId': typeof appWebsiteManagementMeetingsMeetingIdRoute
+  '/(app)/website-management/meetings/create': typeof appWebsiteManagementMeetingsCreateRoute
+  '/(app)/website-management/notice-categories/$categoryId': typeof appWebsiteManagementNoticeCategoriesCategoryIdRoute
+  '/(app)/website-management/notice-categories/create': typeof appWebsiteManagementNoticeCategoriesCreateRoute
+  '/(app)/website-management/notices/$noticeId': typeof appWebsiteManagementNoticesNoticeIdRoute
+  '/(app)/website-management/notices/create': typeof appWebsiteManagementNoticesCreateRoute
+  '/(app)/website-management/public-requests/$requestId': typeof appWebsiteManagementPublicRequestsRequestIdRoute
+  '/(app)/website-management/spray-missions/$sprayScheduleId': typeof appWebsiteManagementSprayMissionsSprayScheduleIdRoute
+  '/(app)/website-management/spray-missions/create': typeof appWebsiteManagementSprayMissionsCreateRoute
   '/(app)/admin/users/': typeof appAdminUsersIndexRoute
   '/(app)/hr/employees/': typeof appHrEmployeesIndexRoute
+  '/(app)/website-management/document-categories/': typeof appWebsiteManagementDocumentCategoriesIndexRoute
+  '/(app)/website-management/documents/': typeof appWebsiteManagementDocumentsIndexRoute
+  '/(app)/website-management/insecticides/': typeof appWebsiteManagementInsecticidesIndexRoute
+  '/(app)/website-management/job-postings/': typeof appWebsiteManagementJobPostingsIndexRoute
+  '/(app)/website-management/meetings/': typeof appWebsiteManagementMeetingsIndexRoute
+  '/(app)/website-management/notice-categories/': typeof appWebsiteManagementNoticeCategoriesIndexRoute
+  '/(app)/website-management/notices/': typeof appWebsiteManagementNoticesIndexRoute
+  '/(app)/website-management/public-requests/': typeof appWebsiteManagementPublicRequestsIndexRoute
+  '/(app)/website-management/spray-missions/': typeof appWebsiteManagementSprayMissionsIndexRoute
+  '/(app)/website-management/weekly-activity/': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/(app)/hr/employees/$employeeId_/edit': typeof appHrEmployeesEmployeeIdEditRoute
+  '/(app)/website-management/document-categories/$categoryId_/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
+  '/(app)/website-management/documents/$documentId_/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
+  '/(app)/website-management/insecticides/$insecticideId_/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
+  '/(app)/website-management/job-postings/$postingId_/edit': typeof appWebsiteManagementJobPostingsPostingIdEditRoute
+  '/(app)/website-management/meetings/$meetingId_/edit': typeof appWebsiteManagementMeetingsMeetingIdEditRoute
+  '/(app)/website-management/notice-categories/$categoryId_/edit': typeof appWebsiteManagementNoticeCategoriesCategoryIdEditRoute
+  '/(app)/website-management/notices/$noticeId_/edit': typeof appWebsiteManagementNoticesNoticeIdEditRoute
+  '/(app)/website-management/spray-missions/$sprayScheduleId_/edit': typeof appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -214,22 +664,68 @@ export interface FileRouteTypes {
     | '/hr'
     | '/meetings'
     | '/notices'
+    | '/website-management'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
     | '/set-password'
     | '/'
     | '/hr/employees'
+    | '/website-management/document-categories'
+    | '/website-management/documents'
+    | '/website-management/insecticides'
+    | '/website-management/job-postings'
+    | '/website-management/meetings'
+    | '/website-management/notice-categories'
+    | '/website-management/notices'
+    | '/website-management/public-requests'
+    | '/website-management/spray-missions'
     | '/meetings/$meetingId'
     | '/notices/$noticeId'
     | '/admin/'
     | '/hr/'
     | '/meetings/'
     | '/notices/'
+    | '/website-management/'
     | '/hr/employees/$employeeId'
+    | '/website-management/document-categories/$categoryId'
+    | '/website-management/document-categories/create'
+    | '/website-management/documents/$documentId'
+    | '/website-management/documents/create'
+    | '/website-management/insecticides/$insecticideId'
+    | '/website-management/insecticides/create'
+    | '/website-management/job-postings/$postingId'
+    | '/website-management/job-postings/create'
+    | '/website-management/meetings/$meetingId'
+    | '/website-management/meetings/create'
+    | '/website-management/notice-categories/$categoryId'
+    | '/website-management/notice-categories/create'
+    | '/website-management/notices/$noticeId'
+    | '/website-management/notices/create'
+    | '/website-management/public-requests/$requestId'
+    | '/website-management/spray-missions/$sprayScheduleId'
+    | '/website-management/spray-missions/create'
     | '/admin/users'
     | '/hr/employees/'
+    | '/website-management/document-categories/'
+    | '/website-management/documents/'
+    | '/website-management/insecticides/'
+    | '/website-management/job-postings/'
+    | '/website-management/meetings/'
+    | '/website-management/notice-categories/'
+    | '/website-management/notices/'
+    | '/website-management/public-requests/'
+    | '/website-management/spray-missions/'
+    | '/website-management/weekly-activity'
     | '/hr/employees/$employeeId/edit'
+    | '/website-management/document-categories/$categoryId/edit'
+    | '/website-management/documents/$documentId/edit'
+    | '/website-management/insecticides/$insecticideId/edit'
+    | '/website-management/job-postings/$postingId/edit'
+    | '/website-management/meetings/$meetingId/edit'
+    | '/website-management/notice-categories/$categoryId/edit'
+    | '/website-management/notices/$noticeId/edit'
+    | '/website-management/spray-missions/$sprayScheduleId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -243,10 +739,46 @@ export interface FileRouteTypes {
     | '/hr'
     | '/meetings'
     | '/notices'
+    | '/website-management'
     | '/hr/employees/$employeeId'
+    | '/website-management/document-categories/$categoryId'
+    | '/website-management/document-categories/create'
+    | '/website-management/documents/$documentId'
+    | '/website-management/documents/create'
+    | '/website-management/insecticides/$insecticideId'
+    | '/website-management/insecticides/create'
+    | '/website-management/job-postings/$postingId'
+    | '/website-management/job-postings/create'
+    | '/website-management/meetings/$meetingId'
+    | '/website-management/meetings/create'
+    | '/website-management/notice-categories/$categoryId'
+    | '/website-management/notice-categories/create'
+    | '/website-management/notices/$noticeId'
+    | '/website-management/notices/create'
+    | '/website-management/public-requests/$requestId'
+    | '/website-management/spray-missions/$sprayScheduleId'
+    | '/website-management/spray-missions/create'
     | '/admin/users'
     | '/hr/employees'
+    | '/website-management/document-categories'
+    | '/website-management/documents'
+    | '/website-management/insecticides'
+    | '/website-management/job-postings'
+    | '/website-management/meetings'
+    | '/website-management/notice-categories'
+    | '/website-management/notices'
+    | '/website-management/public-requests'
+    | '/website-management/spray-missions'
+    | '/website-management/weekly-activity'
     | '/hr/employees/$employeeId/edit'
+    | '/website-management/document-categories/$categoryId/edit'
+    | '/website-management/documents/$documentId/edit'
+    | '/website-management/insecticides/$insecticideId/edit'
+    | '/website-management/job-postings/$postingId/edit'
+    | '/website-management/meetings/$meetingId/edit'
+    | '/website-management/notice-categories/$categoryId/edit'
+    | '/website-management/notices/$noticeId/edit'
+    | '/website-management/spray-missions/$sprayScheduleId/edit'
   id:
     | '__root__'
     | '/(app)'
@@ -255,22 +787,68 @@ export interface FileRouteTypes {
     | '/(app)/hr'
     | '/(app)/meetings'
     | '/(app)/notices'
+    | '/(app)/website-management'
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/reset-password'
     | '/_auth/set-password'
     | '/(app)/'
     | '/(app)/hr/employees'
+    | '/(app)/website-management/document-categories'
+    | '/(app)/website-management/documents'
+    | '/(app)/website-management/insecticides'
+    | '/(app)/website-management/job-postings'
+    | '/(app)/website-management/meetings'
+    | '/(app)/website-management/notice-categories'
+    | '/(app)/website-management/notices'
+    | '/(app)/website-management/public-requests'
+    | '/(app)/website-management/spray-missions'
     | '/(app)/meetings/$meetingId'
     | '/(app)/notices/$noticeId'
     | '/(app)/admin/'
     | '/(app)/hr/'
     | '/(app)/meetings/'
     | '/(app)/notices/'
+    | '/(app)/website-management/'
     | '/(app)/hr/employees/$employeeId'
+    | '/(app)/website-management/document-categories/$categoryId'
+    | '/(app)/website-management/document-categories/create'
+    | '/(app)/website-management/documents/$documentId'
+    | '/(app)/website-management/documents/create'
+    | '/(app)/website-management/insecticides/$insecticideId'
+    | '/(app)/website-management/insecticides/create'
+    | '/(app)/website-management/job-postings/$postingId'
+    | '/(app)/website-management/job-postings/create'
+    | '/(app)/website-management/meetings/$meetingId'
+    | '/(app)/website-management/meetings/create'
+    | '/(app)/website-management/notice-categories/$categoryId'
+    | '/(app)/website-management/notice-categories/create'
+    | '/(app)/website-management/notices/$noticeId'
+    | '/(app)/website-management/notices/create'
+    | '/(app)/website-management/public-requests/$requestId'
+    | '/(app)/website-management/spray-missions/$sprayScheduleId'
+    | '/(app)/website-management/spray-missions/create'
     | '/(app)/admin/users/'
     | '/(app)/hr/employees/'
+    | '/(app)/website-management/document-categories/'
+    | '/(app)/website-management/documents/'
+    | '/(app)/website-management/insecticides/'
+    | '/(app)/website-management/job-postings/'
+    | '/(app)/website-management/meetings/'
+    | '/(app)/website-management/notice-categories/'
+    | '/(app)/website-management/notices/'
+    | '/(app)/website-management/public-requests/'
+    | '/(app)/website-management/spray-missions/'
+    | '/(app)/website-management/weekly-activity/'
     | '/(app)/hr/employees/$employeeId_/edit'
+    | '/(app)/website-management/document-categories/$categoryId_/edit'
+    | '/(app)/website-management/documents/$documentId_/edit'
+    | '/(app)/website-management/insecticides/$insecticideId_/edit'
+    | '/(app)/website-management/job-postings/$postingId_/edit'
+    | '/(app)/website-management/meetings/$meetingId_/edit'
+    | '/(app)/website-management/notice-categories/$categoryId_/edit'
+    | '/(app)/website-management/notices/$noticeId_/edit'
+    | '/(app)/website-management/spray-missions/$sprayScheduleId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -329,6 +907,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/(app)/website-management': {
+      id: '/(app)/website-management'
+      path: '/website-management'
+      fullPath: '/website-management'
+      preLoaderRoute: typeof appWebsiteManagementRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/notices': {
       id: '/(app)/notices'
       path: '/notices'
@@ -356,6 +941,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof appAdminRouteRouteImport
       parentRoute: typeof appRouteRoute
+    }
+    '/(app)/website-management/': {
+      id: '/(app)/website-management/'
+      path: '/'
+      fullPath: '/website-management/'
+      preLoaderRoute: typeof appWebsiteManagementIndexRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
     }
     '/(app)/notices/': {
       id: '/(app)/notices/'
@@ -399,12 +991,145 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appMeetingsMeetingIdRouteImport
       parentRoute: typeof appMeetingsRouteRoute
     }
+    '/(app)/website-management/spray-missions': {
+      id: '/(app)/website-management/spray-missions'
+      path: '/spray-missions'
+      fullPath: '/website-management/spray-missions'
+      preLoaderRoute: typeof appWebsiteManagementSprayMissionsRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/public-requests': {
+      id: '/(app)/website-management/public-requests'
+      path: '/public-requests'
+      fullPath: '/website-management/public-requests'
+      preLoaderRoute: typeof appWebsiteManagementPublicRequestsRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/notices': {
+      id: '/(app)/website-management/notices'
+      path: '/notices'
+      fullPath: '/website-management/notices'
+      preLoaderRoute: typeof appWebsiteManagementNoticesRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/notice-categories': {
+      id: '/(app)/website-management/notice-categories'
+      path: '/notice-categories'
+      fullPath: '/website-management/notice-categories'
+      preLoaderRoute: typeof appWebsiteManagementNoticeCategoriesRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/meetings': {
+      id: '/(app)/website-management/meetings'
+      path: '/meetings'
+      fullPath: '/website-management/meetings'
+      preLoaderRoute: typeof appWebsiteManagementMeetingsRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/job-postings': {
+      id: '/(app)/website-management/job-postings'
+      path: '/job-postings'
+      fullPath: '/website-management/job-postings'
+      preLoaderRoute: typeof appWebsiteManagementJobPostingsRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/insecticides': {
+      id: '/(app)/website-management/insecticides'
+      path: '/insecticides'
+      fullPath: '/website-management/insecticides'
+      preLoaderRoute: typeof appWebsiteManagementInsecticidesRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/documents': {
+      id: '/(app)/website-management/documents'
+      path: '/documents'
+      fullPath: '/website-management/documents'
+      preLoaderRoute: typeof appWebsiteManagementDocumentsRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/document-categories': {
+      id: '/(app)/website-management/document-categories'
+      path: '/document-categories'
+      fullPath: '/website-management/document-categories'
+      preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesRouteRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
     '/(app)/hr/employees': {
       id: '/(app)/hr/employees'
       path: '/employees'
       fullPath: '/hr/employees'
       preLoaderRoute: typeof appHrEmployeesRouteRouteImport
       parentRoute: typeof appHrRouteRoute
+    }
+    '/(app)/website-management/weekly-activity/': {
+      id: '/(app)/website-management/weekly-activity/'
+      path: '/weekly-activity'
+      fullPath: '/website-management/weekly-activity'
+      preLoaderRoute: typeof appWebsiteManagementWeeklyActivityIndexRouteImport
+      parentRoute: typeof appWebsiteManagementRouteRoute
+    }
+    '/(app)/website-management/spray-missions/': {
+      id: '/(app)/website-management/spray-missions/'
+      path: '/'
+      fullPath: '/website-management/spray-missions/'
+      preLoaderRoute: typeof appWebsiteManagementSprayMissionsIndexRouteImport
+      parentRoute: typeof appWebsiteManagementSprayMissionsRouteRoute
+    }
+    '/(app)/website-management/public-requests/': {
+      id: '/(app)/website-management/public-requests/'
+      path: '/'
+      fullPath: '/website-management/public-requests/'
+      preLoaderRoute: typeof appWebsiteManagementPublicRequestsIndexRouteImport
+      parentRoute: typeof appWebsiteManagementPublicRequestsRouteRoute
+    }
+    '/(app)/website-management/notices/': {
+      id: '/(app)/website-management/notices/'
+      path: '/'
+      fullPath: '/website-management/notices/'
+      preLoaderRoute: typeof appWebsiteManagementNoticesIndexRouteImport
+      parentRoute: typeof appWebsiteManagementNoticesRouteRoute
+    }
+    '/(app)/website-management/notice-categories/': {
+      id: '/(app)/website-management/notice-categories/'
+      path: '/'
+      fullPath: '/website-management/notice-categories/'
+      preLoaderRoute: typeof appWebsiteManagementNoticeCategoriesIndexRouteImport
+      parentRoute: typeof appWebsiteManagementNoticeCategoriesRouteRoute
+    }
+    '/(app)/website-management/meetings/': {
+      id: '/(app)/website-management/meetings/'
+      path: '/'
+      fullPath: '/website-management/meetings/'
+      preLoaderRoute: typeof appWebsiteManagementMeetingsIndexRouteImport
+      parentRoute: typeof appWebsiteManagementMeetingsRouteRoute
+    }
+    '/(app)/website-management/job-postings/': {
+      id: '/(app)/website-management/job-postings/'
+      path: '/'
+      fullPath: '/website-management/job-postings/'
+      preLoaderRoute: typeof appWebsiteManagementJobPostingsIndexRouteImport
+      parentRoute: typeof appWebsiteManagementJobPostingsRouteRoute
+    }
+    '/(app)/website-management/insecticides/': {
+      id: '/(app)/website-management/insecticides/'
+      path: '/'
+      fullPath: '/website-management/insecticides/'
+      preLoaderRoute: typeof appWebsiteManagementInsecticidesIndexRouteImport
+      parentRoute: typeof appWebsiteManagementInsecticidesRouteRoute
+    }
+    '/(app)/website-management/documents/': {
+      id: '/(app)/website-management/documents/'
+      path: '/'
+      fullPath: '/website-management/documents/'
+      preLoaderRoute: typeof appWebsiteManagementDocumentsIndexRouteImport
+      parentRoute: typeof appWebsiteManagementDocumentsRouteRoute
+    }
+    '/(app)/website-management/document-categories/': {
+      id: '/(app)/website-management/document-categories/'
+      path: '/'
+      fullPath: '/website-management/document-categories/'
+      preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesIndexRouteImport
+      parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
     }
     '/(app)/hr/employees/': {
       id: '/(app)/hr/employees/'
@@ -420,12 +1145,187 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAdminUsersIndexRouteImport
       parentRoute: typeof appAdminRouteRoute
     }
+    '/(app)/website-management/spray-missions/create': {
+      id: '/(app)/website-management/spray-missions/create'
+      path: '/create'
+      fullPath: '/website-management/spray-missions/create'
+      preLoaderRoute: typeof appWebsiteManagementSprayMissionsCreateRouteImport
+      parentRoute: typeof appWebsiteManagementSprayMissionsRouteRoute
+    }
+    '/(app)/website-management/spray-missions/$sprayScheduleId': {
+      id: '/(app)/website-management/spray-missions/$sprayScheduleId'
+      path: '/$sprayScheduleId'
+      fullPath: '/website-management/spray-missions/$sprayScheduleId'
+      preLoaderRoute: typeof appWebsiteManagementSprayMissionsSprayScheduleIdRouteImport
+      parentRoute: typeof appWebsiteManagementSprayMissionsRouteRoute
+    }
+    '/(app)/website-management/public-requests/$requestId': {
+      id: '/(app)/website-management/public-requests/$requestId'
+      path: '/$requestId'
+      fullPath: '/website-management/public-requests/$requestId'
+      preLoaderRoute: typeof appWebsiteManagementPublicRequestsRequestIdRouteImport
+      parentRoute: typeof appWebsiteManagementPublicRequestsRouteRoute
+    }
+    '/(app)/website-management/notices/create': {
+      id: '/(app)/website-management/notices/create'
+      path: '/create'
+      fullPath: '/website-management/notices/create'
+      preLoaderRoute: typeof appWebsiteManagementNoticesCreateRouteImport
+      parentRoute: typeof appWebsiteManagementNoticesRouteRoute
+    }
+    '/(app)/website-management/notices/$noticeId': {
+      id: '/(app)/website-management/notices/$noticeId'
+      path: '/$noticeId'
+      fullPath: '/website-management/notices/$noticeId'
+      preLoaderRoute: typeof appWebsiteManagementNoticesNoticeIdRouteImport
+      parentRoute: typeof appWebsiteManagementNoticesRouteRoute
+    }
+    '/(app)/website-management/notice-categories/create': {
+      id: '/(app)/website-management/notice-categories/create'
+      path: '/create'
+      fullPath: '/website-management/notice-categories/create'
+      preLoaderRoute: typeof appWebsiteManagementNoticeCategoriesCreateRouteImport
+      parentRoute: typeof appWebsiteManagementNoticeCategoriesRouteRoute
+    }
+    '/(app)/website-management/notice-categories/$categoryId': {
+      id: '/(app)/website-management/notice-categories/$categoryId'
+      path: '/$categoryId'
+      fullPath: '/website-management/notice-categories/$categoryId'
+      preLoaderRoute: typeof appWebsiteManagementNoticeCategoriesCategoryIdRouteImport
+      parentRoute: typeof appWebsiteManagementNoticeCategoriesRouteRoute
+    }
+    '/(app)/website-management/meetings/create': {
+      id: '/(app)/website-management/meetings/create'
+      path: '/create'
+      fullPath: '/website-management/meetings/create'
+      preLoaderRoute: typeof appWebsiteManagementMeetingsCreateRouteImport
+      parentRoute: typeof appWebsiteManagementMeetingsRouteRoute
+    }
+    '/(app)/website-management/meetings/$meetingId': {
+      id: '/(app)/website-management/meetings/$meetingId'
+      path: '/$meetingId'
+      fullPath: '/website-management/meetings/$meetingId'
+      preLoaderRoute: typeof appWebsiteManagementMeetingsMeetingIdRouteImport
+      parentRoute: typeof appWebsiteManagementMeetingsRouteRoute
+    }
+    '/(app)/website-management/job-postings/create': {
+      id: '/(app)/website-management/job-postings/create'
+      path: '/create'
+      fullPath: '/website-management/job-postings/create'
+      preLoaderRoute: typeof appWebsiteManagementJobPostingsCreateRouteImport
+      parentRoute: typeof appWebsiteManagementJobPostingsRouteRoute
+    }
+    '/(app)/website-management/job-postings/$postingId': {
+      id: '/(app)/website-management/job-postings/$postingId'
+      path: '/$postingId'
+      fullPath: '/website-management/job-postings/$postingId'
+      preLoaderRoute: typeof appWebsiteManagementJobPostingsPostingIdRouteImport
+      parentRoute: typeof appWebsiteManagementJobPostingsRouteRoute
+    }
+    '/(app)/website-management/insecticides/create': {
+      id: '/(app)/website-management/insecticides/create'
+      path: '/create'
+      fullPath: '/website-management/insecticides/create'
+      preLoaderRoute: typeof appWebsiteManagementInsecticidesCreateRouteImport
+      parentRoute: typeof appWebsiteManagementInsecticidesRouteRoute
+    }
+    '/(app)/website-management/insecticides/$insecticideId': {
+      id: '/(app)/website-management/insecticides/$insecticideId'
+      path: '/$insecticideId'
+      fullPath: '/website-management/insecticides/$insecticideId'
+      preLoaderRoute: typeof appWebsiteManagementInsecticidesInsecticideIdRouteImport
+      parentRoute: typeof appWebsiteManagementInsecticidesRouteRoute
+    }
+    '/(app)/website-management/documents/create': {
+      id: '/(app)/website-management/documents/create'
+      path: '/create'
+      fullPath: '/website-management/documents/create'
+      preLoaderRoute: typeof appWebsiteManagementDocumentsCreateRouteImport
+      parentRoute: typeof appWebsiteManagementDocumentsRouteRoute
+    }
+    '/(app)/website-management/documents/$documentId': {
+      id: '/(app)/website-management/documents/$documentId'
+      path: '/$documentId'
+      fullPath: '/website-management/documents/$documentId'
+      preLoaderRoute: typeof appWebsiteManagementDocumentsDocumentIdRouteImport
+      parentRoute: typeof appWebsiteManagementDocumentsRouteRoute
+    }
+    '/(app)/website-management/document-categories/create': {
+      id: '/(app)/website-management/document-categories/create'
+      path: '/create'
+      fullPath: '/website-management/document-categories/create'
+      preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesCreateRouteImport
+      parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
+    }
+    '/(app)/website-management/document-categories/$categoryId': {
+      id: '/(app)/website-management/document-categories/$categoryId'
+      path: '/$categoryId'
+      fullPath: '/website-management/document-categories/$categoryId'
+      preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesCategoryIdRouteImport
+      parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
+    }
     '/(app)/hr/employees/$employeeId': {
       id: '/(app)/hr/employees/$employeeId'
       path: '/$employeeId'
       fullPath: '/hr/employees/$employeeId'
       preLoaderRoute: typeof appHrEmployeesEmployeeIdRouteImport
       parentRoute: typeof appHrEmployeesRouteRoute
+    }
+    '/(app)/website-management/spray-missions/$sprayScheduleId_/edit': {
+      id: '/(app)/website-management/spray-missions/$sprayScheduleId_/edit'
+      path: '/$sprayScheduleId/edit'
+      fullPath: '/website-management/spray-missions/$sprayScheduleId/edit'
+      preLoaderRoute: typeof appWebsiteManagementSprayMissionsSprayScheduleIdEditRouteImport
+      parentRoute: typeof appWebsiteManagementSprayMissionsRouteRoute
+    }
+    '/(app)/website-management/notices/$noticeId_/edit': {
+      id: '/(app)/website-management/notices/$noticeId_/edit'
+      path: '/$noticeId/edit'
+      fullPath: '/website-management/notices/$noticeId/edit'
+      preLoaderRoute: typeof appWebsiteManagementNoticesNoticeIdEditRouteImport
+      parentRoute: typeof appWebsiteManagementNoticesRouteRoute
+    }
+    '/(app)/website-management/notice-categories/$categoryId_/edit': {
+      id: '/(app)/website-management/notice-categories/$categoryId_/edit'
+      path: '/$categoryId/edit'
+      fullPath: '/website-management/notice-categories/$categoryId/edit'
+      preLoaderRoute: typeof appWebsiteManagementNoticeCategoriesCategoryIdEditRouteImport
+      parentRoute: typeof appWebsiteManagementNoticeCategoriesRouteRoute
+    }
+    '/(app)/website-management/meetings/$meetingId_/edit': {
+      id: '/(app)/website-management/meetings/$meetingId_/edit'
+      path: '/$meetingId/edit'
+      fullPath: '/website-management/meetings/$meetingId/edit'
+      preLoaderRoute: typeof appWebsiteManagementMeetingsMeetingIdEditRouteImport
+      parentRoute: typeof appWebsiteManagementMeetingsRouteRoute
+    }
+    '/(app)/website-management/job-postings/$postingId_/edit': {
+      id: '/(app)/website-management/job-postings/$postingId_/edit'
+      path: '/$postingId/edit'
+      fullPath: '/website-management/job-postings/$postingId/edit'
+      preLoaderRoute: typeof appWebsiteManagementJobPostingsPostingIdEditRouteImport
+      parentRoute: typeof appWebsiteManagementJobPostingsRouteRoute
+    }
+    '/(app)/website-management/insecticides/$insecticideId_/edit': {
+      id: '/(app)/website-management/insecticides/$insecticideId_/edit'
+      path: '/$insecticideId/edit'
+      fullPath: '/website-management/insecticides/$insecticideId/edit'
+      preLoaderRoute: typeof appWebsiteManagementInsecticidesInsecticideIdEditRouteImport
+      parentRoute: typeof appWebsiteManagementInsecticidesRouteRoute
+    }
+    '/(app)/website-management/documents/$documentId_/edit': {
+      id: '/(app)/website-management/documents/$documentId_/edit'
+      path: '/$documentId/edit'
+      fullPath: '/website-management/documents/$documentId/edit'
+      preLoaderRoute: typeof appWebsiteManagementDocumentsDocumentIdEditRouteImport
+      parentRoute: typeof appWebsiteManagementDocumentsRouteRoute
+    }
+    '/(app)/website-management/document-categories/$categoryId_/edit': {
+      id: '/(app)/website-management/document-categories/$categoryId_/edit'
+      path: '/$categoryId/edit'
+      fullPath: '/website-management/document-categories/$categoryId/edit'
+      preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRouteImport
+      parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
     }
     '/(app)/hr/employees/$employeeId_/edit': {
       id: '/(app)/hr/employees/$employeeId_/edit'
@@ -507,11 +1407,266 @@ const appNoticesRouteRouteWithChildren = appNoticesRouteRoute._addFileChildren(
   appNoticesRouteRouteChildren,
 )
 
+interface appWebsiteManagementDocumentCategoriesRouteRouteChildren {
+  appWebsiteManagementDocumentCategoriesCategoryIdRoute: typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
+  appWebsiteManagementDocumentCategoriesCreateRoute: typeof appWebsiteManagementDocumentCategoriesCreateRoute
+  appWebsiteManagementDocumentCategoriesIndexRoute: typeof appWebsiteManagementDocumentCategoriesIndexRoute
+  appWebsiteManagementDocumentCategoriesCategoryIdEditRoute: typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
+}
+
+const appWebsiteManagementDocumentCategoriesRouteRouteChildren: appWebsiteManagementDocumentCategoriesRouteRouteChildren =
+  {
+    appWebsiteManagementDocumentCategoriesCategoryIdRoute:
+      appWebsiteManagementDocumentCategoriesCategoryIdRoute,
+    appWebsiteManagementDocumentCategoriesCreateRoute:
+      appWebsiteManagementDocumentCategoriesCreateRoute,
+    appWebsiteManagementDocumentCategoriesIndexRoute:
+      appWebsiteManagementDocumentCategoriesIndexRoute,
+    appWebsiteManagementDocumentCategoriesCategoryIdEditRoute:
+      appWebsiteManagementDocumentCategoriesCategoryIdEditRoute,
+  }
+
+const appWebsiteManagementDocumentCategoriesRouteRouteWithChildren =
+  appWebsiteManagementDocumentCategoriesRouteRoute._addFileChildren(
+    appWebsiteManagementDocumentCategoriesRouteRouteChildren,
+  )
+
+interface appWebsiteManagementDocumentsRouteRouteChildren {
+  appWebsiteManagementDocumentsDocumentIdRoute: typeof appWebsiteManagementDocumentsDocumentIdRoute
+  appWebsiteManagementDocumentsCreateRoute: typeof appWebsiteManagementDocumentsCreateRoute
+  appWebsiteManagementDocumentsIndexRoute: typeof appWebsiteManagementDocumentsIndexRoute
+  appWebsiteManagementDocumentsDocumentIdEditRoute: typeof appWebsiteManagementDocumentsDocumentIdEditRoute
+}
+
+const appWebsiteManagementDocumentsRouteRouteChildren: appWebsiteManagementDocumentsRouteRouteChildren =
+  {
+    appWebsiteManagementDocumentsDocumentIdRoute:
+      appWebsiteManagementDocumentsDocumentIdRoute,
+    appWebsiteManagementDocumentsCreateRoute:
+      appWebsiteManagementDocumentsCreateRoute,
+    appWebsiteManagementDocumentsIndexRoute:
+      appWebsiteManagementDocumentsIndexRoute,
+    appWebsiteManagementDocumentsDocumentIdEditRoute:
+      appWebsiteManagementDocumentsDocumentIdEditRoute,
+  }
+
+const appWebsiteManagementDocumentsRouteRouteWithChildren =
+  appWebsiteManagementDocumentsRouteRoute._addFileChildren(
+    appWebsiteManagementDocumentsRouteRouteChildren,
+  )
+
+interface appWebsiteManagementInsecticidesRouteRouteChildren {
+  appWebsiteManagementInsecticidesInsecticideIdRoute: typeof appWebsiteManagementInsecticidesInsecticideIdRoute
+  appWebsiteManagementInsecticidesCreateRoute: typeof appWebsiteManagementInsecticidesCreateRoute
+  appWebsiteManagementInsecticidesIndexRoute: typeof appWebsiteManagementInsecticidesIndexRoute
+  appWebsiteManagementInsecticidesInsecticideIdEditRoute: typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
+}
+
+const appWebsiteManagementInsecticidesRouteRouteChildren: appWebsiteManagementInsecticidesRouteRouteChildren =
+  {
+    appWebsiteManagementInsecticidesInsecticideIdRoute:
+      appWebsiteManagementInsecticidesInsecticideIdRoute,
+    appWebsiteManagementInsecticidesCreateRoute:
+      appWebsiteManagementInsecticidesCreateRoute,
+    appWebsiteManagementInsecticidesIndexRoute:
+      appWebsiteManagementInsecticidesIndexRoute,
+    appWebsiteManagementInsecticidesInsecticideIdEditRoute:
+      appWebsiteManagementInsecticidesInsecticideIdEditRoute,
+  }
+
+const appWebsiteManagementInsecticidesRouteRouteWithChildren =
+  appWebsiteManagementInsecticidesRouteRoute._addFileChildren(
+    appWebsiteManagementInsecticidesRouteRouteChildren,
+  )
+
+interface appWebsiteManagementJobPostingsRouteRouteChildren {
+  appWebsiteManagementJobPostingsPostingIdRoute: typeof appWebsiteManagementJobPostingsPostingIdRoute
+  appWebsiteManagementJobPostingsCreateRoute: typeof appWebsiteManagementJobPostingsCreateRoute
+  appWebsiteManagementJobPostingsIndexRoute: typeof appWebsiteManagementJobPostingsIndexRoute
+  appWebsiteManagementJobPostingsPostingIdEditRoute: typeof appWebsiteManagementJobPostingsPostingIdEditRoute
+}
+
+const appWebsiteManagementJobPostingsRouteRouteChildren: appWebsiteManagementJobPostingsRouteRouteChildren =
+  {
+    appWebsiteManagementJobPostingsPostingIdRoute:
+      appWebsiteManagementJobPostingsPostingIdRoute,
+    appWebsiteManagementJobPostingsCreateRoute:
+      appWebsiteManagementJobPostingsCreateRoute,
+    appWebsiteManagementJobPostingsIndexRoute:
+      appWebsiteManagementJobPostingsIndexRoute,
+    appWebsiteManagementJobPostingsPostingIdEditRoute:
+      appWebsiteManagementJobPostingsPostingIdEditRoute,
+  }
+
+const appWebsiteManagementJobPostingsRouteRouteWithChildren =
+  appWebsiteManagementJobPostingsRouteRoute._addFileChildren(
+    appWebsiteManagementJobPostingsRouteRouteChildren,
+  )
+
+interface appWebsiteManagementMeetingsRouteRouteChildren {
+  appWebsiteManagementMeetingsMeetingIdRoute: typeof appWebsiteManagementMeetingsMeetingIdRoute
+  appWebsiteManagementMeetingsCreateRoute: typeof appWebsiteManagementMeetingsCreateRoute
+  appWebsiteManagementMeetingsIndexRoute: typeof appWebsiteManagementMeetingsIndexRoute
+  appWebsiteManagementMeetingsMeetingIdEditRoute: typeof appWebsiteManagementMeetingsMeetingIdEditRoute
+}
+
+const appWebsiteManagementMeetingsRouteRouteChildren: appWebsiteManagementMeetingsRouteRouteChildren =
+  {
+    appWebsiteManagementMeetingsMeetingIdRoute:
+      appWebsiteManagementMeetingsMeetingIdRoute,
+    appWebsiteManagementMeetingsCreateRoute:
+      appWebsiteManagementMeetingsCreateRoute,
+    appWebsiteManagementMeetingsIndexRoute:
+      appWebsiteManagementMeetingsIndexRoute,
+    appWebsiteManagementMeetingsMeetingIdEditRoute:
+      appWebsiteManagementMeetingsMeetingIdEditRoute,
+  }
+
+const appWebsiteManagementMeetingsRouteRouteWithChildren =
+  appWebsiteManagementMeetingsRouteRoute._addFileChildren(
+    appWebsiteManagementMeetingsRouteRouteChildren,
+  )
+
+interface appWebsiteManagementNoticeCategoriesRouteRouteChildren {
+  appWebsiteManagementNoticeCategoriesCategoryIdRoute: typeof appWebsiteManagementNoticeCategoriesCategoryIdRoute
+  appWebsiteManagementNoticeCategoriesCreateRoute: typeof appWebsiteManagementNoticeCategoriesCreateRoute
+  appWebsiteManagementNoticeCategoriesIndexRoute: typeof appWebsiteManagementNoticeCategoriesIndexRoute
+  appWebsiteManagementNoticeCategoriesCategoryIdEditRoute: typeof appWebsiteManagementNoticeCategoriesCategoryIdEditRoute
+}
+
+const appWebsiteManagementNoticeCategoriesRouteRouteChildren: appWebsiteManagementNoticeCategoriesRouteRouteChildren =
+  {
+    appWebsiteManagementNoticeCategoriesCategoryIdRoute:
+      appWebsiteManagementNoticeCategoriesCategoryIdRoute,
+    appWebsiteManagementNoticeCategoriesCreateRoute:
+      appWebsiteManagementNoticeCategoriesCreateRoute,
+    appWebsiteManagementNoticeCategoriesIndexRoute:
+      appWebsiteManagementNoticeCategoriesIndexRoute,
+    appWebsiteManagementNoticeCategoriesCategoryIdEditRoute:
+      appWebsiteManagementNoticeCategoriesCategoryIdEditRoute,
+  }
+
+const appWebsiteManagementNoticeCategoriesRouteRouteWithChildren =
+  appWebsiteManagementNoticeCategoriesRouteRoute._addFileChildren(
+    appWebsiteManagementNoticeCategoriesRouteRouteChildren,
+  )
+
+interface appWebsiteManagementNoticesRouteRouteChildren {
+  appWebsiteManagementNoticesNoticeIdRoute: typeof appWebsiteManagementNoticesNoticeIdRoute
+  appWebsiteManagementNoticesCreateRoute: typeof appWebsiteManagementNoticesCreateRoute
+  appWebsiteManagementNoticesIndexRoute: typeof appWebsiteManagementNoticesIndexRoute
+  appWebsiteManagementNoticesNoticeIdEditRoute: typeof appWebsiteManagementNoticesNoticeIdEditRoute
+}
+
+const appWebsiteManagementNoticesRouteRouteChildren: appWebsiteManagementNoticesRouteRouteChildren =
+  {
+    appWebsiteManagementNoticesNoticeIdRoute:
+      appWebsiteManagementNoticesNoticeIdRoute,
+    appWebsiteManagementNoticesCreateRoute:
+      appWebsiteManagementNoticesCreateRoute,
+    appWebsiteManagementNoticesIndexRoute:
+      appWebsiteManagementNoticesIndexRoute,
+    appWebsiteManagementNoticesNoticeIdEditRoute:
+      appWebsiteManagementNoticesNoticeIdEditRoute,
+  }
+
+const appWebsiteManagementNoticesRouteRouteWithChildren =
+  appWebsiteManagementNoticesRouteRoute._addFileChildren(
+    appWebsiteManagementNoticesRouteRouteChildren,
+  )
+
+interface appWebsiteManagementPublicRequestsRouteRouteChildren {
+  appWebsiteManagementPublicRequestsRequestIdRoute: typeof appWebsiteManagementPublicRequestsRequestIdRoute
+  appWebsiteManagementPublicRequestsIndexRoute: typeof appWebsiteManagementPublicRequestsIndexRoute
+}
+
+const appWebsiteManagementPublicRequestsRouteRouteChildren: appWebsiteManagementPublicRequestsRouteRouteChildren =
+  {
+    appWebsiteManagementPublicRequestsRequestIdRoute:
+      appWebsiteManagementPublicRequestsRequestIdRoute,
+    appWebsiteManagementPublicRequestsIndexRoute:
+      appWebsiteManagementPublicRequestsIndexRoute,
+  }
+
+const appWebsiteManagementPublicRequestsRouteRouteWithChildren =
+  appWebsiteManagementPublicRequestsRouteRoute._addFileChildren(
+    appWebsiteManagementPublicRequestsRouteRouteChildren,
+  )
+
+interface appWebsiteManagementSprayMissionsRouteRouteChildren {
+  appWebsiteManagementSprayMissionsSprayScheduleIdRoute: typeof appWebsiteManagementSprayMissionsSprayScheduleIdRoute
+  appWebsiteManagementSprayMissionsCreateRoute: typeof appWebsiteManagementSprayMissionsCreateRoute
+  appWebsiteManagementSprayMissionsIndexRoute: typeof appWebsiteManagementSprayMissionsIndexRoute
+  appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute: typeof appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute
+}
+
+const appWebsiteManagementSprayMissionsRouteRouteChildren: appWebsiteManagementSprayMissionsRouteRouteChildren =
+  {
+    appWebsiteManagementSprayMissionsSprayScheduleIdRoute:
+      appWebsiteManagementSprayMissionsSprayScheduleIdRoute,
+    appWebsiteManagementSprayMissionsCreateRoute:
+      appWebsiteManagementSprayMissionsCreateRoute,
+    appWebsiteManagementSprayMissionsIndexRoute:
+      appWebsiteManagementSprayMissionsIndexRoute,
+    appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute:
+      appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute,
+  }
+
+const appWebsiteManagementSprayMissionsRouteRouteWithChildren =
+  appWebsiteManagementSprayMissionsRouteRoute._addFileChildren(
+    appWebsiteManagementSprayMissionsRouteRouteChildren,
+  )
+
+interface appWebsiteManagementRouteRouteChildren {
+  appWebsiteManagementDocumentCategoriesRouteRoute: typeof appWebsiteManagementDocumentCategoriesRouteRouteWithChildren
+  appWebsiteManagementDocumentsRouteRoute: typeof appWebsiteManagementDocumentsRouteRouteWithChildren
+  appWebsiteManagementInsecticidesRouteRoute: typeof appWebsiteManagementInsecticidesRouteRouteWithChildren
+  appWebsiteManagementJobPostingsRouteRoute: typeof appWebsiteManagementJobPostingsRouteRouteWithChildren
+  appWebsiteManagementMeetingsRouteRoute: typeof appWebsiteManagementMeetingsRouteRouteWithChildren
+  appWebsiteManagementNoticeCategoriesRouteRoute: typeof appWebsiteManagementNoticeCategoriesRouteRouteWithChildren
+  appWebsiteManagementNoticesRouteRoute: typeof appWebsiteManagementNoticesRouteRouteWithChildren
+  appWebsiteManagementPublicRequestsRouteRoute: typeof appWebsiteManagementPublicRequestsRouteRouteWithChildren
+  appWebsiteManagementSprayMissionsRouteRoute: typeof appWebsiteManagementSprayMissionsRouteRouteWithChildren
+  appWebsiteManagementIndexRoute: typeof appWebsiteManagementIndexRoute
+  appWebsiteManagementWeeklyActivityIndexRoute: typeof appWebsiteManagementWeeklyActivityIndexRoute
+}
+
+const appWebsiteManagementRouteRouteChildren: appWebsiteManagementRouteRouteChildren =
+  {
+    appWebsiteManagementDocumentCategoriesRouteRoute:
+      appWebsiteManagementDocumentCategoriesRouteRouteWithChildren,
+    appWebsiteManagementDocumentsRouteRoute:
+      appWebsiteManagementDocumentsRouteRouteWithChildren,
+    appWebsiteManagementInsecticidesRouteRoute:
+      appWebsiteManagementInsecticidesRouteRouteWithChildren,
+    appWebsiteManagementJobPostingsRouteRoute:
+      appWebsiteManagementJobPostingsRouteRouteWithChildren,
+    appWebsiteManagementMeetingsRouteRoute:
+      appWebsiteManagementMeetingsRouteRouteWithChildren,
+    appWebsiteManagementNoticeCategoriesRouteRoute:
+      appWebsiteManagementNoticeCategoriesRouteRouteWithChildren,
+    appWebsiteManagementNoticesRouteRoute:
+      appWebsiteManagementNoticesRouteRouteWithChildren,
+    appWebsiteManagementPublicRequestsRouteRoute:
+      appWebsiteManagementPublicRequestsRouteRouteWithChildren,
+    appWebsiteManagementSprayMissionsRouteRoute:
+      appWebsiteManagementSprayMissionsRouteRouteWithChildren,
+    appWebsiteManagementIndexRoute: appWebsiteManagementIndexRoute,
+    appWebsiteManagementWeeklyActivityIndexRoute:
+      appWebsiteManagementWeeklyActivityIndexRoute,
+  }
+
+const appWebsiteManagementRouteRouteWithChildren =
+  appWebsiteManagementRouteRoute._addFileChildren(
+    appWebsiteManagementRouteRouteChildren,
+  )
+
 interface appRouteRouteChildren {
   appAdminRouteRoute: typeof appAdminRouteRouteWithChildren
   appHrRouteRoute: typeof appHrRouteRouteWithChildren
   appMeetingsRouteRoute: typeof appMeetingsRouteRouteWithChildren
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
+  appWebsiteManagementRouteRoute: typeof appWebsiteManagementRouteRouteWithChildren
   appIndexRoute: typeof appIndexRoute
 }
 
@@ -520,6 +1675,7 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appHrRouteRoute: appHrRouteRouteWithChildren,
   appMeetingsRouteRoute: appMeetingsRouteRouteWithChildren,
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
+  appWebsiteManagementRouteRoute: appWebsiteManagementRouteRouteWithChildren,
   appIndexRoute: appIndexRoute,
 }
 
