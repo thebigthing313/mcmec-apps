@@ -85,7 +85,7 @@ export const AVAILABLE_APPS: App[] = [
 		requiredPermission: "manage_website",
 	},
 	{
-		description: "Add, edit and invite Employees.",
+		description: "Add, edit, invite and delete Employees.",
 		href: "/hr",
 		logo: <Users />,
 		name: "HR",

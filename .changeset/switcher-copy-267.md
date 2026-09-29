@@ -2,4 +2,4 @@
 "@mcmec/lib": patch
 ---
 
-The app switcher's HR description reads "Add, edit and invite Employees." instead of claiming user accounts, which belong to Admin. Admin's reads "Grant and revoke App Roles for Users." instead of "Manage user permission assignments."
+The app switcher's HR description changes from "Manage employees and user accounts." to "Add, edit, invite and delete Employees." User accounts belong to Admin. Admin's changes from "Manage user permission assignments." to "Grant and revoke App Roles for Users."
