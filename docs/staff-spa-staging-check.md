@@ -23,17 +23,17 @@ Re-run the Self Service Portal section on every fold-in, because each one change
 Five fixed Users, on plus-addressed aliases of the maintainer's own inbox. Never use a real
 `@middlesexmosquito.org` address, and never write a password here or in a PR comment.
 
-> [!IMPORTANT]
-> **TODO (maintainer):** create these five Users on staging and replace each placeholder with its
-> real alias. Until then the addresses below are placeholders.
+They were created through the ordinary invite flow: add the Employee in HR, invite it, set the
+password from the mailed link, then grant the App Role in Admin. The no-linked-Employee User was
+invited like the others and then had its Employee record deleted, which leaves the login in place.
 
-| Purpose | App Roles | Linked Employee | Address |
+| Purpose | App Roles | Employee | Address |
 | --- | --- | --- | --- |
-| Website Management | `manage_website` | yes | `<maintainer>+staging-website@<domain>` |
-| HR | `manage_employees` | yes | `<maintainer>+staging-hr@<domain>` |
-| Admin | `manage_users` | yes | `<maintainer>+staging-admin@<domain>` |
-| No App Role | none | yes | `<maintainer>+staging-norole@<domain>` |
-| No linked Employee | none | no | `<maintainer>+staging-noemployee@<domain>` |
+| Website Management | `manage_website` | Staging Website | `adriankabigting+staging-website@gmail.com` |
+| HR | `manage_employees` | Staging HR | `adriankabigting+staging-hr@gmail.com` |
+| Admin | `manage_users` | Staging Admin | `adriankabigting+staging-admin@gmail.com` |
+| No App Role | none | Staging NoRole | `adriankabigting+staging-norole@gmail.com` |
+| No linked Employee | none | none ("Staging NoEmployee" deleted) | `adriankabigting+staging-noemployee@gmail.com` |
 
 Each role-holding User has exactly one App Role, so step 2 can use any of the others as the User
 without the role.
