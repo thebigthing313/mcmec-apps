@@ -8,8 +8,8 @@ import type { NitroAppPlugin, NitroRuntimeHooks } from "nitro/types";
  *
  * Only the CSP moved. `vercel.json` also long-cached the build output, but Nitro already sends
  * `public, max-age=31536000, immutable` with an ETag on the content-hashed files it emits under
- * `/assets/`, and correctly withholds it from the unhashed files copied out of `public/`
- * (`sitemap.xml`, the Search Console verification page). That is stricter than the rule it
+ * `/assets/`, and correctly withholds it from the unhashed files copied out of `public/` (the
+ * Search Console verification page). That is stricter than the rule it
  * replaces, which matched on file extension alone and would have frozen an unhashed image for a
  * year if one were ever dropped into `public/`.
  *
