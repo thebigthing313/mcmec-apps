@@ -232,7 +232,7 @@ gates, which shapes load, and sign-out.
 - Always apply and test a migration against staging before promoting to `main`
 
 ### CI checks on every PR
-- **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build`, then
+- **Lint, Types & Build** — `pnpm lint`, `pnpm check-pkgs`, `pnpm check-types`, `pnpm build`, then
   `pnpm check-bundle` — the same root scripts you run locally, so a deleted or broken root script
   fails CI instead of drifting silently
 - **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas`, `api` (against a
