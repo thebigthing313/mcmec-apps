@@ -27,6 +27,10 @@ jobs:
       - name: Lint (Biome)
         run: pnpm lint
 
+      # manypkg: every workspace asks for the same range of a shared dependency (#279).
+      - name: Check workspace dependency ranges
+        run: pnpm check-pkgs
+
       - name: Type check
         run: pnpm check-types
         env:
