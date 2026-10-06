@@ -7,7 +7,7 @@ export const Route = createFileRoute("/mosquito-control/spray-notice")({
 		meta: seo({
 			title: "Spray Notice - MCMEC",
 			description:
-				"Public notice regarding mosquito spraying operations in Middlesex County, NJ. View products used and precautions to reduce exposure.",
+				"Public notice regarding mosquito spraying operations in Middlesex County, NJ. View products used and what residents can do during or after spraying.",
 			url: "/mosquito-control/spray-notice",
 		}),
 		links: [canonical("/mosquito-control/spray-notice")],
@@ -129,46 +129,52 @@ function RouteComponent() {
 				Extermination Commission at 732-549-0665.
 			</p>
 
-			<h2>Precautions to Reduce Exposure</h2>
+			<h2>What Residents Can Do During or After Spraying</h2>
 			<p>
-				In order to reduce the number of nuisance and vector mosquitoes in the
-				specified area(s), the following adult mosquito control products will be
-				applied from the ground by truck or handheld equipment and/or by
-				aircraft, all using low volume (LV) or ultra-low volume (ULV)
-				techniques. Neither the USEPA nor the NJ Department of Environmental
-				Protection (NJDEP) requires relocating or taking special precautions
-				during spraying with this product. All applications will be made
-				according to product labeling. However, to reduce exposure:
+				<strong>Please Note:</strong> Truck spraying for mosquito control is
+				safe. The public health insecticides used do not pose a risk of harm to
+				people, pets, animals, or the environment when applied according to
+				label instructions, and they break down quickly without leaving lasting
+				residue.
 			</p>
+			<p>To maximize your comfort, you can follow these simple steps:</p>
 			<ul>
 				<li>
-					Pay attention to notices about mosquito insecticide treatments found
-					through newspapers, websites, automated telephone messages or notices
-					distributed by municipal, county or state agencies.
+					<strong>Check Schedules:</strong> Look out for local spray schedules
+					by regularly checking the{" "}
+					<Link to="/mosquito-control/spray-schedule">
+						County Mosquito Commission website
+					</Link>
+					, municipal social media pages, local newspapers, local health
+					offices, or via automated phone notifications.
 				</li>
 				<li>
-					Plan your activities to limit time spent outside during times of
-					possible insecticide treatments. Move your pets, their food, and water
-					dishes inside during applications. Also bring clothing and children's
-					toys inside. Stay back from application equipment, whether in use or
-					not.
+					<strong>Maintain Distance:</strong> Always keep a safe distance from
+					the spray truck and active application equipment.
 				</li>
 				<li>
-					Whenever possible, remain indoors with windows closed and with window
-					air conditioners on non-vent (closed to the outside air) and window
-					fans turned off during spraying.
+					<strong>Stay Indoors If Preferred:</strong> You do not need to leave
+					the area. If you prefer, you can stay inside with windows and doors
+					closed for 15 to 30 minutes while the truck passes, though it is not
+					necessary.
 				</li>
 				<li>
-					Avoid direct contact with surfaces that are still wet from pesticide
-					spraying. Do not allow children to play in areas that have been
-					sprayed until they have completely dried (approximately one hour).
+					<strong>Protect Pets &amp; Items:</strong> The spray does not harm
+					animals, but you may bring pets, food, and water bowls inside for
+					peace of mind. Wash any uncovered outdoor toys or pet dishes before
+					reusing. Local beekeepers may also choose to cover hives loosely with
+					a wet cloth or burlap.
 				</li>
 				<li>
-					If you must remain outdoors, avoid eye and skin contact with the
-					spray. If you get spray in your eyes or on your skin, immediately
-					flush and rinse with water. If you believe that you have been exposed
-					to pesticide spray and have health-related questions, contact your
-					physician.
+					<strong>Rinse Produce:</strong> Thoroughly wash all harvested backyard
+					fruits and vegetables before eating. You can also cover garden beds
+					with a light sheet during the scheduled spray window.
+				</li>
+				<li>
+					<strong>Consult Professionals:</strong> Consult your doctor or
+					healthcare provider if you believe you are experiencing health effects
+					from the spraying, especially due to known chemical sensitivities or a
+					pre-existing respiratory issue.
 				</li>
 			</ul>
 		</article>
