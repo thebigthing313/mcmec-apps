@@ -1,5 +1,12 @@
 # public
 
+## 2.1.3
+
+### Patch Changes
+
+- 176b6a0: Serve `/sitemap.xml` from a server route that builds every `<loc>` from `SITE_URL`, instead of a static file that named the host by hand. Outside production it returns 404, so no staging URL is listed.
+- f6cab8f: Replace the spray notice's "Precautions to Reduce Exposure" section with "What Residents Can Do During or After Spraying" (#287)
+
 ## 2.1.2
 
 ### Patch Changes

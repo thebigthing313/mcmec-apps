@@ -1,5 +1,12 @@
 # central
 
+## 1.2.1
+
+### Patch Changes
+
+- e28f032: Align `@tanstack/react-router` with the rest of the repo (`^1.145.7`) so `pnpm check-pkgs` passes.
+- 47b21e7: A test now ties `CommandRefusedError` to the name `@mcmec/ui`'s `toastOnError` recognises it by. Renaming it on either side now fails CI, instead of silently replacing the server's refusal sentence with the generic error toast (#278).
+
 ## 1.2.0
 
 ### Minor Changes
