@@ -28,10 +28,10 @@ mean any change redeploys all of them and one bad build blocks the lot.
 served to the internet; privacy lives in the Better Auth session and permission checks.
 
 > [!NOTE]
-> Staging runs exactly these five. **Production still also runs `hr`, `admin` and
-> `website-management`** until the consolidation release (#254) deletes them with their custom
-> domains, DNS records and `TRUSTED_ORIGINS` entries. Their code left the repo in #248 and #250
-> and lives on in `central` at `/hr`, `/admin` and `/website-management`.
+> Both environments run exactly these five. The old `hr`, `admin` and `website-management`
+> services, their custom domains, DNS records and `TRUSTED_ORIGINS` entries were deleted from
+> staging (#248, #250) and then production (#254). They live on in `central` at `/hr`, `/admin`
+> and `/website-management`, with no redirects from the old hosts.
 
 ## Branch mapping
 
@@ -40,9 +40,6 @@ served to the internet; privacy lives in the Better Auth session and permission 
 
 Production deploys on every merge to `main`. **Staging does not deploy on every merge to
 `develop`** — see below.
-
-> [!WARNING]
-> **Production releases stay frozen until #254 ships the staff SPA consolidation.**
 
 ## Staging deploys on demand (`pnpm stage`)
 
@@ -221,8 +218,8 @@ have disappeared the moment the app was served from Railway. The move dropped `v
 
 The long-cache rule did **not** move, because Nitro already sends
 `public, max-age=31536000, immutable` with an `ETag` on the content-hashed files it emits under
-`/assets/`, and withholds it from the unhashed files copied out of `public/` (`sitemap.xml`, the
-Search Console verification page). That is stricter than the `vercel.json` rule, which matched on
+`/assets/`, and withholds it from the unhashed files copied out of `public/` (the Search Console
+verification page). That is stricter than the `vercel.json` rule, which matched on
 file extension and would have frozen an unhashed image for a year if one were added to `public/`.
 
 The brand images are unaffected by any of this — their headers come from `api`, which serves them
@@ -350,9 +347,9 @@ Its host still lives under the same parent for consistency and TLS convenience.
 
 **`www` is canonical.** Every URL the app declares about itself is built from `SITE_URL` in
 `apps/public/src/lib/site.ts` — the `rel="canonical"` link and `og:url` on every page, the JSON-LD
-`url`, and the `Sitemap:` line of robots.txt. `public/sitemap.xml` is a static file and names the
-same host by hand, so **change the two together**. The app must never declare one host while the
-edge serves another.
+`url`, the `Sitemap:` line of robots.txt, and every `<loc>` in the sitemap, which
+`server/routes/sitemap.xml.ts` builds from a list of paths (#257). Changing `SITE_URL` moves them
+all. The app must never declare one host while the edge serves another.
 
 `www.middlesexmosquito.org` is the custom domain on the production `public` service. The bare
 apex is **not** a Railway domain: its DNS points at the registrar's forwarding service (AWS
@@ -369,8 +366,7 @@ the apex.
 > [!NOTE]
 > Before the cutover the plan was the reverse: apex canonical, served by Railway, with `www`
 > 308ing to it. That needs the apex record pointed at Railway (an ALIAS / flattened CNAME) and
-> the redirect built. If anyone revives that plan, `SITE_URL` and `public/sitemap.xml` flip back
-> in the same change that makes the apex serve.
+> the redirect built. If anyone revives that plan, `SITE_URL` flips back in the same change that makes the apex serve.
 
 `BETTER_AUTH_URL` must match the host actually serving the API. Change it in the same step as
 adding the custom domain, never before — pointing it at a domain that does not resolve yet

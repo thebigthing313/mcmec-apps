@@ -194,11 +194,13 @@ All changes go through branches and pull requests — never commit directly to `
 
 ### Releasing (`develop` → `main`)
 
-**Production releases stay frozen until #254 ships the staff SPA consolidation.**
-
 Run `pnpm release` on a clean, up-to-date `develop`. It consumes the pending changesets
 (bumping versions and writing CHANGELOGs), commits `chore: version packages`, pushes, and opens
 the promotion PR. `pnpm release --dry-run` prints the plan and changes nothing.
+
+**Merge the promotion PR with "Create a merge commit", never squash.** A squash leaves `main`
+with a commit `develop` never had, and the next release PR conflicts on every version and
+CHANGELOG it touched (#280 did, over #230's squash; #281 merged `main` back to fix it).
 
 Do not open the `develop` → `main` PR by hand. CI enforces this: a PR into `main` fails if any
 unconsumed changeset is still in `.changeset/`, because merging one would promote the code while
@@ -230,7 +232,7 @@ gates, which shapes load, and sign-out.
 - Always apply and test a migration against staging before promoting to `main`
 
 ### CI checks on every PR
-- **Lint, Types & Build** — `pnpm lint`, `pnpm check-types`, `pnpm build`, then
+- **Lint, Types & Build** — `pnpm lint`, `pnpm check-pkgs`, `pnpm check-types`, `pnpm build`, then
   `pnpm check-bundle` — the same root scripts you run locally, so a deleted or broken root script
   fails CI instead of drifting silently
 - **Tests** — `test:run` in `@mcmec/auth`, `@mcmec/lib`, `@mcmec/schemas`, `api` (against a
@@ -264,8 +266,8 @@ repo-root `railway.json` belongs to `api`.
   `X-Robots-Tag` headers are set in `apps/public/server/plugins/`
 - `public`'s canonical host is `www.middlesexmosquito.org` (`SITE_URL` in
   `apps/public/src/lib/site.ts`); the bare apex is a registrar forward, not a Railway domain
-- Staging runs `api`, `central` and `public`. **Production still also runs the retired `hr`,
-  `admin` and `website-management` services** until the consolidation release (#254) deletes them
+- Staging and production each run `api`, `central` and `public`. The old `hr`, `admin` and
+  `website-management` services were deleted from both when the staff SPA shipped (#254)
 
 The apps moved here from Vercel on 2026-08-13 (#122) and nothing deploys to Vercel any more.
 See `docs/railway-deployment.md`.

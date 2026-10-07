@@ -17,6 +17,7 @@ export default defineConfig({
 			// `server/` directory when `serverDir` is set, and TanStack Start does not set it.
 			handlers: [
 				{ handler: "./server/routes/robots.txt.ts", route: "/robots.txt" },
+				{ handler: "./server/routes/sitemap.xml.ts", route: "/sitemap.xml" },
 			],
 			plugins: ["./server/plugins/csp.ts", "./server/plugins/robots.ts"],
 		}),
