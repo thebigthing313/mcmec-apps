@@ -11,6 +11,7 @@
  */
 import * as employees from "./employees/employees";
 import * as holidays from "./employees/holidays";
+import * as staffEvents from "./employees/staff-events";
 import type { CommandRegistry } from "./types";
 import * as users from "./users/users";
 import * as documentCategories from "./website/document-categories";
@@ -26,12 +27,17 @@ import * as sprayMissions from "./website/spray-missions";
 
 export const REGISTRY: CommandRegistry = {
 	"employees.addEmployee": employees.addEmployee,
+	"employees.cancelStaffEvent": staffEvents.cancelStaffEvent,
 	"employees.createHoliday": holidays.createHoliday,
+	"employees.createStaffEvent": staffEvents.createStaffEvent,
 	"employees.deleteEmployee": employees.deleteEmployee,
 	"employees.deleteHoliday": holidays.deleteHoliday,
+	"employees.deleteStaffEvent": staffEvents.deleteStaffEvent,
 	"employees.inviteEmployee": employees.inviteEmployee,
+	"employees.uncancelStaffEvent": staffEvents.uncancelStaffEvent,
 	"employees.updateEmployeeDetails": employees.updateEmployeeDetails,
 	"employees.updateHoliday": holidays.updateHoliday,
+	"employees.updateStaffEventDetails": staffEvents.updateStaffEventDetails,
 	"users.grantAppRole": users.grantAppRole,
 	"users.revokeAppRole": users.revokeAppRole,
 	"website.archiveNotice": notices.archiveNotice,

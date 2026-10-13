@@ -2,11 +2,12 @@
  * The registry: every command in the system, keyed by its name.
  *
  * Each slice of the cutover appended its domain module here; `notices` and `job_postings` were
- * the first two (#152), and `employees` + `users` are the last (#165). The vocabulary is now
- * complete and nothing is left to append: `reference` is the fourth domain #134 named and ships
- * zero commands, because the reference-data screen it would serve does not exist yet.
+ * the first two (#152), and `employees` + `users` were the last (#165). `reference` is the
+ * fourth domain #134 named and ships zero commands, because the reference-data screen it would
+ * serve does not exist yet. The staff Calendar (#302) has since added Holidays and Staff Events
+ * to `employees`: eight more, 59 in all.
  *
- * **51 commands, against #134's 50.** The one addition is `website.rescheduleSprayMission`, and
+ * **51 commands at the cutover, against #134's 50.** The one addition is `website.rescheduleSprayMission`, and
  * it is not a slip: ADR 0001 replaced the mission status `<Select>` with one button per legal
  * transition, and doing that exposed that a delayed or cancelled mission had no route back to
  * Scheduled. The dropdown had been supplying one and no command did.
@@ -15,6 +16,7 @@
 import type { AnyCommand } from "./command";
 import { EMPLOYEE_COMMANDS } from "./employees/employees";
 import { HOLIDAY_COMMANDS } from "./employees/holidays";
+import { STAFF_EVENT_COMMANDS } from "./employees/staff-events";
 import { USER_COMMANDS } from "./users/users";
 import { DOCUMENT_CATEGORY_COMMANDS } from "./website/document-categories";
 import { DOCUMENT_COMMANDS } from "./website/documents";
@@ -40,6 +42,7 @@ const ALL = [
 	...PUBLIC_REQUEST_COMMANDS,
 	...EMPLOYEE_COMMANDS,
 	...HOLIDAY_COMMANDS,
+	...STAFF_EVENT_COMMANDS,
 	...USER_COMMANDS,
 ] as const;
 

@@ -34,6 +34,7 @@ export const TABLE_NAMES = [
 	"sessions",
 	"spray_schedule_municipalities",
 	"spray_schedules",
+	"staff_events",
 	"users",
 	"verifications",
 	"zip_codes",

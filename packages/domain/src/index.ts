@@ -16,6 +16,7 @@ export {
 } from "./command";
 export * as employees from "./employees/employees";
 export * as holidays from "./employees/holidays";
+export * as staffEvents from "./employees/staff-events";
 export {
 	TiptapDocument,
 	type TiptapDocumentType,

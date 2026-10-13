@@ -41,6 +41,8 @@ function centralTables(apiUrl: string) {
 			(await import("./tables/spray-schedule-municipalities")).create(apiUrl),
 		spraySchedules: async () =>
 			(await import("./tables/spray-schedules")).create(apiUrl),
+		staffEvents: async () =>
+			(await import("./tables/staff-events")).create(apiUrl),
 		zipCodes: async () => (await import("./tables/zip-codes")).create(apiUrl),
 	};
 }

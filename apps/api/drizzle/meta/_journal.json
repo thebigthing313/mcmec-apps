@@ -64,6 +64,20 @@
 			"when": 1791926129115,
 			"tag": "0008_holidays_updated_at",
 			"breakpoints": true
+		},
+		{
+			"idx": 9,
+			"version": "7",
+			"when": 1791926993877,
+			"tag": "0009_staff_events",
+			"breakpoints": true
+		},
+		{
+			"idx": 10,
+			"version": "7",
+			"when": 1791926995296,
+			"tag": "0010_staff_events_updated_at",
+			"breakpoints": true
 		}
 	]
 }

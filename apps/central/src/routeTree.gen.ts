@@ -37,6 +37,7 @@ import { Route as appWebsiteManagementJobPostingsRouteRouteImport } from './rout
 import { Route as appWebsiteManagementInsecticidesRouteRouteImport } from './routes/(app)/website-management/insecticides/route'
 import { Route as appWebsiteManagementDocumentsRouteRouteImport } from './routes/(app)/website-management/documents/route'
 import { Route as appWebsiteManagementDocumentCategoriesRouteRouteImport } from './routes/(app)/website-management/document-categories/route'
+import { Route as appHrStaffEventsRouteRouteImport } from './routes/(app)/hr/staff-events/route'
 import { Route as appHrHolidaysRouteRouteImport } from './routes/(app)/hr/holidays/route'
 import { Route as appHrEmployeesRouteRouteImport } from './routes/(app)/hr/employees/route'
 import { Route as appWebsiteManagementWeeklyActivityIndexRouteImport } from './routes/(app)/website-management/weekly-activity/index'
@@ -49,6 +50,7 @@ import { Route as appWebsiteManagementJobPostingsIndexRouteImport } from './rout
 import { Route as appWebsiteManagementInsecticidesIndexRouteImport } from './routes/(app)/website-management/insecticides/index'
 import { Route as appWebsiteManagementDocumentsIndexRouteImport } from './routes/(app)/website-management/documents/index'
 import { Route as appWebsiteManagementDocumentCategoriesIndexRouteImport } from './routes/(app)/website-management/document-categories/index'
+import { Route as appHrStaffEventsIndexRouteImport } from './routes/(app)/hr/staff-events/index'
 import { Route as appHrHolidaysIndexRouteImport } from './routes/(app)/hr/holidays/index'
 import { Route as appHrEmployeesIndexRouteImport } from './routes/(app)/hr/employees/index'
 import { Route as appAdminUsersIndexRouteImport } from './routes/(app)/admin/users/index'
@@ -69,6 +71,8 @@ import { Route as appWebsiteManagementDocumentsCreateRouteImport } from './route
 import { Route as appWebsiteManagementDocumentsDocumentIdRouteImport } from './routes/(app)/website-management/documents/$documentId'
 import { Route as appWebsiteManagementDocumentCategoriesCreateRouteImport } from './routes/(app)/website-management/document-categories/create'
 import { Route as appWebsiteManagementDocumentCategoriesCategoryIdRouteImport } from './routes/(app)/website-management/document-categories/$categoryId'
+import { Route as appHrStaffEventsCreateRouteImport } from './routes/(app)/hr/staff-events/create'
+import { Route as appHrStaffEventsStaffEventIdRouteImport } from './routes/(app)/hr/staff-events/$staffEventId'
 import { Route as appHrHolidaysCreateRouteImport } from './routes/(app)/hr/holidays/create'
 import { Route as appHrHolidaysHolidayIdRouteImport } from './routes/(app)/hr/holidays/$holidayId'
 import { Route as appHrEmployeesEmployeeIdRouteImport } from './routes/(app)/hr/employees/$employeeId'
@@ -80,6 +84,7 @@ import { Route as appWebsiteManagementJobPostingsPostingIdEditRouteImport } from
 import { Route as appWebsiteManagementInsecticidesInsecticideIdEditRouteImport } from './routes/(app)/website-management/insecticides/$insecticideId_.edit'
 import { Route as appWebsiteManagementDocumentsDocumentIdEditRouteImport } from './routes/(app)/website-management/documents/$documentId_.edit'
 import { Route as appWebsiteManagementDocumentCategoriesCategoryIdEditRouteImport } from './routes/(app)/website-management/document-categories/$categoryId_.edit'
+import { Route as appHrStaffEventsStaffEventIdEditRouteImport } from './routes/(app)/hr/staff-events/$staffEventId_.edit'
 import { Route as appHrHolidaysHolidayIdEditRouteImport } from './routes/(app)/hr/holidays/$holidayId_.edit'
 import { Route as appHrEmployeesEmployeeIdEditRouteImport } from './routes/(app)/hr/employees/$employeeId_.edit'
 
@@ -232,6 +237,11 @@ const appWebsiteManagementDocumentCategoriesRouteRoute =
     path: '/document-categories',
     getParentRoute: () => appWebsiteManagementRouteRoute,
   } as any)
+const appHrStaffEventsRouteRoute = appHrStaffEventsRouteRouteImport.update({
+  id: '/staff-events',
+  path: '/staff-events',
+  getParentRoute: () => appHrRouteRoute,
+} as any)
 const appHrHolidaysRouteRoute = appHrHolidaysRouteRouteImport.update({
   id: '/holidays',
   path: '/holidays',
@@ -302,6 +312,11 @@ const appWebsiteManagementDocumentCategoriesIndexRoute =
     path: '/',
     getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
   } as any)
+const appHrStaffEventsIndexRoute = appHrStaffEventsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appHrStaffEventsRouteRoute,
+} as any)
 const appHrHolidaysIndexRoute = appHrHolidaysIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -419,6 +434,17 @@ const appWebsiteManagementDocumentCategoriesCategoryIdRoute =
     path: '/$categoryId',
     getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
   } as any)
+const appHrStaffEventsCreateRoute = appHrStaffEventsCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => appHrStaffEventsRouteRoute,
+} as any)
+const appHrStaffEventsStaffEventIdRoute =
+  appHrStaffEventsStaffEventIdRouteImport.update({
+    id: '/$staffEventId',
+    path: '/$staffEventId',
+    getParentRoute: () => appHrStaffEventsRouteRoute,
+  } as any)
 const appHrHolidaysCreateRoute = appHrHolidaysCreateRouteImport.update({
   id: '/create',
   path: '/create',
@@ -483,6 +509,12 @@ const appWebsiteManagementDocumentCategoriesCategoryIdEditRoute =
     path: '/$categoryId/edit',
     getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
   } as any)
+const appHrStaffEventsStaffEventIdEditRoute =
+  appHrStaffEventsStaffEventIdEditRouteImport.update({
+    id: '/$staffEventId_/edit',
+    path: '/$staffEventId/edit',
+    getParentRoute: () => appHrStaffEventsRouteRoute,
+  } as any)
 const appHrHolidaysHolidayIdEditRoute =
   appHrHolidaysHolidayIdEditRouteImport.update({
     id: '/$holidayId_/edit',
@@ -509,6 +541,7 @@ export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
   '/hr/employees': typeof appHrEmployeesRouteRouteWithChildren
   '/hr/holidays': typeof appHrHolidaysRouteRouteWithChildren
+  '/hr/staff-events': typeof appHrStaffEventsRouteRouteWithChildren
   '/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesRouteRouteWithChildren
   '/website-management/documents': typeof appWebsiteManagementDocumentsRouteRouteWithChildren
   '/website-management/insecticides': typeof appWebsiteManagementInsecticidesRouteRouteWithChildren
@@ -528,6 +561,8 @@ export interface FileRoutesByFullPath {
   '/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
   '/hr/holidays/$holidayId': typeof appHrHolidaysHolidayIdRoute
   '/hr/holidays/create': typeof appHrHolidaysCreateRoute
+  '/hr/staff-events/$staffEventId': typeof appHrStaffEventsStaffEventIdRoute
+  '/hr/staff-events/create': typeof appHrStaffEventsCreateRoute
   '/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
   '/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
   '/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
@@ -548,6 +583,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof appAdminUsersIndexRoute
   '/hr/employees/': typeof appHrEmployeesIndexRoute
   '/hr/holidays/': typeof appHrHolidaysIndexRoute
+  '/hr/staff-events/': typeof appHrStaffEventsIndexRoute
   '/website-management/document-categories/': typeof appWebsiteManagementDocumentCategoriesIndexRoute
   '/website-management/documents/': typeof appWebsiteManagementDocumentsIndexRoute
   '/website-management/insecticides/': typeof appWebsiteManagementInsecticidesIndexRoute
@@ -560,6 +596,7 @@ export interface FileRoutesByFullPath {
   '/website-management/weekly-activity': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/hr/employees/$employeeId/edit': typeof appHrEmployeesEmployeeIdEditRoute
   '/hr/holidays/$holidayId/edit': typeof appHrHolidaysHolidayIdEditRoute
+  '/hr/staff-events/$staffEventId/edit': typeof appHrStaffEventsStaffEventIdEditRoute
   '/website-management/document-categories/$categoryId/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
   '/website-management/documents/$documentId/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
   '/website-management/insecticides/$insecticideId/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
@@ -585,6 +622,8 @@ export interface FileRoutesByTo {
   '/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
   '/hr/holidays/$holidayId': typeof appHrHolidaysHolidayIdRoute
   '/hr/holidays/create': typeof appHrHolidaysCreateRoute
+  '/hr/staff-events/$staffEventId': typeof appHrStaffEventsStaffEventIdRoute
+  '/hr/staff-events/create': typeof appHrStaffEventsCreateRoute
   '/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
   '/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
   '/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
@@ -605,6 +644,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof appAdminUsersIndexRoute
   '/hr/employees': typeof appHrEmployeesIndexRoute
   '/hr/holidays': typeof appHrHolidaysIndexRoute
+  '/hr/staff-events': typeof appHrStaffEventsIndexRoute
   '/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesIndexRoute
   '/website-management/documents': typeof appWebsiteManagementDocumentsIndexRoute
   '/website-management/insecticides': typeof appWebsiteManagementInsecticidesIndexRoute
@@ -617,6 +657,7 @@ export interface FileRoutesByTo {
   '/website-management/weekly-activity': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/hr/employees/$employeeId/edit': typeof appHrEmployeesEmployeeIdEditRoute
   '/hr/holidays/$holidayId/edit': typeof appHrHolidaysHolidayIdEditRoute
+  '/hr/staff-events/$staffEventId/edit': typeof appHrStaffEventsStaffEventIdEditRoute
   '/website-management/document-categories/$categoryId/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
   '/website-management/documents/$documentId/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
   '/website-management/insecticides/$insecticideId/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
@@ -642,6 +683,7 @@ export interface FileRoutesById {
   '/(app)/': typeof appIndexRoute
   '/(app)/hr/employees': typeof appHrEmployeesRouteRouteWithChildren
   '/(app)/hr/holidays': typeof appHrHolidaysRouteRouteWithChildren
+  '/(app)/hr/staff-events': typeof appHrStaffEventsRouteRouteWithChildren
   '/(app)/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesRouteRouteWithChildren
   '/(app)/website-management/documents': typeof appWebsiteManagementDocumentsRouteRouteWithChildren
   '/(app)/website-management/insecticides': typeof appWebsiteManagementInsecticidesRouteRouteWithChildren
@@ -661,6 +703,8 @@ export interface FileRoutesById {
   '/(app)/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
   '/(app)/hr/holidays/$holidayId': typeof appHrHolidaysHolidayIdRoute
   '/(app)/hr/holidays/create': typeof appHrHolidaysCreateRoute
+  '/(app)/hr/staff-events/$staffEventId': typeof appHrStaffEventsStaffEventIdRoute
+  '/(app)/hr/staff-events/create': typeof appHrStaffEventsCreateRoute
   '/(app)/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
   '/(app)/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
   '/(app)/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
@@ -681,6 +725,7 @@ export interface FileRoutesById {
   '/(app)/admin/users/': typeof appAdminUsersIndexRoute
   '/(app)/hr/employees/': typeof appHrEmployeesIndexRoute
   '/(app)/hr/holidays/': typeof appHrHolidaysIndexRoute
+  '/(app)/hr/staff-events/': typeof appHrStaffEventsIndexRoute
   '/(app)/website-management/document-categories/': typeof appWebsiteManagementDocumentCategoriesIndexRoute
   '/(app)/website-management/documents/': typeof appWebsiteManagementDocumentsIndexRoute
   '/(app)/website-management/insecticides/': typeof appWebsiteManagementInsecticidesIndexRoute
@@ -693,6 +738,7 @@ export interface FileRoutesById {
   '/(app)/website-management/weekly-activity/': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/(app)/hr/employees/$employeeId_/edit': typeof appHrEmployeesEmployeeIdEditRoute
   '/(app)/hr/holidays/$holidayId_/edit': typeof appHrHolidaysHolidayIdEditRoute
+  '/(app)/hr/staff-events/$staffEventId_/edit': typeof appHrStaffEventsStaffEventIdEditRoute
   '/(app)/website-management/document-categories/$categoryId_/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
   '/(app)/website-management/documents/$documentId_/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
   '/(app)/website-management/insecticides/$insecticideId_/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
@@ -717,6 +763,7 @@ export interface FileRouteTypes {
     | '/'
     | '/hr/employees'
     | '/hr/holidays'
+    | '/hr/staff-events'
     | '/website-management/document-categories'
     | '/website-management/documents'
     | '/website-management/insecticides'
@@ -736,6 +783,8 @@ export interface FileRouteTypes {
     | '/hr/employees/$employeeId'
     | '/hr/holidays/$holidayId'
     | '/hr/holidays/create'
+    | '/hr/staff-events/$staffEventId'
+    | '/hr/staff-events/create'
     | '/website-management/document-categories/$categoryId'
     | '/website-management/document-categories/create'
     | '/website-management/documents/$documentId'
@@ -756,6 +805,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/hr/employees/'
     | '/hr/holidays/'
+    | '/hr/staff-events/'
     | '/website-management/document-categories/'
     | '/website-management/documents/'
     | '/website-management/insecticides/'
@@ -768,6 +818,7 @@ export interface FileRouteTypes {
     | '/website-management/weekly-activity'
     | '/hr/employees/$employeeId/edit'
     | '/hr/holidays/$holidayId/edit'
+    | '/hr/staff-events/$staffEventId/edit'
     | '/website-management/document-categories/$categoryId/edit'
     | '/website-management/documents/$documentId/edit'
     | '/website-management/insecticides/$insecticideId/edit'
@@ -793,6 +844,8 @@ export interface FileRouteTypes {
     | '/hr/employees/$employeeId'
     | '/hr/holidays/$holidayId'
     | '/hr/holidays/create'
+    | '/hr/staff-events/$staffEventId'
+    | '/hr/staff-events/create'
     | '/website-management/document-categories/$categoryId'
     | '/website-management/document-categories/create'
     | '/website-management/documents/$documentId'
@@ -813,6 +866,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/hr/employees'
     | '/hr/holidays'
+    | '/hr/staff-events'
     | '/website-management/document-categories'
     | '/website-management/documents'
     | '/website-management/insecticides'
@@ -825,6 +879,7 @@ export interface FileRouteTypes {
     | '/website-management/weekly-activity'
     | '/hr/employees/$employeeId/edit'
     | '/hr/holidays/$holidayId/edit'
+    | '/hr/staff-events/$staffEventId/edit'
     | '/website-management/document-categories/$categoryId/edit'
     | '/website-management/documents/$documentId/edit'
     | '/website-management/insecticides/$insecticideId/edit'
@@ -849,6 +904,7 @@ export interface FileRouteTypes {
     | '/(app)/'
     | '/(app)/hr/employees'
     | '/(app)/hr/holidays'
+    | '/(app)/hr/staff-events'
     | '/(app)/website-management/document-categories'
     | '/(app)/website-management/documents'
     | '/(app)/website-management/insecticides'
@@ -868,6 +924,8 @@ export interface FileRouteTypes {
     | '/(app)/hr/employees/$employeeId'
     | '/(app)/hr/holidays/$holidayId'
     | '/(app)/hr/holidays/create'
+    | '/(app)/hr/staff-events/$staffEventId'
+    | '/(app)/hr/staff-events/create'
     | '/(app)/website-management/document-categories/$categoryId'
     | '/(app)/website-management/document-categories/create'
     | '/(app)/website-management/documents/$documentId'
@@ -888,6 +946,7 @@ export interface FileRouteTypes {
     | '/(app)/admin/users/'
     | '/(app)/hr/employees/'
     | '/(app)/hr/holidays/'
+    | '/(app)/hr/staff-events/'
     | '/(app)/website-management/document-categories/'
     | '/(app)/website-management/documents/'
     | '/(app)/website-management/insecticides/'
@@ -900,6 +959,7 @@ export interface FileRouteTypes {
     | '/(app)/website-management/weekly-activity/'
     | '/(app)/hr/employees/$employeeId_/edit'
     | '/(app)/hr/holidays/$holidayId_/edit'
+    | '/(app)/hr/staff-events/$staffEventId_/edit'
     | '/(app)/website-management/document-categories/$categoryId_/edit'
     | '/(app)/website-management/documents/$documentId_/edit'
     | '/(app)/website-management/insecticides/$insecticideId_/edit'
@@ -1113,6 +1173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesRouteRouteImport
       parentRoute: typeof appWebsiteManagementRouteRoute
     }
+    '/(app)/hr/staff-events': {
+      id: '/(app)/hr/staff-events'
+      path: '/staff-events'
+      fullPath: '/hr/staff-events'
+      preLoaderRoute: typeof appHrStaffEventsRouteRouteImport
+      parentRoute: typeof appHrRouteRoute
+    }
     '/(app)/hr/holidays': {
       id: '/(app)/hr/holidays'
       path: '/holidays'
@@ -1196,6 +1263,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/website-management/document-categories/'
       preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesIndexRouteImport
       parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
+    }
+    '/(app)/hr/staff-events/': {
+      id: '/(app)/hr/staff-events/'
+      path: '/'
+      fullPath: '/hr/staff-events/'
+      preLoaderRoute: typeof appHrStaffEventsIndexRouteImport
+      parentRoute: typeof appHrStaffEventsRouteRoute
     }
     '/(app)/hr/holidays/': {
       id: '/(app)/hr/holidays/'
@@ -1337,6 +1411,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesCategoryIdRouteImport
       parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
     }
+    '/(app)/hr/staff-events/create': {
+      id: '/(app)/hr/staff-events/create'
+      path: '/create'
+      fullPath: '/hr/staff-events/create'
+      preLoaderRoute: typeof appHrStaffEventsCreateRouteImport
+      parentRoute: typeof appHrStaffEventsRouteRoute
+    }
+    '/(app)/hr/staff-events/$staffEventId': {
+      id: '/(app)/hr/staff-events/$staffEventId'
+      path: '/$staffEventId'
+      fullPath: '/hr/staff-events/$staffEventId'
+      preLoaderRoute: typeof appHrStaffEventsStaffEventIdRouteImport
+      parentRoute: typeof appHrStaffEventsRouteRoute
+    }
     '/(app)/hr/holidays/create': {
       id: '/(app)/hr/holidays/create'
       path: '/create'
@@ -1414,6 +1502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRouteImport
       parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
     }
+    '/(app)/hr/staff-events/$staffEventId_/edit': {
+      id: '/(app)/hr/staff-events/$staffEventId_/edit'
+      path: '/$staffEventId/edit'
+      fullPath: '/hr/staff-events/$staffEventId/edit'
+      preLoaderRoute: typeof appHrStaffEventsStaffEventIdEditRouteImport
+      parentRoute: typeof appHrStaffEventsRouteRoute
+    }
     '/(app)/hr/holidays/$holidayId_/edit': {
       id: '/(app)/hr/holidays/$holidayId_/edit'
       path: '/$holidayId/edit'
@@ -1477,15 +1572,36 @@ const appHrHolidaysRouteRouteChildren: appHrHolidaysRouteRouteChildren = {
 const appHrHolidaysRouteRouteWithChildren =
   appHrHolidaysRouteRoute._addFileChildren(appHrHolidaysRouteRouteChildren)
 
+interface appHrStaffEventsRouteRouteChildren {
+  appHrStaffEventsStaffEventIdRoute: typeof appHrStaffEventsStaffEventIdRoute
+  appHrStaffEventsCreateRoute: typeof appHrStaffEventsCreateRoute
+  appHrStaffEventsIndexRoute: typeof appHrStaffEventsIndexRoute
+  appHrStaffEventsStaffEventIdEditRoute: typeof appHrStaffEventsStaffEventIdEditRoute
+}
+
+const appHrStaffEventsRouteRouteChildren: appHrStaffEventsRouteRouteChildren = {
+  appHrStaffEventsStaffEventIdRoute: appHrStaffEventsStaffEventIdRoute,
+  appHrStaffEventsCreateRoute: appHrStaffEventsCreateRoute,
+  appHrStaffEventsIndexRoute: appHrStaffEventsIndexRoute,
+  appHrStaffEventsStaffEventIdEditRoute: appHrStaffEventsStaffEventIdEditRoute,
+}
+
+const appHrStaffEventsRouteRouteWithChildren =
+  appHrStaffEventsRouteRoute._addFileChildren(
+    appHrStaffEventsRouteRouteChildren,
+  )
+
 interface appHrRouteRouteChildren {
   appHrEmployeesRouteRoute: typeof appHrEmployeesRouteRouteWithChildren
   appHrHolidaysRouteRoute: typeof appHrHolidaysRouteRouteWithChildren
+  appHrStaffEventsRouteRoute: typeof appHrStaffEventsRouteRouteWithChildren
   appHrIndexRoute: typeof appHrIndexRoute
 }
 
 const appHrRouteRouteChildren: appHrRouteRouteChildren = {
   appHrEmployeesRouteRoute: appHrEmployeesRouteRouteWithChildren,
   appHrHolidaysRouteRoute: appHrHolidaysRouteRouteWithChildren,
+  appHrStaffEventsRouteRoute: appHrStaffEventsRouteRouteWithChildren,
   appHrIndexRoute: appHrIndexRoute,
 }
 

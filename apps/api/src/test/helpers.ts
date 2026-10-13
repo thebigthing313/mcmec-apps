@@ -43,6 +43,7 @@ const WRITTEN_TABLES = [
 	"mosquito_activity_data",
 	"audit_log",
 	"sessions",
+	"staff_events",
 	"users",
 ] as const;
 
