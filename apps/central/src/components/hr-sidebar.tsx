@@ -1,4 +1,4 @@
-import { Home, Users } from "lucide-react";
+import { CalendarX2, Home, Users } from "lucide-react";
 import type { ShellApp } from "@/src/lib/shell";
 
 /**
@@ -8,7 +8,7 @@ import type { ShellApp } from "@/src/lib/shell";
  * never code-split: the route tree carries it into the entry chunk, and `pnpm check-bundle`
  * refuses App code there. A rail is a few links and icons; the screens behind them stay lazy.
  *
- * Two destinations need no heading above them, so the group is unlabelled.
+ * A handful of destinations need no heading above them, so the group is unlabelled.
  */
 export const HR_SHELL: ShellApp = {
 	activeApp: "HR",
@@ -20,6 +20,11 @@ export const HR_SHELL: ShellApp = {
 					icon: <Users />,
 					label: "Employees",
 					linkProps: { to: "/hr/employees" },
+				},
+				{
+					icon: <CalendarX2 />,
+					label: "Holidays",
+					linkProps: { to: "/hr/holidays" },
 				},
 			],
 		},
