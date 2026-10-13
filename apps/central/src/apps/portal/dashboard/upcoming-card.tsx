@@ -128,7 +128,7 @@ function UpcomingRow({ item, today }: { item: CalendarItem; today: string }) {
 					<button
 						aria-label={itemAccessibleName(item)}
 						className={cn(
-							"flex w-full items-center gap-3 rounded-md px-1 py-2 text-left hover:bg-muted focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
+							"flex w-full items-center gap-3 rounded-md px-1 py-2 text-left hover:bg-secondary focus-visible:relative focus-visible:z-10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
 							off && "text-muted-foreground",
 						)}
 						type="button"
