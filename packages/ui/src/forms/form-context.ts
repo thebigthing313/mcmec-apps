@@ -3,6 +3,7 @@ import { AutocompleteField } from "./autocomplete-field";
 import { CheckboxField } from "./checkbox-field";
 import { ComboboxField } from "./combobox-field";
 import { ContentField } from "./content-field";
+import { DateField } from "./date-field";
 import { DateTimeField } from "./datetime-field";
 import { FormWrapper } from "./form-wrapper";
 import { MultiComboboxField } from "./multi-combobox-field";
@@ -25,6 +26,7 @@ export const { useAppForm, withFieldGroup } = createFormHook({
 		CheckboxField,
 		ComboboxField,
 		ContentField,
+		DateField,
 		DateTimeField,
 		MultiComboboxField,
 		PasswordField,
