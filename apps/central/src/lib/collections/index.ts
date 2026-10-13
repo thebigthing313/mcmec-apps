@@ -20,6 +20,7 @@ function centralTables(apiUrl: string) {
 		documentTypes: async () =>
 			(await import("./tables/document-types")).create(apiUrl),
 		employees: async () => (await import("./tables/employees")).create(apiUrl),
+		holidays: async () => (await import("./tables/holidays")).create(apiUrl),
 		insecticides: async () =>
 			(await import("./tables/insecticides")).create(apiUrl),
 		jobPostings: async () =>

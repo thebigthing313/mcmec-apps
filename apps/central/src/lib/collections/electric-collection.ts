@@ -68,6 +68,24 @@ export const electricParser = {
 	timestamptz: toDate,
 };
 
+/**
+ * A parser override for a table whose `date` columns are days, not instants (#298).
+ *
+ * `electricParser` turns every Postgres `date` into a Date — by type, not by column — which is
+ * what Spray Missions and `public` were written against, so the shared default stays. A table
+ * whose row schema types its dates as `z.iso.date()` strings passes this as its `parser`, and its
+ * synced rows then hold the same `YYYY-MM-DD` text its optimistic rows do. A Date there would be
+ * UTC midnight, which New Jersey reads as the evening before.
+ */
+export const datesAsText = {
+	date: (value: string) => value,
+} as const;
+
+/** What a table may lay over `electricParser`, one Postgres type at a time. */
+export type ParserOverride = Partial<
+	Record<keyof typeof electricParser, (value: string) => unknown>
+>;
+
 const credentialedFetch = (input: RequestInfo | URL, init?: RequestInit) =>
 	fetch(input, { ...init, credentials: "include" });
 
@@ -157,6 +175,11 @@ export type ElectricCollectionOptions<
 	schema: TSchema;
 	/** API origin (VITE_API_URL) */
 	apiUrl: string;
+	/**
+	 * Laid over `electricParser` for this table only — `datesAsText` for a row schema whose
+	 * `date` columns are strings. Absent, the shared default applies.
+	 */
+	parser?: ParserOverride;
 } & WriteMode<TTable>;
 
 type ElectricCollection<
@@ -187,11 +210,13 @@ function createElectricCollection<
 		schema,
 		apiUrl,
 		commands = false,
+		parser,
 	} = options as {
 		table: TTable;
 		schema: TSchema;
 		apiUrl: string;
 		commands?: boolean;
+		parser?: ParserOverride;
 	};
 
 	// `electricCollectionOptions` validates the full config below. Handing it to
@@ -252,7 +277,7 @@ function createElectricCollection<
 			// Electric types `parser` against the row's declared `Extensions`; our schema rows
 			// don't brand `Date` as an extension, so a Date-returning parser can't be expressed
 			// in that generic. The functions are correct at runtime — cast past it.
-			parser: electricParser as never,
+			parser: { ...electricParser, ...parser } as never,
 			url: `${apiUrl}${shapePathFor(table)}`,
 		},
 		startSync,
