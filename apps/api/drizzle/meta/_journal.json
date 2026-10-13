@@ -36,6 +36,20 @@
 			"when": 1787592078041,
 			"tag": "0004_fair_human_torch",
 			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "7",
+			"when": 1791901328256,
+			"tag": "0005_insecticide_fact_sheet",
+			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "7",
+			"when": 1791901329700,
+			"tag": "0006_backfill_zenivex_fact_sheet",
+			"breakpoints": true
 		}
 	]
 }

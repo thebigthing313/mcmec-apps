@@ -154,6 +154,7 @@ function fakeCollections() {
 			{
 				active_ingredient: "Etofenprox",
 				active_ingredient_url: "https://example.com/ai",
+				fact_sheet_url: null,
 				id: INSECTICIDE_ID,
 				label_url: "https://example.com/label.pdf",
 				msds_url: "https://example.com/sds.pdf",

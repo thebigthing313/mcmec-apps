@@ -32,6 +32,7 @@ export function CreateInsecticidePage() {
 		active_ingredient: "",
 		active_ingredient_url: "",
 		created_at: new Date(),
+		fact_sheet_url: null,
 		id: crypto.randomUUID(),
 		label_url: "",
 		msds_url: "",

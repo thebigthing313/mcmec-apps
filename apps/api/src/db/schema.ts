@@ -237,6 +237,7 @@ export const insecticides = pgTable("insecticides", {
 	tradeName: text("trade_name").notNull(),
 	labelUrl: text("label_url").notNull(),
 	msdsUrl: text("msds_url").notNull(),
+	factSheetUrl: text("fact_sheet_url"),
 	...timestamps,
 });
 

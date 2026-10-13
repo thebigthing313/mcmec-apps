@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-29T20:46:20.991Z
-commit: 50c8b1f fix(lib): switcher copy for HR and Admin uses the glossary (#267) (#277)
+released: 2026-10-13T16:49:02.762Z
+commit: a4d2f75 chore: version packages

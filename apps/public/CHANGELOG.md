@@ -1,5 +1,14 @@
 # public
 
+## 2.1.4
+
+### Patch Changes
+
+- f23e665: Insecticides store a fact sheet URL (#220). Staff add or change it from Website Management, and the public spray schedule reads it from the record instead of matching the Zenivex trade name. A migration carries the existing Zenivex fact sheet into the new column.
+- f7b1375: The spray schedule and products pages no longer fail while `api` is still migrating: an insecticide row without `fact_sheet_url` reads as having no fact sheet.
+- Updated dependencies [f23e665]
+  - @mcmec/schemas@3.1.0
+
 ## 2.1.3
 
 ### Patch Changes
