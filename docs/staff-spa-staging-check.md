@@ -49,15 +49,45 @@ sets in `central`'s route tests are the reference if this doc and the code disag
 
 ## Self Service Portal
 
-`/`, `/notices` and `/meetings`. No App Role; any signed-in User with a linked Employee.
+`/`, `/calendar`, `/holidays`, `/notices` and `/meetings`. No App Role; any signed-in User with a
+linked Employee.
 
-- [ ] 1. As the no-role User, `/` loads and Network shows `employees` only. `notices`,
-  `notice_types` and `meetings` appear only after opening `/notices` or `/meetings`.
+- [ ] 1. As the no-role User, `/` loads and Network shows `employees`, plus the four Calendar
+  tables the Upcoming card reads: `staff_events`, `holidays`, `meetings` and `spray_schedules`.
+  `notices` and `notice_types` appear only after opening `/notices`.
 - [ ] 2. As the no-role User, the app switcher lists only the Self Service Portal and has no
   dropdown. (This App has no App Role to lack, so this step stands in for the deep-link check.)
-- [ ] 3. As the no-linked-Employee User, `/` shows the full-page refusal and no shapes load.
+- [ ] 3. As the no-linked-Employee User, `/` shows the full-page refusal and no shapes load —
+  none of the four Calendar tables either.
 - [ ] 4. Sign out, then sign in as another User: none of the previous User's shapes resume.
 - [ ] 5. Hard-refresh on `/notices`: no bounce to `/login`.
+
+### Calendar (#302)
+
+Seed first, as the HR User: two Holidays this year (one with a **Falls on** date), one next year,
+a timed single-day Staff Event, an all-day Staff Event spanning a week boundary, and a Cancelled
+one. A Spray Mission Delayed with a rain date and a Meeting already exist on staging, or add them
+in Website Management.
+
+- [ ] 6. **Upcoming card** on `/`: up to five rows in Calendar order, each "Tomorrow · 7pm" /
+  weekday / date with a date tile and source dot; the Cancelled Staff Event greyed and struck
+  through; a Delayed mission's original date absent once its rain date is listed. **Open
+  Calendar →** goes to `/calendar`.
+- [ ] 7. **`/calendar`** (month): weeks start Sunday; the multi-day Staff Event is one bar squared
+  off where it crosses the week; timed items show dot, time and title; a day with more than three
+  items offers "+N more". ‹ › and **Today** move the month and keep `?month=` in the URL.
+- [ ] 8. **`/calendar?view=agenda`**: the month by day as a list; the multi-day item on the day it
+  starts. Status badges: Cancelled, Delayed (with its "Moved to" line), Rain date (dashed),
+  Completed.
+- [ ] 9. Keyboard only: Tab reaches every item; Enter opens its popover; Escape closes it. A
+  Meeting's popover links to `/meetings/<id>`; a Holiday with a falls-on date says "Falls on …;
+  offices close on the observed day"; a Spray Mission shows only its map link.
+- [ ] 10. **`/holidays`**: this year's Holidays, past ones muted, the next one badged **Next**, the
+  count under the table. ‹ › steps a year; a year with none reads "No Holidays entered for ‹year›
+  yet. HR adds a year's Holidays once the Commission adopts them." Network shows `holidays` (and
+  `employees`) only when `/holidays` is opened directly.
+- [ ] 11. A day's dates read the same in the Calendar, the card and HR — no day off by one (the
+  `date` columns sync as text; a slip shows as the day before).
 
 ## Website Management
 
@@ -73,15 +103,27 @@ sets in `central`'s route tests are the reference if this doc and the code disag
 
 ## HR
 
-`/hr`, gated by `manage_employees`.
+`/hr`, gated by `manage_employees`. Screens: `/hr/employees`, `/hr/staff-events` and
+`/hr/holidays`.
 
 - [ ] 1. As the HR User, the App loads, and Network shows shape requests only for HR's tables
-  (+ `employees`), and only after entering `/hr`.
-- [ ] 2. As the Admin User, deep-link to `/hr/employees`: the URL is kept, `AppRoleRequired`
-  shows, and no HR tables load.
+  (+ `employees`), and only after entering `/hr`. `staff_events` loads only under
+  `/hr/staff-events`, `holidays` only under `/hr/holidays`.
+- [ ] 2. As the Admin User, deep-link to `/hr/employees` and `/hr/holidays`: the URL is kept,
+  `AppRoleRequired` shows, and no HR tables load.
 - [ ] 3. As the no-linked-Employee User, `/hr` shows the full-page refusal.
 - [ ] 4. Sign out, then sign in as another User: none of the previous User's shapes resume.
 - [ ] 5. Hard-refresh on `/hr/employees`: no bounce to `/login`.
+- [ ] 6. **Holidays**: add one, edit it, clear its Falls on date, delete it from the danger zone.
+  Adding a second Holiday on a day already taken shows "There is already a Holiday on …" under
+  **Observed**, and nothing is saved. The ‹ year › stepper moves the list.
+- [ ] 7. **Staff Events**: add a timed one and an all-day multi-day one. An end time before the
+  start on a single day, or an end date before the start, shows a field error. Cancel Event from
+  the row menu, then Reinstate from the detail page; on the edit form, change a field and use
+  **Save and Cancel Event** — both land together. Delete from the danger zone.
+- [ ] 8. `updated_at` moves on staging: after an edit, the row's `updated_at` (e.g. via the shape
+  response in Network) is later than its `created_at` — the custom migrations attached
+  `set_updated_at` to both new tables.
 
 ## Admin
 
