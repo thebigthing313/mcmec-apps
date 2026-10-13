@@ -23,6 +23,10 @@ export function HolidaySchedulePage() {
 	const year = search.year ?? yearOf(today);
 
 	const { items, isReady } = useCalendarItems({ holidays });
+	// Across every year, so the badge marks the Holiday actually coming up next — not the first of
+	// a later year while this one still has some to come. Only Holidays were asked for, and the
+	// items are in Calendar order.
+	const next = items.find((item) => item.startsOn >= today);
 
 	return (
 		<div className="max-w-4xl">
@@ -41,6 +45,7 @@ export function HolidaySchedulePage() {
 			<HolidayScheduleTable
 				holidays={holidaysInYear(items, year)}
 				isReady={isReady}
+				nextKey={next?.key}
 				today={today}
 				year={year}
 			/>

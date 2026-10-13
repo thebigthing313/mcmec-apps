@@ -8,8 +8,8 @@ import type { AppSidebar, ShellApp } from "@/src/lib/shell";
  *
  * "Commission" names the public record — what the Commission has published and what it has
  * called — as distinct from Dashboard, which is where you are rather than what you are reading.
- * The Dashboard group stays unlabelled, per DESIGN.md's rule that a group of three destinations
- * or fewer drops its label rather than inventing one.
+ * The Dashboard group stays unlabelled: it leads the rail, and the dated views beside Dashboard
+ * (#302) belong to no name DESIGN.md would have us invent for them.
  */
 const PORTAL_SIDEBAR: AppSidebar = [
 	{

@@ -40,6 +40,7 @@ describe("HolidayScheduleTable", () => {
 			<HolidayScheduleTable
 				holidays={HOLIDAYS}
 				isReady
+				nextKey={HOLIDAYS[2]?.key}
 				today="2026-10-13"
 				year={2026}
 			/>,
@@ -58,17 +59,22 @@ describe("HolidayScheduleTable", () => {
 		expect(screen.getAllByText("Next")).toHaveLength(1);
 	});
 
-	it("counts a Holiday observed today as the next one", () => {
+	it("badges nothing in a year whose Holidays are not the next to come", () => {
+		// Viewing 2026 from 2025: every row is ahead, but the next Holiday is still in 2025.
 		render(
 			<HolidayScheduleTable
 				holidays={HOLIDAYS}
 				isReady
-				today="2026-11-11"
+				nextKey="holiday-in-2025"
+				today="2025-10-13"
 				year={2026}
 			/>,
 		);
 
-		expect(within(rowOf("Veterans Day")).getByText("Next")).toBeTruthy();
+		expect(screen.queryByText("Next")).toBeNull();
+		expect(rowOf("New Year's Day").className).not.toContain(
+			"text-muted-foreground",
+		);
 	});
 
 	it("shows the day a Holiday falls on, or a dash when it is observed that day", () => {

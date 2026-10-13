@@ -29,11 +29,12 @@ const SKELETON_ROWS = ["a", "b", "c", "d", "e"];
 /**
  * One year's Holidays as a table: Holiday | Observed (offices closed) | Falls on.
  *
- * Presentational — the page hands it the year's Holidays in Calendar order and "today" in
- * Edison, so it can be rendered with any day as today.
+ * Presentational — the page hands it the year's Holidays in Calendar order, "today" in Edison
+ * and the next Holiday's key, so it can be rendered with any day as today.
  *
  * - A Holiday observed before today is past, and muted.
- * - The first observed today or later is the next one, and carries a **Next** badge.
+ * - The next Holiday carries a **Next** badge. It is the first observed today or later in any
+ *   year, so a later year shows no badge while this year still has a Holiday to come.
  * - The count is the table's caption, so it sits under the table and names it for a screen
  *   reader in one.
  *
@@ -44,11 +45,14 @@ export function HolidayScheduleTable({
 	holidays,
 	year,
 	today,
+	nextKey,
 	isReady,
 }: {
 	holidays: CalendarItem[];
 	year: number;
 	today: string;
+	/** The key of the first Holiday observed today or later, in any year. */
+	nextKey?: string;
 	isReady: boolean;
 }) {
 	if (isReady && holidays.length === 0) {
@@ -66,8 +70,6 @@ export function HolidayScheduleTable({
 			</Empty>
 		);
 	}
-
-	const next = holidays.find((holiday) => holiday.startsOn >= today);
 
 	return (
 		<div className="overflow-hidden rounded-xl border">
@@ -95,7 +97,7 @@ export function HolidayScheduleTable({
 								>
 									<TableCell className="font-medium">
 										{holiday.title}
-										{holiday === next ? (
+										{holiday.key === nextKey ? (
 											<Badge className="ml-2">Next</Badge>
 										) : null}
 									</TableCell>
