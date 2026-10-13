@@ -110,14 +110,6 @@ function fakeCollections() {
 				user_id: USER_ID,
 			},
 		]),
-		holidays: localTable("holidays", [
-			{
-				falls_on: null,
-				id: "123e4567-e89b-12d3-a456-426614174080",
-				name: "New Year's Day",
-				observed_on: "2026-01-01",
-			},
-		]),
 		meetings: localTable("meetings", [
 			{
 				id: MEETING_ID,
@@ -223,6 +215,33 @@ function fakeCollections() {
 		staffEvents: localTable("staff_events", []),
 		zipCodes: localTable("zip_codes", [
 			{ city: "Edison", code: "08817", id: ZIP_CODE_ID, state: "NJ" },
+		]),
+		// The Employees domain's Calendar tables, read by the Portal's Calendar surfaces.
+		holidays: localTable("holidays", [
+			{
+				created_at: new Date("2026-01-02T00:00:00Z"),
+				falls_on: null,
+				id: "123e4567-e89b-12d3-a456-426614174080",
+				name: "Columbus Day",
+				observed_on: "2026-10-12",
+				updated_at: new Date("2026-01-02T00:00:00Z"),
+			},
+		]),
+		staffEvents: localTable("staff_events", [
+			{
+				created_at: new Date("2026-01-02T00:00:00Z"),
+				description: null,
+				end_time: null,
+				ends_on: null,
+				id: "123e4567-e89b-12d3-a456-426614174081",
+				is_cancelled: false,
+				location: null,
+				start_time: null,
+				starts_on: "2026-10-21",
+				title: "Staff Day",
+				updated_at: new Date("2026-01-02T00:00:00Z"),
+				url: null,
+			},
 		]),
 	});
 	const use = vi.spyOn(registry, "use");

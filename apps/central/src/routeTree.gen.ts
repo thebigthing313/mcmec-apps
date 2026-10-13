@@ -17,6 +17,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as appHolidaysRouteImport } from './routes/(app)/holidays'
+import { Route as appCalendarRouteImport } from './routes/(app)/calendar'
 import { Route as appWebsiteManagementRouteRouteImport } from './routes/(app)/website-management/route'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
 import { Route as appMeetingsRouteRouteImport } from './routes/(app)/meetings/route'
@@ -125,6 +126,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
 const appHolidaysRoute = appHolidaysRouteImport.update({
   id: '/holidays',
   path: '/holidays',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appCalendarRoute = appCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appWebsiteManagementRouteRoute =
@@ -540,6 +546,7 @@ export interface FileRoutesByFullPath {
   '/meetings': typeof appMeetingsRouteRouteWithChildren
   '/notices': typeof appNoticesRouteRouteWithChildren
   '/website-management': typeof appWebsiteManagementRouteRouteWithChildren
+  '/calendar': typeof appCalendarRoute
   '/holidays': typeof appHolidaysRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
@@ -614,6 +621,7 @@ export interface FileRoutesByFullPath {
   '/website-management/spray-missions/$sprayScheduleId/edit': typeof appWebsiteManagementSprayMissionsSprayScheduleIdEditRoute
 }
 export interface FileRoutesByTo {
+  '/calendar': typeof appCalendarRoute
   '/holidays': typeof appHolidaysRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
@@ -684,6 +692,7 @@ export interface FileRoutesById {
   '/(app)/meetings': typeof appMeetingsRouteRouteWithChildren
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/(app)/website-management': typeof appWebsiteManagementRouteRouteWithChildren
+  '/(app)/calendar': typeof appCalendarRoute
   '/(app)/holidays': typeof appHolidaysRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
@@ -765,6 +774,7 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/notices'
     | '/website-management'
+    | '/calendar'
     | '/holidays'
     | '/forgot-password'
     | '/login'
@@ -839,6 +849,7 @@ export interface FileRouteTypes {
     | '/website-management/spray-missions/$sprayScheduleId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/calendar'
     | '/holidays'
     | '/forgot-password'
     | '/login'
@@ -908,6 +919,7 @@ export interface FileRouteTypes {
     | '/(app)/meetings'
     | '/(app)/notices'
     | '/(app)/website-management'
+    | '/(app)/calendar'
     | '/(app)/holidays'
     | '/_auth/forgot-password'
     | '/_auth/login'
@@ -1043,6 +1055,13 @@ declare module '@tanstack/react-router' {
       path: '/holidays'
       fullPath: '/holidays'
       preLoaderRoute: typeof appHolidaysRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/calendar': {
+      id: '/(app)/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof appCalendarRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/website-management': {
@@ -1915,6 +1934,7 @@ interface appRouteRouteChildren {
   appMeetingsRouteRoute: typeof appMeetingsRouteRouteWithChildren
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appWebsiteManagementRouteRoute: typeof appWebsiteManagementRouteRouteWithChildren
+  appCalendarRoute: typeof appCalendarRoute
   appHolidaysRoute: typeof appHolidaysRoute
   appIndexRoute: typeof appIndexRoute
 }
@@ -1925,6 +1945,7 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appMeetingsRouteRoute: appMeetingsRouteRouteWithChildren,
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appWebsiteManagementRouteRoute: appWebsiteManagementRouteRouteWithChildren,
+  appCalendarRoute: appCalendarRoute,
   appHolidaysRoute: appHolidaysRoute,
   appIndexRoute: appIndexRoute,
 }
