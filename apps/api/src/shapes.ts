@@ -59,6 +59,8 @@ const POLICIES: Record<string, ShapePolicy> = {
 	employees: authenticated,
 	// Every Employee sees the Commission's Holidays on the Calendar; never the public (#302).
 	holidays: authenticated,
+	// Shown to every Employee alike and never to the public (CONTEXT.md: Staff Event).
+	staff_events: authenticated,
 	public_requests: withPermission("manage_website"),
 	notice_postings: withPermission("manage_website"),
 };

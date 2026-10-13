@@ -212,6 +212,42 @@ export const holidays = pgTable("holidays", {
 	...timestamps,
 });
 
+// A dated item every Employee should know about (CONTEXT.md: Staff Event). One row is one
+// Calendar item: there is no series (#301). `ends_on` null is a single day; `start_time` null is
+// all day. `is_cancelled` moves only through the lifecycle commands.
+export const staffEvents = pgTable(
+	"staff_events",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		title: text("title").notNull(),
+		description: text("description"),
+		startsOn: date("starts_on").notNull(),
+		endsOn: date("ends_on"),
+		startTime: time("start_time"),
+		endTime: time("end_time"),
+		location: text("location"),
+		url: text("url"), // webinar or registration link
+		isCancelled: boolean("is_cancelled").notNull().default(false),
+		...timestamps,
+	},
+	(t) => [
+		check(
+			"staff_events_ends_after_starts",
+			sql`${t.endsOn} is null or ${t.endsOn} >= ${t.startsOn}`,
+		),
+		check(
+			"staff_events_end_time_needs_start_time",
+			sql`${t.endTime} is null or ${t.startTime} is not null`,
+		),
+		// On a single-day event the end has to come after the start. Across days, 17:00 to
+		// 09:00 the next morning is a real event, so the times are not compared.
+		check(
+			"staff_events_single_day_end_after_start",
+			sql`${t.endTime} is null or ${t.endsOn} is not null or ${t.endTime} > ${t.startTime}`,
+		),
+	],
+);
+
 // ══ Lookups ══════════════════════════════════════════════════════════════════
 export const zipCodes = pgTable("zip_codes", {
 	id: uuid("id").primaryKey().defaultRandom(),
