@@ -15,6 +15,7 @@ export {
 	type PayloadOf,
 } from "./command";
 export * as employees from "./employees/employees";
+export * as holidays from "./employees/holidays";
 export {
 	TiptapDocument,
 	type TiptapDocumentType,

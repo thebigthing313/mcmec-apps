@@ -200,6 +200,18 @@ export const employees = pgTable(
 	(t) => [index("employees_user_id_idx").on(t.userId)],
 );
 
+// A day the Commission observes with its offices closed (CONTEXT.md: Holiday). The year is
+// `observed_on`'s, never stored. `observed_on` is unique because an office can only close once a
+// day: coinciding Holidays share one row with a combined name. `falls_on` is the nominal date
+// when it differs (July 4 on a Saturday is observed Friday the 3rd); null means the same day.
+export const holidays = pgTable("holidays", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	name: text("name").notNull(),
+	observedOn: date("observed_on").notNull().unique(),
+	fallsOn: date("falls_on"),
+	...timestamps,
+});
+
 // ══ Lookups ══════════════════════════════════════════════════════════════════
 export const zipCodes = pgTable("zip_codes", {
 	id: uuid("id").primaryKey().defaultRandom(),
