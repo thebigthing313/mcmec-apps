@@ -218,9 +218,8 @@ function fakeCollections() {
 				status: "scheduled",
 			},
 		]),
-		// The Calendar's own two tables, read by the Portal Dashboard's Upcoming card. Empty: the
-		// tests check which tables a route asks for, not what the card lists.
-		holidays: localTable("holidays", []),
+		// Read by the Portal Dashboard's Upcoming card. Empty: the tests check which tables a route
+		// asks for, not what the card lists.
 		staffEvents: localTable("staff_events", []),
 		zipCodes: localTable("zip_codes", [
 			{ city: "Edison", code: "08817", id: ZIP_CODE_ID, state: "NJ" },
