@@ -1,5 +1,11 @@
 # @mcmec/schemas
 
+## 3.1.0
+
+### Minor Changes
+
+- f23e665: Insecticides store a fact sheet URL (#220). Staff add or change it from Website Management, and the public spray schedule reads it from the record instead of matching the Zenivex trade name. A migration carries the existing Zenivex fact sheet into the new column.
+
 ## 3.0.1
 
 ### Patch Changes
