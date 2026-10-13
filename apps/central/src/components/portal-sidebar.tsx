@@ -1,4 +1,10 @@
-import { CalendarDays, CalendarX2, FileText, Home } from "lucide-react";
+import {
+	Calendar,
+	CalendarDays,
+	CalendarX2,
+	FileText,
+	Home,
+} from "lucide-react";
 import type { AppSidebar, ShellApp } from "@/src/lib/shell";
 
 /**
@@ -15,6 +21,7 @@ const PORTAL_SIDEBAR: AppSidebar = [
 	{
 		items: [
 			{ icon: <Home />, label: "Dashboard", linkProps: { to: "/" } },
+			{ icon: <Calendar />, label: "Calendar", linkProps: { to: "/calendar" } },
 			{
 				icon: <CalendarX2 />,
 				label: "Holiday Schedule",

@@ -149,6 +149,10 @@ describe("tables each route asks for", () => {
 		[`/notices/${NOTICE_ID}`, ["employees", "noticeTypes", "notices"]],
 		["/meetings", ["employees", "meetings"]],
 		[`/meetings/${MEETING_ID}`, ["employees", "meetings"]],
+		[
+			"/calendar",
+			["employees", "holidays", "meetings", "spraySchedules", "staffEvents"],
+		],
 		["/holidays", ["employees", "holidays"]],
 		// HR and Admin read only the root's `employees`: they share the shell's instance.
 		["/hr", ["employees"]],
@@ -262,6 +266,41 @@ describe("tables each route asks for", () => {
 			})),
 		);
 		expect(asked()).toEqual(tables);
+	});
+});
+
+describe("the Calendar page", () => {
+	const EMPLOYEE = employeeWith([]);
+
+	it("opens the month in ?month= as a grid, with every source's items", async () => {
+		await renderAt("/calendar?month=2026-10", EMPLOYEE);
+
+		expect(
+			await screen.findByRole("heading", { name: "October 2026" }),
+		).toBeTruthy();
+		expect(screen.getByRole("table")).toBeTruthy();
+		expect(
+			screen.getByRole("button", {
+				name: "Holiday: Columbus Day, Monday, October 12, 2026, All day",
+			}),
+		).toBeTruthy();
+		expect(
+			screen.getByRole("link", { name: "Next month, November 2026" }),
+		).toHaveProperty("href", expect.stringContaining("month=2026-11"));
+	});
+
+	it("shows the agenda for ?view=agenda, keeping the view as it steps", async () => {
+		await renderAt("/calendar?month=2026-10&view=agenda", EMPLOYEE);
+
+		expect(
+			await screen.findByRole("button", {
+				name: "Staff Event: Staff Day, Wednesday, October 21, 2026, All day",
+			}),
+		).toBeTruthy();
+		expect(screen.queryByRole("table")).toBeNull();
+		expect(
+			screen.getByRole("link", { name: "Previous month, September 2026" }),
+		).toHaveProperty("href", expect.stringContaining("view=agenda"));
 	});
 });
 
