@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-09-29T20:46:20.991Z
-commit: 50c8b1f fix(lib): switcher copy for HR and Admin uses the glossary (#267) (#277)
+released: 2026-10-13T16:28:05.059Z
+commit: f88ab12 Merge pull request #290 from thebigthing313/feat/insecticide-fact-sheet-column
