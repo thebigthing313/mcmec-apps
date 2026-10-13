@@ -121,6 +121,7 @@ const getSpraySchedulesServerFn = createServerFn({ method: "GET" }).handler(
 				return {
 					...schedule,
 					insecticideActiveIngredient: insecticide?.active_ingredient ?? "",
+					insecticideFactSheetUrl: insecticide?.fact_sheet_url ?? null,
 					insecticideLabelUrl: insecticide?.label_url ?? null,
 					insecticideMsdsUrl: insecticide?.msds_url ?? null,
 					insecticideName: insecticide?.trade_name ?? "",

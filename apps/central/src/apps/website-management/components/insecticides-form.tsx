@@ -7,6 +7,10 @@ import {
 	type InsecticidesRowType,
 } from "@mcmec/schemas/db/insecticides";
 import { useAppForm } from "@mcmec/ui/forms/form-context";
+import z from "zod";
+
+/** Not every product has a fact sheet, so an empty field is allowed and stored as null. */
+const OptionalURLSchema = ValidURLSchema.or(z.literal("")).nullable();
 
 interface InsecticidesFormProps {
 	defaultValues: InsecticidesRowType;
@@ -24,7 +28,10 @@ export function InsecticidesForm({
 	const form = useAppForm({
 		defaultValues,
 		onSubmit: async ({ value }) => {
-			const parsedValue = InsecticidesRowSchema.parse(value);
+			const parsedValue = InsecticidesRowSchema.parse({
+				...value,
+				fact_sheet_url: value.fact_sheet_url || null,
+			});
 			await onSubmit(parsedValue);
 		},
 	});
@@ -67,6 +74,18 @@ export function InsecticidesForm({
 				</form.AppField>
 				<form.AppField name="msds_url" validators={{ onBlur: ValidURLSchema }}>
 					{(field) => <field.TextField label="SDS URL" showPaste={true} />}
+				</form.AppField>
+				<form.AppField
+					name="fact_sheet_url"
+					validators={{ onBlur: OptionalURLSchema }}
+				>
+					{(field) => (
+						<field.TextField
+							description="Optional. Shown on the public spray schedule next to the label and SDS."
+							label="Fact Sheet URL"
+							showPaste={true}
+						/>
+					)}
 				</form.AppField>
 
 				<form.SubmitFormButton className="w-full" label={submitLabel} />

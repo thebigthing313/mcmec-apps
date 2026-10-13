@@ -35,12 +35,14 @@ export function InsecticidePage() {
 		active_ingredient_url,
 		label_url,
 		msds_url,
+		fact_sheet_url,
 	} = insecticide;
 
 	const links = [
 		{ label: "Label", url: label_url },
 		{ label: "SDS", url: msds_url },
-	].filter((link) => link.url);
+		{ label: "Fact Sheet", url: fact_sheet_url },
+	].filter((link): link is { label: string; url: string } => !!link.url);
 
 	// No LifecycleButton: insecticides have no lifecycle columns. This page exists to hold the
 	// danger zone and for nothing else, which is exactly what ADR 0001 decided — `delete*` is

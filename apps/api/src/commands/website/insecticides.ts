@@ -1,7 +1,7 @@
 /**
  * Handlers for the three `insecticides` commands.
  *
- * A catalogue table: six columns, no lifecycle, and a delete refused while a Spray Mission
+ * A catalogue table: seven columns, no lifecycle, and a delete refused while a Spray Mission
  * still names the product.
  */
 import type { insecticides as insecticideCommands } from "@mcmec/domain";

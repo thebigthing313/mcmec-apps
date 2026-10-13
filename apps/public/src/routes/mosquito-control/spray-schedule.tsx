@@ -165,6 +165,7 @@ function SprayMissionGroup({
 						areaDescription={schedule.area_description}
 						endTime={schedule.end_time}
 						insecticideActiveIngredient={schedule.insecticideActiveIngredient}
+						insecticideFactSheetUrl={schedule.insecticideFactSheetUrl}
 						insecticideLabelUrl={schedule.insecticideLabelUrl}
 						insecticideMsdsUrl={schedule.insecticideMsdsUrl}
 						insecticideName={schedule.insecticideName}
