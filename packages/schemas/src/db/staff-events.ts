@@ -60,7 +60,7 @@ export function checkStaffEventDates(
 			ctx.addIssue({
 				code: "custom",
 				message:
-					"On a one-day event the end time has to be after the start time.",
+					"On a one-day Staff Event the end time has to be after the start time.",
 				path: ["end_time"],
 			});
 		}

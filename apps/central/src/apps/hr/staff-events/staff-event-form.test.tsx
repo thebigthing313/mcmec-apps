@@ -63,7 +63,7 @@ describe("StaffEventForm", () => {
 
 		expect(
 			await screen.findByText(
-				"On a one-day event the end time has to be after the start time.",
+				"On a one-day Staff Event the end time has to be after the start time.",
 			),
 		).toBeTruthy();
 		expect(onSubmit).not.toHaveBeenCalled();
@@ -74,7 +74,7 @@ describe("StaffEventForm", () => {
 		await waitFor(() =>
 			expect(
 				screen.queryByText(
-					"On a one-day event the end time has to be after the start time.",
+					"On a one-day Staff Event the end time has to be after the start time.",
 				),
 			).toBeNull(),
 		);
