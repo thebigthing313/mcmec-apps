@@ -7,8 +7,8 @@ import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Edit, ExternalLink, Undo2, Upload } from "lucide-react";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
 import { intents } from "@/src/lib/intents";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi("/(app)/website-management/documents/$documentId");
 

@@ -10,13 +10,9 @@ import {
 	NoticeForm,
 	type NoticeFormValues,
 } from "@/src/apps/website-management/components/notice-form";
-import {
-	changedFields,
-	type Draft,
-	runLifecycle,
-} from "@/src/apps/website-management/lib/lifecycle";
 import type { CentralCollection } from "@/src/lib/collections";
 import { intents } from "@/src/lib/intents";
+import { changedFields, type Draft, runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi("/(app)/website-management/notices/$noticeId_/edit");
 

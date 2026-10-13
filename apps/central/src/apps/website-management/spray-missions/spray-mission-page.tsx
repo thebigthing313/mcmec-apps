@@ -8,7 +8,6 @@ import { eq, useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Edit, ExternalLink } from "lucide-react";
 import { MissionTransitionButton } from "@/src/apps/website-management/components/mission-transition-button";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
 import { transitionsFrom } from "@/src/apps/website-management/lib/spray-mission-transitions";
 import {
 	formatTimeRange,
@@ -16,6 +15,7 @@ import {
 	statusLabel,
 } from "@/src/apps/website-management/lib/spray-schedule";
 import { intents } from "@/src/lib/intents";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi(
 	"/(app)/website-management/spray-missions/$sprayScheduleId",

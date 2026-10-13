@@ -10,13 +10,9 @@ import {
 	type MeetingFormValues,
 	MeetingsForm,
 } from "@/src/apps/website-management/components/meetings-form";
-import {
-	changedFields,
-	type Draft,
-	runLifecycle,
-} from "@/src/apps/website-management/lib/lifecycle";
 import type { CentralCollection } from "@/src/lib/collections";
 import { intents } from "@/src/lib/intents";
+import { changedFields, type Draft, runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi(
 	"/(app)/website-management/meetings/$meetingId_/edit",

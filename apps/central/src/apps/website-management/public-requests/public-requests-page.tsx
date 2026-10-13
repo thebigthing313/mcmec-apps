@@ -15,7 +15,6 @@ import {
 import { useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { CheckCircle2, Inbox, RotateCcw } from "lucide-react";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
 import {
 	displayStatus,
 	REQUEST_STATUS_LABELS,
@@ -23,6 +22,7 @@ import {
 	REQUEST_TYPE_LABELS,
 	requestTypeLabel,
 } from "@/src/apps/website-management/lib/public-requests";
+import { runLifecycle } from "@/src/lib/lifecycle";
 import {
 	ALL_REQUESTS as ALL,
 	type DisplayRequestStatus,
