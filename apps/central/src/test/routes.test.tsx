@@ -153,6 +153,7 @@ describe("tables each route asks for", () => {
 		[`/notices/${NOTICE_ID}`, ["employees", "noticeTypes", "notices"]],
 		["/meetings", ["employees", "meetings"]],
 		[`/meetings/${MEETING_ID}`, ["employees", "meetings"]],
+		["/holidays", ["employees", "holidays"]],
 		// HR and Admin read only the root's `employees`: they share the shell's instance.
 		["/hr", ["employees"]],
 		["/hr/employees", ["employees"]],
