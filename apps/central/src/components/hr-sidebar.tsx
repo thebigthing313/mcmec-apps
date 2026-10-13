@@ -1,4 +1,4 @@
-import { CalendarX2, Home, Users } from "lucide-react";
+import { CalendarClock, CalendarX2, Home, Users } from "lucide-react";
 import type { ShellApp } from "@/src/lib/shell";
 
 /**
@@ -20,6 +20,11 @@ export const HR_SHELL: ShellApp = {
 					icon: <Users />,
 					label: "Employees",
 					linkProps: { to: "/hr/employees" },
+				},
+				{
+					icon: <CalendarClock />,
+					label: "Staff Events",
+					linkProps: { to: "/hr/staff-events" },
 				},
 				{
 					icon: <CalendarX2 />,
