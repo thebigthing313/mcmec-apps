@@ -37,10 +37,6 @@ import { ItemDetails, SourceDot, StatusBadge } from "../calendar/parts";
 
 const route = getRouteApi("/(app)/");
 
-// `/calendar` is added by #306, in parallel with this card. Until it merges the route tree has
-// no such path, so the typed `to` is widened here; tighten it to `to="/calendar"` once it has.
-const CALENDAR_PATH: string = "/calendar";
-
 export function UpcomingCard() {
 	const { staffEvents, holidays, meetings, spraySchedules } =
 		route.useRouteContext();
@@ -59,7 +55,7 @@ export function UpcomingCard() {
 				</CardTitle>
 				<CardAction>
 					<Button asChild size="sm" variant="ghost">
-						<Link to={CALENDAR_PATH}>
+						<Link to="/calendar">
 							Open Calendar <ArrowRight />
 						</Link>
 					</Button>
