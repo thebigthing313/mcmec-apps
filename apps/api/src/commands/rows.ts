@@ -15,6 +15,7 @@
 import { eq } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import type { Tx } from "../actor";
+import { pgErrorCode } from "../db-errors";
 import { CommandError } from "./types";
 
 /** Every table these commands address is keyed by a single `id` column. */
@@ -71,10 +72,10 @@ export async function deleteRow(
 
 /** Postgres `foreign_key_violation`. A fact about the driver, not a policy about the table. */
 export function isForeignKeyViolation(e: unknown): boolean {
-	return (
-		typeof e === "object" &&
-		e !== null &&
-		"code" in e &&
-		(e as { code?: string }).code === "23503"
-	);
+	return pgErrorCode(e) === "23503";
+}
+
+/** Postgres `unique_violation`. As above: the handler decides what the collision means. */
+export function isUniqueViolation(e: unknown): boolean {
+	return pgErrorCode(e) === "23505";
 }
