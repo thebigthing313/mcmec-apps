@@ -225,6 +225,8 @@ A single institutional green against a family of neutrals that share its hue, so
 
 They were pastels until they had to carry data. Measured against the card ground, `chart-2` came out at 1.90:1, `chart-3` at 2.17:1, `chart-4` at 1.49:1 and `chart-5` at 1.85:1, all under the 3:1 that WCAG 1.4.11 requires of a graphical object carrying meaning: a pastel works as a large filled area and fails as a plotted line. Each hue is kept and its lightness pulled down until it clears 3:1, with chroma raised to stay vivid. `chart-1` already passed and is unchanged. Ratios against the card ground are now 3.68, 4.00, 3.86, 3.65 and 3.46.
 
+The staff Calendar is the one other place they appear (#302), and for the same reason: four sources of dated item — Meeting, Spray Mission, Holiday, Staff Event — are four series, told apart at a glance in a dense month grid. Meeting takes `chart-1`, Spray Mission `chart-3`, Holiday `chart-4` and Staff Event `chart-5`. Colour is never the only signal there: a legend names each source, and every item carries its source's name and icon in its details and its accessible name. A bar with a label on it takes black text on every light-theme token (4.97–5.74:1); in the dark theme, white on `chart-1` (6.82:1) and black on the rest.
+
 The current-year series on that chart is the one exception to the separation, and it runs the other way: it is drawn in Commission Green because it is the series the page exists to show. The five-year average takes `chart-1` and stays dashed, so the two are told apart by stroke pattern and not by colour alone; rainfall takes `chart-5`.
 
 ### Named Rules
@@ -535,7 +537,7 @@ One deliberate exemption: a **confirming register**, like the dashboard's "What 
 - **Don't** consume `--font-serif` or `--font-mono` while Lora and Fira Code remain unloaded.
 - **Don't** put a shadow on a resting surface. Cards, tables, panels, and inputs are flat.
 - **Don't** use Commission Green decoratively. It marks the agency, the primary action, and the active state — nothing else.
-- **Don't** let `chart-1`–`chart-5` out of the Weekly Mosquito Activity chart. They are a series palette, not a UI palette.
+- **Don't** let `chart-1`–`chart-5` out of the Weekly Mosquito Activity chart and the staff Calendar's source colours. They are a series palette, not a UI palette.
 - **Don't** plot a series in a colour that has not been measured against the ground it sits on. A chart line is a graphical object under WCAG 1.4.11 and needs 3:1, which is why the series palette is no longer pastel.
 - **Don't** use a pill radius for anything that isn't a status badge.
 - **Don't** render a lifecycle action as a switch, checkbox, or status dropdown.
