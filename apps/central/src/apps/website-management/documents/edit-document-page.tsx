@@ -11,13 +11,9 @@ import {
 	DocumentForm,
 	type DocumentFormValues,
 } from "@/src/apps/website-management/components/document-form";
-import {
-	changedFields,
-	type Draft,
-	runLifecycle,
-} from "@/src/apps/website-management/lib/lifecycle";
 import type { CentralCollection } from "@/src/lib/collections";
 import { intents } from "@/src/lib/intents";
+import { changedFields, type Draft, runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi(
 	"/(app)/website-management/documents/$documentId_/edit",

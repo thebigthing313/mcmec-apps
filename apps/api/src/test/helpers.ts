@@ -36,6 +36,7 @@ export type TestSession = {
  * caused.
  */
 const WRITTEN_TABLES = [
+	"holidays",
 	"insecticides",
 	"notices",
 	"notice_types",
@@ -149,4 +150,42 @@ export async function seedNotice(fields: {
 		title: fields.title ?? "A stored notice",
 	});
 	return id;
+}
+
+/**
+ * Asks the shape proxy for a table, as the browser would, and reports whether the policy let the
+ * request through.
+ *
+ * Electric itself is not running here, so the proxy's outbound fetch is answered by a stub; what
+ * a test observes is the policy's verdict (401/403 before any fetch) and, when it allows, the
+ * shape it would have asked Electric for.
+ */
+export async function requestShape(
+	table: string,
+	session?: TestSession,
+): Promise<{ status: number; forwarded: URL | null }> {
+	const realFetch = globalThis.fetch;
+	const env = {
+		url: process.env.ELECTRIC_URL,
+		secret: process.env.ELECTRIC_SECRET,
+	};
+	let forwarded: URL | null = null;
+	process.env.ELECTRIC_URL = "http://electric.test";
+	process.env.ELECTRIC_SECRET = "electric-test-secret";
+	globalThis.fetch = (async (input: RequestInfo | URL) => {
+		forwarded = new URL(String(input));
+		return new Response("[]", { status: 200 });
+	}) as typeof fetch;
+	try {
+		const res = await app.request(`/api/shapes/${table}?offset=-1`, {
+			headers: session?.headers ?? {},
+		});
+		return { forwarded, status: res.status };
+	} finally {
+		globalThis.fetch = realFetch;
+		if (env.url === undefined) delete process.env.ELECTRIC_URL;
+		else process.env.ELECTRIC_URL = env.url;
+		if (env.secret === undefined) delete process.env.ELECTRIC_SECRET;
+		else process.env.ELECTRIC_SECRET = env.secret;
+	}
 }

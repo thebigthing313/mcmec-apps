@@ -18,8 +18,8 @@ import {
 	Upload,
 } from "lucide-react";
 import { JOB_POSTING_STATUS_DISPLAY } from "@/src/apps/website-management/lib/job-postings";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
 import { intents } from "@/src/lib/intents";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi("/(app)/website-management/job-postings/$postingId");
 

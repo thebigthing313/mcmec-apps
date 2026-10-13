@@ -10,7 +10,6 @@ import { toastOnError } from "@mcmec/ui/lib/toast-on-error";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, RotateCcw } from "lucide-react";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
 import {
 	displayStatus,
 	humanizeDetailKey,
@@ -19,6 +18,7 @@ import {
 	requestTypeLabel,
 } from "@/src/apps/website-management/lib/public-requests";
 import { intents } from "@/src/lib/intents";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi(
 	"/(app)/website-management/public-requests/$requestId",

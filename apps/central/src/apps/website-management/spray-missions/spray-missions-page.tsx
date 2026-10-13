@@ -16,13 +16,13 @@ import {
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { Plus, SprayCan } from "lucide-react";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
 import { transitionsFrom } from "@/src/apps/website-management/lib/spray-mission-transitions";
 import {
 	formatTimeRange,
 	statusBadgeVariant,
 	statusLabel,
 } from "@/src/apps/website-management/lib/spray-schedule";
+import { runLifecycle } from "@/src/lib/lifecycle";
 import { MISSION_STATUSES } from "@/src/lib/website-management-search";
 
 type MissionRow = {

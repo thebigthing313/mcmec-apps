@@ -50,6 +50,20 @@
 			"when": 1791901329700,
 			"tag": "0006_backfill_zenivex_fact_sheet",
 			"breakpoints": true
+		},
+		{
+			"idx": 7,
+			"version": "7",
+			"when": 1791926127570,
+			"tag": "0007_holidays",
+			"breakpoints": true
+		},
+		{
+			"idx": 8,
+			"version": "7",
+			"when": 1791926129115,
+			"tag": "0008_holidays_updated_at",
+			"breakpoints": true
 		}
 	]
 }

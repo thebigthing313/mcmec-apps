@@ -9,13 +9,9 @@ import {
 	JobPostingForm,
 	type JobPostingFormValues,
 } from "@/src/apps/website-management/components/job-posting-form";
-import {
-	changedFields,
-	type Draft,
-	runLifecycle,
-} from "@/src/apps/website-management/lib/lifecycle";
 import type { CentralCollection } from "@/src/lib/collections";
 import { intents } from "@/src/lib/intents";
+import { changedFields, type Draft, runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi(
 	"/(app)/website-management/job-postings/$postingId_/edit",

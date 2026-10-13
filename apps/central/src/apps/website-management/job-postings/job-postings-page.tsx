@@ -9,7 +9,7 @@ import { Button } from "@mcmec/ui/components/button";
 import { useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { Briefcase, Plus, Undo2, Upload } from "lucide-react";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 type JobPostingRow = {
 	id: string;

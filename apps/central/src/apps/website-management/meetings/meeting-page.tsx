@@ -15,8 +15,8 @@ import {
 	Edit,
 	ExternalLink,
 } from "lucide-react";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
 import { intents } from "@/src/lib/intents";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi("/(app)/website-management/meetings/$meetingId");
 

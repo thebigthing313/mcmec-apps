@@ -48,6 +48,12 @@ The App every signed-in Employee can enter, with no App Role required. It is whe
 and where they read the Commission's public record.
 _Avoid_: Central (the address, not an App), dashboard, home
 
+**Calendar**:
+The Self Service Portal's dated view of everything the Commission has scheduled: Staff Events,
+Holidays, Meetings and Spray Missions. It shows Meetings and Spray Missions without making them
+Staff Events, and owns no records of its own.
+_Avoid_: schedule, agenda (the agenda is one way of showing the Calendar, not another thing)
+
 **Audit Entry**:
 The immutable record of a single change — who made it, when, from where, what the row was
 before and after, and which command they meant.
@@ -95,7 +101,9 @@ _Avoid_: event, session
 
 **Cancelled**:
 Of a Meeting: called but not held. A Cancelled Meeting stays on the public meetings page and
-carries the reason in its notes.
+carries the reason in its notes. Of a Staff Event: announced but called off. A Cancelled Staff
+Event stays on the Calendar, marked as such, so no Employee mistakes its absence for a
+misremembering; one entered by mistake is deleted instead.
 
 **Document**:
 A file the Commission publishes for transparency — budgets, reports, audits — identified by
@@ -119,7 +127,8 @@ _Avoid_: spray schedule, spray event, treatment, application
 **Mission Status**:
 Where a Spray Mission stands — Scheduled when created, then Delayed, Cancelled or Completed.
 A Delayed mission carries a rain date. A Delayed or Cancelled mission can be returned to
-Scheduled; a Completed one is finished for good.
+Scheduled; a Completed one is finished for good. A Completed mission that still carries a rain
+date was carried out on its rain date, not its original date.
 
 **Weekly Mosquito Activity**:
 Trap counts and rainfall by species, week and year, loaded a season at a time. Loading a
@@ -158,8 +167,8 @@ from unpublished — a Closed posting was advertised and the advertisement ended
 
 ### Employees domain
 
-The people who work for the Commission, and whether they can sign in to `central`. Requires
-`manage_employees`.
+The people who work for the Commission, whether they can sign in to `central`, and the dates
+the Commission sets for them. Requires `manage_employees`.
 
 **Employee**:
 A person employed by the Commission. An Employee exists whether or not they can sign in to
@@ -175,6 +184,22 @@ _Avoid_: account, member, profile
 Giving an Employee a User and sending them the link to set their password. An Employee can
 be invited once.
 _Avoid_: onboard, provision, register
+
+**Staff Event**:
+A dated item every Employee should know about — a webinar, a training date. Shown to every
+Employee alike and never to the public. Distinct from a Meeting, which is the Commission's
+public business, and from a Holiday. A training held on four Tuesdays is four Staff Events;
+there is no series.
+_Avoid_: event (alone — a Meeting is not one), appointment, internal event, series, recurring event
+
+**Holiday**:
+A day the Commission officially observes, with its offices closed. Usually adopted a year at a
+time, though a day granted later in the year (an extra day from the Governor) is one too; it is
+always a whole day. Each names the date it is observed, which may differ from the date it
+nominally falls on (July 4 on a Saturday is observed Friday the 3rd), and belongs to the year it
+is observed in. A day off an Employee chooses for themselves is leave, and an unplanned weather
+or emergency closure is not adopted, so neither is a Holiday.
+_Avoid_: day off, closure, floating holiday, snow day
 
 ---
 

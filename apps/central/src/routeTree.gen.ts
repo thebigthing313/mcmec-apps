@@ -37,6 +37,7 @@ import { Route as appWebsiteManagementJobPostingsRouteRouteImport } from './rout
 import { Route as appWebsiteManagementInsecticidesRouteRouteImport } from './routes/(app)/website-management/insecticides/route'
 import { Route as appWebsiteManagementDocumentsRouteRouteImport } from './routes/(app)/website-management/documents/route'
 import { Route as appWebsiteManagementDocumentCategoriesRouteRouteImport } from './routes/(app)/website-management/document-categories/route'
+import { Route as appHrHolidaysRouteRouteImport } from './routes/(app)/hr/holidays/route'
 import { Route as appHrEmployeesRouteRouteImport } from './routes/(app)/hr/employees/route'
 import { Route as appWebsiteManagementWeeklyActivityIndexRouteImport } from './routes/(app)/website-management/weekly-activity/index'
 import { Route as appWebsiteManagementSprayMissionsIndexRouteImport } from './routes/(app)/website-management/spray-missions/index'
@@ -48,6 +49,7 @@ import { Route as appWebsiteManagementJobPostingsIndexRouteImport } from './rout
 import { Route as appWebsiteManagementInsecticidesIndexRouteImport } from './routes/(app)/website-management/insecticides/index'
 import { Route as appWebsiteManagementDocumentsIndexRouteImport } from './routes/(app)/website-management/documents/index'
 import { Route as appWebsiteManagementDocumentCategoriesIndexRouteImport } from './routes/(app)/website-management/document-categories/index'
+import { Route as appHrHolidaysIndexRouteImport } from './routes/(app)/hr/holidays/index'
 import { Route as appHrEmployeesIndexRouteImport } from './routes/(app)/hr/employees/index'
 import { Route as appAdminUsersIndexRouteImport } from './routes/(app)/admin/users/index'
 import { Route as appWebsiteManagementSprayMissionsCreateRouteImport } from './routes/(app)/website-management/spray-missions/create'
@@ -67,6 +69,8 @@ import { Route as appWebsiteManagementDocumentsCreateRouteImport } from './route
 import { Route as appWebsiteManagementDocumentsDocumentIdRouteImport } from './routes/(app)/website-management/documents/$documentId'
 import { Route as appWebsiteManagementDocumentCategoriesCreateRouteImport } from './routes/(app)/website-management/document-categories/create'
 import { Route as appWebsiteManagementDocumentCategoriesCategoryIdRouteImport } from './routes/(app)/website-management/document-categories/$categoryId'
+import { Route as appHrHolidaysCreateRouteImport } from './routes/(app)/hr/holidays/create'
+import { Route as appHrHolidaysHolidayIdRouteImport } from './routes/(app)/hr/holidays/$holidayId'
 import { Route as appHrEmployeesEmployeeIdRouteImport } from './routes/(app)/hr/employees/$employeeId'
 import { Route as appWebsiteManagementSprayMissionsSprayScheduleIdEditRouteImport } from './routes/(app)/website-management/spray-missions/$sprayScheduleId_.edit'
 import { Route as appWebsiteManagementNoticesNoticeIdEditRouteImport } from './routes/(app)/website-management/notices/$noticeId_.edit'
@@ -76,6 +80,7 @@ import { Route as appWebsiteManagementJobPostingsPostingIdEditRouteImport } from
 import { Route as appWebsiteManagementInsecticidesInsecticideIdEditRouteImport } from './routes/(app)/website-management/insecticides/$insecticideId_.edit'
 import { Route as appWebsiteManagementDocumentsDocumentIdEditRouteImport } from './routes/(app)/website-management/documents/$documentId_.edit'
 import { Route as appWebsiteManagementDocumentCategoriesCategoryIdEditRouteImport } from './routes/(app)/website-management/document-categories/$categoryId_.edit'
+import { Route as appHrHolidaysHolidayIdEditRouteImport } from './routes/(app)/hr/holidays/$holidayId_.edit'
 import { Route as appHrEmployeesEmployeeIdEditRouteImport } from './routes/(app)/hr/employees/$employeeId_.edit'
 
 const AuthRoute = AuthRouteImport.update({
@@ -227,6 +232,11 @@ const appWebsiteManagementDocumentCategoriesRouteRoute =
     path: '/document-categories',
     getParentRoute: () => appWebsiteManagementRouteRoute,
   } as any)
+const appHrHolidaysRouteRoute = appHrHolidaysRouteRouteImport.update({
+  id: '/holidays',
+  path: '/holidays',
+  getParentRoute: () => appHrRouteRoute,
+} as any)
 const appHrEmployeesRouteRoute = appHrEmployeesRouteRouteImport.update({
   id: '/employees',
   path: '/employees',
@@ -292,6 +302,11 @@ const appWebsiteManagementDocumentCategoriesIndexRoute =
     path: '/',
     getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
   } as any)
+const appHrHolidaysIndexRoute = appHrHolidaysIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appHrHolidaysRouteRoute,
+} as any)
 const appHrEmployeesIndexRoute = appHrEmployeesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -404,6 +419,16 @@ const appWebsiteManagementDocumentCategoriesCategoryIdRoute =
     path: '/$categoryId',
     getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
   } as any)
+const appHrHolidaysCreateRoute = appHrHolidaysCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => appHrHolidaysRouteRoute,
+} as any)
+const appHrHolidaysHolidayIdRoute = appHrHolidaysHolidayIdRouteImport.update({
+  id: '/$holidayId',
+  path: '/$holidayId',
+  getParentRoute: () => appHrHolidaysRouteRoute,
+} as any)
 const appHrEmployeesEmployeeIdRoute =
   appHrEmployeesEmployeeIdRouteImport.update({
     id: '/$employeeId',
@@ -458,6 +483,12 @@ const appWebsiteManagementDocumentCategoriesCategoryIdEditRoute =
     path: '/$categoryId/edit',
     getParentRoute: () => appWebsiteManagementDocumentCategoriesRouteRoute,
   } as any)
+const appHrHolidaysHolidayIdEditRoute =
+  appHrHolidaysHolidayIdEditRouteImport.update({
+    id: '/$holidayId_/edit',
+    path: '/$holidayId/edit',
+    getParentRoute: () => appHrHolidaysRouteRoute,
+  } as any)
 const appHrEmployeesEmployeeIdEditRoute =
   appHrEmployeesEmployeeIdEditRouteImport.update({
     id: '/$employeeId_/edit',
@@ -477,6 +508,7 @@ export interface FileRoutesByFullPath {
   '/set-password': typeof AuthSetPasswordRoute
   '/': typeof appIndexRoute
   '/hr/employees': typeof appHrEmployeesRouteRouteWithChildren
+  '/hr/holidays': typeof appHrHolidaysRouteRouteWithChildren
   '/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesRouteRouteWithChildren
   '/website-management/documents': typeof appWebsiteManagementDocumentsRouteRouteWithChildren
   '/website-management/insecticides': typeof appWebsiteManagementInsecticidesRouteRouteWithChildren
@@ -494,6 +526,8 @@ export interface FileRoutesByFullPath {
   '/notices/': typeof appNoticesIndexRoute
   '/website-management/': typeof appWebsiteManagementIndexRoute
   '/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/hr/holidays/$holidayId': typeof appHrHolidaysHolidayIdRoute
+  '/hr/holidays/create': typeof appHrHolidaysCreateRoute
   '/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
   '/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
   '/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
@@ -513,6 +547,7 @@ export interface FileRoutesByFullPath {
   '/website-management/spray-missions/create': typeof appWebsiteManagementSprayMissionsCreateRoute
   '/admin/users': typeof appAdminUsersIndexRoute
   '/hr/employees/': typeof appHrEmployeesIndexRoute
+  '/hr/holidays/': typeof appHrHolidaysIndexRoute
   '/website-management/document-categories/': typeof appWebsiteManagementDocumentCategoriesIndexRoute
   '/website-management/documents/': typeof appWebsiteManagementDocumentsIndexRoute
   '/website-management/insecticides/': typeof appWebsiteManagementInsecticidesIndexRoute
@@ -524,6 +559,7 @@ export interface FileRoutesByFullPath {
   '/website-management/spray-missions/': typeof appWebsiteManagementSprayMissionsIndexRoute
   '/website-management/weekly-activity': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/hr/employees/$employeeId/edit': typeof appHrEmployeesEmployeeIdEditRoute
+  '/hr/holidays/$holidayId/edit': typeof appHrHolidaysHolidayIdEditRoute
   '/website-management/document-categories/$categoryId/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
   '/website-management/documents/$documentId/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
   '/website-management/insecticides/$insecticideId/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
@@ -547,6 +583,8 @@ export interface FileRoutesByTo {
   '/notices': typeof appNoticesIndexRoute
   '/website-management': typeof appWebsiteManagementIndexRoute
   '/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/hr/holidays/$holidayId': typeof appHrHolidaysHolidayIdRoute
+  '/hr/holidays/create': typeof appHrHolidaysCreateRoute
   '/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
   '/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
   '/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
@@ -566,6 +604,7 @@ export interface FileRoutesByTo {
   '/website-management/spray-missions/create': typeof appWebsiteManagementSprayMissionsCreateRoute
   '/admin/users': typeof appAdminUsersIndexRoute
   '/hr/employees': typeof appHrEmployeesIndexRoute
+  '/hr/holidays': typeof appHrHolidaysIndexRoute
   '/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesIndexRoute
   '/website-management/documents': typeof appWebsiteManagementDocumentsIndexRoute
   '/website-management/insecticides': typeof appWebsiteManagementInsecticidesIndexRoute
@@ -577,6 +616,7 @@ export interface FileRoutesByTo {
   '/website-management/spray-missions': typeof appWebsiteManagementSprayMissionsIndexRoute
   '/website-management/weekly-activity': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/hr/employees/$employeeId/edit': typeof appHrEmployeesEmployeeIdEditRoute
+  '/hr/holidays/$holidayId/edit': typeof appHrHolidaysHolidayIdEditRoute
   '/website-management/document-categories/$categoryId/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
   '/website-management/documents/$documentId/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
   '/website-management/insecticides/$insecticideId/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
@@ -601,6 +641,7 @@ export interface FileRoutesById {
   '/_auth/set-password': typeof AuthSetPasswordRoute
   '/(app)/': typeof appIndexRoute
   '/(app)/hr/employees': typeof appHrEmployeesRouteRouteWithChildren
+  '/(app)/hr/holidays': typeof appHrHolidaysRouteRouteWithChildren
   '/(app)/website-management/document-categories': typeof appWebsiteManagementDocumentCategoriesRouteRouteWithChildren
   '/(app)/website-management/documents': typeof appWebsiteManagementDocumentsRouteRouteWithChildren
   '/(app)/website-management/insecticides': typeof appWebsiteManagementInsecticidesRouteRouteWithChildren
@@ -618,6 +659,8 @@ export interface FileRoutesById {
   '/(app)/notices/': typeof appNoticesIndexRoute
   '/(app)/website-management/': typeof appWebsiteManagementIndexRoute
   '/(app)/hr/employees/$employeeId': typeof appHrEmployeesEmployeeIdRoute
+  '/(app)/hr/holidays/$holidayId': typeof appHrHolidaysHolidayIdRoute
+  '/(app)/hr/holidays/create': typeof appHrHolidaysCreateRoute
   '/(app)/website-management/document-categories/$categoryId': typeof appWebsiteManagementDocumentCategoriesCategoryIdRoute
   '/(app)/website-management/document-categories/create': typeof appWebsiteManagementDocumentCategoriesCreateRoute
   '/(app)/website-management/documents/$documentId': typeof appWebsiteManagementDocumentsDocumentIdRoute
@@ -637,6 +680,7 @@ export interface FileRoutesById {
   '/(app)/website-management/spray-missions/create': typeof appWebsiteManagementSprayMissionsCreateRoute
   '/(app)/admin/users/': typeof appAdminUsersIndexRoute
   '/(app)/hr/employees/': typeof appHrEmployeesIndexRoute
+  '/(app)/hr/holidays/': typeof appHrHolidaysIndexRoute
   '/(app)/website-management/document-categories/': typeof appWebsiteManagementDocumentCategoriesIndexRoute
   '/(app)/website-management/documents/': typeof appWebsiteManagementDocumentsIndexRoute
   '/(app)/website-management/insecticides/': typeof appWebsiteManagementInsecticidesIndexRoute
@@ -648,6 +692,7 @@ export interface FileRoutesById {
   '/(app)/website-management/spray-missions/': typeof appWebsiteManagementSprayMissionsIndexRoute
   '/(app)/website-management/weekly-activity/': typeof appWebsiteManagementWeeklyActivityIndexRoute
   '/(app)/hr/employees/$employeeId_/edit': typeof appHrEmployeesEmployeeIdEditRoute
+  '/(app)/hr/holidays/$holidayId_/edit': typeof appHrHolidaysHolidayIdEditRoute
   '/(app)/website-management/document-categories/$categoryId_/edit': typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRoute
   '/(app)/website-management/documents/$documentId_/edit': typeof appWebsiteManagementDocumentsDocumentIdEditRoute
   '/(app)/website-management/insecticides/$insecticideId_/edit': typeof appWebsiteManagementInsecticidesInsecticideIdEditRoute
@@ -671,6 +716,7 @@ export interface FileRouteTypes {
     | '/set-password'
     | '/'
     | '/hr/employees'
+    | '/hr/holidays'
     | '/website-management/document-categories'
     | '/website-management/documents'
     | '/website-management/insecticides'
@@ -688,6 +734,8 @@ export interface FileRouteTypes {
     | '/notices/'
     | '/website-management/'
     | '/hr/employees/$employeeId'
+    | '/hr/holidays/$holidayId'
+    | '/hr/holidays/create'
     | '/website-management/document-categories/$categoryId'
     | '/website-management/document-categories/create'
     | '/website-management/documents/$documentId'
@@ -707,6 +755,7 @@ export interface FileRouteTypes {
     | '/website-management/spray-missions/create'
     | '/admin/users'
     | '/hr/employees/'
+    | '/hr/holidays/'
     | '/website-management/document-categories/'
     | '/website-management/documents/'
     | '/website-management/insecticides/'
@@ -718,6 +767,7 @@ export interface FileRouteTypes {
     | '/website-management/spray-missions/'
     | '/website-management/weekly-activity'
     | '/hr/employees/$employeeId/edit'
+    | '/hr/holidays/$holidayId/edit'
     | '/website-management/document-categories/$categoryId/edit'
     | '/website-management/documents/$documentId/edit'
     | '/website-management/insecticides/$insecticideId/edit'
@@ -741,6 +791,8 @@ export interface FileRouteTypes {
     | '/notices'
     | '/website-management'
     | '/hr/employees/$employeeId'
+    | '/hr/holidays/$holidayId'
+    | '/hr/holidays/create'
     | '/website-management/document-categories/$categoryId'
     | '/website-management/document-categories/create'
     | '/website-management/documents/$documentId'
@@ -760,6 +812,7 @@ export interface FileRouteTypes {
     | '/website-management/spray-missions/create'
     | '/admin/users'
     | '/hr/employees'
+    | '/hr/holidays'
     | '/website-management/document-categories'
     | '/website-management/documents'
     | '/website-management/insecticides'
@@ -771,6 +824,7 @@ export interface FileRouteTypes {
     | '/website-management/spray-missions'
     | '/website-management/weekly-activity'
     | '/hr/employees/$employeeId/edit'
+    | '/hr/holidays/$holidayId/edit'
     | '/website-management/document-categories/$categoryId/edit'
     | '/website-management/documents/$documentId/edit'
     | '/website-management/insecticides/$insecticideId/edit'
@@ -794,6 +848,7 @@ export interface FileRouteTypes {
     | '/_auth/set-password'
     | '/(app)/'
     | '/(app)/hr/employees'
+    | '/(app)/hr/holidays'
     | '/(app)/website-management/document-categories'
     | '/(app)/website-management/documents'
     | '/(app)/website-management/insecticides'
@@ -811,6 +866,8 @@ export interface FileRouteTypes {
     | '/(app)/notices/'
     | '/(app)/website-management/'
     | '/(app)/hr/employees/$employeeId'
+    | '/(app)/hr/holidays/$holidayId'
+    | '/(app)/hr/holidays/create'
     | '/(app)/website-management/document-categories/$categoryId'
     | '/(app)/website-management/document-categories/create'
     | '/(app)/website-management/documents/$documentId'
@@ -830,6 +887,7 @@ export interface FileRouteTypes {
     | '/(app)/website-management/spray-missions/create'
     | '/(app)/admin/users/'
     | '/(app)/hr/employees/'
+    | '/(app)/hr/holidays/'
     | '/(app)/website-management/document-categories/'
     | '/(app)/website-management/documents/'
     | '/(app)/website-management/insecticides/'
@@ -841,6 +899,7 @@ export interface FileRouteTypes {
     | '/(app)/website-management/spray-missions/'
     | '/(app)/website-management/weekly-activity/'
     | '/(app)/hr/employees/$employeeId_/edit'
+    | '/(app)/hr/holidays/$holidayId_/edit'
     | '/(app)/website-management/document-categories/$categoryId_/edit'
     | '/(app)/website-management/documents/$documentId_/edit'
     | '/(app)/website-management/insecticides/$insecticideId_/edit'
@@ -1054,6 +1113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesRouteRouteImport
       parentRoute: typeof appWebsiteManagementRouteRoute
     }
+    '/(app)/hr/holidays': {
+      id: '/(app)/hr/holidays'
+      path: '/holidays'
+      fullPath: '/hr/holidays'
+      preLoaderRoute: typeof appHrHolidaysRouteRouteImport
+      parentRoute: typeof appHrRouteRoute
+    }
     '/(app)/hr/employees': {
       id: '/(app)/hr/employees'
       path: '/employees'
@@ -1130,6 +1196,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/website-management/document-categories/'
       preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesIndexRouteImport
       parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
+    }
+    '/(app)/hr/holidays/': {
+      id: '/(app)/hr/holidays/'
+      path: '/'
+      fullPath: '/hr/holidays/'
+      preLoaderRoute: typeof appHrHolidaysIndexRouteImport
+      parentRoute: typeof appHrHolidaysRouteRoute
     }
     '/(app)/hr/employees/': {
       id: '/(app)/hr/employees/'
@@ -1264,6 +1337,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesCategoryIdRouteImport
       parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
     }
+    '/(app)/hr/holidays/create': {
+      id: '/(app)/hr/holidays/create'
+      path: '/create'
+      fullPath: '/hr/holidays/create'
+      preLoaderRoute: typeof appHrHolidaysCreateRouteImport
+      parentRoute: typeof appHrHolidaysRouteRoute
+    }
+    '/(app)/hr/holidays/$holidayId': {
+      id: '/(app)/hr/holidays/$holidayId'
+      path: '/$holidayId'
+      fullPath: '/hr/holidays/$holidayId'
+      preLoaderRoute: typeof appHrHolidaysHolidayIdRouteImport
+      parentRoute: typeof appHrHolidaysRouteRoute
+    }
     '/(app)/hr/employees/$employeeId': {
       id: '/(app)/hr/employees/$employeeId'
       path: '/$employeeId'
@@ -1327,6 +1414,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWebsiteManagementDocumentCategoriesCategoryIdEditRouteImport
       parentRoute: typeof appWebsiteManagementDocumentCategoriesRouteRoute
     }
+    '/(app)/hr/holidays/$holidayId_/edit': {
+      id: '/(app)/hr/holidays/$holidayId_/edit'
+      path: '/$holidayId/edit'
+      fullPath: '/hr/holidays/$holidayId/edit'
+      preLoaderRoute: typeof appHrHolidaysHolidayIdEditRouteImport
+      parentRoute: typeof appHrHolidaysRouteRoute
+    }
     '/(app)/hr/employees/$employeeId_/edit': {
       id: '/(app)/hr/employees/$employeeId_/edit'
       path: '/$employeeId/edit'
@@ -1366,13 +1460,32 @@ const appHrEmployeesRouteRouteChildren: appHrEmployeesRouteRouteChildren = {
 const appHrEmployeesRouteRouteWithChildren =
   appHrEmployeesRouteRoute._addFileChildren(appHrEmployeesRouteRouteChildren)
 
+interface appHrHolidaysRouteRouteChildren {
+  appHrHolidaysHolidayIdRoute: typeof appHrHolidaysHolidayIdRoute
+  appHrHolidaysCreateRoute: typeof appHrHolidaysCreateRoute
+  appHrHolidaysIndexRoute: typeof appHrHolidaysIndexRoute
+  appHrHolidaysHolidayIdEditRoute: typeof appHrHolidaysHolidayIdEditRoute
+}
+
+const appHrHolidaysRouteRouteChildren: appHrHolidaysRouteRouteChildren = {
+  appHrHolidaysHolidayIdRoute: appHrHolidaysHolidayIdRoute,
+  appHrHolidaysCreateRoute: appHrHolidaysCreateRoute,
+  appHrHolidaysIndexRoute: appHrHolidaysIndexRoute,
+  appHrHolidaysHolidayIdEditRoute: appHrHolidaysHolidayIdEditRoute,
+}
+
+const appHrHolidaysRouteRouteWithChildren =
+  appHrHolidaysRouteRoute._addFileChildren(appHrHolidaysRouteRouteChildren)
+
 interface appHrRouteRouteChildren {
   appHrEmployeesRouteRoute: typeof appHrEmployeesRouteRouteWithChildren
+  appHrHolidaysRouteRoute: typeof appHrHolidaysRouteRouteWithChildren
   appHrIndexRoute: typeof appHrIndexRoute
 }
 
 const appHrRouteRouteChildren: appHrRouteRouteChildren = {
   appHrEmployeesRouteRoute: appHrEmployeesRouteRouteWithChildren,
+  appHrHolidaysRouteRoute: appHrHolidaysRouteRouteWithChildren,
   appHrIndexRoute: appHrIndexRoute,
 }
 

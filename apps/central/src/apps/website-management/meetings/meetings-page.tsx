@@ -9,7 +9,7 @@ import { Button } from "@mcmec/ui/components/button";
 import { useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { CalendarOff, CalendarPlus, Plus, Users } from "lucide-react";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
+import { runLifecycle } from "@/src/lib/lifecycle";
 
 type MeetingRow = {
 	id: string;

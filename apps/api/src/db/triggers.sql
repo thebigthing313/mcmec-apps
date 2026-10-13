@@ -25,6 +25,9 @@ create or replace trigger set_updated_at before update on spray_schedules       
 create or replace trigger set_updated_at before update on public_requests        for each row execute function set_updated_at();
 create or replace trigger set_updated_at before update on job_postings           for each row execute function set_updated_at();
 create or replace trigger set_updated_at before update on mosquito_activity_data for each row execute function set_updated_at();
+-- Attached on deploy by a custom migration too (drizzle/0008_holidays_updated_at.sql): nothing
+-- applies this file outside the test suite, so a new table's trigger has to ship both ways.
+create or replace trigger set_updated_at before update on holidays               for each row execute function set_updated_at();
 
 -- ═══ 2. Audit log (append-only) ══════════════════════════════════════════════
 -- SECURITY DEFINER so it can insert into audit_log even though the app role has no write there.

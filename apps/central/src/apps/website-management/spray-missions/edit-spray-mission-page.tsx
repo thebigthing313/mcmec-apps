@@ -7,15 +7,12 @@ import {
 	type SprayMissionFormValues,
 	SprayScheduleForm,
 } from "@/src/apps/website-management/components/spray-schedule-form";
-import {
-	changedFields,
-	runLifecycle,
-} from "@/src/apps/website-management/lib/lifecycle";
 import { transitionsFrom } from "@/src/apps/website-management/lib/spray-mission-transitions";
 import {
 	sameMunicipalities,
 	saveSprayMission,
 } from "@/src/apps/website-management/lib/spray-missions";
+import { changedFields, runLifecycle } from "@/src/lib/lifecycle";
 
 const route = getRouteApi(
 	"/(app)/website-management/spray-missions/$sprayScheduleId_/edit",

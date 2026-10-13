@@ -21,6 +21,7 @@ export const TABLE_NAMES = [
 	"document_types",
 	"documents",
 	"employees",
+	"holidays",
 	"insecticides",
 	"job_postings",
 	"meetings",

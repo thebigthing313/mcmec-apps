@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
 	COMMISSION_TIME_ZONE,
+	commissionToday,
 	formatClockTime,
 	formatDate,
 	formatDateShort,
 	formatDateShortWithWeekday,
 	formatDateTime,
 	formatDateWithWeekday,
+	toCommissionLocal,
+	yearOf,
 } from "./date-fns";
 
 /**
@@ -138,5 +141,78 @@ describe("formatClockTime", () => {
 
 	it("hands back an unparseable value rather than NaN", () => {
 		expect(formatClockTime("whenever")).toBe("whenever");
+	});
+});
+
+describe("toCommissionLocal", () => {
+	it("reads a winter instant in Eastern Standard Time", () => {
+		expect(toCommissionLocal(new Date("2026-01-22T17:00:00Z"))).toEqual({
+			date: "2026-01-22",
+			time: "12:00",
+		});
+	});
+
+	it("reads a summer instant in Eastern Daylight Time", () => {
+		expect(toCommissionLocal(new Date("2026-07-22T16:00:00Z"))).toEqual({
+			date: "2026-07-22",
+			time: "12:00",
+		});
+	});
+
+	// 2026-03-08: clocks jump from 02:00 EST to 03:00 EDT at 07:00Z.
+	it("crosses the spring change without losing the day", () => {
+		expect(toCommissionLocal(new Date("2026-03-08T06:59:00Z"))).toEqual({
+			date: "2026-03-08",
+			time: "01:59",
+		});
+		expect(toCommissionLocal(new Date("2026-03-08T07:00:00Z"))).toEqual({
+			date: "2026-03-08",
+			time: "03:00",
+		});
+	});
+
+	// 2026-11-01: clocks fall back from 02:00 EDT to 01:00 EST at 06:00Z.
+	it("crosses the autumn change without losing the day", () => {
+		expect(toCommissionLocal(new Date("2026-11-01T05:59:00Z"))).toEqual({
+			date: "2026-11-01",
+			time: "01:59",
+		});
+		expect(toCommissionLocal(new Date("2026-11-01T06:00:00Z"))).toEqual({
+			date: "2026-11-01",
+			time: "01:00",
+		});
+	});
+
+	it("keeps a late evening on its own day, though UTC has moved on", () => {
+		expect(toCommissionLocal(new Date("2026-05-15T03:59:00Z"))).toEqual({
+			date: "2026-05-14",
+			time: "23:59",
+		});
+		expect(toCommissionLocal(new Date("2026-05-15T04:00:00Z"))).toEqual({
+			date: "2026-05-15",
+			time: "00:00",
+		});
+	});
+
+	it("writes midnight as 00, not 24", () => {
+		expect(toCommissionLocal(new Date("2026-01-01T05:00:00Z")).time).toBe(
+			"00:00",
+		);
+	});
+});
+
+describe("commissionToday", () => {
+	it("is the day in Edison, not in UTC", () => {
+		// 02:00Z on New Year's Day is still New Year's Eve in New Jersey.
+		expect(commissionToday(new Date("2027-01-01T02:00:00Z"))).toBe(
+			"2026-12-31",
+		);
+	});
+});
+
+describe("yearOf", () => {
+	it("reads the year off the day's own text", () => {
+		expect(yearOf("2027-01-01")).toBe(2027);
+		expect(yearOf("2026-12-31")).toBe(2026);
 	});
 });

@@ -19,7 +19,7 @@ import {
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { FileText, Plus, Undo2, Upload } from "lucide-react";
-import { runLifecycle } from "@/src/apps/website-management/lib/lifecycle";
+import { runLifecycle } from "@/src/lib/lifecycle";
 import {
 	NOTICE_STATUSES,
 	type NoticeStatus,

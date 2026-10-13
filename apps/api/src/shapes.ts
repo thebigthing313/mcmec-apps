@@ -57,6 +57,8 @@ const POLICIES: Record<string, ShapePolicy> = {
 	),
 	// staff-only
 	employees: authenticated,
+	// Every Employee sees the Commission's Holidays on the Calendar; never the public (#302).
+	holidays: authenticated,
 	public_requests: withPermission("manage_website"),
 	notice_postings: withPermission("manage_website"),
 };

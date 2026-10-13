@@ -14,6 +14,7 @@
 
 import type { AnyCommand } from "./command";
 import { EMPLOYEE_COMMANDS } from "./employees/employees";
+import { HOLIDAY_COMMANDS } from "./employees/holidays";
 import { USER_COMMANDS } from "./users/users";
 import { DOCUMENT_CATEGORY_COMMANDS } from "./website/document-categories";
 import { DOCUMENT_COMMANDS } from "./website/documents";
@@ -38,6 +39,7 @@ const ALL = [
 	...MOSQUITO_ACTIVITY_COMMANDS,
 	...PUBLIC_REQUEST_COMMANDS,
 	...EMPLOYEE_COMMANDS,
+	...HOLIDAY_COMMANDS,
 	...USER_COMMANDS,
 ] as const;
 
