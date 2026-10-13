@@ -17,12 +17,15 @@ export type CalendarSearch = {
 
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 
+export const isCalendarView = (value: unknown): value is CalendarView =>
+	value === "month" || value === "agenda";
+
 /** Keeps what is valid and drops the rest, so a mistyped link opens this month's grid. */
 export function validateCalendarSearch(
 	raw: Record<string, unknown>,
 ): CalendarSearch {
 	const search: CalendarSearch = {};
-	if (raw.view === "month" || raw.view === "agenda") search.view = raw.view;
+	if (isCalendarView(raw.view)) search.view = raw.view;
 	if (typeof raw.month === "string" && MONTH.test(raw.month)) {
 		search.month = raw.month;
 	}

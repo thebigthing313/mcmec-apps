@@ -10,7 +10,11 @@ import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { CalendarDays, ChevronLeft, ChevronRight, List } from "lucide-react";
 import { shiftMonth } from "@/src/lib/calendar/days";
 import { monthLabel } from "@/src/lib/calendar/labels";
-import { type CalendarView, calendarSearch } from "@/src/lib/calendar/search";
+import {
+	type CalendarView,
+	calendarSearch,
+	isCalendarView,
+} from "@/src/lib/calendar/search";
 import { useCalendarItems } from "@/src/lib/calendar/use-calendar-items";
 import { Agenda } from "./agenda";
 import { MonthGrid } from "./month-grid";
@@ -86,7 +90,7 @@ export function CalendarPage() {
 					<ToggleGroup
 						aria-label="View"
 						onValueChange={(value) => {
-							if (value === "month" || value === "agenda") {
+							if (isCalendarView(value)) {
 								navigate({
 									search: calendarSearch(month, value, thisMonth),
 									to: "/calendar",

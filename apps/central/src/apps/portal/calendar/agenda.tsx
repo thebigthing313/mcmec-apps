@@ -86,36 +86,39 @@ export function Agenda({
 function AgendaRow({ item }: { item: CalendarItem }) {
 	const off = isOff(item);
 	return (
-		<ItemPopover
-			className={cn(
-				"flex w-full flex-wrap items-center gap-x-2 gap-y-0.5 rounded-md border border-transparent px-2 py-1 text-sm hover:bg-muted",
-				item.status === "rainDate" && "border-current border-dashed",
-			)}
-			item={item}
-		>
-			<SourceDot source={item.source} />
-			<span
+		<>
+			<ItemPopover
 				className={cn(
-					"w-36 shrink-0 text-muted-foreground tabular-nums",
-					off && "line-through",
+					"flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1 text-sm hover:bg-secondary",
+					item.status === "rainDate" && "border-current border-dashed",
 				)}
+				item={item}
 			>
-				{whenLabel(item)}
-			</span>
-			<span
-				className={cn(
-					"min-w-0 flex-1 truncate",
-					off && "text-muted-foreground line-through",
-				)}
-			>
-				{item.title}
-			</span>
-			<StatusBadge item={item} />
-			{item.status === "delayed" && item.otherDate ? (
-				<span className="basis-full pl-[calc(0.625rem+0.5rem)] text-muted-foreground text-xs">
-					Moved to its rain date, {dayShort(item.otherDate)}.
+				<SourceDot source={item.source} />
+				<span
+					className={cn(
+						"w-36 shrink-0 text-muted-foreground tabular-nums",
+						off && "line-through",
+					)}
+				>
+					{whenLabel(item)}
 				</span>
+				<span
+					className={cn(
+						"min-w-0 flex-1 truncate",
+						off && "text-muted-foreground line-through",
+					)}
+				>
+					{item.title}
+				</span>
+				<StatusBadge item={item} />
+			</ItemPopover>
+			{/* Outside the button, whose name is the item's whole description, so it is read too. */}
+			{item.status === "delayed" && item.otherDate ? (
+				<p className="pl-[calc(1.125rem+0.5rem)] text-muted-foreground text-xs">
+					Moved to its rain date, {dayShort(item.otherDate)}.
+				</p>
 			) : null}
-		</ItemPopover>
+		</>
 	);
 }

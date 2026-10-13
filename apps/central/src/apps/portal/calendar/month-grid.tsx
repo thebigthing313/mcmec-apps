@@ -12,6 +12,7 @@ import {
 	dayLong,
 	isOff,
 	monthLabel,
+	statusLabel,
 } from "@/src/lib/calendar/labels";
 import { packWeek, type WeekSegment } from "@/src/lib/calendar/pack-week";
 import { ItemPopover } from "./item-popover";
@@ -157,15 +158,16 @@ function Week({
 function Bar({ segment }: { segment: WeekSegment }) {
 	const { item, lane, span, continuesBefore, continuesAfter } = segment;
 	const tone = SOURCE_TONE[item.source];
-	const whole = !item.startTime || item.startsOn !== item.endsOn;
+	// A solid bar for a whole-day or multi-day item; a dot and a time for a timed single day.
+	const solid = !item.startTime || item.startsOn !== item.endsOn;
+	const status = statusLabel(item.status);
 	return (
 		<ItemPopover
 			className={cn(
 				"absolute z-10 flex h-[1.375rem] items-center gap-1 overflow-hidden px-1.5 text-xs leading-none",
-				whole ? tone.solid : "rounded hover:bg-muted",
-				whole && (continuesBefore ? "rounded-l-none" : "rounded-l"),
-				whole && (continuesAfter ? "rounded-r-none" : "rounded-r"),
-				isOff(item) && "line-through",
+				solid ? tone.solid : "rounded hover:bg-secondary",
+				solid && (continuesBefore ? "rounded-l-none" : "rounded-l"),
+				solid && (continuesAfter ? "rounded-r-none" : "rounded-r"),
 				item.status === "rainDate" && "border border-current border-dashed",
 			)}
 			data-continues-after={continuesAfter || undefined}
@@ -181,17 +183,19 @@ function Bar({ segment }: { segment: WeekSegment }) {
 				}px)`,
 			}}
 		>
-			{whole ? (
-				<span className="truncate">{item.title}</span>
-			) : (
+			{solid ? null : (
 				<>
 					<SourceDot className="size-2" source={item.source} />
 					<span className="text-muted-foreground tabular-nums">
 						{clockLabel(item.startTime as string)}
 					</span>
-					<span className="truncate">{item.title}</span>
 				</>
 			)}
+			{/* The status in words, never struck: the strike says the item is off, the word says why. */}
+			{status ? <span className="shrink-0 font-semibold">{status}</span> : null}
+			<span className={cn("truncate", isOff(item) && "line-through")}>
+				{item.title}
+			</span>
 		</ItemPopover>
 	);
 }

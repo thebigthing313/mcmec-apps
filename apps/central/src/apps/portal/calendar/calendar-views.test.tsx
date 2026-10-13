@@ -107,13 +107,18 @@ describe("MonthGrid", () => {
 		expect(second?.className).toContain("rounded-l-none");
 	});
 
-	it("shows a timed item as its start time and title, struck through when cancelled", () => {
+	it("shows a timed item as its start time and title, with a cancelled one's status in words and its title struck", () => {
 		renderGrid();
 		const button = screen.getByRole("button", {
 			name: "Meeting: Regular Meeting, Wednesday, October 14, 2026, 7pm, Cancelled",
 		});
-		expect(button.textContent).toBe("7pmRegular Meeting");
-		expect(button.className).toContain("line-through");
+		expect(button.textContent).toBe("7pmCancelledRegular Meeting");
+		expect(within(button).getByText("Cancelled").className).not.toContain(
+			"line-through",
+		);
+		expect(within(button).getByText("Regular Meeting").className).toContain(
+			"line-through",
+		);
 	});
 
 	it("shows three lanes, then +N more listing the whole day", async () => {
