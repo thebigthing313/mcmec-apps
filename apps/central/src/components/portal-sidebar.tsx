@@ -1,4 +1,10 @@
-import { Calendar, CalendarDays, FileText, Home } from "lucide-react";
+import {
+	Calendar,
+	CalendarDays,
+	CalendarX2,
+	FileText,
+	Home,
+} from "lucide-react";
 import type { AppSidebar, ShellApp } from "@/src/lib/shell";
 
 /**
@@ -8,14 +14,19 @@ import type { AppSidebar, ShellApp } from "@/src/lib/shell";
  *
  * "Commission" names the public record — what the Commission has published and what it has
  * called — as distinct from Dashboard, which is where you are rather than what you are reading.
- * The Dashboard group stays unlabelled: the Dashboard and the Calendar after it are where an
- * Employee starts, not a part of the record that needs a name.
+ * The Dashboard group stays unlabelled: it leads the rail, and the dated views beside Dashboard
+ * (#302) belong to no name DESIGN.md would have us invent for them.
  */
 const PORTAL_SIDEBAR: AppSidebar = [
 	{
 		items: [
 			{ icon: <Home />, label: "Dashboard", linkProps: { to: "/" } },
 			{ icon: <Calendar />, label: "Calendar", linkProps: { to: "/calendar" } },
+			{
+				icon: <CalendarX2 />,
+				label: "Holiday Schedule",
+				linkProps: { to: "/holidays" },
+			},
 		],
 	},
 	{

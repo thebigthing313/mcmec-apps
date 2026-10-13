@@ -16,6 +16,7 @@ import { Route as AuthSetPasswordRouteImport } from './routes/_auth/set-password
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as appHolidaysRouteImport } from './routes/(app)/holidays'
 import { Route as appCalendarRouteImport } from './routes/(app)/calendar'
 import { Route as appWebsiteManagementRouteRouteImport } from './routes/(app)/website-management/route'
 import { Route as appNoticesRouteRouteImport } from './routes/(app)/notices/route'
@@ -121,6 +122,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
+} as any)
+const appHolidaysRoute = appHolidaysRouteImport.update({
+  id: '/holidays',
+  path: '/holidays',
+  getParentRoute: () => appRouteRoute,
 } as any)
 const appCalendarRoute = appCalendarRouteImport.update({
   id: '/calendar',
@@ -541,6 +547,7 @@ export interface FileRoutesByFullPath {
   '/notices': typeof appNoticesRouteRouteWithChildren
   '/website-management': typeof appWebsiteManagementRouteRouteWithChildren
   '/calendar': typeof appCalendarRoute
+  '/holidays': typeof appHolidaysRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
@@ -615,6 +622,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/calendar': typeof appCalendarRoute
+  '/holidays': typeof appHolidaysRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
@@ -685,6 +693,7 @@ export interface FileRoutesById {
   '/(app)/notices': typeof appNoticesRouteRouteWithChildren
   '/(app)/website-management': typeof appWebsiteManagementRouteRouteWithChildren
   '/(app)/calendar': typeof appCalendarRoute
+  '/(app)/holidays': typeof appHolidaysRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
@@ -766,6 +775,7 @@ export interface FileRouteTypes {
     | '/notices'
     | '/website-management'
     | '/calendar'
+    | '/holidays'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
@@ -840,6 +850,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/calendar'
+    | '/holidays'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
@@ -909,6 +920,7 @@ export interface FileRouteTypes {
     | '/(app)/notices'
     | '/(app)/website-management'
     | '/(app)/calendar'
+    | '/(app)/holidays'
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/reset-password'
@@ -1037,6 +1049,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/(app)/holidays': {
+      id: '/(app)/holidays'
+      path: '/holidays'
+      fullPath: '/holidays'
+      preLoaderRoute: typeof appHolidaysRouteImport
+      parentRoute: typeof appRouteRoute
     }
     '/(app)/calendar': {
       id: '/(app)/calendar'
@@ -1916,6 +1935,7 @@ interface appRouteRouteChildren {
   appNoticesRouteRoute: typeof appNoticesRouteRouteWithChildren
   appWebsiteManagementRouteRoute: typeof appWebsiteManagementRouteRouteWithChildren
   appCalendarRoute: typeof appCalendarRoute
+  appHolidaysRoute: typeof appHolidaysRoute
   appIndexRoute: typeof appIndexRoute
 }
 
@@ -1926,6 +1946,7 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appNoticesRouteRoute: appNoticesRouteRouteWithChildren,
   appWebsiteManagementRouteRoute: appWebsiteManagementRouteRouteWithChildren,
   appCalendarRoute: appCalendarRoute,
+  appHolidaysRoute: appHolidaysRoute,
   appIndexRoute: appIndexRoute,
 }
 
