@@ -516,3 +516,46 @@ export function formatClockTime(time: string | null | undefined): string {
 
 	return `${hours % 12 || 12}:${minutes} ${meridiem}`;
 }
+
+const COMMISSION_PARTS = new Intl.DateTimeFormat("en-US", {
+	day: "2-digit",
+	hour: "2-digit",
+	hourCycle: "h23",
+	minute: "2-digit",
+	month: "2-digit",
+	timeZone: COMMISSION_TIME_ZONE,
+	year: "numeric",
+});
+
+/**
+ * An instant, read as the day and wall-clock time it is in Edison: `{ date: "YYYY-MM-DD",
+ * time: "HH:MM" }`.
+ *
+ * The Calendar holds days as text, never Dates (#298), so a `timestamptz` like a Meeting's
+ * `meeting_at` has to become one before it can sit beside a Holiday's `observed_on`. Pinned to
+ * the Commission's zone like {@link formatDateTime}, and for the same reason: an evening meeting
+ * is on the day it is held in New Jersey, whatever zone the reader's machine is set to.
+ *
+ * @example
+ * toCommissionLocal(new Date("2026-05-15T00:30:00Z")) // { date: "2026-05-14", time: "20:30" }
+ */
+export function toCommissionLocal(instant: Date): {
+	date: string;
+	time: string;
+} {
+	const part = (type: Intl.DateTimeFormatPartTypes) =>
+		COMMISSION_PARTS.formatToParts(instant).find((p) => p.type === type)
+			?.value ?? "";
+	return {
+		date: `${part("year")}-${part("month")}-${part("day")}`,
+		time: `${part("hour")}:${part("minute")}`,
+	};
+}
+
+/**
+ * Today's date in Edison, as `YYYY-MM-DD` — the day a Calendar screen calls "today", and the year
+ * a year-filtered screen opens on. Read once when called; nothing re-reads it at midnight.
+ */
+export function commissionToday(now: Date = new Date()): string {
+	return toCommissionLocal(now).date;
+}
