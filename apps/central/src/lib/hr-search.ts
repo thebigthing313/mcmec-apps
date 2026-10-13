@@ -9,6 +9,7 @@ import {
 	type RecordIndexSearch,
 	validateRecordIndexSearch,
 } from "@mcmec/ui/blocks/record-index-search";
+import { searchYear } from "./portal-search";
 
 export type HolidaysSearch = Partial<RecordIndexSearch> & { year?: number };
 
@@ -19,10 +20,5 @@ export type HolidaysSearch = Partial<RecordIndexSearch> & { year?: number };
 export function validateHolidaysSearch(
 	raw: Record<string, unknown>,
 ): HolidaysSearch {
-	return validateRecordIndexSearch(raw, (r) => {
-		const year = Number(r.year);
-		return Number.isInteger(year) && year >= 1000 && year <= 9999
-			? { year }
-			: {};
-	});
+	return validateRecordIndexSearch(raw, searchYear);
 }

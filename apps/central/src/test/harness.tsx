@@ -110,6 +110,14 @@ function fakeCollections() {
 				user_id: USER_ID,
 			},
 		]),
+		holidays: localTable("holidays", [
+			{
+				falls_on: null,
+				id: "123e4567-e89b-12d3-a456-426614174080",
+				name: "New Year's Day",
+				observed_on: "2026-01-01",
+			},
+		]),
 		meetings: localTable("meetings", [
 			{
 				id: MEETING_ID,
