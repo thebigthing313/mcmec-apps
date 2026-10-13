@@ -144,7 +144,11 @@ describe("a deep link into Website Management without its App Role", () => {
  */
 describe("tables each route asks for", () => {
 	it.each([
-		["/", ["employees"]],
+		// The Portal Dashboard's Upcoming card reads the Calendar's four tables.
+		[
+			"/",
+			["employees", "holidays", "meetings", "spraySchedules", "staffEvents"],
+		],
 		["/notices", ["employees", "noticeTypes", "notices"]],
 		[`/notices/${NOTICE_ID}`, ["employees", "noticeTypes", "notices"]],
 		["/meetings", ["employees", "meetings"]],
