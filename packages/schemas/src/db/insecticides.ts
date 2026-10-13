@@ -4,6 +4,7 @@ export const InsecticidesRowSchema = z.object({
 	active_ingredient: z.string(),
 	active_ingredient_url: z.url(),
 	created_at: z.coerce.date<Date>(),
+	fact_sheet_url: z.url().nullable(),
 	id: z.uuid(),
 	label_url: z.url(),
 	msds_url: z.url(),

@@ -3,9 +3,9 @@
  *
  * A catalogue entry, not an activity: listing an Insecticide is not a record of applying one
  * (CONTEXT.md). So there is no lifecycle and no publish — the same plain three-command shape as
- * the two category tables, over six columns instead of two.
+ * the two category tables, over seven columns instead of two.
  *
- * The fields are taken from `InsecticidesRowSchema` rather than restated, so the three URL
+ * The fields are taken from `InsecticidesRowSchema` rather than restated, so the four URL
  * columns keep the one `z.url()` definition the row schema already carries. The form's own
  * minimum lengths on `trade_name`, `type_name` and `active_ingredient` deliberately stay in the
  * form: #134 promoted three named form rules to server preconditions and declined to invent
@@ -23,6 +23,7 @@ const command = website.table("insecticides");
 const DetailFields = {
 	active_ingredient: InsecticidesRowSchema.shape.active_ingredient,
 	active_ingredient_url: InsecticidesRowSchema.shape.active_ingredient_url,
+	fact_sheet_url: InsecticidesRowSchema.shape.fact_sheet_url,
 	label_url: InsecticidesRowSchema.shape.label_url,
 	msds_url: InsecticidesRowSchema.shape.msds_url,
 	trade_name: InsecticidesRowSchema.shape.trade_name,

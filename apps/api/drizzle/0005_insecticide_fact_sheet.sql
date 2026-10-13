@@ -1,0 +1,1 @@
+ALTER TABLE "insecticides" ADD COLUMN "fact_sheet_url" text;

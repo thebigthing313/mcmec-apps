@@ -36,6 +36,7 @@ export type TestSession = {
  * caused.
  */
 const WRITTEN_TABLES = [
+	"insecticides",
 	"notices",
 	"notice_types",
 	"mosquito_activity_data",
