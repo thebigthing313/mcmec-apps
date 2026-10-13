@@ -51,9 +51,12 @@ export function DateField({
 					placeholder={placeholder}
 					value={toLocalDateOnly(value)}
 				/>
-				{clearable && value ? (
+				{clearable ? (
+					// Always rendered, disabled when there is nothing to clear: a button that
+					// unmounted itself on click would drop keyboard focus onto <body>.
 					<Button
 						aria-label={`Clear ${formFieldProps.label ?? "date"}`}
+						disabled={!value}
 						onClick={() => {
 							field.handleChange(null);
 							field.handleBlur();

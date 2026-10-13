@@ -1,6 +1,6 @@
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { describe, expect, it } from "vitest";
-import { pgErrorCode } from "./db-errors";
+import { pgErrorCode, pgErrorConstraint } from "./db-errors";
 
 describe("pgErrorCode", () => {
 	it("reads a bare pg error", () => {
@@ -20,5 +20,15 @@ describe("pgErrorCode", () => {
 	it("finds nothing on an error that is not from Postgres", () => {
 		expect(pgErrorCode(new Error("boom"))).toBeUndefined();
 		expect(pgErrorCode("boom")).toBeUndefined();
+	});
+
+	it("reads the constraint a violation names", () => {
+		const pg = Object.assign(new Error("dup"), {
+			code: "23505",
+			constraint: "holidays_observed_on_unique",
+		});
+		expect(pgErrorConstraint(new DrizzleQueryError("insert …", [], pg))).toBe(
+			"holidays_observed_on_unique",
+		);
 	});
 });

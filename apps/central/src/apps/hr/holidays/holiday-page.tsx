@@ -1,4 +1,4 @@
-import { formatDateWithWeekday } from "@mcmec/lib/functions/date-fns";
+import { formatDateWithWeekday, yearOf } from "@mcmec/lib/functions/date-fns";
 import { DangerZoneCard } from "@mcmec/ui/blocks/danger-zone-card";
 import { RecordDetail } from "@mcmec/ui/blocks/record-detail";
 import { Button } from "@mcmec/ui/components/button";
@@ -27,7 +27,7 @@ export function HolidayPage() {
 	);
 	const holiday = liveHolidays[0] ?? loadedHoliday;
 	// Back to the year this Holiday belongs to, which is the year it is observed in.
-	const year = Number(holiday.observed_on.slice(0, 4));
+	const year = yearOf(holiday.observed_on);
 
 	// A revoked Holiday is deleted: there is no lifecycle to move it through instead. Detail page
 	// only, in the danger zone, behind a confirm (ADR 0001).

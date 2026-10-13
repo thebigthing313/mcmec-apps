@@ -13,6 +13,9 @@ import { toColumnValues } from "../columns";
 import { deleteRow, isUniqueViolation, setFields } from "../rows";
 import { CommandError, type CommandHandler } from "../types";
 
+/** Drizzle's name for `observed_on`'s unique constraint (see drizzle/0007_holidays.sql). */
+const OBSERVED_ON_UNIQUE = "holidays_observed_on_unique";
+
 function dateTaken(observedOn: string | undefined): CommandError {
 	const day = observedOn ? formatDateShortWithWeekday(observedOn) : "that day";
 	return new CommandError(409, {
@@ -31,7 +34,8 @@ export const createHoliday: CommandHandler<
 			...toColumnValues(holidays, payload),
 		} as typeof holidays.$inferInsert);
 	} catch (e) {
-		if (isUniqueViolation(e)) throw dateTaken(payload.observed_on);
+		if (isUniqueViolation(e, OBSERVED_ON_UNIQUE))
+			throw dateTaken(payload.observed_on);
 		throw e;
 	}
 };
@@ -42,7 +46,8 @@ export const updateHoliday: CommandHandler<
 	try {
 		await setFields(tx, holidays, id, toColumnValues(holidays, payload));
 	} catch (e) {
-		if (isUniqueViolation(e)) throw dateTaken(payload.observed_on);
+		if (isUniqueViolation(e, OBSERVED_ON_UNIQUE))
+			throw dateTaken(payload.observed_on);
 		throw e;
 	}
 };

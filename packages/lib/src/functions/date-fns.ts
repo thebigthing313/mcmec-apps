@@ -543,9 +543,9 @@ export function toCommissionLocal(instant: Date): {
 	date: string;
 	time: string;
 } {
+	const parts = COMMISSION_PARTS.formatToParts(instant);
 	const part = (type: Intl.DateTimeFormatPartTypes) =>
-		COMMISSION_PARTS.formatToParts(instant).find((p) => p.type === type)
-			?.value ?? "";
+		parts.find((p) => p.type === type)?.value ?? "";
 	return {
 		date: `${part("year")}-${part("month")}-${part("day")}`,
 		time: `${part("hour")}:${part("minute")}`,
@@ -558,4 +558,12 @@ export function toCommissionLocal(instant: Date): {
  */
 export function commissionToday(now: Date = new Date()): string {
 	return toCommissionLocal(now).date;
+}
+
+/**
+ * The year a `YYYY-MM-DD` day belongs to. Read off the text, not through a Date, so no zone can
+ * move it — the day a Holiday is observed decides its year (CONTEXT.md: Holiday).
+ */
+export function yearOf(day: string): number {
+	return Number(day.slice(0, 4));
 }

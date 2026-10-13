@@ -15,7 +15,7 @@
 import { eq } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import type { Tx } from "../actor";
-import { pgErrorCode } from "../db-errors";
+import { pgErrorCode, pgErrorConstraint } from "../db-errors";
 import { CommandError } from "./types";
 
 /** Every table these commands address is keyed by a single `id` column. */
@@ -75,7 +75,11 @@ export function isForeignKeyViolation(e: unknown): boolean {
 	return pgErrorCode(e) === "23503";
 }
 
-/** Postgres `unique_violation`. As above: the handler decides what the collision means. */
-export function isUniqueViolation(e: unknown): boolean {
-	return pgErrorCode(e) === "23505";
+/**
+ * Postgres `unique_violation` of one named constraint. Named, because a table with a unique
+ * column also has a primary key, and a retried create colliding on the id is not the same
+ * refusal as a duplicate value. As above: the handler decides what the collision means.
+ */
+export function isUniqueViolation(e: unknown, constraint: string): boolean {
+	return pgErrorCode(e) === "23505" && pgErrorConstraint(e) === constraint;
 }

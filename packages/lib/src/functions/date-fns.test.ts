@@ -9,6 +9,7 @@ import {
 	formatDateTime,
 	formatDateWithWeekday,
 	toCommissionLocal,
+	yearOf,
 } from "./date-fns";
 
 /**
@@ -206,5 +207,12 @@ describe("commissionToday", () => {
 		expect(commissionToday(new Date("2027-01-01T02:00:00Z"))).toBe(
 			"2026-12-31",
 		);
+	});
+});
+
+describe("yearOf", () => {
+	it("reads the year off the day's own text", () => {
+		expect(yearOf("2027-01-01")).toBe(2027);
+		expect(yearOf("2026-12-31")).toBe(2026);
 	});
 });

@@ -1,6 +1,7 @@
 import {
 	commissionToday,
 	formatDateShortWithWeekday,
+	yearOf,
 } from "@mcmec/lib/functions/date-fns";
 import {
 	RecordIndex,
@@ -32,17 +33,15 @@ export function HolidaysPage() {
 	const { holidays } = route.useRouteContext();
 	const navigate = useNavigate();
 	const search = route.useSearch();
-	const year = search.year ?? Number(commissionToday().slice(0, 4));
+	const year = search.year ?? yearOf(commissionToday());
 
 	const { data, collection } = useLiveQuery(
 		(q) => q.from({ holiday: holidays }),
 		[holidays],
 	);
 
-	// `observed_on` is `YYYY-MM-DD` text, so its year is its first four characters — no Date, so
-	// no zone to shift it. A Holiday belongs to the year it is observed in (CONTEXT.md).
 	const rows: HolidayRow[] = (data ?? [])
-		.filter((holiday) => holiday.observed_on.startsWith(`${year}-`))
+		.filter((holiday) => yearOf(holiday.observed_on) === year)
 		.map((holiday) => ({
 			fallsOn: holiday.falls_on,
 			id: holiday.id,

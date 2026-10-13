@@ -166,6 +166,20 @@ describe("a day already closed", () => {
 	});
 });
 
+describe("a create sent twice", () => {
+	// The same envelope again collides on the primary key, not on the day: it must not be
+	// reported as a taken date.
+	it("is not mistaken for a taken date", async () => {
+		const envelope = createEnvelope();
+		await postCommand(envelope, hr);
+
+		const res = await postCommand(envelope, hr);
+
+		expect(res.status).toBe(409);
+		expect(res.body.reason).toBeUndefined();
+	});
+});
+
 describe("the holidays shape", () => {
 	it("is refused to an anonymous caller", async () => {
 		const { status, forwarded } = await requestShape("holidays");

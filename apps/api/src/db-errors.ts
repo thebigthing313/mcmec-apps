@@ -8,20 +8,34 @@
 import type { Context } from "hono";
 
 /**
- * The SQLSTATE of a Postgres error, wherever the driver stack put it.
+ * The Postgres error itself, wherever the driver stack put it.
  *
  * Drizzle wraps every failed query in a `DrizzleQueryError` whose `cause` is the `pg` error, so
  * the code is one level down. Reading only the top level matched nothing, and every constraint
  * violation surfaced as a 500.
  */
-export function pgErrorCode(e: unknown): string | undefined {
+function findPgError(
+	e: unknown,
+): { code: string; constraint?: string } | undefined {
 	for (let at = e, depth = 0; depth < 3; depth++) {
 		if (typeof at !== "object" || at === null) return undefined;
 		const { code, cause } = at as { code?: unknown; cause?: unknown };
-		if (typeof code === "string") return code;
+		if (typeof code === "string") {
+			return at as { code: string; constraint?: string };
+		}
 		at = cause;
 	}
 	return undefined;
+}
+
+/** The SQLSTATE of a Postgres error — `23505` for a unique violation. */
+export function pgErrorCode(e: unknown): string | undefined {
+	return findPgError(e)?.code;
+}
+
+/** The constraint a violation names, so a handler can tell one unique key from another. */
+export function pgErrorConstraint(e: unknown): string | undefined {
+	return findPgError(e)?.constraint;
 }
 
 export function pgErrorResponse(
