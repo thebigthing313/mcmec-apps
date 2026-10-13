@@ -38,10 +38,10 @@ export const SOURCE_ICON: Record<
 /**
  * Each source's colour, from the `chart-*` tokens (#302) — DESIGN.md's one other licence for them.
  *
- * `solid` is a bar with a label on it, so its text is chosen per token and theme for 4.5:1: black
- * on every light-theme token (4.97–5.74:1), and in the dark theme black except on `chart-1`,
- * which is dark enough to need white (6.82:1). `dot` and `border` carry no text, and every token
- * clears the 3:1 a graphical object needs against the card.
+ * Measured, not assumed (DESIGN.md: Series). `chart-1` is left out: on the dark card it is
+ * 2.90:1, under the 3:1 a coloured mark needs. The four used here clear 3.46:1 against the card
+ * in both themes, and black text on a `solid` bar clears 4.97:1 in both, so the bars need no
+ * per-theme text colour.
  */
 export const SOURCE_TONE: Record<
 	CalendarSource,
@@ -54,10 +54,10 @@ export const SOURCE_TONE: Record<
 		solid: "bg-chart-4 text-black",
 	},
 	meeting: {
-		border: "border-chart-1",
-		dot: "bg-chart-1",
-		soft: "bg-chart-1/15",
-		solid: "bg-chart-1 text-black dark:text-white",
+		border: "border-chart-2",
+		dot: "bg-chart-2",
+		soft: "bg-chart-2/15",
+		solid: "bg-chart-2 text-black",
 	},
 	sprayMission: {
 		border: "border-chart-3",
@@ -149,8 +149,7 @@ export function ItemDetails({ item }: { item: CalendarItem }) {
 			) : null}
 			{item.status === "completed" && item.otherDate ? (
 				<p>
-					Carried out on its rain date; first set for {dayShort(item.otherDate)}
-					.
+					{`Carried out on its rain date; first set for ${dayShort(item.otherDate)}.`}
 				</p>
 			) : null}
 			{item.location && item.location !== item.title ? (
@@ -177,7 +176,9 @@ export function ItemDetails({ item }: { item: CalendarItem }) {
 							rel="noopener noreferrer"
 							target="_blank"
 						>
-							Link <ExternalLink className="size-3" />
+							Open link
+							<ExternalLink className="size-3" />
+							<span className="sr-only">(opens in a new tab)</span>
 						</a>
 					) : null}
 					{item.mapUrl ? (
@@ -188,6 +189,7 @@ export function ItemDetails({ item }: { item: CalendarItem }) {
 							target="_blank"
 						>
 							Spray map <ExternalLink className="size-3" />
+							<span className="sr-only">(opens in a new tab)</span>
 						</a>
 					) : null}
 				</div>

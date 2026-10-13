@@ -1,4 +1,5 @@
 import { daysBetween } from "./days";
+import { itemsBetween } from "./filters";
 import type { CalendarItem } from "./items";
 
 /** One item's piece of one week, placed in the month grid. */
@@ -26,8 +27,7 @@ export type WeekSegment = {
 export function packWeek(week: string[], items: CalendarItem[]): WeekSegment[] {
 	const from = week[0] as string;
 	const to = week[6] as string;
-	const pieces = items
-		.filter((item) => item.endsOn >= from && item.startsOn <= to)
+	const pieces = itemsBetween(items, from, to)
 		.map((item) => {
 			const start = item.startsOn < from ? from : item.startsOn;
 			const end = item.endsOn > to ? to : item.endsOn;

@@ -34,19 +34,19 @@ export function useCalendarItems({
 	meetings?: CentralCollection<"meetings">;
 	spraySchedules?: CentralCollection<"spraySchedules">;
 }): { items: CalendarItem[]; isReady: boolean } {
-	const events = useLiveQuery(
+	const staffEventRows = useLiveQuery(
 		(q) => (staffEvents ? q.from({ event: staffEvents }) : undefined),
 		[staffEvents],
 	);
-	const days = useLiveQuery(
+	const holidayRows = useLiveQuery(
 		(q) => (holidays ? q.from({ holiday: holidays }) : undefined),
 		[holidays],
 	);
-	const held = useLiveQuery(
+	const meetingRows = useLiveQuery(
 		(q) => (meetings ? q.from({ meeting: meetings }) : undefined),
 		[meetings],
 	);
-	const missions = useLiveQuery(
+	const missionRows = useLiveQuery(
 		(q) => (spraySchedules ? q.from({ mission: spraySchedules }) : undefined),
 		[spraySchedules],
 	);
@@ -54,15 +54,15 @@ export function useCalendarItems({
 	const items = useMemo(
 		() =>
 			sortItems([
-				...(events.data ?? []).map(fromStaffEvent),
-				...(days.data ?? []).map(fromHoliday),
-				...(held.data ?? []).map(fromMeeting),
-				...(missions.data ?? []).flatMap(fromSprayMission),
+				...(staffEventRows.data ?? []).map(fromStaffEvent),
+				...(holidayRows.data ?? []).map(fromHoliday),
+				...(meetingRows.data ?? []).map(fromMeeting),
+				...(missionRows.data ?? []).flatMap(fromSprayMission),
 			]),
-		[events.data, days.data, held.data, missions.data],
+		[staffEventRows.data, holidayRows.data, meetingRows.data, missionRows.data],
 	);
 
-	const isReady = [events, days, held, missions].every(
+	const isReady = [staffEventRows, holidayRows, meetingRows, missionRows].every(
 		(query) => !query.isEnabled || query.isReady,
 	);
 
