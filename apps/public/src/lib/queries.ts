@@ -36,6 +36,16 @@ function apiUrl(): string {
 	return url;
 }
 
+/**
+ * A deploy adds a column to `api`'s database and to this site's row schema at once, but the
+ * two services go live independently — on staging #220's release served 500s from both
+ * insecticide pages until `api` had migrated. So a row that has no `fact_sheet_url` yet reads
+ * as no fact sheet rather than failing the page.
+ */
+const PublicInsecticidesRowSchema = InsecticidesRowSchema.extend({
+	fact_sheet_url: InsecticidesRowSchema.shape.fact_sheet_url.default(null),
+});
+
 /** Reads a whole shape and validates each row against its schema. */
 async function readTable<TSchema extends ZodObject<z.ZodRawShape>>(
 	table: string,
@@ -62,7 +72,7 @@ const getMeetingsServerFn = createServerFn({ method: "GET" }).handler(() =>
 );
 
 const getInsecticidesServerFn = createServerFn({ method: "GET" }).handler(() =>
-	readTable("insecticides", InsecticidesRowSchema),
+	readTable("insecticides", PublicInsecticidesRowSchema),
 );
 
 const getZipCodesServerFn = createServerFn({ method: "GET" }).handler(() =>
@@ -102,7 +112,7 @@ const getSpraySchedulesServerFn = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const [schedules, insecticides, links, municipalities] = await Promise.all([
 			readTable("spray_schedules", SpraySchedulesRowSchema),
-			readTable("insecticides", InsecticidesRowSchema),
+			readTable("insecticides", PublicInsecticidesRowSchema),
 			readTable(
 				"spray_schedule_municipalities",
 				SprayScheduleMunicipalitiesRowSchema,
