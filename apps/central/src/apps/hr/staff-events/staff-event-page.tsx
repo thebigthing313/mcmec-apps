@@ -38,7 +38,7 @@ export function StaffEventPage() {
 			event.id,
 			intents("employees.deleteStaffEvent"),
 		);
-		toastOnError(tx, "Failed to delete the event.");
+		toastOnError(tx, "Failed to delete the Staff Event.");
 		navigate({ to: "/hr/staff-events" });
 	};
 

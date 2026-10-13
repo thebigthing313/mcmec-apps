@@ -32,8 +32,8 @@ export function staffEventLifecycle(
 				},
 				command,
 				failure: cancelled
-					? "Failed to reinstate the event."
-					: "Failed to cancel the event.",
+					? "Failed to reinstate the Staff Event."
+					: "Failed to cancel the Staff Event.",
 				save:
 					withSave && save
 						? {

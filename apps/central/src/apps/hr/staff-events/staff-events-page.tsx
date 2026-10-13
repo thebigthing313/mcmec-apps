@@ -17,7 +17,7 @@ type StaffEventRow = {
 	startsOn: string;
 	startTime: string | null;
 	location: string | null;
-	is_cancelled: boolean;
+	isCancelled: boolean;
 };
 
 const route = getRouteApi("/(app)/hr/staff-events/");
@@ -34,7 +34,7 @@ export function StaffEventsPage() {
 
 	const rows: StaffEventRow[] = (data ?? []).map((event) => ({
 		id: event.id,
-		is_cancelled: event.is_cancelled,
+		isCancelled: event.is_cancelled,
 		location: event.location,
 		startTime: event.start_time,
 		startsOn: event.starts_on,
@@ -45,12 +45,12 @@ export function StaffEventsPage() {
 	const columns: RecordIndexColumn<StaffEventRow>[] = [
 		{
 			cell: (row) => (
-				<span className={row.is_cancelled ? "line-through" : undefined}>
+				<span className={row.isCancelled ? "line-through" : undefined}>
 					{row.title}
 				</span>
 			),
 			cellClassName: "max-w-[36ch] truncate",
-			header: "Event",
+			header: "Staff Event",
 			id: "title",
 			identity: true,
 			sortValue: (row) => row.title,
@@ -72,10 +72,10 @@ export function StaffEventsPage() {
 		},
 		{
 			cell: (row) =>
-				row.is_cancelled ? <Badge variant="secondary">Cancelled</Badge> : null,
+				row.isCancelled ? <Badge variant="secondary">Cancelled</Badge> : null,
 			header: "Status",
 			id: "status",
-			sortValue: (row) => (row.is_cancelled ? 1 : 0),
+			sortValue: (row) => (row.isCancelled ? 1 : 0),
 		},
 	];
 
@@ -92,13 +92,13 @@ export function StaffEventsPage() {
 			description="Webinars, training dates and anything else every Employee should know about. They appear on the Calendar for every Employee, never on the public site."
 			emptyState={{
 				description:
-					"Add an event and every Employee sees it on the Calendar. A training held on four days is four events.",
+					"Add a Staff Event and every Employee sees it on the Calendar. A training held on four days is four Staff Events.",
 				icon: CalendarClock,
 				title: "No Staff Events yet",
 			}}
 			getRowKey={(row) => row.id}
 			getRowLabel={(row) =>
-				`${row.title}, ${row.when}${row.is_cancelled ? ", cancelled" : ""}`
+				`${row.title}, ${row.when}${row.isCancelled ? ", cancelled" : ""}`
 			}
 			getSearchText={(row) => `${row.title} ${row.location ?? ""}`}
 			onSearchChange={(next) =>
@@ -117,7 +117,11 @@ export function StaffEventsPage() {
 			// A shortcut, never the only way in: Cancel Event and Reinstate are on the detail view
 			// and the edit form too (ADR 0001). Delete is only in the detail page's danger zone.
 			rowActions={(row) => {
-				const action = staffEventLifecycle(staffEvents, row);
+				const action = staffEventLifecycle(staffEvents, {
+					id: row.id,
+					is_cancelled: row.isCancelled,
+					title: row.title,
+				});
 				return [
 					{
 						icon: action.icon,

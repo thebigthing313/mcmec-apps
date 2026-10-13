@@ -54,7 +54,7 @@ export const StaffEventDetailsSchema = z
 		location: row.location,
 		start_time: row.start_time,
 		starts_on: z.iso.date("Pick the day it starts."),
-		title: z.string().trim().min(1, "Give the event a title."),
+		title: z.string().trim().min(1, "Give the Staff Event a title."),
 		url: z.url("Enter a full link, starting https://").nullable(),
 	})
 	.superRefine(checkStaffEventDates);
@@ -94,7 +94,9 @@ export function detailsFromRow(event: StaffEventDetails): StaffEventDetails {
 	return {
 		description: event.description,
 		end_time: toClock(event.end_time),
-		ends_on: event.ends_on,
+		// Collapsed as `detailsFromForm` collapses it, so a row stored with an end date on its
+		// start date does not read as edited the moment the form opens.
+		ends_on: event.ends_on === event.starts_on ? null : event.ends_on,
 		location: event.location,
 		start_time: toClock(event.start_time),
 		starts_on: event.starts_on,

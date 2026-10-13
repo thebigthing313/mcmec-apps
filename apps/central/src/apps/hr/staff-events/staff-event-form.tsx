@@ -13,14 +13,22 @@ import {
  * field of the pair, which a validator on either field alone cannot see.
  */
 function validate(values: StaffEventFormValues) {
-	const result = StaffEventDetailsSchema.safeParse(detailsFromForm(values));
-	if (result.success) return undefined;
 	const fields: Record<string, string> = {};
-	for (const issue of result.error.issues) {
+	const result = StaffEventDetailsSchema.safeParse(detailsFromForm(values));
+	for (const issue of result.success ? [] : result.error.issues) {
 		const field = String(issue.path[0] ?? "");
 		if (field && !fields[field]) fields[field] = issue.message;
 	}
-	return { fields };
+	// The form's own rule: "All day" unticked is a promise of a start time. A blank one would
+	// otherwise be stored as null, which means all day — the opposite of what was chosen.
+	if (
+		!values.all_day &&
+		values.start_time.trim() === "" &&
+		!fields.start_time
+	) {
+		fields.start_time = "Pick a start time, or tick All day.";
+	}
+	return Object.keys(fields).length > 0 ? { fields } : undefined;
 }
 
 export function StaffEventForm({
@@ -44,10 +52,12 @@ export function StaffEventForm({
 			await onSubmit(value);
 		},
 		validators: {
-			// Quiet until the first Save, then live, so a fix clears its error as it is typed.
+			// One validator, quiet until the first Save and live after it. A submit runs the
+			// change validator too (the attempt is counted first), and keeping the errors under
+			// one key means fixing a field clears them — a separate `onSubmit` validator's
+			// errors would stay until the next submit and keep Save disabled.
 			onChange: ({ value, formApi }) =>
 				formApi.state.submissionAttempts > 0 ? validate(value) : undefined,
-			onSubmit: ({ value }) => validate(value),
 		},
 	});
 
@@ -78,7 +88,7 @@ export function StaffEventForm({
 					{(field) => (
 						<field.DateField
 							clearable={true}
-							description="Only for an event that runs over several days."
+							description="Only for a Staff Event that runs over several days."
 							label="End date"
 							placeholder="Same day"
 						/>

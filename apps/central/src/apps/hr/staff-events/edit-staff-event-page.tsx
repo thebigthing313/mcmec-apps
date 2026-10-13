@@ -58,7 +58,7 @@ export function EditStaffEventPage() {
 				Object.assign(draft, changes);
 			},
 		);
-		toastOnError(tx, "Failed to update the event.");
+		toastOnError(tx, "Failed to update the Staff Event.");
 		done();
 	};
 

@@ -31,7 +31,7 @@ export function CreateStaffEventPage() {
 			},
 			intents("employees.createStaffEvent"),
 		);
-		toastOnError(tx, "Failed to add the event.");
+		toastOnError(tx, "Failed to add the Staff Event.");
 		navigate({
 			params: { staffEventId: id },
 			to: "/hr/staff-events/$staffEventId",
