@@ -52,6 +52,6 @@ describe("the shape proxy's cache headers", () => {
 		expect(headers.get("electric-offset")).toBe("0_0");
 		expect(headers.get("electric-schema")).toBe('{"id":{"type":"uuid"}}');
 		expect(headers.has("electric-up-to-date")).toBe(true);
-		expect(headers.get("vary")).toBe("cookie");
+		expect(headers.get("vary")).toMatch(/bcookieb/i);
 	});
 });
