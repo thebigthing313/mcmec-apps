@@ -13,6 +13,7 @@ import {
 	useLocation,
 	useMatches,
 } from "@tanstack/react-router";
+import type { ComponentProps, ReactNode } from "react";
 import { PORTAL_SHELL } from "@/src/components/portal-sidebar";
 import { requireEmployee } from "@/src/lib/gates";
 import { shellAppOf } from "@/src/lib/shell";
@@ -103,7 +104,7 @@ function LayoutComponent() {
 					<Layout.AppSwitcher LinkComponent={Link} />
 				</Layout.Sidebar.Header>
 				<Layout.Sidebar.Content>
-					<Layout.Sidebar.Nav groups={sidebar} LinkComponent={Link} />
+					<Layout.Sidebar.Nav groups={sidebar} LinkComponent={SidebarLink} />
 				</Layout.Sidebar.Content>
 				<Layout.Sidebar.Footer>
 					<Layout.NavUser />
@@ -130,5 +131,19 @@ function LayoutComponent() {
 			    so sonner stays out of the entry chunk. */}
 			<Toaster />
 		</Layout>
+	);
+}
+
+/**
+ * The rail's link. The shell picks the current destination (the deepest that matches), so the
+ * router's own active state is held to exact matches: left fuzzy, it marked an App's Dashboard
+ * `aria-current="page"` on every screen beneath it, beside the screen the shell had picked.
+ */
+function SidebarLink(props: { to: string; children?: ReactNode }) {
+	return (
+		<Link
+			{...(props as ComponentProps<typeof Link>)}
+			activeOptions={{ exact: true }}
+		/>
 	);
 }

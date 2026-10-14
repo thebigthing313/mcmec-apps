@@ -387,6 +387,31 @@ describe("Self Service Portal dashboard", () => {
 	});
 });
 
+describe("the sidebar's current destination", () => {
+	/** The links the App's rail marks as the current page. */
+	const current = (app: string) =>
+		within(screen.getByRole("navigation", { name: `${app} sections` }))
+			.getAllByRole("link")
+			.filter((link) => link.getAttribute("aria-current") === "page")
+			.map((link) => link.textContent);
+
+	it("lights only the screen, not the App's Dashboard above it", async () => {
+		await renderAt("/hr/holidays", employeeWith(["manage_employees"]));
+
+		expect(
+			await screen.findByRole("heading", { name: "Holidays" }),
+		).toBeTruthy();
+		expect(current("HR")).toEqual(["Holidays"]);
+	});
+
+	it("lights the Dashboard on the App's root", async () => {
+		await renderAt("/hr", employeeWith(["manage_employees"]));
+
+		await screen.findByText(EMPLOYEE_NAME);
+		expect(current("HR")).toEqual(["Dashboard"]);
+	});
+});
+
 /** The switcher's menu trigger, in the sidebar header (NavUser's menu is in the footer). */
 const SWITCHER_MENU = "[data-sidebar='header'] [aria-haspopup='menu']";
 

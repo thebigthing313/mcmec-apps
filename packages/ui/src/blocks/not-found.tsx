@@ -1,3 +1,4 @@
+import { notFoundImage } from "@mcmec/lib/constants/assets";
 import { Button } from "../components/button";
 
 interface NotFoundProps {
@@ -11,11 +12,7 @@ export function NotFound({
 }: NotFoundProps) {
 	return (
 		<div className="flex min-h-100 flex-col items-center justify-center p-6 text-center">
-			<img
-				alt="404 Not Found"
-				className="mb-6 h-64 w-64"
-				src="/404-not-found.png"
-			/>
+			<img alt="404 Not Found" className="mb-6 h-64 w-64" src={notFoundImage} />
 			<h2 className="mb-4 font-semibold text-2xl">Not Found</h2>
 			<p className="mb-6 max-w-md text-muted-foreground">{message}</p>
 			<Button onClick={onAction}>Go Back</Button>

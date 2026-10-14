@@ -108,4 +108,19 @@ describe("StaffEventForm", () => {
 
 		await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 	});
+
+	it("lets the Date picker reach next year", async () => {
+		renderForm({});
+
+		await act(async () => {
+			fireEvent.click(screen.getByLabelText(/^Date/));
+		});
+
+		const years = screen
+			.getAllByRole("combobox")
+			.flatMap((select) =>
+				[...(select as HTMLSelectElement).options].map((o) => o.text),
+			);
+		expect(years).toContain(String(new Date().getFullYear() + 1));
+	});
 });

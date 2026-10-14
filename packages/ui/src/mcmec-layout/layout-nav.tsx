@@ -52,6 +52,23 @@ function isPathActive(currentPath: string, to: string): boolean {
 }
 
 /**
+ * The one destination to light: the deepest that matches.
+ *
+ * An App's Dashboard is its root (`/hr`), so it is an ancestor of every screen in the App, and
+ * the prefix rule alone lit it beside Holidays on `/hr/holidays` — the same meaningless state the
+ * `/` exemption above exists to prevent. Choosing the longest match keeps the drill-down rule
+ * and lights Dashboard only where nothing deeper claims the page.
+ */
+function activeDestination(
+	currentPath: string,
+	destinations: string[],
+): string | undefined {
+	return destinations
+		.filter((to) => isPathActive(currentPath, to))
+		.sort((a, b) => b.length - a.length)[0];
+}
+
+/**
  * The staff sidebar's navigation, owned by the shell rather than by each application.
  *
  * Four applications previously hand-wrote the same `items.map(SidebarMenuItem →
@@ -72,6 +89,10 @@ export function LayoutNav<TLinkProps extends { to: string }>({
 	LinkComponent: ComponentType<TLinkProps & { children?: ReactNode }>;
 }) {
 	const { activeApp, currentPath } = useLayoutContext();
+	const active = activeDestination(
+		currentPath,
+		groups.flatMap((group) => group.items.map((item) => item.linkProps.to)),
+	);
 
 	return (
 		/*
@@ -105,7 +126,7 @@ export function LayoutNav<TLinkProps extends { to: string }>({
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{group.items.map((item) => {
-								const isActive = isPathActive(currentPath, item.linkProps.to);
+								const isActive = item.linkProps.to === active;
 								return (
 									<SidebarMenuItem key={item.linkProps.to}>
 										<SidebarMenuButton
