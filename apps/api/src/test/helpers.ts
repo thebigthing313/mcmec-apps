@@ -159,12 +159,14 @@ export async function seedNotice(fields: {
  *
  * Electric itself is not running here, so the proxy's outbound fetch is answered by a stub; what
  * a test observes is the policy's verdict (401/403 before any fetch) and, when it allows, the
- * shape it would have asked Electric for.
+ * shape it would have asked Electric for. `electric` sets the stub's reply, for tests of what the
+ * proxy does to Electric's response on the way back.
  */
 export async function requestShape(
 	table: string,
 	session?: TestSession,
-): Promise<{ status: number; forwarded: URL | null }> {
+	electric: { headers?: HeadersInit; status?: number } = {},
+): Promise<{ status: number; forwarded: URL | null; headers: Headers }> {
 	const realFetch = globalThis.fetch;
 	const env = {
 		url: process.env.ELECTRIC_URL,
@@ -175,13 +177,16 @@ export async function requestShape(
 	process.env.ELECTRIC_SECRET = "electric-test-secret";
 	globalThis.fetch = (async (input: RequestInfo | URL) => {
 		forwarded = new URL(String(input));
-		return new Response("[]", { status: 200 });
+		return new Response("[]", {
+			headers: electric.headers,
+			status: electric.status ?? 200,
+		});
 	}) as typeof fetch;
 	try {
 		const res = await app.request(`/api/shapes/${table}?offset=-1`, {
 			headers: session?.headers ?? {},
 		});
-		return { forwarded, status: res.status };
+		return { forwarded, headers: res.headers, status: res.status };
 	} finally {
 		globalThis.fetch = realFetch;
 		if (env.url === undefined) delete process.env.ELECTRIC_URL;
