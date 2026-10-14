@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-10-13T22:19:34.829Z
-commit: cd06ad1 Merge pull request #315 from thebigthing313/docs/calendar-staging-check
+released: 2026-10-14T12:33:44.856Z
+commit: 6059ccf Merge pull request #316 from thebigthing313/fix/staging-check-findings
