@@ -32,6 +32,15 @@ interface DateTimeInputProps {
 	"aria-describedby"?: string;
 }
 
+/**
+ * How many years past this one the picker reaches.
+ *
+ * react-day-picker's dropdown caption stops at December of the current year unless told
+ * otherwise, which left next year's Holidays, and anything else dated past New Year's Eve, out
+ * of reach. Five years is further ahead than the Commission schedules anything.
+ */
+const YEARS_AHEAD = 5;
+
 export function DateTimeInput({
 	value,
 	onChange,
@@ -95,6 +104,7 @@ export function DateTimeInput({
 					<Calendar
 						captionLayout="dropdown"
 						disabled={disabled}
+						endMonth={new Date(new Date().getFullYear() + YEARS_AHEAD, 11)}
 						mode="single"
 						month={month}
 						onMonthChange={setMonth}
