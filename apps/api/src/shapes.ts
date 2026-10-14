@@ -91,7 +91,7 @@ const SAFE_PARAMS = [
 //   - sanitize the request BODY instead of the query string — strip any client-supplied
 //     `table`/`where`/`columns`/`secret` and inject the policy's server-side, since the
 //     allowlist below only guards the URL,
-//   - revisit the cache headers: the `Vary: Cookie` handling below assumes cacheable GETs.
+//   - keep the cache headers below on the POST responses too.
 // The security property itself still holds either way — Electric intersects the subset with
 // the shape's `where` regardless of how the request is framed.
 const SAFE_PARAM_PREFIX = "subset__";
@@ -139,6 +139,11 @@ export async function shapeProxy(c: Context): Promise<Response> {
 	headers.delete("content-encoding");
 	headers.delete("content-length");
 	headers.set("vary", "cookie");
+	// Electric marks its responses cacheable (a catch-up for 60s, the initial snapshot for a
+	// week) so a CDN can collapse requests. We have no CDN, and in the browser that cache is a
+	// bug: a fresh page whose catch-up comes from it reaches up-to-date without a row written a
+	// moment ago, and a record route 404s or an edit form opens on old values (#317).
+	headers.set("cache-control", "private, no-cache");
 
 	return new Response(electricRes.body, {
 		status: electricRes.status,
