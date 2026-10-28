@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-10-14T12:33:44.856Z
-commit: 6059ccf Merge pull request #316 from thebigthing313/fix/staging-check-findings
+released: 2026-10-28T12:24:31.685Z
+commit: 5a51f76 Merge pull request #318 from thebigthing313/fix/shape-proxy-no-cache
