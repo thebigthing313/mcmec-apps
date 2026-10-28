@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-10-28T14:16:56.283Z
-commit: b7d9abb chore: stage 5726be1
+released: 2026-10-28T15:37:36.812Z
+commit: 767df5f Merge pull request #319 from thebigthing313/fix/central-index-cache
