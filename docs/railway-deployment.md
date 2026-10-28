@@ -106,18 +106,20 @@ workspace install resolves, and its **config-as-code path** is set to `apps/<app
 
 ### Static apps
 
-Built with Vite to `dist/`, served by `sirv-cli`:
+Built with Vite to `dist/`, served by `apps/central/server/serve.mjs` (`pnpm --filter central
+start`), a few lines of Node around `sirv`:
 
-```
-sirv dist --single --etag --host 0.0.0.0
-```
-
-- `--single` is the SPA fallback, replacing Vercel's `/(.*) → /index.html` rewrite. Without it
-  every deep link (`/employees`, `/notices/:id`) 404s on refresh.
-- `--host 0.0.0.0` is **required**. `sirv-cli` defaults `--host` to `localhost`, which in a
-  container binds loopback only and makes the service unreachable — Railway returns 502.
-- `sirv-cli` reads `PORT` from the environment, which Railway injects.
-- `sirv-cli` is a regular `dependency`, not a devDependency: the production install prunes
+- The SPA fallback replaces Vercel's `/(.*) → /index.html` rewrite. Without it every deep link
+  (`/hr/employees`, `/notices/:id`) 404s on refresh. A path with a file extension never falls
+  back, so a missing asset is a 404 rather than the app shell.
+- **Cache headers.** The app shell (and everything outside `/assets/`) is `no-cache` with an
+  ETag, so each load revalidates and a deploy is picked up on the next navigation. Vite's
+  content-hashed `/assets/*` are `public, max-age=31536000, immutable`. `sirv-cli`, which served
+  `central` until #317's staging check, sent no `Cache-Control` at all, and browsers kept running
+  the previous build after a deploy until a manual reload.
+- It listens on `0.0.0.0`, which is **required**: binding `localhost` in a container is loopback
+  only and Railway returns 502. It reads `PORT`, which Railway injects.
+- `sirv` is a regular `dependency`, not a devDependency: the production install prunes
   devDependencies, so a devDependency would be missing at runtime. (Same reason `tsx` and
   `drizzle-kit` are dependencies of `api`.)
 
@@ -263,9 +265,9 @@ indexed, which shows up in Search Console instead of silently.
 anywhere. This is not gated on environment, so there is nothing
 to configure and nothing to forget.
 
-It gets a meta tag rather than a header because `sirv-cli` cannot set response headers. The
-coverage is equivalent here: `--single` serves that one document for every path, so every URL a
-crawler can reach carries the tag. It would not be equivalent on `public`, which serves PDFs and
+It gets a meta tag rather than a header; the tag predates `central`'s own server, when
+`sirv-cli` could not set response headers. The coverage is equivalent here: the SPA fallback
+serves that one document for every path, so every URL a crawler can reach carries the tag. It would not be equivalent on `public`, which serves PDFs and
 XML.
 
 ### HTTP Basic auth on staging `public`
