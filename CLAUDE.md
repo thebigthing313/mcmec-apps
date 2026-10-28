@@ -260,8 +260,8 @@ Every app deploys to **Railway**, one service per app plus `Postgres` and `elect
 `pnpm stage`). Each app's build and start commands live in `apps/<app>/railway.json`; the
 repo-root `railway.json` belongs to `api`.
 
-- `central`: static SPA in `dist/`, served by `sirv --single` (the SPA fallback), on Serverless
-  (sleeps when idle)
+- `central`: static SPA in `dist/`, served by `apps/central/server/serve.mjs` (`sirv` with the SPA
+  fallback and cache headers), on Serverless (sleeps when idle)
 - `public`: SSR (Nitro), started from `.output/server/index.mjs`, always-on. Its CSP and
   `X-Robots-Tag` headers are set in `apps/public/server/plugins/`
 - `public`'s canonical host is `www.middlesexmosquito.org` (`SITE_URL` in
