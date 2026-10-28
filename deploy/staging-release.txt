@@ -7,5 +7,5 @@
 #
 # Do not edit by hand — run `pnpm stage`.
 
-released: 2026-10-28T12:59:05.780Z
-commit: 5726be1 chore: stage 5a51f76
+released: 2026-10-28T14:16:56.283Z
+commit: b7d9abb chore: stage 5726be1
