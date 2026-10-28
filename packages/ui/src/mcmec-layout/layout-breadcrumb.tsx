@@ -97,8 +97,9 @@ export function LayoutBreadcrumb<
 					 * only link back to it. Comparing against the real path leaves a trail that stops
 					 * short fully navigable.
 					 */
-					const isLast =
-						index === trail.length - 1 &&
+					const isFinal = index === trail.length - 1;
+					const isCurrent =
+						isFinal &&
 						(!item.href ||
 							normalizePath(item.href) === normalizePath(currentPath));
 					return (
@@ -111,7 +112,7 @@ export function LayoutBreadcrumb<
 								 * never rendered, and with it `aria-current="page"`: the trail told a
 								 * screen reader nothing about which entry was the current screen.
 								 */}
-								{isLast || !item.href ? (
+								{isCurrent || !item.href ? (
 									<BreadcrumbPage>{item.label}</BreadcrumbPage>
 								) : LinkComponent ? (
 									<BreadcrumbLink asChild>
@@ -123,7 +124,12 @@ export function LayoutBreadcrumb<
 									<BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
 								)}
 							</BreadcrumbItem>
-							{isLast ? null : <BreadcrumbSeparator />}
+							{/*
+							 * Separators go between crumbs, so the final one takes none even when the trail
+							 * stops short and it is a link: keyed to `isCurrent`, a refused App's trail read
+							 * "Dashboard ›".
+							 */}
+							{isFinal ? null : <BreadcrumbSeparator />}
 						</Fragment>
 					);
 				})}

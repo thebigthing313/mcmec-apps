@@ -47,6 +47,7 @@ it("opens only the Self Service Portal without an App Role", () => {
 describe.each(CENTRAL_APPS)("$name", (app) => {
 	const role = app.requiredPermission;
 	const holding = role ? [role] : [];
+	const others = APP_ROLES.filter((other) => other !== role);
 
 	it("sends a signed-out visitor to /login", async () => {
 		const { asked, router } = await renderAt(app.href, signedOut);
@@ -69,7 +70,6 @@ describe.each(CENTRAL_APPS)("$name", (app) => {
 
 	if (role) {
 		it("keeps the URL and refuses inside the shell for a User without its App Role", async () => {
-			const others = APP_ROLES.filter((other) => other !== role);
 			const { asked, router } = await renderAt(app.href, employeeWith(others));
 
 			expect(router.state.location.pathname).toBe(app.href);
@@ -100,6 +100,22 @@ describe.each(CENTRAL_APPS)("$name", (app) => {
 				screen.queryByRole("navigation", { name: `${app.name} sections` }),
 			).toBeNull();
 			expect(asked()).toEqual(["employees"]);
+		});
+
+		it("ends the refusal's breadcrumb on a crumb, not a separator", async () => {
+			await renderAt(app.href, employeeWith(others));
+
+			const trail = await screen.findByRole("navigation", {
+				name: "breadcrumb",
+			});
+			const steps = trail.querySelectorAll("ol > li");
+			expect(steps.length).toBeGreaterThan(0);
+			expect(steps[steps.length - 1]?.getAttribute("data-slot")).toBe(
+				"breadcrumb-item",
+			);
+			expect(
+				within(trail).getByRole("link", { name: "Dashboard" }),
+			).toBeTruthy();
 		});
 	}
 
